@@ -2041,6 +2041,56 @@
             ]
         },
         {
+            "name": "supermatter_keys",
+            "directions": 4
+        },
+        {
+            "name": "supermatter-0",
+            "directions": 4
+        },
+        {
+            "name": "supermatter-1",
+            "directions": 4
+        },
+        {
+            "name": "supermatter-2",
+            "directions": 4
+        },
+        {
+            "name": "supermatter-3",
+            "directions": 4
+        },
+        {
+            "name": "supermatter-4",
+            "directions": 4
+        },
+        {
+            "name": "supermatter-5",
+            "directions": 4
+        },
+        {
+            "name": "supermatter-6",
+            "directions": 4,
+            "delays": [
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ],
+                [
+                    0.1,
+                    0.1
+                ]
+            ]
+        },
+        {
             "name": "supply",
             "directions": 4
         },
