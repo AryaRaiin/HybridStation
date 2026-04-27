@@ -1,9 +1,9 @@
 - type: entity
-  parent: [BaseItem, BaseSyndicateContraband]
+  parent: [BaseItem, BaseC3SyndicateContraband] # Frontier: BaseSyndicateContraband<BaseC3SyndicateContraband
   id: EmagUnlimited
   suffix: Unlimited
   name: cryptographic sequencer
-  description: The all-in-one hacking solution. Friend of any syndicate. The iconic EMAG.
+  description: The all-in-one hacking solution. Friend of any syndicate agent. The iconic EMAG. # Frontier: add "agent"
   components:
   - type: Emag
   - type: Sprite

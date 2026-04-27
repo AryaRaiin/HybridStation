@@ -37,4 +37,12 @@ public sealed partial class EnergySwordComponent : Component
     /// </summary>
     [DataField]
     public float CycleRate = 1f;
+
+    // Frontier: block changing colour
+    /// <summary>
+    ///     RGB cycle rate for hacked e-swords.
+    /// </summary>
+    [DataField]
+    public bool BlockHacking = false;
+    // End Frontier
 }

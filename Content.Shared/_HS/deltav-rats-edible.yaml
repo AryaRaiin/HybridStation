@@ -1,0 +1,12 @@
+# Delta V - Make them edible and pickable.
+--- ### REGALRAT ###
+file: Resources/Prototypes/Entities/Mobs/NPCs/regalrat.yml
+- match:
+    - id: MobRatServant
+  action: add
+  data:
+    components:
+      - type: Food 
+      - type: Item # Delta V - Make them edible and pickable.
+        size: Tiny # Delta V - Make them edible and pickable.
+

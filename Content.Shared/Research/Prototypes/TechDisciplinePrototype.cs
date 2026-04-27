@@ -1,4 +1,13 @@
-﻿using Robust.Shared.Prototypes;
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Nemanja
+// SPDX-FileCopyrightText: 2024 Raphael Bertoche
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 gluesniffler
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 
 namespace Content.Shared.Research.Prototypes;
@@ -44,5 +53,12 @@ public sealed partial class TechDisciplinePrototype : IPrototype
     /// Purchasing this tier of technology causes a server to become "locked" to this discipline.
     /// </summary>
     [DataField("lockoutTier")]
-    public int LockoutTier = 3;
+    public int LockoutTier = 4;
+
+    /// <summary>
+    /// Goobstation R&D console rework field
+    /// Name that appears on this discipline's button in console
+    /// </summary>
+    [DataField(required: true)]
+    public string UiName = string.Empty;
 }

@@ -3,7 +3,6 @@ job-name-security = Security Officer
 job-name-cadet = Security Cadet
 job-name-hos = Head of Security
 job-name-detective = Detective
-job-name-brigmedic = Brigmedic
 job-name-borg = Cyborg
 job-name-scientist = Scientist
 job-name-research-assistant = Research Assistant
@@ -84,15 +83,17 @@ JobChiefEngineer = Chief Engineer
 JobChiefMedicalOfficer = Chief Medical Officer
 JobClown = Clown
 JobDetective = Detective
-JobBrigmedic = Brigmedic
+JobBrigmedic = Corpsman
 JobERTChaplain = ERT Chaplain
 JobERTEngineer = ERT Engineer
 JobERTJanitor = ERT Janitor
 JobERTLeader = ERT Leader
 JobERTMedical = ERT Medical
 JobERTSecurity = ERT Security
-JobHeadOfPersonnel = Head of Personnel
-JobHeadOfSecurity = Head of Security
+# Frontier: Head of Personnel<Station Representative
+JobHeadOfPersonnel = Station Representative
+# Mono: Head of Security<TSFMC Colonel
+JobHeadOfSecurity = TSFMC Colonel
 JobJanitor = Janitor
 JobLawyer = Lawyer
 JobLibrarian = Librarian
@@ -101,7 +102,8 @@ JobMedicalIntern = Medical intern
 JobMime = Mime
 JobMusician = Musician
 JobParamedic = Paramedic
-JobPassenger = Passenger
+# Frontier: Passenger<Contractor
+JobPassenger = Contractor
 JobPsychologist = Psychologist
 JobQuartermaster = Quartermaster
 JobReporter = Reporter
@@ -109,12 +111,15 @@ JobResearchAssistant = Research Assistant
 JobResearchDirector = Research Director
 JobSalvageSpecialist = Salvage Specialist
 JobScientist = Scientist
-JobSecurityCadet = Security Cadet
-JobSecurityOfficer = Security Officer
+# Frontier: Security Cadet<Cadet
+JobSecurityCadet = Cadet
+# Mono: Security Officer<TSFMC Corporal
+JobSecurityOfficer = TSFMC Corporal
 JobServiceWorker = Service Worker
 JobStationAi = Station AI
 JobStationEngineer = Station Engineer
 JobTechnicalAssistant = Technical Assistant
 JobVisitor = Visitor
-JobWarden = Warden
+# Mono: Warden<TSFMC Captain
+JobWarden = TSFMC Captain
 JobZookeeper = Zookeeper

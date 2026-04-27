@@ -1,5 +1,25 @@
-﻿using Content.Server.Worldgen.Components;
+// SPDX-FileCopyrightText: 2023 Moony
+// SPDX-FileCopyrightText: 2023 Nemanja
+// SPDX-FileCopyrightText: 2023 metalgearsloth
+// SPDX-FileCopyrightText: 2024 Checkraze
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2025 GreaseMonk
+// SPDX-FileCopyrightText: 2025 Ilya246
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using Content.Server.Worldgen.Components;
 using Robust.Server.GameObjects;
+using Content.Server._NF.Worldgen.Components.Debris; // Frontier
+using Content.Shared.Humanoid; // Frontier
+using Content.Shared.Mobs.Components; // Frontier
+using System.Numerics; // Frontier
+using Robust.Shared.Map; // Frontier
+using Content.Server._NF.Salvage; // Frontier
+
+using EntityPosition = (Robust.Shared.GameObjects.EntityUid Entity, Robust.Shared.Map.EntityCoordinates Coordinates);
+using Content.Server.StationEvents.Events; // Frontier
 
 namespace Content.Server.Worldgen.Systems;
 
@@ -9,6 +29,13 @@ namespace Content.Server.Worldgen.Systems;
 public sealed class LocalityLoaderSystem : BaseWorldSystem
 {
     [Dependency] private readonly TransformSystem _xformSys = default!;
+    [Dependency] private readonly LinkedLifecycleGridSystem _linkedLifecycleGrid = default!;
+
+    public override void Initialize()
+    {
+        SubscribeLocalEvent<SpaceDebrisComponent, EntityTerminatingEvent>(OnDebrisDespawn);
+    }
+    // Frontier
 
     /// <inheritdoc />
     public override void Update(float frameTime)
@@ -54,10 +81,31 @@ public sealed class LocalityLoaderSystem : BaseWorldSystem
             }
         }
     }
+
+    // Frontier
+    private void OnDebrisDespawn(EntityUid entity, SpaceDebrisComponent component, EntityTerminatingEvent e)
+    {
+        if (entity != null)
+        {
+            // Handle mobrestrictions getting deleted
+            var query = AllEntityQuery<NFSalvageMobRestrictionsComponent>();
+
+            while (query.MoveNext(out var salvUid, out var salvMob))
+            {
+                if (entity == salvMob.LinkedGridEntity && salvMob.DespawnIfOffLinkedGrid) // Mono - fix
+                {
+                    QueueDel(salvUid);
+                }
+            }
+
+            // Do not delete the grid, it is being deleted.
+            _linkedLifecycleGrid.UnparentPlayersFromGrid(grid: entity, deleteGrid: false, ignoreLifeStage: true);
+        }
+    }
+    // Frontier
 }
 
 /// <summary>
 ///     A directed fired on a loadable entity when a local loader enters it's vicinity.
 /// </summary>
 public record struct LocalStructureLoadedEvent;
-

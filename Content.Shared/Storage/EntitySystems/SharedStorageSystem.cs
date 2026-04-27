@@ -1,3 +1,34 @@
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 Callmore
+// SPDX-FileCopyrightText: 2024 Crude Oil
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Kara
+// SPDX-FileCopyrightText: 2024 Krunklehorn
+// SPDX-FileCopyrightText: 2024 Leon Friedrich
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 ShadowCommander
+// SPDX-FileCopyrightText: 2024 SlamBamActionman
+// SPDX-FileCopyrightText: 2024 Sphiral
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 checkraze
+// SPDX-FileCopyrightText: 2024 deltanedas
+// SPDX-FileCopyrightText: 2024 metalgearsloth
+// SPDX-FileCopyrightText: 2024 nikthechampiongr
+// SPDX-FileCopyrightText: 2024 plykiya
+// SPDX-FileCopyrightText: 2024 slarticodefast
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 Daniel Lenrd
+// SPDX-FileCopyrightText: 2025 ErhardSteinhauer
+// SPDX-FileCopyrightText: 2025 Errant
+// SPDX-FileCopyrightText: 2025 GreaseMonk
+// SPDX-FileCopyrightText: 2025 Kyle Tyo
+// SPDX-FileCopyrightText: 2025 lzk
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -44,6 +75,8 @@ using Robust.Shared.Utility;
 using Content.Shared.Rounding;
 using Robust.Shared.Collections;
 using Robust.Shared.Map.Enumerators;
+
+using Content.Shared.Nyanotrasen.Item.PseudoItem; // Nyanotrasen
 
 namespace Content.Shared.Storage.EntitySystems;
 
@@ -171,6 +204,13 @@ public abstract class SharedStorageSystem : EntitySystem
         CommandBinds.Builder
             .Bind(ContentKeyFunctions.OpenBackpack, InputCmdHandler.FromDelegate(HandleOpenBackpack, handle: false))
             .Bind(ContentKeyFunctions.OpenBelt, InputCmdHandler.FromDelegate(HandleOpenBelt, handle: false))
+            .Bind(ContentKeyFunctions.OpenWallet, InputCmdHandler.FromDelegate(HandleOpenWallet, handle: false)) // FRONTIER
+            // MONO START
+            .Bind(ContentKeyFunctions.OpenPocket1, InputCmdHandler.FromDelegate(HandleOpenPocket1, handle: false))
+            .Bind(ContentKeyFunctions.OpenPocket2, InputCmdHandler.FromDelegate(HandleOpenPocket2, handle: false))
+            .Bind(ContentKeyFunctions.OpenSuitStorage, InputCmdHandler.FromDelegate(HandleOpenSuitStorage, handle: false))
+            .Bind(ContentKeyFunctions.OpenOuterClothing, InputCmdHandler.FromDelegate(HandleOuterClothing, handle: false))
+            // MONO END
             .Register<SharedStorageSystem>();
 
         Subs.CVar(_cfg, CCVars.NestedStorage, OnNestedStorageCvar, true);
@@ -1017,6 +1057,7 @@ public abstract class SharedStorageSystem : EntitySystem
 
         foreach (var entity in entities.ToArray())
         {
+            if (HasComp<PseudoItemComponent>(entity)){ continue; } // Nyanotrasen - They dont transfer properly
             Insert(target, entity, out _, user: user, targetComp, playSound: false);
         }
         if (user != null
@@ -1773,6 +1814,23 @@ public abstract class SharedStorageSystem : EntitySystem
         return GetCumulativeItemAreas(uid) < uid.Comp.Grid.GetArea() || HasSpaceInStacks(uid);
     }
 
+    // FRONTIER START
+    /// <summary>
+    /// Returns true if there is enough space to fit an item based on slot counts and item stack size.
+    /// </summary>
+    public bool HasSlotSpaceFor(Entity<StorageComponent?> uid, Entity<ItemComponent?> itemEnt)
+    {
+        if (!Resolve(uid, ref uid.Comp) || !Resolve(itemEnt, ref itemEnt.Comp))
+            return false;
+
+        // If the amount of spaces that's left in the bag is less than the size of the item, return false.
+        var itemSpacesNeeded = ItemSystem.GetItemShape((itemEnt, itemEnt.Comp)).GetArea();
+        var availableSpaces = uid.Comp.Grid.GetArea() - GetCumulativeItemAreas(uid);
+
+        return availableSpaces >= itemSpacesNeeded || HasSpaceInStacks(uid);
+    }
+    // FRONTIER END
+
     private bool HasSpaceInStacks(Entity<StorageComponent?> uid, ProtoId<StackPrototype>? stackType = null)
     {
         if (!Resolve(uid, ref uid.Comp))
@@ -1873,6 +1931,31 @@ public abstract class SharedStorageSystem : EntitySystem
     {
         HandleToggleSlotUI(session, "belt");
     }
+
+    // FRONTIER START: open wallet
+    private void HandleOpenWallet(ICommonSession? session)
+    {
+        HandleToggleSlotUI(session, "wallet");
+    }
+    // FRONTIER END: open wallet
+    // MONO START
+    private void HandleOpenPocket1(ICommonSession? session)
+    {
+        HandleToggleSlotUI(session, "pocket1");
+    }
+    private void HandleOpenPocket2(ICommonSession? session)
+    {
+        HandleToggleSlotUI(session, "pocket2");
+    }
+    private void HandleOpenSuitStorage(ICommonSession? session)
+    {
+        HandleToggleSlotUI(session, "suitstorage");
+    }
+    private void HandleOuterClothing(ICommonSession? session)
+    {
+        HandleToggleSlotUI(session, "outerClothing");
+    }
+    // MONO END
 
     private void HandleToggleSlotUI(ICommonSession? session, string slot)
     {

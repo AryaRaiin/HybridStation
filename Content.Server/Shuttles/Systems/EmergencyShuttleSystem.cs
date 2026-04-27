@@ -37,6 +37,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
+using Content.Shared.DeviceNetwork.Components;
 
 namespace Content.Server.Shuttles.Systems;
 
@@ -640,6 +641,7 @@ public sealed partial class EmergencyShuttleSystem : SharedEmergencyShuttleSyste
         EnsureComp<EmergencyShuttleComponent>(shuttle.Value);
 
         Log.Info($"Added emergency shuttle {ToPrettyString(shuttle)} for station {ToPrettyString(ent)} and centcomm {ToPrettyString(ent.Comp2.Entity)}");
+        // EnsureComp<StationEmpImmuneComponent>(shuttle.Value); Enable in the case we want to ensure EMP immune grid
     }
 
     /// <summary>

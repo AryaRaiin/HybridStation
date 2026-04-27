@@ -1,0 +1,44 @@
+
+---
+file: Resources/Prototypes/Recipes/Lathes/Packs/robotics.yml
+- match:
+    -id: BorgModulesDynamic
+  action: mergeadd
+  data:
+    type: latheRecipePack
+    recipes:
+    - BorgModuleAdvancedSurgery
+
+---
+file: Resources/Prototypes/Recipes/Lathes/Packs/robotics.yml
+- match:
+    -id: SMCybernetics
+  action: mergeadd
+  data:
+    type: latheRecipePack
+    recipes:
+    - JawsOfLifeLeftArm
+    - JawsOfLifeRightArm
+    - SpeedLeftLeg
+    - SpeedRightLeg
+    - BasicCyberneticEyes
+    - SecurityCyberneticEyes
+    - MedicalCyberneticEyes
+    - DexLeftHand
+    - DexRightHand
+
+---
+file: Resources/Prototypes/Recipes/Lathes/Packs/robotics.yml
+- match:
+    -id: BorgModules
+  action: merge
+  data:
+    recipes:
+    - BorgModuleRescue
+    - BorgModuleGardening
+    - BorgModuleHarvesting
+    - BorgModuleJetpack # Frontier
+    - BorgModuleAdvancedParamedic # Frontier
+    - BorgModuleAdvancedMining # Frontier
+
+

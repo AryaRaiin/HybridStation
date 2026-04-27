@@ -1,0 +1,342 @@
+
+--- ### Encryption keys: traffic
+file: Resources/Prototypes/Entities/Objects/Devices/encryption_keys.yml
+- match:
+    - id: EncryptionKeyCommon
+  action: merge
+  data:
+    components:
+    - type: EncryptionKey
+      channels:
+      - Traffic
+
+
+--- ### Encryption keys: traffic
+file: Resources/Prototypes/Entities/Objects/Devices/pinpointer.yml
+- match:
+    - id: PinpointerUniversal
+  action: merge
+  data:
+    components:
+    - type: StaticPrice # Frontier
+      price: 150
+
+
+# --- ### Encryption keys: traffic
+# file: Resources/Prototypes/Entities/Objects/Materials/materials.yml
+# - match:
+#     - id: MaterialBase
+#   action: merge
+#   data:
+#     components:
+#     - type: Tag
+#       tags:
+#       - ConstructionMaterial
+
+
+# --- ### Encryption keys: traffic
+# file: Resources/Prototypes/Entities/Objects/Materials/materials.yml
+# - match:
+#   action: merge
+#   data:
+#   - type: entity
+#     parent: FloorTileItemDark
+#     id: FloorTileItemDarkLingering0
+#     suffix: Lingering, 0
+#     components:
+#     - type: Stack
+#       lingering: true
+#       count: 0
+#   - type: entity
+#     parent: FloorTileItemWhite
+#     id: FloorTileItemWhiteLingering0
+#     suffix: Lingering, 0
+#     components:
+#     - type: Stack
+#       lingering: true
+#       count: 0
+#   - type: entity
+#     parent: SheetPlastic 
+#     id: SheetPlasticLingering0 
+#     suffix: Lingering, 0
+#     components:
+#     - type: Stack
+#       lingering: true
+#       count: 0
+#   - type: entity
+#     parent: SheetPlasteel 
+#     id: SheetPlasteelLingering0 
+#     suffix: Lingering, 0
+#     components:
+#     - type: Stack
+#       lingering: true
+#       count: 0
+
+
+--- ### identification_cards
+file: Resources/Prototypes/Entities/Objects/Misc/identification_cards.yml
+- match:
+    - id: IDCardStandard
+  action: merge
+  data:
+    components:
+    - type: StaticPrice # Frontier
+      price: 5 # Frontier The card need to cost less then the PDA that comes with a card and a pen in it.
+    - type: CargoSellBlacklist # Frontier
+    - type: ShipyardSellCondition # Frontier: Teleport to shipyard console on sale
+      preserveOnSale: true
+
+
+
+---
+file: Resources/Prototypes/Entities/Objects/Misc/machine_parts.yml
+- match:
+    - id: BaseStockPart
+  action: merge
+  data:
+    components:
+    - type: GuideHelp
+      guides:
+      - MachineUpgrading
+- match:
+    - id: MicroManipulatorStockPart
+  action: merge
+  data:
+    components:
+    - type: MachinePart # Frontier
+      part: Manipulator # Frontier
+      rating: 1 # Frontier
+#add to base, no match
+- action: merge
+  data:
+  - type: entity
+    id: CapacitorStockPart
+    name: capacitor
+    parent: BaseStockPart
+    description: A basic capacitor used in the construction of a variety of devices.
+    suffix: Rating 1
+    components:
+      - type: Sprite
+        state: capacitor
+      - type: Tag
+        tags:
+          - CapacitorStockPart
+      - type: MachinePart # Frontier
+        part: Capacitor # Frontier
+        rating: 1 # Frontier
+      - type: Stack
+        stackType: Capacitor
+  - type: entity
+    id: MatterBinStockPart
+    name: matter bin
+    parent: BaseStockPart
+    description: A basic matter bin used in the construction of a variety of devices.
+    suffix: Rating 1
+    components:
+      - type: Sprite
+        state: matter_bin
+      - type: MachinePart # Frontier
+        part: MatterBin # Frontier
+        rating: 1 # Frontier
+      - type: Stack
+        stackType: MatterBin
+
+
+
+--- ### forever SPESOS, not CREDITS
+file: Resources/Prototypes/Entities/Objects/Misc/space_cash.yml
+- match:
+    - id: SpaceCash
+  action: merge
+  data:
+    components:
+    - type: UserInterface
+      interfaces:
+        enum.StackCustomSplitUiKey.Key:
+          type: StackCustomSplitBoundUserInterface
+    - type: CargoSellBlacklist
+    - type: ShipyardSellCondition # Frontier: Teleport to shipyard console on sale
+      preserveOnSale: true
+
+---
+file: Resources/Prototypes/Entities/Structures/Power/substation.yml
+- match:
+    -id: BaseSubstation
+  action: merge
+  data:
+    components:
+      - type: UpgradeBattery
+        maxChargeMultiplier: 2
+        baseMaxCharge: 2500000
+      - type: UpgradePowerSupplyRamping
+        scaling: Linear
+        supplyRampingMultiplier: 1
+- match:
+    -id: BaseSubstation
+  action: delete
+  data:
+    components:
+      - type: Battery
+
+---
+file: Resources/Prototypes/Loadouts/Miscellaneous/survival.yml
+- match:
+    -id: OxygenBreather
+  action: merge
+  data:
+    effects:
+      - !type:SpeciesLoadoutEffect
+        species:
+        - Protogen
+        - Yowie # Goobstation
+        - Tajaran # Goobstation
+
+--- ###TODO: ensure non-match gets added
+file: Resources/Prototypes/Shaders/shaders.yml
+- match:
+  - id: CircleAlphaMask
+  action: mergeadd
+  data:
+  # Monolith addition
+  # Cuts out everything outside of a circle
+  # Anti-aliased so the edges are smooth
+  # Radius is relative to target size (0.5 is a full circle)
+    type: shader
+    kind: source
+    path: "/Textures/Shaders/circle_alpha_mask.swsl"
+
+
+---
+file: Resources/Prototypes/ai_factions.yml
+- match:
+    -id: Dragon
+    -id: NanoTrasen
+    -id: SimpleHostile
+    -id: Syndicate
+    -id: Xeno
+    -id: Zombie
+    -id: Wizard
+    -id: Revolutionary
+  action: merge
+  data:
+    hostile:
+    - WizFedFaction # Frontier
+    - BloodCultNF # Frontier
+    - PirateNF # Frontier
+    - ExplorersExpeditionNF # Frontier
+    - ArtifactConstruct # Frontier
+    - StreetGangNF # Frontier
+    - DinosaursNF # Frontier
+    - MercenariesExpeditionNF # Frontier
+    - SiliconsExpeditionNF # Frontier
+    - AberrantFleshExpeditionNF # Frontier
+    - ContrabandClothing # Frontier
+    - ContrabandDetection # Frontier
+- match:
+    -id: Revolutionary
+  action: delete
+  data:
+    hostile:
+    - StreetGangNF
+- match:
+    -id: Syndicate
+  action: merge
+  data:
+    friendly: # Frontier
+    - SyndicateNF # Frontier
+
+
+
+---
+file: Resources/Prototypes/Species/moth.yml
+- match:
+    -id: MobMothSprites
+  action: merge
+  data:
+    sprites:
+      Hair: MobHumanoidAnyMarking # Mono
+- match:
+    -id: MobMothMarkingLimits
+  action: merge
+  data:
+    points:
+      Hair:
+        points: 1 # Mono Moth Hair
+
+---
+file: Resources/Prototypes/Recipes/Lathes/security.yml
+- match:
+    -id: SecurityCyberneticEyes
+  action: mergeadd
+  data:
+    type: latheRecipe
+    result: SecurityCyberneticEyes
+    completetime: 5
+    materials:
+      Steel: 1000
+      Glass: 500
+      Plastic: 500
+      Gold: 300
+      Silver: 300
+
+
+---
+file: Resources/Prototypes/Recipes/Lathes/medical.yml
+- match:
+  - id: VehicleWheelchairFolded
+  action: mergeadd
+  data:
+    type: latheRecipe
+    result: VehicleWheelchairFolded
+    completetime: 1
+    materials:
+      Steel: 500
+      Plastic: 300
+
+
+---
+file: Resources/Prototypes/Recipes/Lathes/machine_boards.yml
+- match:
+  - id: CrystallizerMachineCircuitboard
+  action: mergeadd
+  data:
+    type: latheRecipe
+    parent: [ BaseCircuitboardRecipe, BaseGeneralMachineRecipeCategory ]
+    result: CrystallizerMachineCircuitboard
+
+---
+file: Resources/Prototypes/Recipes/Lathes/Packs/security.yml
+- match:
+  - id: VisionGoggles
+  action: mergeadd
+  data:
+  # WD EDIT START
+    type: latheRecipePack
+    recipes:
+    - ClothingEyesNightVisionGoggles
+    - ClothingEyesThermalVisionGoggles
+  # WD EDIT END
+  # Mono start
+    - ClothingHelmetAttachmentNVGsBasic
+    - ClothingHelmetAttachmentInfraredBasic
+  # Mono end
+
+---
+file: Resources/Prototypes/Recipes/Lathes/Packs/robotics.yml
+- match:
+    -id: Modsuits
+  action: mergeadd
+  data:
+    # Mono/Goob changes start
+    type: latheRecipePack
+    recipes:
+    - ModsuitChestplate
+    - ModsuitBoots
+    - ModsuitHelmet
+    - ModsuitGauntlets
+    - ModsuitShell
+    - ModsuitPlatingExternal
+    - ModsuitCoreStandard
+    # Mono/Goob changes end
+
+

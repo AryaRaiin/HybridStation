@@ -13,7 +13,7 @@
     ClothingUniformJumpsuitLibrarian: 3
     ClothingUniformJumpskirtLibrarian: 3
     ClothingShoesBootsLaceup: 2
-    ClothingHeadsetService: 2
+#    ClothingHeadsetService: 2 # Frontier
   contrabandInventory:
     ToyFigurineLibrarian: 1
 

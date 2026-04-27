@@ -1,3 +1,4 @@
+using Content.Server.Emp; // Frontier: Upstream - #28984
 using Content.Server.Power.Components;
 using Content.Server.Power.EntitySystems;
 using Content.Shared.Gravity;
@@ -16,6 +17,7 @@ public sealed class GravityGeneratorSystem : EntitySystem
         SubscribeLocalEvent<GravityGeneratorComponent, EntParentChangedMessage>(OnParentChanged);
         SubscribeLocalEvent<GravityGeneratorComponent, ChargedMachineActivatedEvent>(OnActivated);
         SubscribeLocalEvent<GravityGeneratorComponent, ChargedMachineDeactivatedEvent>(OnDeactivated);
+        // SubscribeLocalEvent<GravityGeneratorComponent, EmpPulseEvent>(OnEmpPulse); // Frontier: Upstream - #28984
     }
 
     public override void Update(float frameTime)

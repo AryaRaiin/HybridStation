@@ -1,0 +1,28 @@
+
+#TODO: Move these. don't be adding stuff to upstream tags
+---
+file: Resources/Prototypes/tags.yml
+- match:
+    - id: AdvancedLaserPistol
+    - id: CartridgeRocketEmp
+    - id: NoRecharge
+    - id: OperatingTable
+    - id: Openable
+    - id: Organ
+    - id: Eyes
+    - id: Liver
+    - id: Heart
+    - id: Kidneys
+    - id: Ore
+    - id: Posibrain
+    - id: TurretCompatibleWeapon
+    - id: CartridgeMachineGun
+    - id: CartridgeShell
+    - id: Mask
+    - id: SugarBiscuit
+    - id: OatmealBiscuit
+    - id: SimpleBiscuit
+  action: mergeadd
+  data:
+    type: Tag
+

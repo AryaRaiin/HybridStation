@@ -1,4 +1,15 @@
 ﻿using Content.Shared.Administration;
+// SPDX-FileCopyrightText: 2024 metalgearsloth
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 GreaseMonk
+// SPDX-FileCopyrightText: 2025 Ilya246
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 Rubeebeebee
+// SPDX-FileCopyrightText: 2025 Simon
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using Content.Shared.Administration;
 using Content.Shared.CCVar.CVarAccess;
 using Robust.Shared.Configuration;
 
@@ -31,7 +42,8 @@ public sealed partial class CCVars
     ///     Whether the arrivals shuttle is enabled.
     /// </summary>
     public static readonly CVarDef<bool> ArrivalsShuttles =
-        CVarDef.Create("shuttle.arrivals", true, CVar.SERVERONLY);
+        //CVarDef.Create("shuttle.arrivals", true, CVar.SERVERONLY);
+        CVarDef.Create("shuttle.arrivals", false, CVar.SERVERONLY); // Frontier: false
 
     /// <summary>
     ///     The map to use for the arrivals station.
@@ -68,7 +80,8 @@ public sealed partial class CCVars
     ///     Whether to automatically spawn escape shuttles.
     /// </summary>
     public static readonly CVarDef<bool> GridFill =
-        CVarDef.Create("shuttle.grid_fill", true, CVar.SERVERONLY);
+        //CVarDef.Create("shuttle.grid_fill", true, CVar.SERVERONLY);
+        CVarDef.Create("shuttle.grid_fill", false, CVar.SERVERONLY); // Frontier: false
 
     /// <summary>
     ///     Whether to automatically preloading grids by GridPreloaderSystem
@@ -105,7 +118,8 @@ public sealed partial class CCVars
     ///     Any value equal to or less than zero will disable this check.
     /// </summary>
     public static readonly CVarDef<float> FTLMassLimit =
-        CVarDef.Create("shuttle.mass_limit", 300f, CVar.SERVERONLY);
+        //CVarDef.Create("shuttle.mass_limit", 300f, CVar.SERVERONLY);
+        CVarDef.Create("shuttle.mass_limit", 0f, CVar.SERVERONLY); // UNKNOWN
 
     /// <summary>
     ///     How long to knock down entities for if they aren't buckled when FTL starts and stops.
@@ -123,7 +137,8 @@ public sealed partial class CCVars
     ///     How long the emergency shuttle remains docked with the station, in seconds.
     /// </summary>
     public static readonly CVarDef<float> EmergencyShuttleDockTime =
-        CVarDef.Create("shuttle.emergency_dock_time", 180f, CVar.SERVERONLY);
+        //CVarDef.Create("shuttle.emergency_dock_time", 180f, CVar.SERVERONLY);
+        CVarDef.Create("shuttle.emergency_dock_time", 300f, CVar.SERVERONLY); // Frontier: 180f<300f
 
     /// <summary>
     ///     If the emergency shuttle can't dock at a priority port, the dock time will be multiplied with this value.
@@ -148,19 +163,22 @@ public sealed partial class CCVars
     ///     Actual minimum travel time cannot be less than <see cref="ShuttleSystem.DefaultArrivalTime"/>
     /// </summary>
     public static readonly CVarDef<float> EmergencyShuttleMinTransitTime =
-        CVarDef.Create("shuttle.emergency_transit_time_min", 60f, CVar.SERVERONLY);
+        //CVarDef.Create("shuttle.emergency_transit_time_min", 60f, CVar.SERVERONLY);
+        CVarDef.Create("shuttle.emergency_transit_time_min", 300f, CVar.SERVERONLY); // Frontier: 60f<300f
 
     /// <summary>
     ///     The maximum time for the emergency shuttle to arrive at centcomm.
     /// </summary>
     public static readonly CVarDef<float> EmergencyShuttleMaxTransitTime =
-        CVarDef.Create("shuttle.emergency_transit_time_max", 180f, CVar.SERVERONLY);
+        //CVarDef.Create("shuttle.emergency_transit_time_max", 180f, CVar.SERVERONLY);
+        CVarDef.Create("shuttle.emergency_transit_time_max", 600f, CVar.SERVERONLY); // Frontier: 180f<600f
 
     /// <summary>
     ///     Whether the emergency shuttle is enabled or should the round just end.
     /// </summary>
     public static readonly CVarDef<bool> EmergencyShuttleEnabled =
-        CVarDef.Create("shuttle.emergency", true, CVar.SERVERONLY);
+        //CVarDef.Create("shuttle.emergency", true, CVar.SERVERONLY);
+        CVarDef.Create("shuttle.emergency", false, CVar.SERVERONLY); // Frontier: false
 
     /// <summary>
     ///     The percentage of time passed from the initial call to when the shuttle can no longer be recalled.
@@ -174,7 +192,8 @@ public sealed partial class CCVars
     /// </summary>
     [CVarControl(AdminFlags.Server | AdminFlags.Mapping, min: 0, max: int.MaxValue)]
     public static readonly CVarDef<int> EmergencyShuttleAutoCallTime =
-        CVarDef.Create("shuttle.auto_call_time", 90, CVar.SERVERONLY);
+        //CVarDef.Create("shuttle.auto_call_time", 90, CVar.SERVERONLY);
+        CVarDef.Create("shuttle.auto_call_time", 360, CVar.SERVERONLY); // Frontier: 90<360
 
     /// <summary>
     ///     Time in minutes after the round was extended (by recalling the shuttle) to call
@@ -258,7 +277,8 @@ public sealed partial class CCVars
     /// </summary>
     [CVarControl(AdminFlags.VarEdit)]
     public static readonly CVarDef<float> ImpactSlowdown =
-        CVarDef.Create("shuttle.impact.slowdown", 8f, CVar.SERVERONLY);
+        //CVarDef.Create("shuttle.impact.slowdown", 8f, CVar.SERVERONLY);
+        CVarDef.Create("shuttle.impact.slowdown", 1.6f, CVar.SERVERONLY); // UNKNOWN
 
     /// <summary>
     /// Minimum velocity change from impact for special throw effects (e.g. stuns, beakers breaking) to occur

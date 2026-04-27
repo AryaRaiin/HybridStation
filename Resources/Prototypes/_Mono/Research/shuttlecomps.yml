@@ -1,0 +1,67 @@
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 RikuTheKiller
+# SPDX-FileCopyrightText: 2025 sleepyyapril
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: technology
+  id: ShuttleArmamentComponentsResearch
+  name: research-technology-shuttle-armaments-components
+  entityIcon: GunneryServerLow
+  discipline: Arsenal
+  tier: 3
+  cost: 50000
+  recipeUnlocks:
+#  - ShieldControlComputerCircuitboard
+#  - MachineShieldMS225Circuitboard
+  - GunneryControlComputerCircuitboard
+  - MachineGCSLowCircuitboard
+  - MachineGCSMediumCircuitboard
+  - MachineGCSHighCircuitboard
+  technologyPrerequisites:
+  - ShuttleRadarResearch
+  position: -6, 8
+
+- type: technology
+  id: ShuttleRadarResearch
+  name: research-technology-shuttle-radar-components
+  entityIcon: ComputerAdvancedRadar
+  discipline: CivilianServices
+  tier: 3
+  cost: 80000
+  recipeUnlocks:
+  - AdvancedRadarConsoleCircuitboard
+  - ComputerIFFCircuitboard
+  technologyPrerequisites:
+  - Shuttlecraft
+  - SuperParts
+  position: -6, 7
+
+- type: technology
+  id: ShuttleCtla25DriveResearch
+  name: research-technology-bluespace-drive-ctla25
+  entityIcon: MachineFTLDrive
+  discipline: Experimental
+  tier: 2
+  cost: 50000
+  recipeUnlocks:
+  - MachineDriveCTLA25Circuitboard
+  technologyPrerequisites:
+  - ShuttleRadarResearch
+  position: -7, 7
+
+- type: technology
+  id: ShuttleCtlaAdvancedDriveResearch
+  name: research-technology-bluespace-drive-ctla-advanced
+  entityIcon: MachineFTLDrive50
+  discipline: Experimental
+  tier: 3
+  cost: 75000
+  recipeUnlocks:
+  - MachineDriveCTLA25sCircuitboard
+  - MachineDriveCTLA50Circuitboard
+  technologyPrerequisites:
+  - ShuttleCtla25DriveResearch
+  - PortableFission
+  position: -7, 6

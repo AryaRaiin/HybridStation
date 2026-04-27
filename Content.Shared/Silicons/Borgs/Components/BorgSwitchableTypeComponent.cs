@@ -1,4 +1,10 @@
-﻿using Content.Shared.Actions;
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2025 BeBright
+// SPDX-FileCopyrightText: 2025 Ilya246
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using Content.Shared.Actions;
 using Content.Shared.Radio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
@@ -57,9 +63,11 @@ public sealed partial class BorgToggleSelectTypeEvent : InstantActionEvent;
 /// </summary>
 /// <param name="prototype">The borg type prototype that the user selected.</param>
 [Serializable, NetSerializable]
-public sealed class BorgSelectTypeMessage(ProtoId<BorgTypePrototype> prototype) : BoundUserInterfaceMessage
+public sealed class BorgSelectTypeMessage(ProtoId<BorgTypePrototype> prototype, ProtoId<BorgSubtypePrototype> subtype) : BoundUserInterfaceMessage
 {
     public ProtoId<BorgTypePrototype> Prototype = prototype;
+    // Goobstation: Customizable borgs sprites
+    public ProtoId<BorgSubtypePrototype> Subtype = subtype;
 }
 
 /// <summary>

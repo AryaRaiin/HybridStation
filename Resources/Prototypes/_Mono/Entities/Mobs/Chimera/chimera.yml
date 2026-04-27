@@ -1,0 +1,103 @@
+# SPDX-FileCopyrightText: 2025 EctoplasmIsGood
+# SPDX-FileCopyrightText: 2025 Ilya246
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 Your Name
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# TODO - new sprites
+
+- type: entity
+  parent: MonoBaseMobLetoferolHumanoid
+  id: MobLetoferolHorror
+  name: chimera fleshbeast
+  components:
+  - type: MovementSpeedModifier
+    baseWalkSpeed : 2.7
+    baseSprintSpeed : 4.65
+    weightlessAcceleration: 1.5 # Slightly more manueverable in space.
+  - type: Sprite
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: horror
+      color: "#eaff00"
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: horror
+      Dead:
+        Base: dead
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      500: Dead
+    allowRevives: true
+  - type: SlowOnDamage
+    speedModifierThresholds:
+      120: 0.7
+      250: 0.5
+      300: 0.25
+  - type: MeleeWeapon
+    autoAttack: true
+    attackRate: 1.2
+    soundHit:
+      path: /Audio/Weapons/Xeno/alien_claw_flesh3.ogg
+    angle: 60
+    animation: WeaponArcClaw
+    damage:
+      types:
+        Slash: 14
+        Structural: 75
+  #- type: ActionGun
+  #  action: ActionLetoferolSpike
+  #  gunProto: LetoferolSpikeGun
+
+- type: entity
+  parent: MobLetoferolHorror
+  id: MobLetoferolHorrorGhostrole
+  suffix: Ghostrole
+  name: chimera fleshbeast
+  components:
+  - type: GhostRole
+    name: ghost-role-information-chimera-name
+    description: ghost-role-information-chimera-description
+    rules: ghost-role-information-chimera-rules
+    raffle:
+      settings: default
+    requirements:
+    - !type:OverallPlaytimeRequirement
+      time: 180000 # 50 hrs
+  - type: GhostTakeoverAvailable
+
+- type: entity
+  parent:
+  - MonoBaseMobLetoferol
+  - BaseMobFlesh
+  id: MobLetoferolBeast
+  name: chimera fleshbeast
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    sprite: Mobs/Aliens/flesh.rsi
+    layers:
+    - map: [ "enum.DamageStateVisualLayers.Base" ]
+      state: jared
+  - type: RandomSprite
+    available:
+    - enum.DamageStateVisualLayers.Base:
+        jared: ""
+        golem: ""
+        clamp: ""
+        lover: ""
+  - type: MeleeWeapon
+    attackRate: 1.5
+    soundHit:
+      path: /Audio/Weapons/Xeno/alien_claw_flesh3.ogg
+    angle: 30
+    animation: WeaponArcClaw
+    damage:
+      types:
+        Blunt: 5
+        Slash: 5
+        Structural: 50

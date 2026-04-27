@@ -16,6 +16,7 @@ using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
+using Content.Shared.Containers.ItemSlots; // Frontier
 
 namespace Content.Shared.VendingMachines;
 
@@ -34,6 +35,7 @@ public abstract partial class SharedVendingMachineSystem : EntitySystem
     [Dependency] protected readonly SharedUserInterfaceSystem UISystem = default!;
     [Dependency] protected readonly IRobustRandom Randomizer = default!;
     [Dependency] private readonly EmagSystem _emag = default!;
+    [Dependency] protected readonly ItemSlotsSystem ItemSlots = default!; // Frontier
 
     public override void Initialize()
     {
@@ -45,6 +47,8 @@ public abstract partial class SharedVendingMachineSystem : EntitySystem
         SubscribeLocalEvent<VendingMachineComponent, RestockDoAfterEvent>(OnRestockDoAfter);
 
         SubscribeLocalEvent<VendingMachineRestockComponent, AfterInteractEvent>(OnAfterInteract);
+
+        SubscribeLocalEvent<VendingMachineComponent, GotUnEmaggedEvent>(OnUnemagged); // Frontier
 
         Subs.BuiEvents<VendingMachineComponent>(VendingMachineUiKey.Key, subs =>
         {
@@ -145,6 +149,11 @@ public abstract partial class SharedVendingMachineSystem : EntitySystem
     protected virtual void OnMapInit(EntityUid uid, VendingMachineComponent component, MapInitEvent args)
     {
         RestockInventoryFromPrototype(uid, component, component.InitialStockQuality);
+
+        // FRONTIER START: create the cash slot if this entity has one
+        if (component.CashSlot != null && component.CashSlotName != null)
+            ItemSlots.AddItemSlot(uid, component.CashSlotName, component.CashSlot);
+        // FRONTIER END: create the cash slot if this entity has one
     }
 
     private void OnEmpPulse(Entity<VendingMachineComponent> ent, ref EmpPulseEvent args)
@@ -307,9 +316,85 @@ public abstract partial class SharedVendingMachineSystem : EntitySystem
     /// <param name="component"></param>
     public void AuthorizedVend(EntityUid uid, EntityUid sender, InventoryType type, string itemId, VendingMachineComponent component)
     {
+        // FRONTIER START
+        if (!_prototypeManager.TryIndex<EntityPrototype>(itemId, out var proto))
+            return;
+
+        var price = _pricing.GetEstimatedPrice(proto);
+        // Somewhere deep in the code of pricing, a hardcoded 20 dollar value exists for anything without
+        // a staticprice component for some god forsaken reason, and I cant find it or think of another way to
+        // get an accurate price from a prototype with no staticprice comp.
+        // this will undoubtably lead to vending machine exploits if I cant find wtf pricing system is doing.
+        // also stacks, food, solutions, are handled poorly too f
+        if (price == 0)
+            price = 20;
+
+        if (TryComp<MarketModifierComponent>(component.Owner, out var modifier))
+            price *= modifier.Mod;
+
+        var totalPrice = (int) price;
+
+        // If any price has a vendor price, explicitly use its value - higher OR lower, over others.
+        var priceVend = _pricing.GetEstimatedVendPrice(proto);
+        if (priceVend > 0.0) // if vending price exists, overwrite it.
+            totalPrice = (int) priceVend;
+        // FRONTIER END
+
         if (IsAuthorized(uid, sender, component))
         {
-            TryEjectVendorItem(uid, type, itemId, component.CanShoot, sender, component);
+            // FRONTIER START
+            int bankBalance = 0;
+            if (!HasComp<IronmanComponent>(sender) && TryComp<BankAccountComponent>(sender, out var bank))
+                bankBalance = bank.Balance;
+            int cashSlotBalance = 0;
+            Entity<StackComponent>? cashEntity = null;
+            if (component.CashSlotName != null
+                && component.CurrencyStackType != null
+                && ItemSlots.TryGetSlot(uid, component.CashSlotName, out var cashSlot)
+                && TryComp<StackComponent>(cashSlot?.ContainerSlot?.ContainedEntity, out var stackComp)
+                && stackComp!.StackTypeId == component.CurrencyStackType)
+            {
+                cashSlotBalance = stackComp!.Count;
+                cashEntity = (cashSlot!.ContainerSlot!.ContainedEntity.Value, stackComp!);
+            }
+            if (totalPrice > bankBalance + cashSlotBalance)
+            {
+                _popupSystem.PopupEntity(Loc.GetString("bank-insufficient-funds"), uid);
+                Deny(uid, component);
+                return;
+            }
+            bool paidFully = false;
+            // Mono: Store the purchase price for tracking
+            component.LastPurchasePrice = totalPrice;
+            //TryEjectVendorItem(uid, type, itemId, component.CanShoot, sender, component); // Upstream method, doesn't have rv
+            if (TryEjectVendorItem(uid, type, itemId, component.CanShoot, component))
+            {
+                if (cashEntity != null)
+                {
+                    var newCashSlotBalance = Math.Max(cashSlotBalance - totalPrice, 0);
+                    _stack.SetCount(cashEntity.Value.Owner, newCashSlotBalance, cashEntity.Value.Comp);
+                    component.CashSlotBalance = newCashSlotBalance;
+                    paidFully = true; // Either we paid fully with cash, or we need to withdraw the remainder
+                }
+                if (totalPrice > cashSlotBalance && !HasComp<Content.Shared._Mono.Traits.Physical.IronmanComponent>(sender))
+                    paidFully = _bankSystem.TryBankWithdraw(sender, totalPrice - cashSlotBalance);
+                // If we paid completely, pay our station taxes
+                if (paidFully)
+                {
+                    foreach (var (account, taxCoeff) in component.TaxAccounts)
+                    {
+                        if (!float.IsFinite(taxCoeff) || taxCoeff <= 0.0f)
+                            continue;
+                        var tax = (int)Math.Floor(totalPrice * taxCoeff);
+                        _bankSystem.TrySectorDeposit(account, tax, LedgerEntryType.VendorTax);
+                    }
+                }
+                // Something was ejected, update the vending component's state
+                Dirty(uid, component);
+                _adminLogger.Add(LogType.Action, LogImpact.Low,
+                    $"{ToPrettyString(sender):user} bought from [vendingMachine:{ToPrettyString(uid!)}, product:{proto.Name}, cost:{totalPrice},  with ${cashSlotBalance} in the cash slot and ${bankBalance} in the bank.");
+            }
+            // FRONTIER END
         }
     }
 
@@ -341,6 +426,20 @@ public abstract partial class SharedVendingMachineSystem : EntitySystem
         // only emag if there are emag-only items
         args.Handled = component.EmaggedInventory.Count > 0;
     }
+
+    // FRONTIER START: demag
+    private void OnUnemagged(EntityUid uid, VendingMachineComponent component, ref GotUnEmaggedEvent args)
+    {
+        if (!_emag.CompareFlag(args.Type, EmagType.Interaction))
+            return;
+
+        if (!_emag.CheckFlag(uid, EmagType.Interaction))
+            return;
+
+        // Always demag if emagged.
+        args.Handled = true;
+    }
+    // FRONTIER END
 
     /// <summary>
     /// Returns all of the vending machine's inventory. Only includes emagged and contraband inventories if
@@ -413,6 +512,12 @@ public abstract partial class SharedVendingMachineSystem : EntitySystem
                 }
 
                 if (inventory.TryGetValue(id, out var entry))
+                { // Frontier: brackets added
+                    // FRONTIER START: Max value is reserved for unlimited items, this should not be restocked.
+                    if (entry.Amount == uint.MaxValue)
+                        continue;
+                    // FRONTIER END
+
                     // Prevent a machine's stock from going over three times
                     // the prototype's normal amount. This is an arbitrary
                     // number and meant to be a convenience for someone
@@ -420,6 +525,7 @@ public abstract partial class SharedVendingMachineSystem : EntitySystem
                     // all the items just to restock one empty slot without
                     // losing the rest of the restock.
                     entry.Amount = Math.Min(entry.Amount + amount, 3 * restock);
+                } // Frontier: brackets added
                 else
                     inventory.Add(id, new VendingMachineInventoryEntry(type, id, restock));
             }

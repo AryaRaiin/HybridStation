@@ -11,27 +11,26 @@
       state: any
   - type: RandomSpawner
     prototypes:
-    - VendingMachineChang
-    - VendingMachineCigs
-    - VendingMachineCoffee
-    - VendingMachineCola #Robust Sofdrinks
-    - VendingMachineColaBlack #Robust Sofdrinks [Black]
-    - VendingMachineColaRed #Space Cola
-    - VendingMachineDiscount
-    - VendingMachineDonut
-    - VendingMachineDrGibb
-    - VendingMachinePwrGame
-    - VendingMachineShamblersJuice
-    - VendingMachineSmite
-    - VendingMachineSnack
-    - VendingMachineSnackBlue
-    - VendingMachineSnackGreen
-    - VendingMachineSnackOrange
-    - VendingMachineSnackTeal
-    - VendingMachineSoda #Robust Sofdrinks [Soda]
-    - VendingMachineSovietSoda #Boda
-    - VendingMachineSpaceUp
-    - VendingMachineStarkist
+      - VendingMachineCigs
+      - VendingMachineCoffee
+      - VendingMachineCola
+      - VendingMachineColaRed
+      - VendingMachineColaBlack
+      # - VendingMachineDiscount # Frontier: no food vendors, support local chefs
+      # - VendingMachineSnack # Frontier: no food vendors, support local chefs
+      # - VendingMachineSnackBlue # Frontier: no food vendors, support local chefs
+      # - VendingMachineSnackGreen # Frontier: no food vendors, support local chefs
+      # - VendingMachineSnackOrange # Frontier: no food vendors, support local chefs
+      # - VendingMachineSnackTeal # Frontier: no food vendors, support local chefs
+      - VendingMachineSovietSoda
+      # - VendingMachineChang # Frontier: no food vendors, support local chefs
+      # - VendingMachineDonut # Frontier: no food vendors, support local chefs
+      - VendingMachineShamblersJuice
+      - VendingMachinePwrGame
+      - VendingMachineDrGibb
+      - VendingMachineSoda
+      - VendingMachineStarkist
+      - VendingMachineSpaceUp
     chance: 1
 
 

@@ -148,6 +148,7 @@ public abstract class SharedChargesSystem : EntitySystem
     public bool TryUseCharges(Entity<LimitedChargesComponent?> entity, int amount)
     {
         var current = GetCurrentCharges(entity);
+        if(current == int.MaxValue){ return true; } // PulsarsEdge: If it hax max possible charges, it's an unlimited charge
 
         if (current < amount)
         {

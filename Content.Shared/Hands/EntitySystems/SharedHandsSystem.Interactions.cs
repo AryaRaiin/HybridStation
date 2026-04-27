@@ -30,6 +30,7 @@ public abstract partial class SharedHandsSystem : EntitySystem
         CommandBinds.Builder
             .Bind(ContentKeyFunctions.UseItemInHand, InputCmdHandler.FromDelegate(HandleUseItem, handle: false, outsidePrediction: false))
             .Bind(ContentKeyFunctions.AltUseItemInHand, InputCmdHandler.FromDelegate(HandleAltUseInHand, handle: false, outsidePrediction: false))
+            .Bind(ContentKeyFunctions.SwapHandsPrevious, InputCmdHandler.FromDelegate(SwapHandsPreviousPressed, handle: false, outsidePrediction: false)) // Frontier
             .Bind(ContentKeyFunctions.SwapHands, InputCmdHandler.FromDelegate(SwapHandsPressed, handle: false, outsidePrediction: false))
             .Bind(ContentKeyFunctions.SwapHandsReverse, InputCmdHandler.FromDelegate(SwapHandsReversePressed, handle: false, outsidePrediction: false))
             .Bind(ContentKeyFunctions.Drop, new PointerInputCmdHandler(DropPressed))
@@ -106,6 +107,25 @@ public abstract partial class SharedHandsSystem : EntitySystem
 
         TrySetActiveHand((session.AttachedEntity.Value, component), nextHand);
     }
+
+    // Frontier: swap hands
+    private void SwapHandsPreviousPressed(ICommonSession? session)
+    {
+        if (!TryComp(session?.AttachedEntity, out HandsComponent? component))
+            return;
+
+        if (!_actionBlocker.CanInteract(session.AttachedEntity.Value, null))
+            return;
+
+        if (component.ActiveHand == null || component.Hands.Count < 2)
+            return;
+
+        var newActiveIndex = component.SortedHands.IndexOf(component.ActiveHand.Name) + component.Hands.Count - 1; // Ensure no negatives
+        var nextHand = component.SortedHands[newActiveIndex % component.Hands.Count];
+
+        TrySetActiveHand(session.AttachedEntity.Value, nextHand, component);
+    }
+    // End Frontier: swap hands
 
     private bool DropPressed(ICommonSession? session, EntityCoordinates coords, EntityUid netEntity)
     {
@@ -216,9 +236,14 @@ public abstract partial class SharedHandsSystem : EntitySystem
         var locUser = ("user", Identity.Entity(examinedUid, EntityManager));
         var locItems = ("items", ContentLocalizationManager.FormatList(heldItemNames));
 
-        using (args.PushGroup(nameof(HandsComponent)))
+        // WWDP examine
+        if (args.Examiner == args.Examined) // Use the selfaware locale when inspecting yourself
+            locKey += "-selfaware";
+
+        using (args.PushGroup(nameof(HandsComponent), 99)) //  priority for examine
         {
-            args.PushMarkup(Loc.GetString(locKey, locUser, locItems));
+            args.PushMarkup("- " + Loc.GetString(locKey, locUser, locItems)); // "-" for better formatting
         }
+        // WWDP edit end
     }
 }

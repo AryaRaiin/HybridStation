@@ -52,6 +52,8 @@
       layers:
         - state: extraction_point
           map: [ "foldedLayer" ]
+    - type: StaticPrice
+      price: 100
 
 - type: entity
   id: Fulton

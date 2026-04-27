@@ -1,0 +1,54 @@
+# SPDX-FileCopyrightText: 2023 IHAN <IHAN>
+# SPDX-FileCopyrightText: 2023 Kennedy
+# SPDX-FileCopyrightText: 2023 RealIHaveANameOfficial
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 Long YM
+# SPDX-FileCopyrightText: 2024 Maxtone
+# SPDX-FileCopyrightText: 2024 Whatstone
+# SPDX-FileCopyrightText: 2025 KM-Catman
+# SPDX-FileCopyrightText: 2025 UnicornOnLSD
+# SPDX-FileCopyrightText: 2025 plethorian
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Author Info
+# GitHub: UnicornOnLSD
+# Discord: unicornonlsd
+
+# Shuttle Notes:
+#
+- type: vessel
+  id: Rig
+  parent: BaseVessel
+  name: DIS Rig
+  description: A heavy-class flying refinery straight from the DIS. Originally used as a marketing tool to encourage opportunistic newcomers to mine cheaply for the company, thanks to it's mining platform and industrial ore processor it took a hold on the public market.
+  price: 68000
+  category: Medium
+  group: Shipyard
+  shuttlePath: /Maps/_Mono/Shuttles/rig.yml
+  guidebookPage: null
+  class:
+  - Salvage
+  engine:
+  - Uranium
+
+- type: gameMap
+  id: Rig
+  mapName: 'DIS Rig'
+  mapPath: /Maps/_Mono/Shuttles/rig.yml
+  minPlayers: 0
+  stations:
+    Rig:
+      stationProto: StandardFrontierVessel
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: 'Rig CIV{1}'
+          nameGenerator:
+            !type:NanotrasenNameGenerator
+            prefixCreator: '14'
+        - type: StationJobs
+          availableJobs:
+            Contractor: [ 0, 0 ]
+            Pilot: [ 0, 0 ]
+            Mercenary: [ 0, 0 ]

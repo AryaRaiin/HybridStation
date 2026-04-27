@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: 2025 Onezero0
+# SPDX-FileCopyrightText: 2025 significant harassment
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# dont bloat up this file type for every ammo u add
+
+- type: latheRecipePack
+  id: RoundstartShipgunAmmo
+  recipes:
+  # Magfed
+  - Magazine20mmPiercingAmmoRecipe
+  - Magazine30mmAmmoRecipe
+  - Magazine57mmAmmoRecipe
+  - Magazine90mmAmmoRecipe
+  - Magazine140mmAmmoRecipe
+  # Individual load
+  - 220mmCartridgeAmmoRecipe
+  - 203mmCartridgeAmmoRecipe
+  - 255mmCartridgeAmmoRecipe
+  - CharonetteSlugCartridgeAmmoRecipe
+  # Missiles
+  - VanykCartridgeAmmoRecipe
+  - TovekCartridgeAmmoRecipe
+  - VesperaCartridgeAmmoRecipe
+
+- type: latheRecipePack
+  id: UniversalMissileAmmo
+  recipes:
+  - ASM220TorpedoHEUniversal
+  - ASM220TorpedoECMUniversal
+  - ASM220TorpedoLOSATUniversal
+
+- type: latheRecipePack
+  id: UniversalRailgunAmmo
+  recipes:
+  - CharonSlugUniversal
+  - CharonSubnuclearSlugUniversal
+
+- type: latheRecipePack
+  id: UniversalShellAmmo
+  recipes:
+  - 150mmApShellUniversal
+  - 150mmEmpShellUniversal
+
+- type: latheRecipePack
+  id: UniversalOrdinance
+  recipes:
+  - GPOL50BombUniversal
+  - ZenithRocketUniversal
+  - QuasarAcceleratorUniversal

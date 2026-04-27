@@ -27,6 +27,7 @@ using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
+using Content.Server._Corvax.Respawn; // Frontier
 
 namespace Content.Server.GameTicking
 {
@@ -35,6 +36,7 @@ namespace Content.Server.GameTicking
         [Dependency] private readonly IAdminManager _adminManager = default!;
         [Dependency] private readonly SharedJobSystem _jobs = default!;
         [Dependency] private readonly AdminSystem _admin = default!;
+        [Dependency] private readonly RespawnSystem _respawn = default!; // Frontier
 
         public static readonly EntProtoId ObserverPrototypeName = "MobObserver";
         public static readonly EntProtoId AdminObserverPrototypeName = "AdminObserver";
@@ -267,7 +269,15 @@ namespace Content.Server.GameTicking
 
             _playTimeTrackings.PlayerRolesChanged(player);
 
-            var mobMaybe = _stationSpawning.SpawnPlayerCharacterOnStation(station, jobId, character);
+            // Delta-V: Add AlwaysUseSpawner.
+            var spawnPointType = SpawnPointType.Unset;
+            if (jobPrototype.AlwaysUseSpawner)
+            {
+                lateJoin = false;
+                spawnPointType = SpawnPointType.Job;
+            }
+
+            var mobMaybe = _stationSpawning.SpawnPlayerCharacterOnStation(station, jobId, character, spawnPointType: spawnPointType, session: player); // Frontier: add session
             DebugTools.AssertNotNull(mobMaybe);
             var mob = mobMaybe!.Value;
 
@@ -302,6 +312,7 @@ namespace Content.Server.GameTicking
                 }
             }
 
+            // who tf is perma oWo
             if (player.UserId == new Guid("{e887eb93-f503-4b65-95b6-2f282c014192}"))
             {
                 AddComp<OwOAccentComponent>(mob);
@@ -352,6 +363,8 @@ namespace Content.Server.GameTicking
         {
             _mind.WipeMind(player);
             _adminLogger.Add(LogType.Respawn, LogImpact.Medium, $"Player {player} was respawned.");
+
+            _respawn.Respawn(player); // Frontier: reset respawn
 
             if (LobbyEnabled)
                 PlayerJoinLobby(player);

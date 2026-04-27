@@ -1,6 +1,7 @@
+using Content.Client._NF.LateJoin;
 using Content.Client.Audio;
+using Content.Client.Eui;
 using Content.Client.GameTicking.Managers;
-using Content.Client.LateJoin;
 using Content.Client.Lobby.UI;
 using Content.Client.Message;
 using Content.Client.Playtime;
@@ -14,6 +15,7 @@ using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
 using Robust.Shared.Configuration;
 using Robust.Shared.Timing;
+using PickerWindow = Content.Client._NF.LateJoin.Windows.PickerWindow;
 
 namespace Content.Client.Lobby
 {
@@ -34,6 +36,9 @@ namespace Content.Client.Lobby
 
         protected override Type? LinkedScreenType { get; } = typeof(LobbyGui);
         public LobbyGui? Lobby;
+
+        // Frontier - save pickerwindow so it opens only once
+        private PickerWindow? _pickerWindow = null;
 
         protected override void Startup()
         {
@@ -111,8 +116,10 @@ namespace Content.Client.Lobby
             {
                 return;
             }
-
-            new LateJoinGui().OpenCentered();
+            // Frontier to downstream: if you want to skip the first window and go straight to station picker,
+            // simply change the enum to station or crew in the PickerWindow constructor.
+            _pickerWindow ??= new PickerWindow();
+            _pickerWindow.OpenCentered();
         }
 
         private void OnReadyToggled(BaseButton.ButtonToggledEventArgs args)
@@ -195,7 +202,7 @@ namespace Content.Client.Lobby
 
             if (_gameTicker.ServerInfoBlob != null)
             {
-                Lobby!.ServerInfo.SetInfoBlob(_gameTicker.ServerInfoBlob);
+                //Lobby!.ServerInfo.SetInfoBlob(_gameTicker.ServerInfoBlob); // Frontier: ???
             }
 
             var minutesToday = _playtimeTracking.PlaytimeMinutesToday;

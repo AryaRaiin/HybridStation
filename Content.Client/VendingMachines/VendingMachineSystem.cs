@@ -19,6 +19,8 @@ public sealed class VendingMachineSystem : SharedVendingMachineSystem
         SubscribeLocalEvent<VendingMachineComponent, AppearanceChangeEvent>(OnAppearanceChange);
         SubscribeLocalEvent<VendingMachineComponent, AnimationCompletedEvent>(OnAnimationCompleted);
         SubscribeLocalEvent<VendingMachineComponent, ComponentHandleState>(OnVendingHandleState);
+        SubscribeLocalEvent<VendingMachineComponent, EntInsertedIntoContainerMessage>(OnEntityInserted); // Frontier
+        SubscribeLocalEvent<VendingMachineComponent, EntRemovedFromContainerMessage>(OnEntityRemoved); // Frontier
     }
 
     private void OnVendingHandleState(Entity<VendingMachineComponent> entity, ref ComponentHandleState args)
@@ -84,6 +86,24 @@ public sealed class VendingMachineSystem : SharedVendingMachineSystem
             bui.UpdateAmounts();
         }
     }
+
+    // Frontier START
+    private void OnEntityInserted(Entity<VendingMachineComponent> ent, ref EntInsertedIntoContainerMessage args)
+    {
+        if (_uiSystem.TryGetOpenUi<VendingMachineBoundUserInterface>(ent.Owner, VendingMachineUiKey.Key, out var bui))
+        {
+            bui.Refresh();
+        }
+    }
+
+    private void OnEntityRemoved(Entity<VendingMachineComponent> ent, ref EntRemovedFromContainerMessage args)
+    {
+        if (_uiSystem.TryGetOpenUi<VendingMachineBoundUserInterface>(ent.Owner, VendingMachineUiKey.Key, out var bui))
+        {
+            bui.Refresh();
+        }
+    }
+    // Frontier END
 
     private void OnAnimationCompleted(EntityUid uid, VendingMachineComponent component, AnimationCompletedEvent args)
     {

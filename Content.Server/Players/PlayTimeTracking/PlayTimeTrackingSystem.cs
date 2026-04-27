@@ -320,6 +320,8 @@ public sealed class PlayTimeTrackingSystem : EntitySystem
             playTimes ??= new Dictionary<string, TimeSpan>();
         }
 
+        var isWhitelisted = player.ContentData()?.Whitelisted ?? false; // DeltaV - Whitelist requirement
+
         for (var i = 0; i < jobs.Count; i++)
         {
             if (_prototypes.Resolve(jobs[i], out var job)

@@ -34,6 +34,8 @@ namespace Content.Server.Atmos.Piping.Binary.EntitySystems
             SubscribeLocalEvent<GasVolumePumpComponent, AtmosDeviceDisabledEvent>(OnVolumePumpLeaveAtmosphere);
 
             SubscribeLocalEvent<GasVolumePumpComponent, DeviceNetworkPacketEvent>(OnPacketRecv);
+
+            SubscribeLocalEvent<GasVolumePumpComponent, MapInitEvent>(OnMapInit); // Frontier
         }
 
         private void OnVolumePumpUpdated(EntityUid uid, GasVolumePumpComponent pump, ref AtmosDeviceUpdateEvent args)
@@ -118,5 +120,18 @@ namespace Content.Server.Atmos.Piping.Binary.EntitySystems
                     return;
             }
         }
+        // Frontier START
+        private void OnMapInit(EntityUid uid, GasVolumePumpComponent pump, MapInitEvent args)
+        {
+            if (pump.StartOnMapInit)
+            {
+                pump.Enabled = true;
+                UpdateAppearance(uid, pump);
+
+                DirtyUI(uid, pump);
+                _userInterfaceSystem.CloseUi(uid, GasVolumePumpUiKey.Key);
+            }
+        }
+        // Frontier END
     }
 }

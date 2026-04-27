@@ -1,3 +1,14 @@
+﻿// SPDX-FileCopyrightText: 2024 Simon
+// SPDX-FileCopyrightText: 2024 slarticodefast
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 GreaseMonk
+// SPDX-FileCopyrightText: 2025 Myra
+// SPDX-FileCopyrightText: 2025 PJB3005
+// SPDX-FileCopyrightText: 2025 Winkarst
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: MPL-2.0
+
 using Content.Shared.Roles;
 using Robust.Shared.Configuration;
 
@@ -21,7 +32,8 @@ public sealed partial class CCVars
     ///     Controls the duration of the lobby timer in seconds. Defaults to 2 minutes and 30 seconds.
     /// </summary>
     public static readonly CVarDef<int>
-        GameLobbyDuration = CVarDef.Create("game.lobbyduration", 150, CVar.ARCHIVE);
+        //GameLobbyDuration = CVarDef.Create("game.lobbyduration", 150, CVar.ARCHIVE);
+        GameLobbyDuration = CVarDef.Create("game.lobbyduration", 180, CVar.ARCHIVE); // Frontier: 150<180
 
     /// <summary>
     ///     Controls if players can latejoin at all.
@@ -33,7 +45,8 @@ public sealed partial class CCVars
     ///     Controls the default game preset.
     /// </summary>
     public static readonly CVarDef<string>
-        GameLobbyDefaultPreset = CVarDef.Create("game.defaultpreset", "secret", CVar.ARCHIVE);
+        //GameLobbyDefaultPreset = CVarDef.Create("game.defaultpreset", "secret", CVar.ARCHIVE);
+        GameLobbyDefaultPreset = CVarDef.Create("game.defaultpreset", "nfpirate", CVar.ARCHIVE); // Frontier: secret<nfpirate
 
     /// <summary>
     ///     Controls if the game can force a different preset if the current preset's criteria are not met.
@@ -69,7 +82,8 @@ public sealed partial class CCVars
     ///     Controls the game map prototype to load. SS14 stores these prototypes in Prototypes/Maps.
     /// </summary>
     public static readonly CVarDef<string>
-        GameMap = CVarDef.Create("game.map", string.Empty, CVar.SERVERONLY);
+        //GameMap = CVarDef.Create("game.map", string.Empty, CVar.SERVERONLY);
+        GameMap = CVarDef.Create("game.map", "Frontier", CVar.SERVERONLY); // Frontier: string.Empty<Frontier
 
     /// <summary>
     ///     Controls whether to use world persistence or not.
@@ -101,7 +115,8 @@ public sealed partial class CCVars
     ///     Is map rotation enabled?
     /// </summary>
     public static readonly CVarDef<bool>
-        GameMapRotation = CVarDef.Create("game.map_rotation", true, CVar.SERVERONLY);
+        //GameMapRotation = CVarDef.Create("game.map_rotation", true, CVar.SERVERONLY);
+        GameMapRotation = CVarDef.Create("game.map_rotation", false, CVar.SERVERONLY); // Frontier: false
 
     /// <summary>
     ///     If roles should be restricted based on time.
@@ -409,4 +424,33 @@ public sealed partial class CCVars
     /// </summary>
     public static readonly CVarDef<bool> GameHostnameInTitlebar =
         CVarDef.Create("game.hostname_in_titlebar", true, CVar.SERVER | CVar.REPLICATED);
+
+    // Mono START
+    /// <summary>
+    ///     Enable dynamic adjustment of role timers and whitelists based on player count.
+    /// </summary>
+    public static readonly CVarDef<bool> DynamicRolesEnabled =
+         CVarDef.Create("game.dynamic_roles.enabled", true, CVar.SERVERONLY | CVar.ARCHIVE);
+
+    /// <summary>
+    ///     The player count at or below which role timers and whitelists are disabled if dynamic roles are enabled.
+    ///     Set to 0 to always disable timers and whitelists when dynamic roles are enabled.
+    /// </summary>
+    public static readonly CVarDef<int> DynamicRolesPlayerThreshold =
+         CVarDef.Create("game.dynamic_roles.player_threshold", 5, CVar.SERVERONLY | CVar.ARCHIVE);
+
+    /// Enables the automatic voting system.
+    public static readonly CVarDef<bool> AutoVoteEnabled =
+        CVarDef.Create("vote.autovote_enabled", true, CVar.SERVERONLY);
+
+    /// Automatically starts a map vote when returning to the lobby.
+    /// Requires auto voting to be enabled.
+    public static readonly CVarDef<bool> MapAutoVoteEnabled =
+        CVarDef.Create("vote.map_autovote_enabled", false, CVar.SERVERONLY);
+
+    /// Automatically starts a gamemode vote when returning to the lobby.
+    /// Requires auto voting to be enabled.
+    public static readonly CVarDef<bool> PresetAutoVoteEnabled =
+        CVarDef.Create("vote.preset_autovote_enabled", true, CVar.SERVERONLY);
+    // Mono END
 }

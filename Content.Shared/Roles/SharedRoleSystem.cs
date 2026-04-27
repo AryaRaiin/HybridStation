@@ -711,6 +711,18 @@ public abstract class SharedRoleSystem : EntitySystem
     {
         return string.IsNullOrEmpty(subtype) ? Loc.GetString(roleType) : Loc.GetString(subtype);
     }
+
+    // Frontier START: alternate requirement sets
+    public Dictionary<string, HashSet<JobRequirement>>? GetAlternateJobRequirements(JobPrototype job)
+    {
+        return job.AlternateRequirementSets;
+    }
+
+    public Dictionary<string, HashSet<JobRequirement>>? GetAlternateJobRequirements(ProtoId<JobPrototype> job)
+    {
+        return _prototypes.Index(job).AlternateRequirementSets;
+    }
+    // Frontier END: alternate requirement sets
 }
 
 /// <summary>

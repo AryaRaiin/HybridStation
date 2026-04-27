@@ -1,3 +1,19 @@
+// SPDX-FileCopyrightText: 2022 Emisse
+// SPDX-FileCopyrightText: 2022 Leon Friedrich
+// SPDX-FileCopyrightText: 2022 mirrorcult
+// SPDX-FileCopyrightText: 2022 rolfero
+// SPDX-FileCopyrightText: 2023 Nemanja
+// SPDX-FileCopyrightText: 2023 Visne
+// SPDX-FileCopyrightText: 2023 metalgearsloth
+// SPDX-FileCopyrightText: 2024 Cojoke
+// SPDX-FileCopyrightText: 2024 DrSmugleaf
+// SPDX-FileCopyrightText: 2024 Errant
+// SPDX-FileCopyrightText: 2024 deltanedas
+// SPDX-FileCopyrightText: 2024 slarticodefast
+// SPDX-FileCopyrightText: 2025 kotobdev
+//
+// SPDX-License-Identifier: MPL-2.0
+
 using Content.Shared.Examine;
 using Content.Shared.Inventory;
 using Content.Shared.Item.ItemToggle;
@@ -8,6 +24,7 @@ using Content.Shared.Verbs;
 using Robust.Shared.Containers;
 using Robust.Shared.GameStates;
 using Robust.Shared.Utility;
+using Content.Shared._DV.Clothing.Events; // DeltaV - Introduce ClothingSlowResistance to Species
 
 namespace Content.Shared.Clothing;
 
@@ -62,6 +79,16 @@ public sealed class ClothingSpeedModifierSystem : EntitySystem
         if (component.Standing != null && !_standing.IsMatchingState(args.Owner, component.Standing.Value))
             return;
 
+        // DeltaV Start - Introduce ClothingSlowResistance to Species
+        if (_container.TryGetContainingContainer((uid, null), out var container))
+        {
+            var ev = new ModifyClothingSlowdownEvent(component.WalkModifier, component.SprintModifier);
+            RaiseLocalEvent(container.Owner, ref ev);
+            args.Args.ModifySpeed(ev.WalkModifier, ev.RunModifier);
+            return
+        }
+        // DeltaV End
+
         args.Args.ModifySpeed(component.WalkModifier, component.SprintModifier);
     }
 
@@ -70,8 +97,15 @@ public sealed class ClothingSpeedModifierSystem : EntitySystem
         if (!args.CanInteract || !args.CanAccess)
             return;
 
-        var walkModifierPercentage = MathF.Round((1.0f - component.WalkModifier) * 100f, 1);
-        var sprintModifierPercentage = MathF.Round((1.0f - component.SprintModifier) * 100f, 1);
+        // DeltaV Start - Introduce ClothingSlowResistance to Species
+        var ev = new ModifyClothingSlowdownEvent(component.WalkModifier, component.SprintModifier);
+        RaiseLocalEvent(args.User, ref ev);
+
+        //var walkModifierPercentage = MathF.Round((1.0f - component.WalkModifier) * 100f, 1);
+        var walkModifierPercentage = MathF.Round((1.0f - ev.WalkModifier) * 100f, 1);
+        //var sprintModifierPercentage = MathF.Round((1.0f - component.SprintModifier) * 100f, 1);
+        var sprintModifierPercentage = MathF.Round((1.0f - ev.RunModifier) * 100f, 1);
+        // DeltaV End - Introduce ClothingSlowResistance to Species
 
         if (walkModifierPercentage == 0.0f && sprintModifierPercentage == 0.0f)
             return;

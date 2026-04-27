@@ -1,3 +1,34 @@
+// SPDX-FileCopyrightText: 2021 Javier Guardia Fernández
+// SPDX-FileCopyrightText: 2021 Metal Gear Sloth
+// SPDX-FileCopyrightText: 2021 Saphire Lattice
+// SPDX-FileCopyrightText: 2021 Vera Aguilera Puerto
+// SPDX-FileCopyrightText: 2021 Visne
+// SPDX-FileCopyrightText: 2022 Acruid
+// SPDX-FileCopyrightText: 2022 Morb
+// SPDX-FileCopyrightText: 2022 TekuNut
+// SPDX-FileCopyrightText: 2022 keronshb
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2023 AJCM-git
+// SPDX-FileCopyrightText: 2023 Doru991
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Kara
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Errant
+// SPDX-FileCopyrightText: 2024 Jezithyr
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 TemporalOroboros
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 mubururu_
+// SPDX-FileCopyrightText: 2025 GreaseMonk
+// SPDX-FileCopyrightText: 2025 Princess Cheeseballs
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 ark1368
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Content.Shared.ActionBlocker;
@@ -23,6 +54,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 using PullableComponent = Content.Shared.Movement.Pulling.Components.PullableComponent;
+using Content.Shared.StepTrigger.Components; // Delta V-NoShoesSilentFootstepsComponent
 
 namespace Content.Shared.Movement.Systems;
 
@@ -45,6 +77,7 @@ public abstract partial class SharedMoverController : VirtualController
     [Dependency] private   readonly SharedGravitySystem _gravity = default!;
     [Dependency] private   readonly SharedTransformSystem _transform = default!;
     [Dependency] private   readonly TagSystem _tags = default!;
+    [Dependency] private   readonly IEntityManager _entities = default!; // Delta V-NoShoesSilentFootstepsComponent
 
     protected EntityQuery<CanMoveInAirComponent> CanMoveInAirQuery;
     protected EntityQuery<FootstepModifierComponent> FootstepModifierQuery;
@@ -589,6 +622,23 @@ public abstract partial class SharedMoverController : VirtualController
                 return sound != null;
             }
         }
+
+        // Frontier
+        if (_inventory.TryGetSlotEntity(uid, "outerClothing", out var outerClothing) &&
+            TryComp<FootstepModifierComponent>(outerClothing, out var outerModifier))
+        {
+            sound = outerModifier.FootstepSoundCollection;
+            return sound != null;
+        }
+        // End Frontier
+
+        // Delta V
+        if (_entities.TryGetComponent(uid, out NoShoesSilentFootstepsComponent? _) &&
+            !_inventory.TryGetSlotEntity(uid, "shoes", out var _))
+        {
+            return false;
+        }
+        // End Delta V NoShoesSilentFootsteps
 
         // Walking on a tile.
         // Tile def might have been passed in already from previous methods, so use that

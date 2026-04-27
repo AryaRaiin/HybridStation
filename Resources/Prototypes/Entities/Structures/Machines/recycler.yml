@@ -1,4 +1,4 @@
-﻿- type: entity
+- type: entity
   id: Recycler
   parent: BaseMachinePowered
   name: recycler
@@ -69,14 +69,21 @@
       - PhysicalComposition
       - MobState
       - SpaceGarbage
+      - Log # Frontier
+      - Cartridge # Frontier: PDA app cartriges
       tags:
       - Trash
       - Recyclable
+      - Cartridge # Frontier: Bullets
+      - Book # Frontier
+      - Pen # Frontier
+      - Handcuffs # Frontier
     blacklist:
       components:
       - Material
       - Pda
       - IdCard
+      - Brain # Frontier
       tags:
       - HighRiskItem
     sound:
@@ -115,3 +122,5 @@
   - type: Speech
     speechVerb: Robotic
     speechSounds: SyndieBorg
+  - type: ApcPowerReceiver # Frontier
+    powerLoad: 500 # Allows us to not use the 1000 baseline

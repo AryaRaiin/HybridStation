@@ -1,6 +1,41 @@
 using System.Collections;
 using System.Linq;
 using Content.Shared.Chemistry.Components.SolutionManager;
+// SPDX-FileCopyrightText: 2019 ZelteHonor
+// SPDX-FileCopyrightText: 2020 PrPleGoo
+// SPDX-FileCopyrightText: 2020 Tyler Young
+// SPDX-FileCopyrightText: 2020 Víctor Aguilera Puerto
+// SPDX-FileCopyrightText: 2020 moneyl
+// SPDX-FileCopyrightText: 2020 nuke
+// SPDX-FileCopyrightText: 2021 Acruid
+// SPDX-FileCopyrightText: 2021 Paul
+// SPDX-FileCopyrightText: 2021 Paul Ritter
+// SPDX-FileCopyrightText: 2021 Vera Aguilera Puerto
+// SPDX-FileCopyrightText: 2021 Ygg01
+// SPDX-FileCopyrightText: 2021 plinyvic
+// SPDX-FileCopyrightText: 2021 py01
+// SPDX-FileCopyrightText: 2022 mirrorcult
+// SPDX-FileCopyrightText: 2022 wrexbe
+// SPDX-FileCopyrightText: 2023 Arimah
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Emisse
+// SPDX-FileCopyrightText: 2023 EnDecc
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Psychpsyo
+// SPDX-FileCopyrightText: 2023 TemporalOroboros
+// SPDX-FileCopyrightText: 2023 Visne
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 Skye
+// SPDX-FileCopyrightText: 2024 SlamBamActionman
+// SPDX-FileCopyrightText: 2024 Verm
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 blueDev2
+// SPDX-FileCopyrightText: 2024 metalgearsloth
+// SPDX-FileCopyrightText: 2024 neuPanda
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Shared.Chemistry.Reagent;
 using Content.Shared.FixedPoint;
 using JetBrains.Annotations;
@@ -739,6 +774,124 @@ namespace Content.Shared.Chemistry.Components
             return newSolution;
         }
 
+        // Frontier START - cryogenics per-reagent filter function (#1443, #1533)
+        /// <summary>
+        /// Splits a solution, taking the specified amount of each reagent from the solution.
+        /// If any reagent in the solution has less volume than specified, it will all be transferred into the new solution.
+        /// </summary>
+        /// <param name="toTakePer">How much of each reagent to take.</param>
+        /// <returns>A new solution containing the reagents taken from the original solution.</returns>
+        public Solution SplitSolutionPerReagent(FixedPoint2 toTakePer)
+        {
+            if (toTakePer <= FixedPoint2.Zero)
+                return new Solution();
+
+            var origVol = Volume;
+            Solution newSolution = new Solution(Contents.Count) { Temperature = Temperature };
+
+            for (var i = Contents.Count - 1; i >= 0; i--) // iterate backwards because of remove swap.
+            {
+                var (reagent, quantity) = Contents[i];
+
+                // If the reagent has more than enough volume to remove, no need to remove it from the list.
+                if (quantity > toTakePer)
+                {
+                    Contents[i] = new ReagentQuantity(reagent, quantity - toTakePer);
+                    newSolution.Contents.Add(new ReagentQuantity(reagent, toTakePer));
+                    Volume -= toTakePer;
+                }
+                else
+                {
+                    Contents.RemoveSwap(i);
+                    //Only add positive quantities to our new solution.
+                    if (quantity > 0)
+                    {
+                        newSolution.Contents.Add(new ReagentQuantity(reagent, quantity));
+                        Volume -= quantity;
+                    }
+                }
+            }
+
+            // If old solution is empty, invalidate old solution and transfer all volume to new.
+            if (Volume <= 0)
+            {
+                RemoveAllSolution();
+                newSolution.Volume = origVol;
+            }
+            else
+            {
+                newSolution.Volume = origVol - Volume;
+                _heatCapacityDirty = true;
+            }
+            newSolution._heatCapacityDirty = true;
+
+            ValidateSolution();
+            newSolution.ValidateSolution();
+
+            return newSolution;
+        }
+
+        /// <summary>
+        /// Splits a solution, taking the specified amount of each reagent specified in reagents from the solution.
+        /// If any reagent in the solution has less volume than specified, it will all be transferred into the new solution.
+        /// </summary>
+        /// <param name="toTakePer">How much of each reagent to take.</param>
+        /// <returns>A new solution containing the reagents taken from the original solution.</returns>
+        public Solution SplitSolutionPerReagentWithOnly(FixedPoint2 toTakePer, params string[] reagents)
+        {
+            if (toTakePer <= FixedPoint2.Zero)
+                return new Solution();
+
+            var origVol = Volume;
+            Solution newSolution = new Solution(Contents.Count) { Temperature = Temperature };
+
+            for (var i = Contents.Count - 1; i >= 0; i--) // iterate backwards because of remove swap.
+            {
+                var (reagent, quantity) = Contents[i];
+
+                // Each reagent to split must be in the set given.
+                if (!reagents.Contains(reagent.Prototype))
+                    continue;
+
+                // If the reagent has more than enough volume to remove, no need to remove it from the list.
+                if (quantity > toTakePer)
+                {
+                    Contents[i] = new ReagentQuantity(reagent, quantity - toTakePer);
+                    newSolution.Contents.Add(new ReagentQuantity(reagent, toTakePer));
+                    Volume -= toTakePer;
+                }
+                else
+                {
+                    Contents.RemoveSwap(i);
+                    //Only add positive quantities to our new solution.
+                    if (quantity > 0)
+                    {
+                        newSolution.Contents.Add(new ReagentQuantity(reagent, quantity));
+                        Volume -= quantity;
+                    }
+                }
+            }
+
+            // If old solution is empty, invalidate old solution and transfer all volume to new.
+            if (Volume <= 0)
+            {
+                RemoveAllSolution();
+                newSolution.Volume = origVol;
+            }
+            else
+            {
+                newSolution.Volume = origVol - Volume;
+                _heatCapacityDirty = true;
+            }
+            newSolution._heatCapacityDirty = true;
+
+            ValidateSolution();
+            newSolution.ValidateSolution();
+
+            return newSolution;
+        }
+        // Frontier END
+
         /// <summary>
         /// Variant of <see cref="SplitSolution(FixedPoint2)"/> that doesn't return a new solution containing the removed reagents.
         /// </summary>
@@ -924,6 +1077,35 @@ namespace Content.Shared.Chemistry.Components
             }
             return mixColor;
         }
+
+        // Frontier? START
+        public int GetSolutionFlammability(IPrototypeManager? protoMan)
+        {
+            IoCManager.Resolve(ref protoMan);
+            float solutionFlammability = 0;
+            foreach (var (reagent, quantity) in Contents)
+            {
+                solutionFlammability += protoMan.Index<ReagentPrototype>(reagent.Prototype).Flammability * (float)quantity;
+            }
+            return (int)MathF.Floor(solutionFlammability);
+        }
+
+        public void BurnFlammableReagents(float fraction, IPrototypeManager? protoMan)
+        {
+            IoCManager.Resolve(ref protoMan);
+            var newSoln = new Solution(this);
+            foreach (var (reagent, quantity) in Contents)
+            {
+                var quantityToBurn = Math.Ceiling(((float)quantity *
+                                                   (fraction * protoMan.Index<ReagentPrototype>(reagent.Prototype)
+                                                       .Flammability)) / 0.5) * 0.5; // Ceiling to nearest 0.5u
+                newSoln.RemoveReagent(reagent, quantityToBurn);
+            }
+            Contents = newSoln.Contents;
+            DebugTools.Assert(Volume >= newSoln.Volume);
+            Volume = newSoln.Volume;
+        }
+        // Frontier? END
 
         #region Enumeration
 

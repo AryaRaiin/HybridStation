@@ -1,3 +1,45 @@
+// SPDX-FileCopyrightText: 2018 PJB3005
+// SPDX-FileCopyrightText: 2019 Acruid
+// SPDX-FileCopyrightText: 2019 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2019 Silver
+// SPDX-FileCopyrightText: 2020 Exp
+// SPDX-FileCopyrightText: 2020 Hugal31
+// SPDX-FileCopyrightText: 2020 Paul Ritter
+// SPDX-FileCopyrightText: 2020 Vera Aguilera Puerto
+// SPDX-FileCopyrightText: 2020 Vince
+// SPDX-FileCopyrightText: 2020 chairbender
+// SPDX-FileCopyrightText: 2020 derek
+// SPDX-FileCopyrightText: 2020 moneyl
+// SPDX-FileCopyrightText: 2021 Alex Evgrashin
+// SPDX-FileCopyrightText: 2021 Swept
+// SPDX-FileCopyrightText: 2021 ike709
+// SPDX-FileCopyrightText: 2022 DrSmugleaf
+// SPDX-FileCopyrightText: 2022 Jezithyr
+// SPDX-FileCopyrightText: 2022 Kara
+// SPDX-FileCopyrightText: 2022 Michael Phillips
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2022 mirrorcult
+// SPDX-FileCopyrightText: 2023 08A
+// SPDX-FileCopyrightText: 2023 Chief-Engineer
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Miro Kavaliou
+// SPDX-FileCopyrightText: 2023 Nemanja
+// SPDX-FileCopyrightText: 2023 ShadowCommander
+// SPDX-FileCopyrightText: 2023 Vasilis The Pikachu
+// SPDX-FileCopyrightText: 2024 Morb
+// SPDX-FileCopyrightText: 2024 chromiumboy
+// SPDX-FileCopyrightText: 2024 deltanedas
+// SPDX-FileCopyrightText: 2024 slarticodefast
+// SPDX-FileCopyrightText: 2024 wafehling
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 Daniel Lenrd
+// SPDX-FileCopyrightText: 2025 ErhardSteinhauer
+// SPDX-FileCopyrightText: 2025 ScyronX
+// SPDX-FileCopyrightText: 2025 Whatstone
+// SPDX-FileCopyrightText: 2025 ark1368
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Shared.Input;
 using Robust.Shared.Input;
 
@@ -34,6 +76,8 @@ namespace Content.Client.Input
             common.AddFunction(ContentKeyFunctions.RotateStoredItem);
             common.AddFunction(ContentKeyFunctions.SaveItemLocation);
             common.AddFunction(ContentKeyFunctions.Point);
+            common.AddFunction(ContentKeyFunctions.ToggleStanding); // WD EDIT
+            common.AddFunction(ContentKeyFunctions.ToggleFocus); // Mono
             common.AddFunction(ContentKeyFunctions.ZoomOut);
             common.AddFunction(ContentKeyFunctions.ZoomIn);
             common.AddFunction(ContentKeyFunctions.ResetZoom);
@@ -89,6 +133,39 @@ namespace Content.Client.Input
             human.AddFunction(ContentKeyFunctions.Arcade1);
             human.AddFunction(ContentKeyFunctions.Arcade2);
             human.AddFunction(ContentKeyFunctions.Arcade3);
+            
+            //human.addfunction - custom
+            human.AddFunction(ContentKeyFunctions.OpenLanguageMenu); // Einstein Engines - Language
+            // Mono_START
+            human.AddFunction(ContentKeyFunctions.SmartEquipID);
+            human.AddFunction(ContentKeyFunctions.SmartEquipShoes);
+            human.AddFunction(ContentKeyFunctions.SmartEquipOuterClothing);
+            human.AddFunction(ContentKeyFunctions.EquipBackpack);
+            human.AddFunction(ContentKeyFunctions.EquipBelt);
+            human.AddFunction(ContentKeyFunctions.EquipPocket1);
+            human.AddFunction(ContentKeyFunctions.EquipPocket2);
+            human.AddFunction(ContentKeyFunctions.EquipSuitStorage);
+            human.AddFunction(ContentKeyFunctions.EquipWallet);
+            human.AddFunction(ContentKeyFunctions.EquipID);
+            human.AddFunction(ContentKeyFunctions.OpenPocket1);
+            human.AddFunction(ContentKeyFunctions.OpenPocket2);
+            human.AddFunction(ContentKeyFunctions.OpenSuitStorage);
+            human.AddFunction(ContentKeyFunctions.OpenOuterClothing);
+            // Mono_END
+            human.AddFunction(ContentKeyFunctions.OpenWallet); // Frontier
+            human.AddFunction(ContentKeyFunctions.SmartEquipWallet); // Frontier
+            // Shitmed Change Start - TODO: Add hands, feet and groin targeting.
+            human.AddFunction(ContentKeyFunctions.TargetHead);
+            human.AddFunction(ContentKeyFunctions.TargetTorso);
+            human.AddFunction(ContentKeyFunctions.TargetLeftArm);
+            human.AddFunction(ContentKeyFunctions.TargetLeftHand);
+            human.AddFunction(ContentKeyFunctions.TargetRightArm);
+            human.AddFunction(ContentKeyFunctions.TargetRightHand);
+            human.AddFunction(ContentKeyFunctions.TargetLeftLeg);
+            human.AddFunction(ContentKeyFunctions.TargetLeftFoot);
+            human.AddFunction(ContentKeyFunctions.TargetRightLeg);
+            human.AddFunction(ContentKeyFunctions.TargetRightFoot);
+            // Shitmed Change End
 
             // actions should be common (for ghosts, mobs, etc)
             common.AddFunction(ContentKeyFunctions.OpenActionsMenu);

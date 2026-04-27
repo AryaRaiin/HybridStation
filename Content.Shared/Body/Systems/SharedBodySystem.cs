@@ -4,6 +4,7 @@ using Content.Shared.Standing;
 using Robust.Shared.Containers;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
+using Content.Shared.Body.Part; // Shitmed Change
 
 namespace Content.Shared.Body.Systems;
 
@@ -42,6 +43,12 @@ public abstract partial class SharedBodySystem : EntitySystem
 
         InitializeBody();
         InitializeParts();
+        // Shitmed Change Start
+        // To try and mitigate the server load due to integrity checks, we set up a Job Queue.
+        InitializeIntegrityQueue();
+        InitializePartAppearances();
+        InitializeRelay();
+        // Shitmed Change End
     }
 
     /// <summary>

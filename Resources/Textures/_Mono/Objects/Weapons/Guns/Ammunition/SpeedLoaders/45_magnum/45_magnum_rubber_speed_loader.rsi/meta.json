@@ -1,0 +1,52 @@
+{
+    "version": 1,
+    "size": {
+        "x": 32,
+        "y": 32
+    },
+    "license": "CC-BY-SA-3.0",
+    "copyright": "https://github.com/tgstation/tgstation/pull/1684/commits/19e51caef09e78ca1122d26455b539ff5968d334, https://github.com/tgstation/tgstation/blob/master/icons/obj/weapons/guns/ammo.dmi, inhands by TiniestShark (github)",
+    "states": [
+        {
+            "name": "base"
+        },
+        {
+            "name": "rubber-1"
+        },
+        {
+            "name": "rubber-2"
+        },
+        {
+            "name": "rubber-3"
+        },
+        {
+<<<<<<< HEAD:Resources/Textures/Objects/Weapons/Guns/Ammunition/Magazine/Shotgun/m12.rsi/meta.json
+            "name": "mag-1"
+        },
+        {
+            "name": "inhand-left-mag",
+            "directions": 4
+        },
+        {
+            "name": "inhand-left-stripe",
+            "directions": 4
+        },
+        {
+            "name": "inhand-right-mag",
+            "directions": 4
+        },
+        {
+            "name": "inhand-right-stripe",
+            "directions": 4
+=======
+            "name": "rubber-4"
+        },
+        {
+            "name": "rubber-5"
+        },
+        {
+            "name": "rubber-6"
+>>>>>>> monolith/main:Resources/Textures/_Mono/Objects/Weapons/Guns/Ammunition/SpeedLoaders/45_magnum/45_magnum_rubber_speed_loader.rsi/meta.json
+        }
+    ]
+}

@@ -1,9 +1,20 @@
 - type: entity
   abstract: true
-  parent: BaseItem
+  parent: [BaseItem, RecyclableItemCardboard] # Frontier: added RecyclableItemCardboard
   id: BoxDonkSoftBase
   name: foamdart box
   components:
+  # Goobstation edit start
+  - type: EmitSoundOnPickup
+    sound:
+      path: /Audio/_Goobstation/Items/handling/ammobox_pickup.ogg
+  - type: EmitSoundOnDrop
+    sound:
+      path: /Audio/_Goobstation/Items/handling/ammobox_drop.ogg
+  - type: EmitSoundOnLand
+    sound:
+      path: /Audio/_Goobstation/Items/handling/ammobox_drop.ogg
+  # Goobstation edit end
   - type: BallisticAmmoProvider
     mayTransfer: true
     capacity: 30
@@ -32,7 +43,7 @@
       - state: shelltoy
 
 - type: entity
-  parent: BaseMagazineBoxMagnum
+  parent: BaseAmmoBox45_magnum
   id: BoxCartridgeCap
   name: cap gun cartridge box
   components:
@@ -40,14 +51,14 @@
     proto: CartridgeCap
     capacity: 20
   - type: MagazineVisuals
-    magState: mag-cap
+    magState: mag # Frontier: mag-cap<mag
     steps: 4
     zeroVisible: false
   - type: Sprite
-    sprite: Objects/Weapons/Guns/Ammunition/Boxes/magnum.rsi
+    sprite: _Mono/Objects/Weapons/Guns/Ammunition/Boxes/45_magnum.rsi # Frontier: add _NF prefix
     layers:
-      - state: base
+      - state: capbase # Frontier: base<capbase
         map: ["enum.GunVisualLayers.Base"]
-      - state: mag-cap-1
+      - state: mag-1 # Frontier: mag-cap-1<mag-1
         map: ["enum.GunVisualLayers.Mag"]
-      - state: capbase
+      # - state: capbase # Frontier

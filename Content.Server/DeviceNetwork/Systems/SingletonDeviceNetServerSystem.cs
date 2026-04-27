@@ -4,6 +4,7 @@ using Content.Server.Medical.CrewMonitoring;
 using Content.Server.Station.Systems;
 using Content.Shared.Power;
 using Content.Shared.DeviceNetwork.Components;
+using Robust.Shared.Map; //Frontier
 
 namespace Content.Server.DeviceNetwork.Systems;
 
@@ -40,19 +41,24 @@ public sealed class SingletonDeviceNetServerSystem : EntitySystem
     /// <param name="address">The address of the active server if it exists</param>
     /// <typeparam name="TComp">The component type that determines what type of server you're getting the address of</typeparam>
     /// <returns>True if there is an active serve. False otherwise</returns>
-    public bool TryGetActiveServerAddress<TComp>(EntityUid stationId, [NotNullWhen(true)] out string? address) where TComp : IComponent
+    //public bool TryGetActiveServerAddress<TComp>(EntityUid stationId, [NotNullWhen(true)] out string? address) where TComp : IComponent
+    public bool TryGetActiveServerAddress<TComp>(MapId map, [NotNullWhen(true)] out string? address) where TComp : IComponent // Frontier
     {
         var servers = EntityQueryEnumerator<
             SingletonDeviceNetServerComponent,
             DeviceNetworkComponent,
-            TComp
+            TComp,
+            TransformComponent // Frontier
         >();
 
         (EntityUid id, SingletonDeviceNetServerComponent server, DeviceNetworkComponent device)? last = default;
 
-        while (servers.MoveNext(out var uid, out var server, out var device, out _))
+        //while (servers.MoveNext(out var uid, out var server, out var device, out _))
+        while (servers.MoveNext(out var uid, out var server, out var device, out _, out var xform)) //Frontier
         {
-            if (!_stationSystem.GetOwningStation(uid)?.Equals(stationId) ?? true)
+            // Frontier PR 1053 QoL tweaks to displayed coordinates
+            //if (!_stationSystem.GetOwningStation(uid)?.Equals(stationId) ?? true)
+            if (xform.MapID != map) //Frontier
                 continue;
 
             if (!server.Available)

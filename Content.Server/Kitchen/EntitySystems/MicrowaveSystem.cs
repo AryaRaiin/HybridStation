@@ -41,11 +41,16 @@ using Content.Server.Construction.Components;
 using Content.Shared.Chat;
 using Content.Shared.Damage.Components;
 using Content.Shared.Temperature.Components;
+using Content.Server.Atmos.Components; // Mono
+using Content.Server.Atmos.EntitySystems; // Mono
+using Content.Shared._NF.Kitchen.Components; // Frontier
 
 namespace Content.Server.Kitchen.EntitySystems
 {
-    public sealed class MicrowaveSystem : EntitySystem
+    //public sealed class MicrowaveSystem : EntitySystem
+    public sealed partial class MicrowaveSystem : EntitySystem // Frontier: add partial
     {
+        [Dependency] private readonly AtmosphereSystem _atmosphereSystem = default!; // Mono
         [Dependency] private readonly BodySystem _bodySystem = default!;
         [Dependency] private readonly DeviceLinkSystem _deviceLink = default!;
         [Dependency] private readonly SharedPopupSystem _popupSystem = default!;
@@ -106,6 +111,10 @@ namespace Content.Server.Kitchen.EntitySystems
             SubscribeLocalEvent<ActivelyMicrowavedComponent, SolutionRelayEvent<ReactionAttemptEvent>>(OnReactionAttempt);
 
             SubscribeLocalEvent<FoodRecipeProviderComponent, GetSecretRecipesEvent>(OnGetSecretRecipes);
+
+            SubscribeLocalEvent<MicrowaveComponent, RefreshPartsEvent>(OnRefreshParts); // Frontier
+            SubscribeLocalEvent<MicrowaveComponent, UpgradeExamineEvent>(OnUpgradeExamine); // Frontier
+            SubscribeLocalEvent<MicrowaveComponent, AssemblerStartCookMessage>(TryStartAssembly); // Frontier
         }
 
         private void OnCookStart(Entity<ActiveMicrowaveComponent> ent, ref ComponentStartup args)
@@ -175,11 +184,25 @@ namespace Content.Server.Kitchen.EntitySystems
         /// <param name="time">The time on the microwave, in seconds.</param>
         private void AddTemperature(MicrowaveComponent component, float time)
         {
+            // Frontier: temperature requires heat or irradiation
+            if (!component.CanHeat && !component.CanIrradiate)
+                return;
+            // End Frontier
+
             var heatToAdd = time * component.BaseHeatMultiplier;
             foreach (var entity in component.Storage.ContainedEntities)
             {
                 if (TryComp<TemperatureComponent>(entity, out var tempComp))
                     _temperature.ChangeHeat(entity, heatToAdd * component.ObjectHeatMultiplier, false, tempComp);
+
+                // Mono Start - Heat gas tanks
+                if (TryComp<GasTankComponent>(entity, out var gasTank) && gasTank.Air != null)
+                {
+                    // Thermal energy to be added based on gas heat capacity
+                    var thermalEnergyToAdd = heatToAdd * component.ObjectHeatMultiplier;
+                    _atmosphereSystem.AddHeat(gasTank.Air, thermalEnergyToAdd);
+                }
+                // Mono End
 
                 if (!TryComp<SolutionContainerManagerComponent>(entity, out var solutions))
                     continue;
@@ -281,6 +304,7 @@ namespace Content.Server.Kitchen.EntitySystems
         {
             // this really does have to be in ComponentInit
             ent.Comp.Storage = _container.EnsureContainer<Container>(ent, ent.Comp.ContainerId);
+            ent.Comp.FinalCookTimeMultiplier = ent.Comp.CookTimeMultiplier; // Frontier: initial cook time consistency (assumes stock components)
         }
 
         private void OnMapInit(Entity<MicrowaveComponent> ent, ref MapInitEvent args)
@@ -300,6 +324,11 @@ namespace Content.Server.Kitchen.EntitySystems
             // The act of getting your head microwaved doesn't actually kill you
             if (!TryComp<DamageableComponent>(args.Victim, out var damageableComponent))
                 return;
+
+            // Frontier: suicide requires heat or irradiation
+            if (!ent.Comp.CanHeat && !ent.Comp.CanIrradiate)
+                return;
+            // Frontier
 
             // The application of lethal damage is what kills you...
             _suicide.ApplyLethalDamage((args.Victim, damageableComponent), "Heat");
@@ -399,7 +428,8 @@ namespace Content.Server.Kitchen.EntitySystems
                 // check if size of an item you're trying to put in is too big
                 if (_item.GetSizePrototype(item.Size) > _item.GetSizePrototype(ent.Comp.MaxItemSize))
                 {
-                    _popupSystem.PopupEntity(Loc.GetString("microwave-component-interact-item-too-big", ("item", args.Used)), ent, args.User);
+                    //_popupSystem.PopupEntity(Loc.GetString("microwave-component-interact-item-too-big", ("item", args.Used)), ent, args.User);
+                    _popupSystem.PopupEntity(Loc.GetString(ent.Comp.TooBigPopup, ("item", args.Used)), ent, args.User); // Frontier: "microwave-component-interact-item-too-big"<ent.Comp.TooBigPopup
                     return;
                 }
             }
@@ -542,7 +572,8 @@ namespace Content.Server.Kitchen.EntitySystems
             foreach (var item in component.Storage.ContainedEntities.ToArray())
             {
                 // special behavior when being microwaved ;)
-                var ev = new BeingMicrowavedEvent(uid, user);
+                //var ev = new BeingMicrowavedEvent(uid, user);
+                var ev = new BeingMicrowavedEvent(uid, user, component.CanHeat, component.CanIrradiate); // Frontier: add CanHeat, CanIrradiate
                 RaiseLocalEvent(item, ev);
 
                 // TODO MICROWAVE SPARKS & EFFECTS
@@ -555,12 +586,14 @@ namespace Content.Server.Kitchen.EntitySystems
                     return;
                 }
 
-                if (_tag.HasTag(item, MetalTag))
+                //if (_tag.HasTag(item, MetalTag))
+                if (_tag.HasTag(item, MetalTag) && component.CanIrradiate) // Frontier: add && !component.DisableMetalMalfunctions
                 {
                     malfunctioning = true;
                 }
 
-                if (_tag.HasTag(item, PlasticTag))
+                //if (_tag.HasTag(item, PlasticTag))
+                if (_tag.HasTag(item, PlasticTag) && (component.CanHeat || component.CanIrradiate)) // Frontier: add && !component.DisableRuiningPlastic
                 {
                     var junk = Spawn(component.BadRecipeEntityId, Transform(uid).Coordinates);
                     _container.Insert(junk, component.Storage);
@@ -616,11 +649,13 @@ namespace Content.Server.Kitchen.EntitySystems
 
             _audio.PlayPvs(component.StartCookingSound, uid);
             var activeComp = AddComp<ActiveMicrowaveComponent>(uid); //microwave is now cooking
-            activeComp.CookTimeRemaining = component.CurrentCookTimerTime * component.CookTimeMultiplier;
+            //activeComp.CookTimeRemaining = component.CurrentCookTimerTime * component.CookTimeMultiplier;
+            activeComp.CookTimeRemaining = component.CurrentCookTimerTime * component.FinalCookTimeMultiplier; // Frontier: CookTimeMultiplier<FinalCookTimeMultiplier
             activeComp.TotalTime = component.CurrentCookTimerTime; //this doesn't scale so that we can have the "actual" time
             activeComp.PortionedRecipe = portionedRecipe;
             //Scale tiems with cook times
-            component.CurrentCookTimeEnd = _gameTiming.CurTime + TimeSpan.FromSeconds(component.CurrentCookTimerTime * component.CookTimeMultiplier);
+            //component.CurrentCookTimeEnd = _gameTiming.CurTime + TimeSpan.FromSeconds(component.CurrentCookTimerTime * component.CookTimeMultiplier);
+            component.CurrentCookTimeEnd = _gameTiming.CurTime + TimeSpan.FromSeconds(component.CurrentCookTimerTime * component.FinalCookTimeMultiplier); // Frontier: CookTimeMultiplier<FinalCookTimeMultiplier
             if (malfunctioning)
                 activeComp.MalfunctionTime = _gameTiming.CurTime + TimeSpan.FromSeconds(component.MalfunctionInterval);
             UpdateUserInterfaceState(uid, component);
@@ -644,6 +679,13 @@ namespace Content.Server.Kitchen.EntitySystems
                 //can't be a multiple of this recipe
                 return (recipe, 0);
             }
+
+            // Frontier: microwave recipe machine types
+            if ((recipe.RecipeType & component.ValidRecipeTypes) == 0)
+            {
+                return (recipe, 0);
+            }
+            // End Frontier
 
             foreach (var solid in recipe.IngredientsSolids)
             {
@@ -704,7 +746,12 @@ namespace Content.Server.Kitchen.EntitySystems
                     for (var i = 0; i < active.PortionedRecipe.Item2; i++)
                     {
                         SubtractContents(microwave, active.PortionedRecipe.Item1);
-                        Spawn(active.PortionedRecipe.Item1.Result, coords);
+                        // Frontier: ResultCount - support multiple results per recipe
+                        for (var r = 0; r < active.PortionedRecipe.Item1.ResultCount; r++)
+                        {
+                            Spawn(active.PortionedRecipe.Item1.Result, coords);
+                        }
+                        // End Frontier
                     }
                 }
 

@@ -287,8 +287,9 @@ namespace Content.Server.Power.Pow3r
 
                 battery.SupplyRampTarget = battery.MaxEffectiveSupply * relativeTargetBatteryOutput - battery.CurrentReceiving * battery.Efficiency;
 
-                DebugTools.Assert(battery.MaxEffectiveSupply * relativeTargetBatteryOutput <= battery.LoadingNetworkDemand
-                                  || MathHelper.CloseToPercent(battery.MaxEffectiveSupply * relativeTargetBatteryOutput, battery.LoadingNetworkDemand, 0.001));
+                // #Frontier - This is causing server crashes on debug builds, disabling it for now. Happens when big new group of demanding machines turn on causing a surge.
+                //DebugTools.Assert(battery.MaxEffectiveSupply * relativeTargetBatteryOutput <= battery.LoadingNetworkDemand
+                //    || MathHelper.CloseToPercent(battery.MaxEffectiveSupply * relativeTargetBatteryOutput, battery.LoadingNetworkDemand, 0.001));
             }
         }
 

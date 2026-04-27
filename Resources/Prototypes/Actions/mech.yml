@@ -46,3 +46,16 @@
       state: mech_eject
   - type: InstantAction
     event: !type:MechEjectPilotEvent
+
+- type: entity
+  id: ActionRadarUiButton
+  name: Mass Scanner
+  description: Scans the surrounding area for mass signatures
+  components:
+  - type: InstantAction
+    itemIconStyle: NoItem
+    icon:
+      sprite: Objects/Tools/handheld_mass_scanner.rsi
+      state: icon
+    event: !type:MechRadarUiEvent
+    useDelay: 0.5

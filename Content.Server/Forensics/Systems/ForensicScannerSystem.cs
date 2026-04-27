@@ -1,3 +1,35 @@
+// SPDX-FileCopyrightText: 2022 CommieFlowers
+// SPDX-FileCopyrightText: 2022 Rane
+// SPDX-FileCopyrightText: 2022 Vordenburg
+// SPDX-FileCopyrightText: 2022 ike709
+// SPDX-FileCopyrightText: 2022 rolfero
+// SPDX-FileCopyrightText: 2023 Checkraze
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Eoin Mcloughlin
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2023 Visne
+// SPDX-FileCopyrightText: 2023 eoineoineoin
+// SPDX-FileCopyrightText: 2023 faint
+// SPDX-FileCopyrightText: 2023 keronshb
+// SPDX-FileCopyrightText: 2023 themias
+// SPDX-FileCopyrightText: 2024 Ed
+// SPDX-FileCopyrightText: 2024 LordCarve
+// SPDX-FileCopyrightText: 2024 Mervill
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 Shroomerian
+// SPDX-FileCopyrightText: 2024 SlamBamActionman
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 metalgearsloth
+// SPDX-FileCopyrightText: 2024 nikthechampiongr
+// SPDX-FileCopyrightText: 2025 Dvir
+// SPDX-FileCopyrightText: 2025 EctoplasmIsGood
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 SupernoobTheN1
+// SPDX-FileCopyrightText: 2025 Your Name
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Linq;
 using System.Text;
 using Content.Server.Popups;
@@ -19,6 +51,23 @@ using Content.Server.Chemistry.Containers.EntitySystems;
 using Robust.Shared.Prototypes;
 // todo: remove this stinky LINQy
 
+using Content.Server.Stack; // Frontier
+using Content.Server._NF.Smuggling; // Frontier
+using Content.Server._NF.Smuggling.Components; // Frontier
+using Content.Server.Cargo.Systems; // Frontier
+using Content.Server.Radio.EntitySystems; // Frontier
+using Content.Shared.Stacks; // Frontier
+using Content.Shared.Radio; // Frontier
+using Content.Shared.Containers.ItemSlots; // Frontier
+using Content.Server._NF.SectorServices; // Frontier
+using Content.Shared.FixedPoint; // Frontier
+using Robust.Shared.Configuration; // Frontier
+using Content.Shared._NF.CCVar; // Frontier
+using Content.Shared._NF.Bank; // Frontier
+using Content.Shared._NF.Bank.Components; // Frontier
+using Content.Server._NF.Bank; // Frontier
+using Content.Shared._NF.Bank.BUI; // Frontier
+
 namespace Content.Server.Forensics
 {
     public sealed class ForensicScannerSystem : EntitySystem
@@ -33,6 +82,30 @@ namespace Content.Server.Forensics
         [Dependency] private readonly MetaDataSystem _metaData = default!;
         [Dependency] private readonly ForensicsSystem _forensicsSystem = default!;
         [Dependency] private readonly TagSystem _tag = default!;
+        [Dependency] private readonly StackSystem _stackSystem = default!; // Frontier
+        [Dependency] private readonly SharedAudioSystem _audio = default!; // Frontier
+        [Dependency] private readonly IPrototypeManager _prototypeManager = default!; // Frontier
+        [Dependency] private readonly RadioSystem _radio = default!; // Frontier
+        [Dependency] private readonly DeadDropSystem _deadDrop = default!; // Frontier
+        [Dependency] private readonly ItemSlotsSystem _itemSlots = default!; // Frontier
+        [Dependency] private readonly CargoSystem _cargo = default!; // Frontier
+        [Dependency] private readonly SectorServiceSystem _service = default!; // Frontier
+        [Dependency] private readonly IConfigurationManager _cfg = default!; // Frontier
+        [Dependency] private readonly BankSystem _bank = default!; // Frontier
+
+        // Frontier: payout constants
+        // Temporary values, sane defaults, will be overwritten by CVARs.
+        private int _minFMCPayout = 6;
+
+        private const int ActiveUnusedDeadDropSpesoReward = 150000; //Mono
+        private const float ActiveUnusedDeadDropFMCReward = 35.0f; //Mono
+        private const int ActiveUsedDeadDropSpesoReward = 50000; //Mono
+        private const float ActiveUsedDeadDropFMCReward = 15.0f; //Mono
+        private const int InactiveUsedDeadDropSpesoReward = 25000; //Mono
+        private const float InactiveUsedDeadDropFMCReward = 10.0f; //Mono
+        private const int DropPodSpesoReward = 75000; //Mono
+        private const float DropPodFMCReward = 15.0f; //Mono
+        // End Frontier: payout constants
 
         private static readonly ProtoId<TagPrototype> DNASolutionScannableTag = "DNASolutionScannable";
 
@@ -47,7 +120,67 @@ namespace Content.Server.Forensics
             SubscribeLocalEvent<ForensicScannerComponent, ForensicScannerPrintMessage>(OnPrint);
             SubscribeLocalEvent<ForensicScannerComponent, ForensicScannerClearMessage>(OnClear);
             SubscribeLocalEvent<ForensicScannerComponent, ForensicScannerDoAfterEvent>(OnDoAfter);
+
+            Subs.CVar(_cfg, NFCCVars.SmugglingMinFMCPayout, OnMinFMCPayoutChanged, true); // Frontier
         }
+
+        // Frontier
+        private void OnMinFMCPayoutChanged(int newMin)
+        {
+            _minFMCPayout = newMin;
+        }
+
+        // Frontier: add dead drop rewards
+        /// <summary>
+        ///     Rewards the NFSD department for scanning a dead drop.
+        ///     Gives some amount of spesos and FMC to the
+        /// </summary>
+        private void GiveReward(EntityUid uidOrigin, EntityUid target, int spesoAmount, FixedPoint2 fmcAmount, string msg)
+        {
+            SoundSpecifier confirmSound = new SoundPathSpecifier("/Audio/Effects/Cargo/ping.ogg");
+            _audio.PlayPvs(_audio.GetSound(confirmSound), uidOrigin);
+
+            if (spesoAmount > 0)
+                _bank.TrySectorDeposit(SectorBankAccount.Nfsd, spesoAmount, LedgerEntryType.AntiSmugglingBonus);
+            else
+                spesoAmount = 0;
+
+            if (fmcAmount > 0)
+            {
+                // Accumulate sector-wide FMCs, pay out if min threshold met
+                if (TryComp<SectorDeadDropComponent>(_service.GetServiceEntity(), out var sectorDD))
+                {
+                    sectorDD.FMCAccumulator += fmcAmount;
+                    if (sectorDD.FMCAccumulator >= _minFMCPayout)
+                    {
+                        // inherent floor
+                        int payout = sectorDD.FMCAccumulator.Int();
+                        sectorDD.FMCAccumulator -= payout;
+
+                        var stackPrototype = _prototypeManager.Index<StackPrototype>("FederationMilitaryCredit");
+                        _stackSystem.Spawn(payout, stackPrototype, Transform(target).Coordinates);
+                    }
+                }
+            }
+            else
+                fmcAmount = 0;
+
+            var channel = _prototypeManager.Index<RadioChannelPrototype>("Nfsd");
+            string msgString = Loc.GetString(msg);
+            if (fmcAmount >= 1)
+            {
+                msgString = msgString + " " + Loc.GetString("forensic-reward-amount",
+                ("spesos", BankSystemExtensions.ToSpesoString(spesoAmount)),
+                ("fmc", BankSystemExtensions.ToFMCString(fmcAmount.Int())));
+            }
+            else
+            {
+                msgString = msgString + " " + Loc.GetString("forensic-reward-amount-speso-only",
+                ("spesos", BankSystemExtensions.ToSpesoString(spesoAmount)));
+            }
+            _radio.SendRadioMessage(uidOrigin, msgString, channel, uidOrigin);
+        }
+        // End Frontier: add dead drop rewards
 
         private void UpdateUserInterface(EntityUid uid, ForensicScannerComponent component)
         {
@@ -88,6 +221,48 @@ namespace Content.Server.Forensics
                     scanner.TouchDNAs = forensics.DNAs.ToList();
                     scanner.Residues = forensics.Residues.ToList();
                 }
+
+                // Frontier: contraband poster/pod scanning
+                if (_itemSlots.TryGetSlot(uid, "forensics_cartridge", out var itemSlot) && itemSlot.HasItem)
+                {
+                    EntityUid target = args.Args.Target.Value;
+                    if (TryComp<DeadDropComponent>(target, out var deadDrop))
+                    {
+                        // If there's a dead drop note present, pay out regardless and compromise the dead drop.
+                        if (_gameTiming.CurTime >= deadDrop.NextDrop)
+                        {
+                            int spesoReward;
+                            FixedPoint2 fmcReward;
+                            string msg;
+                            if (deadDrop.DeadDropCalled)
+                            {
+                                spesoReward = ActiveUsedDeadDropSpesoReward;
+                                fmcReward = ActiveUsedDeadDropFMCReward;
+                                msg = "forensic-reward-dead-drop-used-present";
+                            }
+                            else
+                            {
+                                spesoReward = ActiveUnusedDeadDropSpesoReward;
+                                fmcReward = ActiveUnusedDeadDropFMCReward;
+                                msg = "forensic-reward-dead-drop-unused";
+                            }
+                            GiveReward(uid, target, spesoReward, fmcReward, msg);
+                            _deadDrop.CompromiseDeadDrop(target, deadDrop);
+                        }
+                        // Otherwise, if it's been used, pay out at a reduced rate and compromise it.
+                        else if (deadDrop.DeadDropCalled)
+                        {
+                            GiveReward(uid, target, InactiveUsedDeadDropSpesoReward, InactiveUsedDeadDropFMCReward, "forensic-reward-dead-drop-used-gone");
+                            _deadDrop.CompromiseDeadDrop(target, deadDrop);
+                        }
+                    }
+                    else if (TryComp<ContrabandPodGridComponent>(Transform(target).GridUid, out var pod) && !pod.Scanned)
+                    {
+                        GiveReward(uid, target, DropPodSpesoReward, DropPodFMCReward, "forensic-reward-pod");
+                        pod.Scanned = true;
+                    }
+                }
+                // End Frontier: contraband poster/pod scanning
 
                 if (_tag.HasTag(args.Args.Target.Value, DNASolutionScannableTag))
                 {

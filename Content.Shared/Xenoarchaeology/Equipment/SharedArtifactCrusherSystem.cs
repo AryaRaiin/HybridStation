@@ -40,6 +40,7 @@ public abstract class SharedArtifactCrusherSystem : EntitySystem
         SubscribeLocalEvent<ArtifactCrusherComponent, GotEmaggedEvent>(OnEmagged);
         SubscribeLocalEvent<ArtifactCrusherComponent, GetVerbsEvent<AlternativeVerb>>(OnGetVerbs);
         SubscribeLocalEvent<ArtifactCrusherComponent, PowerChangedEvent>(OnPowerChanged);
+        SubscribeLocalEvent<ArtifactCrusherComponent, GotUnEmaggedEvent>(OnUnemagged); // Frontier: demag
     }
 
     private void OnInit(Entity<ArtifactCrusherComponent> ent, ref ComponentInit args)
@@ -68,6 +69,21 @@ public abstract class SharedArtifactCrusherSystem : EntitySystem
         args.Handled = true;
         Dirty(ent);
     }
+
+    // Frontier: demag
+    private void OnUnemagged(Entity<ArtifactCrusherComponent> ent, ref GotUnEmaggedEvent args)
+    {
+        if (!_emag.CompareFlag(args.Type, EmagType.Interaction))
+            return;
+
+        if (!_emag.CheckFlag(ent, EmagType.Interaction))
+            return;
+
+        if (ent.Comp.AutoLock)
+            ent.Comp.AutoLock = false;
+        args.Handled = true;
+    }
+    // End Frontier
 
     private void OnStorageOpenAttempt(Entity<ArtifactCrusherComponent> ent, ref StorageOpenAttemptEvent args)
     {

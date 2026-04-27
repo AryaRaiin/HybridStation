@@ -1,3 +1,11 @@
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Scribbles0
+// SPDX-FileCopyrightText: 2023 brainfood1183
+// SPDX-FileCopyrightText: 2024 keronshb
+// SPDX-FileCopyrightText: 2025 themias
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Server.Popups;
 using Content.Server.Speech.EntitySystems;
 using Content.Shared.Abilities.Mime;
@@ -6,11 +14,13 @@ using Content.Shared.Chat.Prototypes;
 using Content.Shared.Puppet;
 using Content.Shared.Speech;
 using Content.Shared.Speech.Muting;
+using Content.Server._EinsteinEngines.Language; // Einstein Engines
 
 namespace Content.Server.Speech.Muting
 {
     public sealed class MutingSystem : EntitySystem
     {
+        [Dependency] private readonly LanguageSystem _languages = default!; // Einstein Engines
         [Dependency] private readonly PopupSystem _popupSystem = default!;
         public override void Initialize()
         {
@@ -47,6 +57,12 @@ namespace Content.Server.Speech.Muting
         private void OnSpeakAttempt(EntityUid uid, MutedComponent component, SpeakAttemptEvent args)
         {
             // TODO something better than this.
+
+            // Einstein Engines START
+            var language = _languages.GetLanguage(uid);
+            if (!language.SpeechOverride.RequireSpeech)
+                return; // Cannot mute if there's no speech involved
+            // Einstein Engines END
 
             if (HasComp<MimePowersComponent>(uid))
                 _popupSystem.PopupEntity(Loc.GetString("mime-cant-speak"), uid, uid);

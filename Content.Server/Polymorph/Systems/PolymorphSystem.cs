@@ -1,3 +1,25 @@
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Moony
+// SPDX-FileCopyrightText: 2023 Nemanja
+// SPDX-FileCopyrightText: 2023 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2023 ShadowCommander
+// SPDX-FileCopyrightText: 2023 TemporalOroboros
+// SPDX-FileCopyrightText: 2023 Visne
+// SPDX-FileCopyrightText: 2023 deltanedas
+// SPDX-FileCopyrightText: 2023 deltanedas <@deltanedas:kde.org>
+// SPDX-FileCopyrightText: 2023 metalgearsloth
+// SPDX-FileCopyrightText: 2024 AJCM-git
+// SPDX-FileCopyrightText: 2024 Baa
+// SPDX-FileCopyrightText: 2024 Bakke
+// SPDX-FileCopyrightText: 2024 Jake Huxell
+// SPDX-FileCopyrightText: 2024 Leon Friedrich
+// SPDX-FileCopyrightText: 2024 keronshb
+// SPDX-FileCopyrightText: 2024 slarticodefast
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 Tayrtahn
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Server.Actions;
 using Content.Server.Humanoid;
 using Content.Server.Inventory;
@@ -21,6 +43,7 @@ using Robust.Server.GameObjects;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
+using Robust.Shared.Serialization.Manager; // Einstein Engines
 
 namespace Content.Server.Polymorph.Systems;
 
@@ -43,6 +66,7 @@ public sealed partial class PolymorphSystem : EntitySystem
     [Dependency] private readonly TransformSystem _transform = default!;
     [Dependency] private readonly SharedMindSystem _mindSystem = default!;
     [Dependency] private readonly MetaDataSystem _metaData = default!;
+    [Dependency] private readonly ISerializationManager _serialization = default!; // Einstein Engines
 
     private const string RevertPolymorphId = "ActionRevertPolymorph";
 
@@ -194,6 +218,14 @@ public sealed partial class PolymorphSystem : EntitySystem
             _gameTiming.CurTime < polymorphableComponent.LastPolymorphEnd + configuration.Cooldown)
             return null;
 
+        // Mono Begin - If polymorph only works in a certain life state, check that state.
+        if (TryComp<MobStateComponent>(uid, out var mob) &&
+            (configuration.PolymorphTheLiving && _mobState.IsAlive(uid, mob) ||
+            configuration.PolymorphTheCritical && _mobState.IsIncapacitated(uid, mob) ||
+            configuration.PolymorphTheDead && _mobState.IsDead(uid, mob)) == false)
+            return null;
+        // Mono End
+
         // mostly just for vehicles
         _buckle.TryUnbuckle(uid, uid, true);
 
@@ -211,6 +243,20 @@ public sealed partial class PolymorphSystem : EntitySystem
                 child);
 
         _mindSystem.MakeSentient(child);
+
+        // Einstein Engines - Language begin
+        // Copy specified components over
+        foreach (var compName in configuration.CopiedComponents)
+        {
+            if (!_compFact.TryGetRegistration(compName, out var reg)
+                || !EntityManager.TryGetComponent(uid, reg.Idx, out var comp))
+                continue;
+
+            var copy = _serialization.CreateCopy(comp, notNullableOverride: true);
+            copy.Owner = child;
+            AddComp(child, copy, true);
+        }
+        // Einstein Engines - Language end
 
         var polymorphedComp = Factory.GetComponent<PolymorphedEntityComponent>();
         polymorphedComp.Parent = uid;

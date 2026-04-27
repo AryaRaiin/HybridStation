@@ -36,6 +36,9 @@
     heldPrefix: brain
   - type: Sprite
     state: brain
+  - type: Organ # Shitmed
+    slotId: brain #Shitmed
+  - type: Brain # Shitmed
   - type: SolutionContainerManager
     solutions:
       organ:
@@ -62,6 +65,9 @@
     layers:
       - state: eyeball-l
       - state: eyeball-r
+  - type: Organ #Shitmed
+    slotId: eyes #Shitmed
+  - type: Eyes #Shitmed
 
 - type: entity
   id: OrganDionaStomach
@@ -80,6 +86,8 @@
         reagents:
         - ReagentId: Cellulose
           Quantity: 5
+  - type: Organ #Shitmed
+    slotId: stomach #Shitmed
   - type: Stomach
   - type: Metabolizer
     maxReagents: 6
@@ -104,6 +112,8 @@
   components:
   - type: Sprite
     state: lungs
+  - type: Organ #Shitmed
+    slotId: lungs #Shitmed
   - type: Item
     size: Small
     heldPrefix: lungs

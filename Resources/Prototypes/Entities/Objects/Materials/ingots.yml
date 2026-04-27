@@ -2,7 +2,7 @@
   abstract: true
   parent: BaseItem
   id: IngotBase
-  description: A heavy metal ingot stamped with the Nanotrasen logo.
+  description: A heavy, metal ingot.
   components:
   - type: Sprite
     sprite: Objects/Materials/ingots.rsi
@@ -60,6 +60,8 @@
         reagents:
         - ReagentId: Gold
           Quantity: 10
+  - type: PirateBountyItem # Frontier
+    id: Gold # Frontier
 
 - type: entity
   parent: IngotGold

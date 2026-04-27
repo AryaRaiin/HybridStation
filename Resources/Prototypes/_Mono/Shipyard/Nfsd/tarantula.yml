@@ -1,0 +1,45 @@
+# SPDX-FileCopyrightText: 2025 Cojoke
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Author Info
+# GitHub: Redrover1760
+# Discord: GnarlySheep
+
+- type: vessel
+  id: Tarantula
+  parent: BaseVesselAntag
+  name: TSF-SVE Tarantula
+  description: A durable ship built for sustained mid-range engagements, equipped with heavy autocannons and plasma weaponry.
+  price: 107850
+  category: Medium
+  group: Security
+  access: Security
+  shuttlePath: /Maps/_Mono/Shuttles/Nfsd/tarantula.yml
+  guidebookPage: Null
+  class:
+  - Patrol
+  - Pursuit
+  engine:
+  - AME
+
+- type: gameMap
+  id: Tarantula
+  mapName: 'Tarantula'
+  mapPath: /Maps/_Mono/Shuttles/Nfsd/tarantula.yml
+  minPlayers: 0
+  stations:
+    Tarantula:
+      stationProto: StandardFrontierSecurityVessel
+      components:
+      - type: StationNameSetup
+        mapNameTemplate: 'Tarantula TSF{1}'
+        nameGenerator:
+          !type:NanotrasenNameGenerator
+          prefixCreator: '14'
+      - type: StationJobs
+        availableJobs:
+          Deputy: [ 0, 0 ]
+

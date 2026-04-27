@@ -1,4 +1,4 @@
-﻿using Content.Shared.Guidebook;
+using Content.Shared.Guidebook;
 using Robust.Shared.GameStates;
 
 namespace Content.Shared.Power.Generator;
@@ -60,4 +60,16 @@ public sealed partial class FuelGeneratorComponent : Component
     /// </summary>
     [DataField]
     public float FuelEfficiencyConstant = 1.3f;
+
+    /// <summary>
+    /// Frontier - Strength of the radiation source in rads per watt.
+    /// </summary>
+    [DataField]
+    public float RadiationIntensity = 1 / 10_000.0f; // One rad/s per 10 kW.
+
+    /// <summary>
+    /// Frontier - Colour of radiation light emissions.
+    /// </summary>
+    [DataField]
+    public Color RadiationColor { get; set; } = Color.LimeGreen;
 }

@@ -13,4 +13,11 @@ public sealed partial class RCDAmmoComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public int Charges = 30;
+
+    /// <summary>
+    /// ~~~ Frontier ~~~
+    /// A flag that limits RCD to the authorized ships.
+    /// </summary>
+    [DataField("isShipyardRCDAmmo"), AutoNetworkedField]
+    public bool IsShipyardRCDAmmo;
 }

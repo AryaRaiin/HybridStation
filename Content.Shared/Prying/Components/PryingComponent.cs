@@ -3,13 +3,13 @@ using Robust.Shared.GameStates;
 
 namespace Content.Shared.Prying.Components;
 
-[RegisterComponent, NetworkedComponent]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState] // Shitmed Change
 public sealed partial class PryingComponent : Component
 {
     /// <summary>
     /// Whether the entity can pry open powered doors
     /// </summary>
-    [DataField]
+    [DataField, AutoNetworkedField] // Shitmed Change
     public bool PryPowered;
 
     /// <summary>
@@ -22,7 +22,7 @@ public sealed partial class PryingComponent : Component
     /// Modifier on the prying time.
     /// Lower values result in more time.
     /// </summary>
-    [DataField]
+    [DataField, AutoNetworkedField] // Shitmed Change
     public float SpeedModifier = 1.0f;
 
     /// <summary>
@@ -36,6 +36,13 @@ public sealed partial class PryingComponent : Component
     /// </summary>
     [DataField]
     public bool Enabled = true;
+
+    /// <summary>
+    /// Goobstation
+    /// Whether the tool is able to instantly pry unpowered unbolted doors and firelocks
+    /// </summary>
+    [DataField]
+    public bool InstaPry = true;
 }
 
 /// <summary>
@@ -85,12 +92,13 @@ public readonly record struct PriedEvent(EntityUid User)
 public record struct GetPryTimeModifierEvent
 {
     public readonly EntityUid User;
+    public readonly bool Instapry; // Goobstation
     public float PryTimeModifier = 1.0f;
     public TimeSpan BaseTime = TimeSpan.FromSeconds(5);
 
-    public GetPryTimeModifierEvent(EntityUid user)
+    public GetPryTimeModifierEvent(EntityUid user, bool instapry) // Goobstation
     {
         User = user;
+        Instapry = instapry;
     }
 }
-

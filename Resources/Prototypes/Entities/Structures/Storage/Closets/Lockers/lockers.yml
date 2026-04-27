@@ -1,3 +1,38 @@
+# SPDX-FileCopyrightText: 2021 Elijahrane
+# SPDX-FileCopyrightText: 2021 Mith-randalf
+# SPDX-FileCopyrightText: 2021 Swept
+# SPDX-FileCopyrightText: 2021 metalgearsloth
+# SPDX-FileCopyrightText: 2022 Kara
+# SPDX-FileCopyrightText: 2022 Lamrr
+# SPDX-FileCopyrightText: 2022 Leon Friedrich
+# SPDX-FileCopyrightText: 2022 Moony
+# SPDX-FileCopyrightText: 2022 Peptide90
+# SPDX-FileCopyrightText: 2022 Rane
+# SPDX-FileCopyrightText: 2022 theashtronaut
+# SPDX-FileCopyrightText: 2023 Banshee
+# SPDX-FileCopyrightText: 2023 Chief-Engineer
+# SPDX-FileCopyrightText: 2023 Emisse
+# SPDX-FileCopyrightText: 2023 Ilya246
+# SPDX-FileCopyrightText: 2023 Jeff
+# SPDX-FileCopyrightText: 2023 MagnusCrowe
+# SPDX-FileCopyrightText: 2023 Nim
+# SPDX-FileCopyrightText: 2023 PECK
+# SPDX-FileCopyrightText: 2023 Puro
+# SPDX-FileCopyrightText: 2023 TemporalOroboros
+# SPDX-FileCopyrightText: 2023 Tunguso4ka
+# SPDX-FileCopyrightText: 2023 Velcroboy
+# SPDX-FileCopyrightText: 2023 deltanedas
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 Maxtone
+# SPDX-FileCopyrightText: 2024 Vasilis
+# SPDX-FileCopyrightText: 2024 Whatstone
+# SPDX-FileCopyrightText: 2024 crazybrain23
+# SPDX-FileCopyrightText: 2024 lzk
+# SPDX-FileCopyrightText: 2024 potato1234_x
+# SPDX-FileCopyrightText: 2025 Redrover1760
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 - type: entity
   id: LockerBooze
   parent: LockerBase
@@ -9,9 +44,8 @@
     stateBaseClosed: cabinet
     stateDoorOpen: cabinet_open
     stateDoorClosed: cabinet_door
-
   - type: AccessReader
-    access: [["Bar"]]
+#    access: [["Bar"]] # Frontier
   - type: EntityStorage
     closeSound:
       path: /Audio/Effects/woodenclosetclose.ogg
@@ -44,7 +78,7 @@
     stateDoorOpen: qm_open
     stateDoorClosed: qm_door
   - type: AccessReader
-    access: [["Quartermaster"]]
+#    access: [["Quartermaster"]] # Frontier
 
 - type: entity
   id: LockerSalvageSpecialist
@@ -58,7 +92,7 @@
     stateDoorOpen: mining_open
     stateDoorClosed: mining_door
   - type: AccessReader
-    access: [["Salvage"]]
+#    access: [["Salvage"]] # Frontier
 
 # Command
 - type: entity
@@ -99,7 +133,7 @@
     stateDoorOpen: ce_open
     stateDoorClosed: ce_door
   - type: AccessReader
-    access: [ [ "ChiefEngineer" ] ]
+#    access: [ [ "ChiefEngineer" ] ] # Frontier
 
 # Electrical supplies
 - type: entity
@@ -113,7 +147,7 @@
     stateDoorOpen: eng_open
     stateDoorClosed: eng_elec_door
   - type: AccessReader
-    access: [ [ "Engineering" ] ]
+#    access: [ [ "Engineering" ] ] # Frontier
 
 # Welding supplies
 - type: entity
@@ -127,7 +161,7 @@
     stateDoorOpen: eng_open
     stateDoorClosed: eng_weld_door
   - type: AccessReader
-    access: [ [ "Engineering" ] ]
+#    access: [ [ "Engineering" ] ] # Frontier
 
 # Atmos tech
 - type: entity
@@ -141,7 +175,7 @@
     stateDoorOpen: atmos_open
     stateDoorClosed: atmos_door
   - type: AccessReader
-    access: [ [ "Atmospherics" ] ]
+#    access: [ [ "Atmospherics" ] ] # Frontier
 
 # Engineer
 - type: entity
@@ -155,7 +189,7 @@
     stateDoorOpen: eng_secure_open
     stateDoorClosed: eng_secure_door
   - type: AccessReader
-    access: [ [ "Engineering" ] ]
+#    access: [ [ "Engineering" ] ] # Frontier
 
 # Evac Repair
 - type: entity
@@ -185,7 +219,7 @@
     stateDoorOpen: freezer_open
     stateDoorClosed: freezer_door
   - type: ExplosionResistance
-    damageCoefficient: 0.50
+    damageCoefficient: 0.01 # Mono 0.50->0.01
   - type: AntiRottingContainer
   - type: Construction
     graph: ClosetFreezer
@@ -202,7 +236,7 @@
   suffix: Kitchen, Locked
   components:
   - type: AccessReader
-    access: [ [ "Kitchen" ] ]
+#    access: [ [ "Kitchen" ] ] # Frontier
 
 # Botanist
 - type: entity
@@ -216,7 +250,7 @@
     stateDoorOpen: hydro_open
     stateDoorClosed: hydro_door
   - type: AccessReader
-    access: [ [ "Hydroponics" ] ]
+#    access: [ [ "Hydroponics" ] ] # Frontier
 
 # Medicine
 - type: entity
@@ -231,7 +265,7 @@
     stateDoorOpen: med_open
     stateDoorClosed: med_door
   - type: AccessReader
-    access: [ [ "Medical" ] ]
+#    access: [ [ "Medical" ] ] # Frontier
 
 # Medical doctor
 - type: entity
@@ -245,7 +279,7 @@
     stateDoorOpen: med_secure_open
     stateDoorClosed: med_secure_door
   - type: AccessReader
-    access: [ [ "Medical" ] ]
+#    access: [ [ "Medical" ] ] # Frontier
 
 # Paramedic
 - type: entity
@@ -259,7 +293,7 @@
     stateDoorOpen: paramed_open
     stateDoorClosed: paramed_door
   - type: AccessReader
-    access: [ [ "Medical" ] ]
+#    access: [ [ "Medical" ] ] # Frontier
 
 
 # Chemical
@@ -274,7 +308,7 @@
     stateDoorOpen: med_open
     stateDoorClosed: chemical_door
   - type: AccessReader
-    access: [ [ "Chemistry" ] ]
+#    access: [ [ "Chemistry" ] ] # Frontier
 
 # CMO
 - type: entity
@@ -288,7 +322,7 @@
     stateDoorOpen: cmo_open
     stateDoorClosed: cmo_door
   - type: AccessReader
-    access: [ [ "ChiefMedicalOfficer" ] ]
+#    access: [ [ "ChiefMedicalOfficer" ] ] # Frontier
 
 # Science
 - type: entity
@@ -302,7 +336,7 @@
     stateDoorOpen: rd_open
     stateDoorClosed: rd_door
   - type: AccessReader
-    access: [ [ "ResearchDirector" ] ]
+#    access: [ [ "ResearchDirector" ] ] # Frontier
 
 - type: entity
   id: LockerScientist
@@ -315,12 +349,12 @@
     stateDoorOpen: science_open
     stateDoorClosed: science_door
   - type: AccessReader
-    access: [ [ "Research" ] ]
+#    access: [ [ "Research" ] ] # Frontier
 
 # HoS
 - type: entity
   id: LockerHeadOfSecurity
-  parent: LockerBaseSecure
+  parent: [BaseStructureIndestructible, BaseStructureLockImmuneToEmag, BaseStructureAccessReaderImmuneToEmag, BaseStructureDisableToolUse, LockerBaseSecure] # Frontier: add BaseStructureIndestructible, BaseStructureLockImmuneToEmag, BaseStructureAccessReaderImmuneToEmag, BaseStructureDisableToolUse
   name: head of security's locker
   components:
   - type: Appearance
@@ -334,7 +368,7 @@
 # Warden
 - type: entity
   id: LockerWarden
-  parent: LockerBaseSecure
+  parent: [BaseStructureIndestructible, BaseStructureLockImmuneToEmag, BaseStructureAccessReaderImmuneToEmag, BaseStructureDisableToolUse, LockerBaseSecure] # Frontier: add BaseStructureIndestructible, BaseStructureLockImmuneToEmag, BaseStructureAccessReaderImmuneToEmag, BaseStructureDisableToolUse
   name: warden's locker
   components:
   - type: Appearance
@@ -349,7 +383,7 @@
 - type: entity
   id: LockerBrigmedic
   parent: LockerBaseSecure
-  name: brigmedic locker
+  name: brigmedic's locker
   components:
   - type: Appearance
   - type: EntityStorageVisuals
@@ -357,7 +391,7 @@
     stateDoorOpen: armory_open
     stateDoorClosed: brigmedic_door
   - type: AccessReader
-    access: [["Medical"]]
+    access: [["Security"]]
 
 # Security Officer
 - type: entity
@@ -578,7 +612,7 @@
   components:
   - type: Appearance
   - type: AccessReader
-    access: [["Theatre"]]
+#    access: [["Theatre"]] # Frontier
   - type: EntityStorageVisuals
     stateBaseClosed: clown
     stateDoorOpen: clown_open
@@ -592,7 +626,7 @@
   components:
   - type: Appearance
   - type: AccessReader
-    access: [["Theatre"]]
+#    access: [["Theatre"]] # Frontier
   - type: EntityStorageVisuals
     stateBaseClosed: mime
     stateDoorOpen: mime_open
@@ -606,7 +640,8 @@
   components:
   - type: Appearance
   - type: AccessReader
-    access: [["Command"]]
+#    access: [["Command"]]
+    access: [["HeadOfPersonnel"]] # Frontier
   - type: EntityStorageVisuals
     stateBaseClosed: hop
     stateDoorOpen: hop_open

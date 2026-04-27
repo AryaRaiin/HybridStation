@@ -1,12 +1,31 @@
+// SPDX-FileCopyrightText: 2022 Flipp Syder
+// SPDX-FileCopyrightText: 2022 Nemanja
+// SPDX-FileCopyrightText: 2022 Paul Ritter
+// SPDX-FileCopyrightText: 2022 keronshb
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2023 Slava0135
+// SPDX-FileCopyrightText: 2023 metalgearsloth
+// SPDX-FileCopyrightText: 2023 themias
+// SPDX-FileCopyrightText: 2024 Aviu00
+// SPDX-FileCopyrightText: 2024 nikthechampiongr
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
+using Content.Shared.Blocking.Components; // Mono
+using Content.Shared._Mono.Blocking; // Mono
 
 namespace Content.Shared.Blocking;
 
-public sealed partial class BlockingSystem
+//public sealed partial class BlockingSystem
+public sealed partial class BlockingSystem : SharedBlockingSystem // Mono
 {
     [Dependency] private readonly DamageableSystem _damageable = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
@@ -42,7 +61,8 @@ public sealed partial class BlockingSystem
 
     private void OnUserDamageModified(EntityUid uid, BlockingUserComponent component, DamageModifyEvent args)
     {
-        if (component.BlockingItem is not { } item || !TryComp<BlockingComponent>(item, out var blocking))
+        //if (component.BlockingItem is not { } item || !TryComp<BlockingComponent>(item, out var blocking))
+        if (TryComp<ItemToggleComponent>(component.BlockingItem, out var toggleComponent) && TryComp<BlockingComponent>(component.BlockingItem, out var blocking)) // Mono
             return;
 
         if (args.Damage.GetTotal() <= 0)
@@ -52,9 +72,13 @@ public sealed partial class BlockingSystem
         if (!TryComp<DamageableComponent>(item, out var dmgComp))
             return;
 
+        if (!toggleComponent.Activated) // Mono
+            return; // Mono
+
         var blockFraction = blocking.IsBlocking ? blocking.ActiveBlockFraction : blocking.PassiveBlockFraction;
         blockFraction = Math.Clamp(blockFraction, 0, 1);
-        _damageable.TryChangeDamage((item, dmgComp), blockFraction * args.OriginalDamage);
+        _damageable.TryChangeDamage((item, dmgComp), blockFraction * args.OriginalDamage,
+            armorPenetration: args.ArmorPenetration); // Goob edit
 
         var modify = new DamageModifierSet();
         foreach (var key in dmgComp.Damage.DamageDict.Keys)
@@ -62,7 +86,9 @@ public sealed partial class BlockingSystem
             modify.Coefficients.TryAdd(key, 1 - blockFraction);
         }
 
-        args.Damage = DamageSpecifier.ApplyModifierSet(args.Damage, modify);
+        //args.Damage = DamageSpecifier.ApplyModifierSet(args.Damage, modify);
+        args.Damage = DamageSpecifier.ApplyModifierSet(args.Damage, // Goob edit
+            DamageSpecifier.PenetrateArmor(modify, args.ArmorPenetration)); // Goob edit
 
         if (blocking.IsBlocking && !args.Damage.Equals(args.OriginalDamage))
         {

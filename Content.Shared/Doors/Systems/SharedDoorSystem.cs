@@ -77,6 +77,7 @@ public abstract partial class SharedDoorSystem : EntitySystem
         SubscribeLocalEvent<DoorComponent, WeldableChangedEvent>(OnWeldChanged);
         SubscribeLocalEvent<DoorComponent, GetPryTimeModifierEvent>(OnPryTimeModifier);
         SubscribeLocalEvent<DoorComponent, GotEmaggedEvent>(OnEmagged);
+        SubscribeLocalEvent<DoorComponent, GotUnEmaggedEvent>(OnUnEmagged); // Frontier: demag
     }
 
     protected virtual void OnComponentInit(Entity<DoorComponent> ent, ref ComponentInit args)
@@ -133,6 +134,31 @@ public abstract partial class SharedDoorSystem : EntitySystem
             return;
 
         args.Repeatable = true;
+        args.Handled = true;
+    }
+
+    private void OnUnEmagged(EntityUid uid, DoorComponent door, ref GotUnEmaggedEvent args) // Frontier - Added DEMUG
+    {
+        if (!_emag.CompareFlag(args.Type, EmagType.Access))
+            return;
+
+        if (!TryComp<AirlockComponent>(uid, out var airlock))
+            return;
+
+        if (!airlock.Powered)
+            return;
+
+        if (!_emag.CheckFlag(uid, EmagType.Access))
+            return;
+
+        if (TryComp<DoorBoltComponent>(uid, out var doorBolt)
+            && IsBolted(uid, doorBolt))
+        {
+            SetBoltsDown((uid, doorBolt), false, args.UserUid, true);
+        }
+        SetState(uid, DoorState.Closing, door);
+
+        Audio.PlayPredicted(door.SparkSound, uid, args.UserUid, AudioParams.Default.WithVolume(8));
         args.Handled = true;
     }
 

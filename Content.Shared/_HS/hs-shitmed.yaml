@@ -1,0 +1,409 @@
+---
+file: Resources/Prototypes/Entities/Objects/Specific/Medical/surgery.yml
+- match:
+  - id: BaseToolSurgery
+  action: merge
+  data:
+    components:
+    - type: SurgeryTool
+
+- match:
+  - id: Cautery
+  action: merge
+  data:
+    components:
+    - type: SurgeryTool
+      startSound:
+        path: /Audio/_Shitmed/Medical/Surgery/cautery1.ogg
+      endSound:
+        path: /Audio/_Shitmed/Medical/Surgery/cautery2.ogg
+    - type: Cautery
+
+- match:
+  - id: Drill
+  action: merge
+  data:
+    components:
+    - type: SurgeryTool
+      startSound:
+        path: /Audio/_Shitmed/Medical/Surgery/saw.ogg
+    - type: Drill
+
+- match:
+  - id: Scalpel
+  action: merge
+  data:
+    components:
+    - type: SurgeryTool
+      startSound:
+        path: /Audio/_Shitmed/Medical/Surgery/scalpel1.ogg
+      endSound:
+        path: /Audio/_Shitmed/Medical/Surgery/scalpel2.ogg
+    - type: Scalpel
+
+- match:
+  - id: ScalpelAdvanced
+  action: merge
+  data:
+    components:
+    - type: Scalpel # Shitmed
+      speed: 1.25
+
+- match:
+  - id: ScalpelLaser
+  action: merge
+  data:
+    components:
+    - type: Scalpel # Shitmed
+      speed: 1.5
+  # TODO: prevent bleeding from incisions
+
+- match:
+  - id: Retractor
+  action: merge
+  data:
+    components:
+    - type: SurgeryTool
+      startSound:
+        path: /Audio/_Shitmed/Medical/Surgery/retractor1.ogg
+      endSound:
+        path: /Audio/_Shitmed/Medical/Surgery/retractor2.ogg
+    - type: Retractor
+
+- match:
+  - id: Hemostat
+  action: merge
+  data:
+    components:
+    # Shitmed Change
+    - type: SurgeryTool
+      startSound:
+        path: /Audio/_Shitmed/Medical/Surgery/retractor1.ogg
+      endSound:
+        path: /Audio/_Shitmed/Medical/Surgery/hemostat1.ogg
+    - type: Hemostat
+    - type: Tweezers # Shitmed
+    - type: Tending # Shitmed
+
+- match:
+  - id: Saw
+  action: merge
+  data:
+    components:
+    # Shitmed Change
+    - type: BoneSaw
+    - type: SurgeryTool
+      startSound:
+        path: /Audio/_Shitmed/Medical/Surgery/saw.ogg
+
+- match:
+  - id: SawImprov
+  action: merge
+  data:
+    components:
+    - type: BoneSaw # Shitmed
+      speed: 0.5
+
+- match:
+  - id: SawElectric
+  action: merge
+  data:
+    components:
+    - type: BoneSaw # Shitmed
+      speed: 1.5
+
+- match:
+  - id: SawAdvanced
+  action: merge
+  data:
+    components:
+    - type: BoneSaw # Shitmed
+      speed: 2
+
+
+#### NEW ITEMS ####
+- match:
+  - id: Bonesetter
+  action: mergeadd
+  data:
+# Bone setter - Shitmed Change
+    type: entity
+    parent: BaseToolSurgery
+    name: bone setter
+    description: Used for setting bones back into place.
+    components:
+    - type: Sprite
+      sprite: _Shitmed/Objects/Specific/Medical/Surgery/bonesetter.rsi
+      state: bonesetter
+    - type: Item
+      sprite: _Shitmed/Objects/Specific/Medical/Surgery/bonesetter.rsi
+    - type: BoneSetter
+
+- match:
+  - id: BoneGel
+  action: mergeadd
+  data:
+  # Bone Gel - Shitmed Change
+    type: entity
+    parent: BaseToolSurgery
+    id: BoneGel
+    name: bottle of bone gel
+    description: A container for bone gel that often needs to be refilled from a specialized machine.
+    components:
+    - type: Sprite
+      sprite: _Shitmed/Objects/Specific/Medical/Surgery/bone-gel.rsi
+      state: bone-gel
+    - type: BoneGel
+
+- match:
+  - id: EnergyCautery
+  action: mergeadd
+  data:
+    type: entity
+    name: searing tool
+    parent: Cautery
+    description: A cautery with an energy tip, also serves as a drill in its powered state.
+    components:
+    - type: Sprite
+      sprite: _Shitmed/Objects/Specific/Medical/Surgery/e-cautery.rsi
+      state: e-cautery-on
+    - type: Item
+      sprite: _Shitmed/Objects/Specific/Medical/Surgery/e-cautery.rsi
+      inhandVisuals:
+        left:
+        - state: inhand-left-on
+        right:
+        - state: inhand-right-on
+    - type: SurgeryTool
+      startSound:
+        path: /Audio/_Shitmed/Medical/Surgery/cautery1.ogg
+      endSound:
+        path: /Audio/_Shitmed/Medical/Surgery/cautery2.ogg
+    - type: MeleeWeapon
+      damage:
+        types:
+          Piercing: 10
+          Heat: 1
+    - type: Cautery
+      speed: 1.5
+    - type: Drill
+      speed: 1.5
+
+- match:
+  - id: EnergyScalpel
+  action: mergeadd
+  data:
+    type: entity
+    name: energy scalpel
+    parent: Scalpel
+    description: A scalpel which uses an energy blade, also serves as a saw in its powered state.
+    components:
+    - type: Sprite
+      sprite: _Shitmed/Objects/Specific/Medical/Surgery/e-scalpel.rsi
+      state: e-scalpel-on
+    - type: Item
+      sprite: _Shitmed/Objects/Specific/Medical/Surgery/e-scalpel.rsi
+      inhandVisuals:
+        left:
+        - state: inhand-left-on
+        right:
+        - state: inhand-right-on
+    - type: SurgeryTool
+      startSound:
+        path: /Audio/_Shitmed/Medical/Surgery/scalpel1.ogg
+      endSound:
+        path: /Audio/_Shitmed/Medical/Surgery/scalpel2.ogg
+    - type: MeleeWeapon
+      damage:
+        types:
+          Slash: 10
+          Heat: 1
+    - type: Scalpel
+      speed: 1.5
+    - type: BoneSaw
+      speed: 1.5
+
+- match:
+  - id: AdvancedRetractor
+  action: mergeadd
+  data:
+    type: entity
+    name: mechanical pinches
+    parent: Retractor
+    description: A retractor with mechanical pinches, also serves as a hemostat in its powered state.
+    components:
+    - type: Sprite
+      sprite: _Shitmed/Objects/Specific/Medical/Surgery/adv-retractor.rsi
+      state: adv-retractor-on
+    - type: Item
+      sprite: _Shitmed/Objects/Specific/Medical/Surgery/adv-retractor.rsi
+      inhandVisuals:
+        left:
+        - state: inhand-left-on
+        right:
+        - state: inhand-right-on
+    - type: SurgeryTool
+      startSound:
+        path: /Audio/_Shitmed/Medical/Surgery/retractor1.ogg
+      endSound:
+        path: /Audio/_Shitmed/Medical/Surgery/retractor2.ogg
+    - type: MeleeWeapon
+      damage:
+        types:
+          Slash: 6.5
+          Heat: 1
+    - type: Hemostat
+      speed: 1.5
+    - type: Retractor
+      speed: 1.5
+    - type: Tweezers
+      speed: 1.5
+    - type: Tending
+      speed: 1.5
+
+- match:
+  - id: OmnimedTool
+  action: mergeadd
+  data:
+    type: entity
+    name: medical multitool
+    id: OmnimedTool
+    parent: BaseToolSurgery
+    components:
+    - type: Sprite
+      sprite: _Shitmed/Objects/Specific/Medical/Surgery/omnimed.rsi
+      state: omnimed
+    - type: Item
+      sprite: _Shitmed/Objects/Specific/Medical/Surgery/omnimed.rsi
+    - type: SurgeryTool
+      startSound:
+        path: /Audio/_Shitmed/Medical/Surgery/saw.ogg
+    - type: Hemostat
+      speed: 2
+    - type: Scalpel
+      speed: 2
+    - type: Drill
+      speed: 2
+    - type: BoneSetter
+      speed: 2
+    - type: Retractor
+      speed: 2
+    - type: Cautery
+      speed: 2
+    - type: BoneGel
+      speed: 2
+    - type: BoneSaw
+      speed: 2
+    - type: Tweezers
+      speed: 2
+    - type: Tending
+      speed: 2
+
+- match:
+  - id: OmnimedToolSyndie
+  action: mergeadd
+  data:
+    type: entity
+    parent: [ OmnimedTool, BaseSyndicateContraband ]
+    components:
+    - type: Sprite
+      state: evil
+    - type: Item
+      size: Small
+      heldPrefix: evil
+
+
+---
+file: Resources/Prototypes/Recipes/Lathes/medical.yml
+- match:
+  - id: BoneGel
+  action: mergeadd
+  data:
+    type: latheRecipe
+    result: BoneGel
+    completetime: 2
+    materials:
+      Plastic: 200
+      Plasma: 200
+
+- match:
+  - id: MedicalCyberneticEyes
+  action: mergeadd
+  data:
+    type: latheRecipe
+    result: MedicalCyberneticEyes
+    completetime: 5
+    materials:
+      Steel: 1000
+      Glass: 500
+      Plastic: 500
+      Gold: 300
+      Silver: 300
+
+- match:
+  - id: EnergyScalpel
+  action: mergeadd
+  data:
+    type: latheRecipe
+    result: EnergyScalpel
+    completetime: 2
+    materials:
+      Steel: 600
+      Glass: 150
+      Gold: 150
+
+- match:
+  - id: AdvancedRetractor
+  action: mergeadd
+  data:
+    type: latheRecipe
+    result: AdvancedRetractor
+    completetime: 2
+    materials:
+      Steel: 600
+      Glass: 150
+      Silver: 150
+
+- match:
+  - id: EnergyCautery
+  action: mergeadd
+  data:
+    type: latheRecipe
+    result: EnergyCautery
+    completetime: 2
+    materials:
+      Steel: 600
+      Glass: 150
+      Plasma: 150
+
+- match:
+  - id: DefibrillatorCompact
+  action: mergeadd
+  data:
+    type: latheRecipe
+    result: DefibrillatorCompact
+    completetime: 2
+    materials:
+      Steel: 1000
+      Glass: 350
+      Plastic: 250
+      Gold: 250
+      Silver: 150
+
+--- # default loadout
+file: Resources/Prototypes/borg_types.yml
+- match:
+    -id: medical
+  action: merge
+  data:
+    defaultModules:
+    - BorgModuleSurgery # Mono
+
+---
+file: Resources/Prototypes/Recipes/Lathes/Packs/robotics.yml
+- match:
+    -id: BorgModulesStatic
+  action: merge
+  data:
+    recipes:
+    - BorgModuleSurgery # Shitmed Change

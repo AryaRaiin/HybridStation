@@ -1,0 +1,72 @@
+# SPDX-FileCopyrightText: 2024 AndresE55
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 Salvantrix
+# SPDX-FileCopyrightText: 2025 Ark
+# SPDX-FileCopyrightText: 2025 Blu
+# SPDX-FileCopyrightText: 2025 Redrover1760
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+#security
+- type: storeCategory
+  id: UplinkSecurityBundles
+  name: store-category-secbundles
+
+- type: storeCategory
+  id: UplinkSecurityHardsuits
+  name: store-category-sechardsuits
+
+- type: storeCategory
+  id: UplinkSecurityWeapons
+  name: store-category-secweapons
+
+- type: storeCategory
+  id: UplinkSecurityAmmo
+  name: store-category-secammo
+
+- type: storeCategory
+  id: UplinkSecurityUtility
+  name: store-category-secutility
+
+- type: storeCategory
+  id: UplinkSecurityExplosives
+  name: store-category-secexplosives
+# mono edit
+
+- type: storeCategory
+  id: UplinkSecurityVouchers
+  name: store-category-secvouchers
+
+# MARK: Rogue
+- type: storeCategory
+  id: UplinkPirateBundles
+  name: store-category-piratebundles
+
+- type: storeCategory
+  id: UplinkPirateEquipment
+  name: store-category-pirateequipment
+
+- type: storeCategory
+  id: UplinkPirateWeapons
+  name: store-category-pirateweapons
+
+- type: storeCategory
+  id: UplinkPirateAmmo
+  name: store-category-pirateammo
+
+- type: storeCategory
+  id: UplinkPirateMedical
+  name: store-category-piratemedical
+
+- type: storeCategory
+  id: UplinkPirateUtility
+  name: store-category-pirateutility
+
+- type: storeCategory
+  id: UplinkPirateExplosives
+  name: store-category-pirateexplosives
+
+#- type: storeCategory
+#  id: UplinkPirateGambling
+#  name: store-category-pirategambling
+# mono edit end

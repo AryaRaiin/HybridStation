@@ -1,3 +1,15 @@
+# SPDX-FileCopyrightText: 2023 Leon Friedrich
+# SPDX-FileCopyrightText: 2023 Nemanja
+# SPDX-FileCopyrightText: 2023 Scribbles0
+# SPDX-FileCopyrightText: 2023 TsjipTsjip
+# SPDX-FileCopyrightText: 2024 Flareguy
+# SPDX-FileCopyrightText: 2024 Kara
+# SPDX-FileCopyrightText: 2024 Mr. 27
+# SPDX-FileCopyrightText: 2024 metalgearsloth
+# SPDX-FileCopyrightText: 2025 core-mene
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 meta:
   format: 6
   postmapinit: false
@@ -6284,14 +6296,14 @@ entities:
     - type: Transform
       pos: 39.5,-24.5
       parent: 1
-- proto: MagazinePistolSubMachineGunEmpty
+- proto: Magazine9x19mmSubMachineGunEmpty
   entities:
   - uid: 473
     components:
     - type: Transform
       pos: 4.945919,4.3761344
       parent: 1
-- proto: MagazinePistolSubMachineGunTopMountedEmpty
+- proto: Magazine46x30mmSubMachineGunTopMountedEmpty
   entities:
   - uid: 1698
     components:
@@ -6303,7 +6315,7 @@ entities:
     - type: Transform
       pos: 120.48175,-7.394827
       parent: 1
-- proto: MagazineShotgunEmpty
+- proto: Magazine12_gaugeEmpty
   entities:
   - uid: 1242
     components:

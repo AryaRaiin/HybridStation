@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2025 Blu
+# SPDX-FileCopyrightText: 2025 core-mene
+#
+# SPDX-License-Identifier: MPL-2.0
+
+- type: entity
+  parent: NFBaseBlueprintArmory
+  id: BlueprintLauncherRocket
+  name: RPG-7 Blueprint
+  description: A blueprint with a schematic of RPG-7 and the ammo for it. It can be inserted into an autolathe or a techfab.
+  components:
+  - type: Blueprint
+    providedRecipes:
+    - WeaponLauncherRocket
+    - CartridgeRocket
+
+#Pre-corpowar tech
+- type: entity
+  parent: NFBaseBlueprintArmory
+  id: BlueprintWeaponRifleNtsfLtr
+  name: NTSF-LTR-556 Blueprint
+  description: A blueprint for the recipe of the NTSF-LTR-556. It can be inserted into an autolathe or a techfab.
+  components:
+  - type: Blueprint
+    providedRecipes:
+    - WeaponRifleNtsfLtr
+
+- type: entity
+  parent: NFBaseBlueprintArmory
+  id: BlueprintWeaponSubMachineGunVectorNtsfHclm
+  name: NTSF-HCLM-45 Blueprint
+  description: A blueprint for the recipe of the NTSF-HCLM-45. It can be inserted into an autolathe or a techfab.
+  components:
+  - type: Blueprint
+    providedRecipes:
+    - WeaponSubMachineGunVectorNtsfHclm

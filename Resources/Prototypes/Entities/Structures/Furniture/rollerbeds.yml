@@ -1,3 +1,20 @@
+# SPDX-FileCopyrightText: 2022 Jacob Tong
+# SPDX-FileCopyrightText: 2022 Peptide90
+# SPDX-FileCopyrightText: 2022 Visne
+# SPDX-FileCopyrightText: 2022 Vordenburg
+# SPDX-FileCopyrightText: 2023 Nemanja
+# SPDX-FileCopyrightText: 2023 TemporalOroboros
+# SPDX-FileCopyrightText: 2023 lzk
+# SPDX-FileCopyrightText: 2024 ErhardSteinhauer
+# SPDX-FileCopyrightText: 2024 Kara
+# SPDX-FileCopyrightText: 2024 Leon Friedrich
+# SPDX-FileCopyrightText: 2024 Nairod
+# SPDX-FileCopyrightText: 2024 ShadowCommander
+# SPDX-FileCopyrightText: 2024 metalgearsloth
+# SPDX-FileCopyrightText: 2025 Solaris
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 - type: entity
   id: RollerBed
   parent: [BaseItem, BaseDeployFoldable]
@@ -10,7 +27,7 @@
       size: Normal
       heldPrefix: rollerbed
     - type: Sprite
-      sprite: Structures/Furniture/rollerbeds.rsi
+      sprite: _DV/Structures/Furniture/rollerbeds.rsi # DeltaV - Resprited some medical items
       noRot: true
       layers:
       - state: rollerbed
@@ -82,7 +99,7 @@
       price: 120
 
 - type: entity
-  parent: RollerBed
+  parent: [RollerBed, RecyclableItemSteelMedium] # Frontier: added RecyclableItemSteelMedium
   id: RollerBedSpawnFolded
   suffix: folded
   components:

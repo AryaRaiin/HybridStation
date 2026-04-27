@@ -22,7 +22,7 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 150 #excess damage (nuke?). avoid computational cost of spawning entities.
+        damage: 300 #excess damage (nuke?). avoid computational cost of spawning entities.
       behaviors:
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
@@ -31,7 +31,7 @@
           collection: WindowShatter
     - trigger:
         !type:DamageTrigger
-        damage: 75
+        damage: 150 # Mono 75->150
       behaviors:
       - !type:PlaySoundBehavior
         sound:
@@ -92,7 +92,7 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 75
+        damage: 150 # Mono
       behaviors:
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
@@ -101,7 +101,7 @@
           collection: WindowShatter
     - trigger:
         !type:DamageTrigger
-        damage: 37
+        damage: 75 # Mono 37->75
       behaviors:
       - !type:PlaySoundBehavior
         sound:
@@ -114,7 +114,7 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: StaticPrice
-    price: 22.5
+    price: 10 # Frontier: 22.5<10
 
 - type: entity
   parent: ReinforcedWindow
@@ -135,7 +135,7 @@
     - Window
   - type: IconSmooth
     mode: Diagonal
-    key: windows
+    key: walls # Frontier: windows<walls
     base: state
   - type: Icon
     sprite: Structures/Windows/reinforced_window_diagonal.rsi

@@ -42,7 +42,7 @@
           - FireAxe
   - type: Lock
   - type: AccessReader
-    access: [["Atmospherics"], ["Command"]]
+#    access: [["Atmospherics"], ["Command"]]
 
 - type: entity
   parent: FireAxeCabinet

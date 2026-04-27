@@ -20,11 +20,21 @@
       - id: FoodPacketSusTrash
       - id: FoodPacketSyndiTrash
       - id: BrokenBottle
+      - id: FoodFrozenPopsicleTrash # Frontier
+      - id: FoodFrozenSnowconeTrash # Frontier
+      - id: FoodTinBeansTrash # Frontier
+      - id: FoodTinPeachesTrash # Frontier
+      - id: FoodTinMRETrash # Frontier
+      - id: MysteryFigureBoxTrash # Frontier
+      - id: FoodPSBTrash # Frontier
     - !type:GroupSelector
       weight: 5
       children:
       - id: FoodPlateSmallTrash
       - id: FoodBowlBigTrash
+      - id: TrashBananaPeel # Frontier
+      - id: FoodCornTrash # Frontier
+      - id: TrashNapkin # Frontier
 
 - type: entity
   name: Trash Spawner

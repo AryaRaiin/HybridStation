@@ -1,3 +1,62 @@
+// SPDX-FileCopyrightText: 2019 L.E.D
+// SPDX-FileCopyrightText: 2019 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2019 PrPleGoo
+// SPDX-FileCopyrightText: 2019 Silver
+// SPDX-FileCopyrightText: 2020 ColdAutumnRain
+// SPDX-FileCopyrightText: 2020 Hugal31
+// SPDX-FileCopyrightText: 2020 Injazz
+// SPDX-FileCopyrightText: 2020 Markus W. Halvorsen
+// SPDX-FileCopyrightText: 2020 Profane McBane
+// SPDX-FileCopyrightText: 2020 Qustinnus
+// SPDX-FileCopyrightText: 2020 Swept
+// SPDX-FileCopyrightText: 2020 Tomeno
+// SPDX-FileCopyrightText: 2020 Víctor Aguilera Puerto
+// SPDX-FileCopyrightText: 2020 chairbender
+// SPDX-FileCopyrightText: 2020 derek
+// SPDX-FileCopyrightText: 2021 20kdc
+// SPDX-FileCopyrightText: 2021 Acruid
+// SPDX-FileCopyrightText: 2021 Clyybber
+// SPDX-FileCopyrightText: 2021 Galactic Chimp
+// SPDX-FileCopyrightText: 2021 Javier Guardia Fernández
+// SPDX-FileCopyrightText: 2021 Metal Gear Sloth
+// SPDX-FileCopyrightText: 2021 Paul
+// SPDX-FileCopyrightText: 2021 Paul Ritter
+// SPDX-FileCopyrightText: 2021 Remie Richards
+// SPDX-FileCopyrightText: 2021 T-Stalker
+// SPDX-FileCopyrightText: 2021 Vera Aguilera Puerto
+// SPDX-FileCopyrightText: 2021 Wrexbe
+// SPDX-FileCopyrightText: 2021 collinlunn
+// SPDX-FileCopyrightText: 2021 metalgearsloth
+// SPDX-FileCopyrightText: 2021 mirrorcult
+// SPDX-FileCopyrightText: 2022 Fishfish458
+// SPDX-FileCopyrightText: 2022 Rane
+// SPDX-FileCopyrightText: 2022 ShadowCommander
+// SPDX-FileCopyrightText: 2022 fishfish458 <fishfish458>
+// SPDX-FileCopyrightText: 2022 wrexbe
+// SPDX-FileCopyrightText: 2023 Checkraze
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 KP
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Menshin
+// SPDX-FileCopyrightText: 2023 Tyzemol
+// SPDX-FileCopyrightText: 2023 Visne
+// SPDX-FileCopyrightText: 2023 deltanedas
+// SPDX-FileCopyrightText: 2024 0x6273
+// SPDX-FileCopyrightText: 2024 AJCM-git
+// SPDX-FileCopyrightText: 2024 Callmore
+// SPDX-FileCopyrightText: 2024 Jezithyr
+// SPDX-FileCopyrightText: 2024 Kara
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 Simon
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 TemporalOroboros
+// SPDX-FileCopyrightText: 2024 slarticodefast
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 SlamBamActionman
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Numerics;
 using Content.Server.Stack;
 using Content.Server.Stunnable;
@@ -21,6 +80,8 @@ using Robust.Shared.Physics.Components;
 using Robust.Shared.Player;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
+using Content.Shared.Body.Systems; // Shitmed Change
+using Content.Shared._Shitmed.Body.Events; // Shitmed Change
 
 namespace Content.Server.Hands.Systems
 {
@@ -33,6 +94,7 @@ namespace Content.Server.Hands.Systems
         [Dependency] private readonly SharedTransformSystem _transformSystem = default!;
         [Dependency] private readonly PullingSystem _pullingSystem = default!;
         [Dependency] private readonly ThrowingSystem _throwingSystem = default!;
+        [Dependency] private readonly SharedBodySystem _bodySystem = default!; // Shitmed Change
 
         private EntityQuery<PhysicsComponent> _physicsQuery;
 
@@ -55,6 +117,8 @@ namespace Content.Server.Hands.Systems
             SubscribeLocalEvent<HandsComponent, ComponentGetState>(GetComponentState);
 
             SubscribeLocalEvent<HandsComponent, BeforeExplodeEvent>(OnExploded);
+            SubscribeLocalEvent<HandsComponent, BodyPartEnabledEvent>(HandleBodyPartEnabled); // Shitmed Change
+            SubscribeLocalEvent<HandsComponent, BodyPartDisabledEvent>(HandleBodyPartDisabled); // Shitmed Change
 
             SubscribeLocalEvent<HandsComponent, DropHandItemsEvent>(OnDropHandItems);
 
@@ -107,6 +171,7 @@ namespace Content.Server.Hands.Systems
             args.Handled = true; // no shove/stun.
         }
 
+        /* Shitmed START override
         private void HandleBodyPartAdded(Entity<HandsComponent> ent, ref BodyPartAddedEvent args)
         {
             if (args.Part.Comp.PartType != BodyPartType.Hand)
@@ -131,7 +196,52 @@ namespace Content.Server.Hands.Systems
                 return;
 
             RemoveHand(uid, args.Slot);
+        }*/ //Shitmed END override
+        // Shitmed Change Start
+        private void TryAddHand(EntityUid uid, HandsComponent component, Entity<BodyPartComponent> part, string slot)
+        {
+            if (part.Comp is null
+                || part.Comp.PartType != BodyPartType.Hand)
+                return;
+
+            // If this annoys you, which it should.
+            // Ping Smugleaf.
+            var location = part.Comp.Symmetry switch
+            {
+                BodyPartSymmetry.None => HandLocation.Middle,
+                BodyPartSymmetry.Left => HandLocation.Left,
+                BodyPartSymmetry.Right => HandLocation.Right,
+                _ => throw new ArgumentOutOfRangeException(nameof(part.Comp.Symmetry))
+            };
+
+            if (part.Comp.Enabled
+                && _bodySystem.TryGetParentBodyPart(part, out var _, out var parentPartComp)
+                && parentPartComp.Enabled)
+                AddHand(uid, slot, location);
         }
+        private void HandleBodyPartAdded(EntityUid uid, HandsComponent component, ref BodyPartAddedEvent args)
+        {
+            TryAddHand(uid, component, args.Part, args.Slot);
+        }
+        private void HandleBodyPartRemoved(EntityUid uid, HandsComponent component, ref BodyPartRemovedEvent args)
+        {
+            if (args.Part.Comp is null
+                || args.Part.Comp.PartType != BodyPartType.Hand)
+                return;
+            RemoveHand(uid, args.Slot);
+        }
+        private void HandleBodyPartEnabled(EntityUid uid, HandsComponent component, ref BodyPartEnabledEvent args) =>
+            TryAddHand(uid, component, args.Part, SharedBodySystem.GetPartSlotContainerId(args.Part.Comp.ParentSlot?.Id ?? string.Empty));
+        private void HandleBodyPartDisabled(EntityUid uid, HandsComponent component, ref BodyPartDisabledEvent args)
+        {
+            if (TerminatingOrDeleted(uid)
+                || args.Part.Comp is null
+                || args.Part.Comp.PartType != BodyPartType.Hand)
+                return;
+
+            RemoveHand(uid, SharedBodySystem.GetPartSlotContainerId(args.Part.Comp.ParentSlot?.Id ?? string.Empty));
+        }
+        // Shitmed Change End
 
         #region interactions
 

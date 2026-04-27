@@ -4,7 +4,7 @@
     sprite: Objects/Specific/Janitorial/janitorial.rsi
     state: cleaner
   product: CrateServiceJanitorialSupplies
-  cost: 560
+  cost: 2500 # Frontier: 560<2500
   category: cargoproduct-category-name-service
   group: market
 
@@ -30,6 +30,7 @@
 
 - type: cargoProduct
   id: ServiceLightsHoliday
+  abstract: true # Frontier
   icon:
     sprite: Objects/Power/light_bulb.rsi
     state: normal
@@ -60,6 +61,7 @@
 
 - type: cargoProduct
   id: ServiceTheatre
+  abstract: true # Frontier
   icon:
     sprite: Clothing/Mask/mime.rsi
     state: icon
@@ -70,6 +72,7 @@
 
 - type: cargoProduct
   id: ServiceSmokeables
+  abstract: true # Frontier
   icon:
     sprite: Objects/Consumable/Smokeables/Cigarettes/Cartons/green.rsi
     state: icon
@@ -110,6 +113,7 @@
 
 - type: cargoProduct
   id: ServicePersonnel
+  abstract: true # Frontier
   icon:
     sprite: Objects/Misc/id_cards.rsi
     state: default
@@ -140,6 +144,7 @@
 
 - type: cargoProduct
   id: ServiceSodaDispenser
+  abstract: true # Frontier
   icon:
     sprite: Objects/Consumable/Drinks/generic_jug.rsi
     state: icon
@@ -150,6 +155,7 @@
 
 - type: cargoProduct
   id: ServiceBoozeDispenser
+  abstract: true # Frontier
   icon:
     sprite: Objects/Consumable/Drinks/generic_jug.rsi
     state: icon
@@ -170,6 +176,7 @@
 
 - type: cargoProduct
   id: ServiceJanitorBiosuit
+  abstract: true # Frontier
   icon:
     sprite: Clothing/Head/Hoods/Bio/janitor.rsi
     state: icon
@@ -210,6 +217,7 @@
 
 - type: cargoProduct
   id: JanitorExplosive
+  abstract: true # Frontier
   icon:
     sprite: Clothing/Head/Helmets/janitor_bombsuit.rsi
     state: icon
@@ -224,7 +232,7 @@
     sprite: Objects/Specific/Janitorial/janitorial_cart.rsi
     state: icon-cart
   product: JanitorialTrolley
-  cost: 300
+  cost: 1000
   category: cargoproduct-category-name-service
   group: market
 

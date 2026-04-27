@@ -28,6 +28,10 @@ namespace Content.Client.Research.UI
             {
                 SendMessage(new DiskConsolePrintDiskMessage());
             };
+            _menu.OnPrintRareButtonPressed += () => // Frontier: Rare disk
+            {
+                SendMessage(new DiskConsolePrintRareDiskMessage());
+            };
         }
 
         protected override void UpdateState(BoundUserInterfaceState state)

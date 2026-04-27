@@ -1,4 +1,12 @@
-﻿using Content.Shared.Clothing.Components;
+﻿// SPDX-FileCopyrightText: 2023 Chronophylos
+// SPDX-FileCopyrightText: 2023 Nemanja
+// SPDX-FileCopyrightText: 2024 beck-thompson
+// SPDX-FileCopyrightText: 2025 Zachary Higgs
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using Content.Shared.Clothing.Components;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Examine;
@@ -48,7 +56,9 @@ public abstract class SharedArmorSystem : EntitySystem
         if (TryComp<MaskComponent>(uid, out var mask) && mask.IsToggled)
             return;
 
-        args.Args.Damage = DamageSpecifier.ApplyModifierSet(args.Args.Damage, component.Modifiers);
+        //args.Args.Damage = DamageSpecifier.ApplyModifierSet(args.Args.Damage, component.Modifiers);
+        args.Args.Damage = DamageSpecifier.ApplyModifierSet(args.Args.Damage,
+            DamageSpecifier.PenetrateArmor(component.Modifiers, args.Args.ArmorPenetration)); // Goob edit
     }
 
     private void OnBorgDamageModify(EntityUid uid, ArmorComponent component,
@@ -57,7 +67,9 @@ public abstract class SharedArmorSystem : EntitySystem
         if (TryComp<MaskComponent>(uid, out var mask) && mask.IsToggled)
             return;
 
-        args.Args.Damage = DamageSpecifier.ApplyModifierSet(args.Args.Damage, component.Modifiers);
+        //args.Args.Damage = DamageSpecifier.ApplyModifierSet(args.Args.Damage, component.Modifiers);
+        args.Args.Damage = DamageSpecifier.ApplyModifierSet(args.Args.Damage, 
+            DamageSpecifier.PenetrateArmor(component.Modifiers, args.Args.ArmorPenetration)); // Goob edit
     }
 
     private void OnArmorVerbExamine(EntityUid uid, ArmorComponent component, GetVerbsEvent<ExamineVerb> args)

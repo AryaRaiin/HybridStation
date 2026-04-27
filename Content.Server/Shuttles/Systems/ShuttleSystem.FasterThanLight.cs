@@ -1,3 +1,41 @@
+// SPDX-FileCopyrightText: 2022 Justin Trotter
+// SPDX-FileCopyrightText: 2022 LittleBuilderJane
+// SPDX-FileCopyrightText: 2022 SpaceManiac
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2023 Cheackraze
+// SPDX-FileCopyrightText: 2023 Checkraze
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Kevin Zheng
+// SPDX-FileCopyrightText: 2023 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2023 TheEmber
+// SPDX-FileCopyrightText: 2023 Tom Leys
+// SPDX-FileCopyrightText: 2023 Varen
+// SPDX-FileCopyrightText: 2023 Visne
+// SPDX-FileCopyrightText: 2023 deltanedas
+// SPDX-FileCopyrightText: 2023 deltanedas <@deltanedas:kde.org>
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Gansu
+// SPDX-FileCopyrightText: 2024 IProduceWidgets
+// SPDX-FileCopyrightText: 2024 Leon Friedrich
+// SPDX-FileCopyrightText: 2024 Mervill
+// SPDX-FileCopyrightText: 2024 MilenVolf
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 PopGamer46
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 TemporalOroboros
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 checkraze
+// SPDX-FileCopyrightText: 2024 no
+// SPDX-FileCopyrightText: 2024 slarticodefast
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 Ilya246
+// SPDX-FileCopyrightText: 2025 Princess Cheeseballs
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 gus
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
@@ -26,6 +64,9 @@ using Robust.Shared.Physics.Components;
 using Robust.Shared.Player;
 using Robust.Shared.Utility;
 using FTLMapComponent = Content.Shared.Shuttles.Components.FTLMapComponent;
+using Content.Server._NF.Shuttles.Components; // Frontier: FTL knockdown immunity
+using Content.Server.Salvage.Expeditions; // Frontier?
+using Content.Shared._Mono.Ships; // Mono
 
 namespace Content.Server.Shuttles.Systems;
 
@@ -45,10 +86,16 @@ public sealed partial class ShuttleSystem
         Params = AudioParams.Default.WithVolume(-5f),
     };
 
+    //MONO START
+    private const float MassConstant = 50f; // Arbitrary, at this value massMultiplier = 0.65
+    private const float MassMultiplierMin = 0.5f;
+    private const float MassMultiplierMax = 5f;
+    //MONO END
+
     public float DefaultStartupTime;
     public float DefaultTravelTime;
     public float DefaultArrivalTime;
-    private float FTLCooldown;
+    //private float FTLCooldown; // Mono: ftl drive sets cooldown
     public float FTLMassLimit;
     private TimeSpan _hyperspaceKnockdownTime = TimeSpan.FromSeconds(5);
 
@@ -60,12 +107,26 @@ public sealed partial class ShuttleSystem
     /// <summary>
     /// Space between grids within hyperspace.
     /// </summary>
-    private const float Buffer = 5f;
+    //private const float Buffer = 5f;
+    private const float Buffer = 100f; // UNKNOWN
 
     /// <summary>
     /// How many times we try to proximity warp close to something before falling back to map-wideAABB.
     /// </summary>
-    private const int FTLProximityIterations = 5;
+    //private const int FTLProximityIterations = 5;
+    private const int FTLProximityIterations = 15; // Frontier: 5<15
+
+    // FRONTIER START: coordinate rollover
+    /// <summary>
+    /// Maximum X coordinate before rolling over.
+    /// </summary>
+    private const float MaxCoord = 20000f;
+
+    /// <summary>
+    /// Amount to subtract from X coordinate on rollover.
+    /// </summary>
+    private const float CoordRollover = 40000f;
+    // FRONTIER END: coordinate rollover
 
     private readonly HashSet<EntityUid> _lookupEnts = new();
     private readonly HashSet<EntityUid> _immuneEnts = new();
@@ -87,7 +148,7 @@ public sealed partial class ShuttleSystem
         _cfg.OnValueChanged(CCVars.FTLStartupTime, time => DefaultStartupTime = time, true);
         _cfg.OnValueChanged(CCVars.FTLTravelTime, time => DefaultTravelTime = time, true);
         _cfg.OnValueChanged(CCVars.FTLArrivalTime, time => DefaultArrivalTime = time, true);
-        _cfg.OnValueChanged(CCVars.FTLCooldown, time => FTLCooldown = time, true);
+        //_cfg.OnValueChanged(CCVars.FTLCooldown, time => FTLCooldown = time, true); Monolith FTL Drive sets cooldown
         _cfg.OnValueChanged(CCVars.FTLMassLimit, time => FTLMassLimit = time, true);
         _cfg.OnValueChanged(CCVars.HyperspaceKnockdownTime, time => _hyperspaceKnockdownTime = TimeSpan.FromSeconds(time), true);
     }
@@ -241,6 +302,17 @@ public sealed partial class ShuttleSystem
             reason = Loc.GetString("shuttle-console-prevent");
             return false;
         }
+
+        // FRONTIER? START
+        // Check if the shuttle is in an expedition
+        if (TryComp<TransformComponent>(shuttleUid, out var xform) &&
+            xform.MapUid != null &&
+            HasComp<SalvageExpeditionComponent>(xform.MapUid))
+        {
+            reason = Loc.GetString("shuttle-console-in-expedition");
+            return false;
+        }
+        // FRONTIER? END
 
         var ev = new ConsoleFTLAttemptEvent(shuttleUid, false, string.Empty);
         RaiseLocalEvent(shuttleUid, ref ev, true);
@@ -453,6 +525,21 @@ public sealed partial class ShuttleSystem
 
         _console.RefreshShuttleConsoles(entity.Owner);
     }
+
+    // Mono Begin
+    private void MassAdjustFTLCooldown(PhysicsComponent shuttlePhysics, FTLDriveComponent drive, out float massAdjustedCooldown)
+    {
+        if (drive.MassAffectedDrive == false)
+        {
+            massAdjustedCooldown = drive.Cooldown;
+            return;
+        }
+        var adjustedMass = shuttlePhysics.Mass * drive.DriveMassMultiplier;
+        var massMultiplier = float.Log(float.Sqrt(adjustedMass / MassConstant + float.E));
+        massMultiplier = float.Clamp(massMultiplier, MassMultiplierMin, MassMultiplierMax);
+        massAdjustedCooldown = drive.Cooldown * massMultiplier;
+    }
+    // Mono End
 
     /// <summary>
     ///  Shuttle arrived.
@@ -695,9 +782,11 @@ public sealed partial class ShuttleSystem
         EntityUid shuttleUid,
         ShuttleComponent component,
         EntityUid targetUid,
-        string? priorityTag = null)
+        string? priorityTag = null,
+        DockType dockType = DockType.Airlock) // Frontier
     {
-        return TryFTLDock(shuttleUid, component, targetUid, out _, priorityTag);
+        return TryFTLDock(shuttleUid, component, targetUid, out _, priorityTag,
+            dockType); // Frontier: add dockType
     }
 
     /// <summary>
@@ -709,7 +798,8 @@ public sealed partial class ShuttleSystem
         ShuttleComponent component,
         EntityUid targetUid,
         [NotNullWhen(true)] out DockingConfig? config,
-        string? priorityTag = null)
+        string? priorityTag = null,
+        DockType dockType = DockType.Airlock) // Frontier
     {
         config = null;
 
@@ -721,7 +811,8 @@ public sealed partial class ShuttleSystem
             return false;
         }
 
-        config = _dockSystem.GetDockingConfig(shuttleUid, targetUid, priorityTag);
+        config = _dockSystem.GetDockingConfig(shuttleUid, targetUid, priorityTag,
+            dockType); // Frontier: add dockType
 
         if (config != null)
         {
@@ -952,6 +1043,8 @@ public sealed partial class ShuttleSystem
 
         foreach (var fixture in manager.Fixtures.Values)
         {
+            if (xform.MapID == _ticker.DefaultMap) { break; } //Frontier - FTL is too buggy to let it just fucking gib people wtf - so we disable for frontier's z-level
+
             if (!fixture.Hard)
                 continue;
 

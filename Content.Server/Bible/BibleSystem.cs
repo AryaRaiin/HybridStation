@@ -223,7 +223,10 @@ namespace Content.Server.Bible
             if (component.AlreadySummoned || component.SpecialItemPrototype == null)
                 return;
             if (component.RequiresBibleUser && !HasComp<BibleUserComponent>(user))
+            {
+                _popupSystem.PopupEntity(Loc.GetString("bible-summon-request-failed"), user, user, PopupType.Small); // Frontier: better summon feedback
                 return;
+            }
             if (!Resolve(user, ref position))
                 return;
             if (component.Deleted || Deleted(uid))

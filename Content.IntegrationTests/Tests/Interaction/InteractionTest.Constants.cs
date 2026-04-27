@@ -41,3 +41,4 @@ public abstract partial class InteractionTest
     protected static readonly EntProtoId Needle = "WeaponMeleeNeedle";
     protected static readonly ProtoId<StackPrototype> InflatableWallStack = "InflatableWall";
 }
+

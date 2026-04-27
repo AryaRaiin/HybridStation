@@ -8,6 +8,8 @@ comp-pda-ui-blank = ID:
 
 comp-pda-ui-owner = Owner: [color=white]{$actualOwnerName}[/color]
 
+comp-pda-ui-owner-with-company = Owner: [color=white]{$actualOwnerName}[/color] [color={$companyColor}]({$companyName})[/color]
+
 comp-pda-io-program-list-button = Programs
 
 comp-pda-io-settings-button = Settings
@@ -28,7 +30,8 @@ comp-pda-ui-footer = Personal Digital Assistant
 
 comp-pda-ui-station = Station: [color=white]{$station}[/color]
 
-comp-pda-ui-station-alert-level = Alert Level: [color={ $color }]{ $level }[/color]
+# Frontier: add "Sector"
+comp-pda-ui-station-alert-level = Sector Alert Level: [color={ $color }]{ $level }[/color]
 
 comp-pda-ui-station-alert-level-instructions = Instructions: [color=white]{ $instructions }[/color]
 

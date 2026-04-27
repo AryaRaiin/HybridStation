@@ -47,7 +47,12 @@ public sealed class EmagSystem : EntitySystem
         if (!args.CanReach || args.Target is not { } target)
             return;
 
-        args.Handled = TryEmagEffect((uid, comp), args.User, target);
+        // Frontier: unemag
+        if (comp.Demag)
+            args.Handled = TryUnemagEffect((uid, comp), args.User, target);
+        else
+            args.Handled = TryEmagEffect((uid, comp), args.User, target);
+        // End Frontier
     }
 
     /// <summary>
@@ -96,7 +101,57 @@ public sealed class EmagSystem : EntitySystem
         return emaggedEvent.Handled;
     }
 
+    // Frontier: demag
     /// <summary>
+    /// Does an unemag effect on a specified entity
+    /// </summary>
+    public bool TryUnemagEffect(Entity<EmagComponent?> ent, EntityUid user, EntityUid target)
+    {
+        if (!Resolve(ent, ref ent.Comp, false))
+            return false;
+
+        if (!HasComp<EmaggedComponent>(target))
+            return false;
+
+        TryComp<LimitedChargesComponent>(ent, out var charges);
+        if (_charges.IsEmpty(ent, charges))
+        {
+            _popup.PopupClient(Loc.GetString("emag-no-charges"), user, user);
+            return false;
+        }
+
+        var emaggedEvent = new GotUnEmaggedEvent(user, ent.Comp.EmagType);
+        RaiseLocalEvent(target, ref emaggedEvent);
+
+        if (!emaggedEvent.Handled)
+            return false;
+
+        _popup.PopupPredicted(Loc.GetString("emag-success", ("target", Identity.Entity(target, EntityManager))), user, user, PopupType.Medium);
+
+        _audio.PlayPredicted(ent.Comp.EmagSound, ent, ent);
+
+        _adminLogger.Add(LogType.Emag, LogImpact.Medium, $"{ToPrettyString(user):player} demagged {ToPrettyString(target):target} with flag(s): {ent.Comp.EmagType}");
+
+        if (charges != null && emaggedEvent.Handled)
+            _charges.UseCharge(ent, charges);
+
+        if (!emaggedEvent.Repeatable)
+        {
+            // Query the emag component after the event is handled in case anything changes during the event.
+            if (TryComp<EmaggedComponent>(target, out var emaggedComp))
+            {
+                emaggedComp.EmagType &= ~ent.Comp.EmagType;
+                if (emaggedComp.EmagType == EmagType.None)
+                    RemComp<EmaggedComponent>(target);
+                else
+                    Dirty(target, emaggedComp);
+            }
+        }
+
+        return emaggedEvent.Handled;
+    }
+    // End Frontier: demag
+
     /// Checks whether an entity has the EmaggedComponent with a set flag.
     /// </summary>
     /// <param name="target">The target entity to check for the flag.</param>
@@ -148,3 +203,8 @@ public enum EmagType
 /// <remarks>Needs to be handled in shared/client, not just the server, to actually show the emagging popup</remarks>
 [ByRefEvent]
 public record struct GotEmaggedEvent(EntityUid UserUid, EmagType Type, bool Handled = false, bool Repeatable = false);
+
+// Frontier: demag
+[ByRefEvent]
+public record struct GotUnEmaggedEvent(EntityUid UserUid, EmagType Type, bool Handled = false, bool Repeatable = false);
+// End Frontier

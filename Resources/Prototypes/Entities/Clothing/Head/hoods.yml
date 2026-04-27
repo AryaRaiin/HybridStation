@@ -115,7 +115,7 @@
     - Hair
 
 - type: entity
-  parent: ClothingHeadBase
+  parent: [ClothingHeadBase, ContrabandClothing] # Frontier: added ContrabandClothing as parent
   id: ClothingHeadHatHoodCulthood
   name: cult hood
   description: There's no cult without cult hoods.
@@ -380,7 +380,7 @@
   parent: ClothingHeadHatHoodWinterBase
   id: ClothingHeadHatHoodWinterHOS
   categories: [ HideSpawnMenu ]
-  name: head of security's winter coat hood
+  name: colonel's winter coat hood # Frontier: head of security<sheriff
   components:
   - type: Sprite
     sprite: Clothing/Head/Hoods/Coat/hoodhos.rsi

@@ -6,8 +6,10 @@
   canBeAntag: false
   icon: JobIconVisitor
   setPreference: false
-  overrideConsoleVisibility: true
-  access:
-  - Maintenance
-  extendedAccess:
-  - External
+#  overrideConsoleVisibility: true # Frontier
+  accessGroups: # Frontier
+  - GeneralAccess # Frontier
+  # access: # Frontier
+  # - Maintenance # Frontier
+  # extendedAccess: # Frontier
+  # - External # Frontier

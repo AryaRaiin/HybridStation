@@ -1,0 +1,41 @@
+# SPDX-FileCopyrightText: 2023 FoxxoTrystan
+# SPDX-FileCopyrightText: 2023 Kennedy
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 Whatstone
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 core-mene
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: vessel
+  id: Hydra
+  parent: BaseVesselAntag
+  name: Hydra
+  description: A syndicate missile corvette meant for stealthy hit and runs and harassment.
+  price: 135000
+  category: Medium
+  group: Syndicate
+  shuttlePath: /Maps/_Mono/Shuttles/Syndicate/hydra.yml
+  guidebookPage: Null
+  class:
+  - Syndicate
+  engine:
+  - Uranium
+
+- type: gameMap
+  id: Hydra
+  mapName: 'Hydra'
+  mapPath: /Maps/_Mono/Shuttles/Syndicate/hydra.yml
+  minPlayers: 0
+  stations:
+    Hydra:
+      stationProto: StandardFrontierVessel
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: 'Hydra MIL{1}'
+          nameGenerator:
+            !type:NanotrasenNameGenerator
+            prefixCreator: '14'
+        - type: StationJobs
+          availableJobs: {}

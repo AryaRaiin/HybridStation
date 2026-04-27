@@ -1,3 +1,18 @@
+// SPDX-FileCopyrightText: 2023 AlexMorgan3817
+// SPDX-FileCopyrightText: 2023 Checkraze
+// SPDX-FileCopyrightText: 2023 Dvir
+// SPDX-FileCopyrightText: 2023 FoxxoTrystan
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Slava0135
+// SPDX-FileCopyrightText: 2023 deltanedas
+// SPDX-FileCopyrightText: 2023 metalgearsloth
+// SPDX-FileCopyrightText: 2024 LordCarve
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 ark1368
+// SPDX-FileCopyrightText: 2025 point2
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Shared.Chat;
 using Content.Shared.Inventory.Events;
 using Content.Shared.Radio;
@@ -5,6 +20,9 @@ using Content.Shared.Radio.Components;
 using Content.Shared.Radio.EntitySystems;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
+using Content.Server.Speech ;// Einstein Engines
+using Content.Server._EinsteinEngines.Language; // Einstein Engines
+using Content.Shared._Mono.Radio; // Mono
 
 namespace Content.Server.Radio.EntitySystems;
 
@@ -12,6 +30,8 @@ public sealed class HeadsetSystem : SharedHeadsetSystem
 {
     [Dependency] private readonly INetManager _netMan = default!;
     [Dependency] private readonly RadioSystem _radio = default!;
+    [Dependency] private readonly LanguageSystem _language = default!; // Einstein Engines
+
 
     public override void Initialize()
     {
@@ -109,7 +129,22 @@ public sealed class HeadsetSystem : SharedHeadsetSystem
             RaiseLocalEvent(parent, ref relayEvent);
         }
 
+        /* Einstein Engines - Language begin
         if (TryComp(parent, out ActorComponent? actor))
             _netMan.ServerSendMessage(args.ChatMsg, actor.PlayerSession.Channel);
+        */
+        if (TryComp(parent, out ActorComponent? actor)){
+            var canUnderstand = _language.CanUnderstand(Transform(uid).ParentUid, args.Language.ID);
+            _netMan.ServerSendMessage(
+                canUnderstand ? args.OriginalChatMsg : args.LanguageObfuscatedChatMsg,
+                actor.PlayerSession.Channel);
+
+            // MONO START - Send radio noise event to client
+            var radioNoiseEvent = new RadioNoiseEvent(GetNetEntity(uid), args.Channel.ID);
+            RaiseNetworkEvent(radioNoiseEvent, actor.PlayerSession);
+            // MONO END
+        }
+        // Einstein Engines - Language end
+
     }
 }

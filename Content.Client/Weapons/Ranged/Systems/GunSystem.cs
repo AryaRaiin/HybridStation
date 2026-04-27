@@ -1,3 +1,25 @@
+// SPDX-FileCopyrightText: 2022 keronshb
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2023 AJCM-git
+// SPDX-FileCopyrightText: 2023 Arendian
+// SPDX-FileCopyrightText: 2023 Nemanja
+// SPDX-FileCopyrightText: 2023 deltanedas
+// SPDX-FileCopyrightText: 2023 deltanedas <@deltanedas:kde.org>
+// SPDX-FileCopyrightText: 2024 BramvanZijp
+// SPDX-FileCopyrightText: 2024 CaasGit
+// SPDX-FileCopyrightText: 2024 DrSmugleaf
+// SPDX-FileCopyrightText: 2024 Kara
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 SlamBamActionman
+// SPDX-FileCopyrightText: 2024 TemporalOroboros
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 Leon Friedrich
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 beck-thompson
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Numerics;
 using Content.Client.Animations;
 using Content.Client.Gameplay;
@@ -6,6 +28,7 @@ using Content.Client.Weapons.Ranged.Components;
 using Content.Shared.Camera;
 using Content.Shared.CombatMode;
 using Content.Shared.Damage;
+using Content.Shared.Mech.Components; // Goobstation
 using Content.Shared.Weapons.Hitscan.Components;
 using Content.Shared.Weapons.Ranged;
 using Content.Shared.Weapons.Ranged.Components;
@@ -170,6 +193,11 @@ public sealed partial class GunSystem : SharedGunSystem
 
         var entity = entityNull.Value;
 
+        // Goobstation START
+        if (TryComp<MechPilotComponent>(entity, out var mechPilot))
+            entity = mechPilot.Mech;
+        // Goobstation END
+
         if (!TryGetGun(entity, out var gunUid, out var gun))
         {
             return;
@@ -202,7 +230,7 @@ public sealed partial class GunSystem : SharedGunSystem
 
         NetEntity? target = null;
         if (_state.CurrentState is GameplayStateBase screen)
-            target = GetNetEntity(screen.GetClickedEntity(mousePos));
+            target = GetNetEntity(screen.GetDamageableClickedEntity(mousePos)); // Goob edit; GetClickedEntity -> GetDamageableClickedEntity
 
         Log.Debug($"Sending shoot request tick {Timing.CurTick} / {Timing.CurTime}");
 

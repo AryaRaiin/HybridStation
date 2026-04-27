@@ -23,6 +23,7 @@ using Robust.Shared.Containers;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 using System.Linq;
+using Content.Server._NF.Station.Systems; // Frontier
 
 namespace Content.Server.Holopad;
 
@@ -40,6 +41,7 @@ public sealed class HolopadSystem : SharedHolopadSystem
     [Dependency] private readonly PopupSystem _popupSystem = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly PvsOverrideSystem _pvs = default!;
+    [Dependency] private readonly StationRenameHolopadsSystem _renameHolopads = default!; // Frontier
 
     private float _updateTimer = 1.0f;
     private const float UpdateTime = 1.0f;
@@ -81,6 +83,7 @@ public sealed class HolopadSystem : SharedHolopadSystem
         SubscribeLocalEvent<HolopadComponent, PowerChangedEvent>(OnPowerChanged);
         SubscribeLocalEvent<HolopadUserComponent, MobStateChangedEvent>(OnMobStateChanged);
 
+        SubscribeLocalEvent<HolopadComponent, MapInitEvent>(OnHolopadMapInit); // Frontier
     }
 
     #region: Holopad UI bound user interface messages
@@ -809,4 +812,14 @@ public sealed class HolopadSystem : SharedHolopadSystem
         if (TryComp<AmbientSoundComponent>(entity, out var ambientSound))
             _ambientSoundSystem.SetAmbience(entity, isEnabled, ambientSound);
     }
+
+    // Frontier START
+    # region Frontier Extensions
+    private void OnHolopadMapInit(Entity<HolopadComponent> entity, ref MapInitEvent args)
+    {
+        if (entity.Comp.UseStationName)
+            _renameHolopads.SyncHolopad(entity);
+    }
+    # endregion
+    // End Frontier
 }

@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using Robust.Shared.GameStates;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
 
@@ -15,7 +15,7 @@ public sealed partial class InfantComponent : Component
     /// How long the entity remains an infant.
     /// </summary>
     [DataField("infantDuration")]
-    public TimeSpan InfantDuration = TimeSpan.FromMinutes(3);
+    public TimeSpan InfantDuration = TimeSpan.FromMinutes(5);
 
     /// <summary>
     /// The base scale of the entity

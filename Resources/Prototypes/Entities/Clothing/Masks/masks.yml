@@ -1,3 +1,71 @@
+# SPDX-FileCopyrightText: 2018 Pieter-Jan Briers
+# SPDX-FileCopyrightText: 2019 DamianX
+# SPDX-FileCopyrightText: 2019 Injazz
+# SPDX-FileCopyrightText: 2019 scuffedjays
+# SPDX-FileCopyrightText: 2020 AJCM-git
+# SPDX-FileCopyrightText: 2020 Hugo Laloge
+# SPDX-FileCopyrightText: 2020 Paul Ritter
+# SPDX-FileCopyrightText: 2020 Swept
+# SPDX-FileCopyrightText: 2020 Víctor Aguilera Puerto
+# SPDX-FileCopyrightText: 2020 Ygg01
+# SPDX-FileCopyrightText: 2020 a.rudenko
+# SPDX-FileCopyrightText: 2020 peptron1
+# SPDX-FileCopyrightText: 2021 Leon Friedrich
+# SPDX-FileCopyrightText: 2022 Alex Evgrashin
+# SPDX-FileCopyrightText: 2022 Flipp Syder
+# SPDX-FileCopyrightText: 2022 Interrobang01
+# SPDX-FileCopyrightText: 2022 Justin Trotter
+# SPDX-FileCopyrightText: 2022 Kai Shiba
+# SPDX-FileCopyrightText: 2022 Mervill
+# SPDX-FileCopyrightText: 2022 Moony
+# SPDX-FileCopyrightText: 2022 Myctai
+# SPDX-FileCopyrightText: 2022 Rane
+# SPDX-FileCopyrightText: 2022 Veritius
+# SPDX-FileCopyrightText: 2022 ZeroDayDaemon
+# SPDX-FileCopyrightText: 2022 mirrorcult
+# SPDX-FileCopyrightText: 2023 Alzore
+# SPDX-FileCopyrightText: 2023 Checkraze
+# SPDX-FileCopyrightText: 2023 Errant
+# SPDX-FileCopyrightText: 2023 Flareguy
+# SPDX-FileCopyrightText: 2023 Jackal298
+# SPDX-FileCopyrightText: 2023 Nim
+# SPDX-FileCopyrightText: 2023 Puro
+# SPDX-FileCopyrightText: 2023 Unbelievable-Salmon
+# SPDX-FileCopyrightText: 2023 Whisper
+# SPDX-FileCopyrightText: 2023 brainfood1183
+# SPDX-FileCopyrightText: 2023 crazybrain23
+# SPDX-FileCopyrightText: 2023 deltanedas
+# SPDX-FileCopyrightText: 2023 deltanedas <@deltanedas:kde.org>
+# SPDX-FileCopyrightText: 2023 gus
+# SPDX-FileCopyrightText: 2023 metalgearsloth
+# SPDX-FileCopyrightText: 2023 router
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 Emisse
+# SPDX-FileCopyrightText: 2024 ErhardSteinhauer
+# SPDX-FileCopyrightText: 2024 Golden Can
+# SPDX-FileCopyrightText: 2024 Kara
+# SPDX-FileCopyrightText: 2024 Magnus Larsen
+# SPDX-FileCopyrightText: 2024 Mr. 27
+# SPDX-FileCopyrightText: 2024 Nairod
+# SPDX-FileCopyrightText: 2024 Nemanja
+# SPDX-FileCopyrightText: 2024 Plykiya
+# SPDX-FileCopyrightText: 2024 RedBookcase
+# SPDX-FileCopyrightText: 2024 SlamBamActionman
+# SPDX-FileCopyrightText: 2024 Whatstone
+# SPDX-FileCopyrightText: 2024 Winkarst
+# SPDX-FileCopyrightText: 2024 lzk
+# SPDX-FileCopyrightText: 2024 slarticodefast
+# SPDX-FileCopyrightText: 2024 strO0pwafel
+# SPDX-FileCopyrightText: 2024 to4no_fix
+# SPDX-FileCopyrightText: 2025 Ark
+# SPDX-FileCopyrightText: 2025 BramvanZijp
+# SPDX-FileCopyrightText: 2025 JustinWinningham
+# SPDX-FileCopyrightText: 2025 K-Dynamic
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 themias
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 - type: entity
   parent: ClothingMaskPullableBase
   id: ClothingMaskGas
@@ -21,7 +89,7 @@
     hideOnToggle: true
 
 - type: entity
-  parent: [ClothingMaskGas, BaseSecurityContraband]
+  parent: [ClothingMaskGas, BaseC1Contraband] # Frontier: BaseSecurityContraband<BaseC1Contraband
   id: ClothingMaskGasSecurity
   name: security gas mask
   description: A standard issue Security gas mask.
@@ -41,7 +109,7 @@
         Heat: 0.95
 
 - type: entity
-  parent: [ClothingMaskGas, BaseSyndicateContraband]
+  parent: [ClothingMaskGas, BaseC3SyndicateContraband, ContrabandClothing] # Frontier: BaseSyndicateContraband<BaseC3SyndicateContraband, added ContrabandClothing as parent
   id: ClothingMaskGasSyndicate
   name: syndicate gas mask
   description: A close-fitting tactical mask that can be connected to an air supply.
@@ -73,10 +141,10 @@
   - type: Armor
     modifiers:
       coefficients:
-        Heat: 0.80
+        Heat: 0.90 # Frontier 0.80<0.90
 
 - type: entity
-  parent: [ClothingMaskGasAtmos, BaseCommandContraband]
+  parent: ClothingMaskGasAtmos # Frontier: removed BaseCommandContraband
   id: ClothingMaskGasCaptain
   name: captain's gas mask
   description: Nanotrasen cut corners and repainted a spare atmospheric gas mask, but don't tell anyone.
@@ -102,7 +170,7 @@
   - type: IngestionBlocker
 
 - type: entity
-  parent: [ClothingMaskGas, BaseCargoContraband]
+  parent: ClothingMaskGas # Frontier: removed BaseCargoContraband
   id: ClothingMaskGasExplorer
   name: explorer gas mask
   description: A military-grade gas mask that can be connected to an air supply.
@@ -114,8 +182,8 @@
   - type: Armor
     modifiers:
       coefficients:
-        Blunt: 0.90
-        Slash: 0.90
+        Blunt: 0.95 # Frontier 0.90<0.95
+        Slash: 0.95 # Frontier 0.90<0.95
         Piercing: 0.95
         Heat: 0.95
 
@@ -185,7 +253,7 @@
       Steel: 50
       Plastic: 100
   - type: StaticPrice
-    price: 30 # increases in price after decomposed into raw materials
+    price: 15 # increases in price after decomposed into raw materials # Frontier: 30<12.5, 12.5<15 - TODO: material value rework
 
 - type: entity
   parent: ClothingMaskBase
@@ -204,6 +272,8 @@
     tags:
     - ClownMask
     - WhitelistChameleon
+    - IPCMaskWearable # EE - IPCs
+    - Mask
   - type: HideLayerClothing
     slots:
     - Snout
@@ -217,6 +287,7 @@
     - ClownMask
     - HamsterWearable
     - WhitelistChameleon
+    - IPCMaskWearable # EE - IPCs
   - type: HideLayerClothing
     slots:
     - Snout
@@ -235,7 +306,7 @@
     node: mask
 
 - type: entity
-  parent: [ClothingMaskClown, BaseSecurityContraband]
+  parent: [ClothingMaskClown, BaseC2ContrabandUnredeemable] # Frontier: BaseSecurityContraband<BaseC2ContrabandUnredeemable
   id: ClothingMaskClownSecurity
   name: security clown wig and mask
   description: A debatably oxymoronic but protective mask and wig.
@@ -367,7 +438,7 @@
     accent: StutteringAccent
 
 - type: entity
-  parent: [ ClothingMaskGas, BaseSecurityContraband ]
+  parent: [ ClothingMaskGas, BaseC2ContrabandUnredeemable ] # Frontier: BaseSecurityContraband<BaseC2ContrabandUnredeemable
   id: ClothingMaskGasSwat
   name: swat gas mask
   description: A elite issue Security gas mask.
@@ -389,14 +460,14 @@
   - type: Armor
     modifiers:
       coefficients:
-        Blunt: 0.90
-        Slash: 0.90
+        Blunt: 0.95 # Frontier 0.90<0.95
+        Slash: 0.95 # Frontier 0.90<0.95
         Piercing: 0.95
         Heat: 0.95
 
 - type: entity
-  parent: [ ClothingMaskGas, BaseSecurityCargoContraband ]
-  id: ClothingMaskGasMerc
+  parent: [ ClothingMaskGas ] # Frontier: Removed BaseSecurityCargoContraband
+  id: ClothingMaskGasMercenary # Frontier: Merc to Mercenary
   name: mercenary gas mask
   description: Slightly outdated, but reliable military-style gas mask.
   components:
@@ -407,10 +478,12 @@
   - type: Armor
     modifiers:
       coefficients:
-        Blunt: 0.90
-        Slash: 0.90
+        Blunt: 0.95 # Frontier 0.90<0.95
+        Slash: 0.95 # Frontier 0.90<0.95
         Piercing: 0.95
         Heat: 0.95
+  - type: PirateBountyItem # Frontier
+    id: ClothingMaskGasMercenary # Frontier
 
 - type: entity
   parent: [ ClothingMaskGas, BaseCentcommContraband ]
@@ -478,6 +551,7 @@
     tags:
     - HamsterWearable
     - WhitelistChameleon
+    - IPCMaskWearable # EE - IPCs
   - type: HideLayerClothing
     slots:
     - Snout
@@ -498,6 +572,9 @@
   - type: HideLayerClothing
     slots:
     - Snout
+  - type: Tag
+    tags:
+    - IPCMaskWearable # EE - IPCs
 
 - type: entity
   parent: ClothingMaskBase
@@ -514,6 +591,9 @@
   - type: HideLayerClothing
     slots:
     - Snout
+  - type: Tag
+    tags:
+    - IPCMaskWearable # EE - IPCs
 
 - type: entity
   parent: ClothingMaskBase
@@ -530,6 +610,9 @@
   - type: HideLayerClothing
     slots:
     - Snout
+  - type: Tag
+    tags:
+    - IPCMaskWearable # EE - IPCs
 
 - type: entity
   parent: ClothingMaskBase
@@ -546,6 +629,9 @@
   - type: HideLayerClothing
     slots:
     - Snout
+  - type: Tag
+    tags:
+    - IPCMaskWearable # EE - IPCs
 
 - type: entity
   parent: ClothingMaskBase
@@ -562,6 +648,9 @@
   - type: HideLayerClothing
     slots:
     - Snout
+  - type: Tag
+    tags:
+    - IPCMaskWearable # EE - IPCs
 
 - type: entity
   parent: ClothingMaskBase
@@ -578,6 +667,9 @@
   - type: HideLayerClothing
     slots:
     - Snout
+  - type: Tag
+    tags:
+    - IPCMaskWearable # EE - IPCs
 
 - type: entity
   parent: ClothingMaskBase
@@ -589,11 +681,13 @@
     sprite: Clothing/Mask/neckgaiter.rsi
   - type: Clothing
     sprite: Clothing/Mask/neckgaiter.rsi
+  - type: BreathMask
   - type: IdentityBlocker
     coverage: MOUTH
   - type: Tag
     tags:
     - WhitelistChameleon
+    - IPCMaskWearable # EE - IPCs
 
 - type: entity
   parent: ClothingMaskNeckGaiter
@@ -698,6 +792,9 @@
   - type: EyeProtection
   - type: BreathMask
   - type: IdentityBlocker
+  - type: Tag
+    tags:
+    - IPCMaskWearable # EE - IPCs
 
 - type: entity
   parent: ClothingMaskGas

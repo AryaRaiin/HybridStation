@@ -44,6 +44,8 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
+using Content.Shared._Goobstation.DoAfter; // GOOBSTATION
+using Content.Shared._NF.LoggingExtensions; // FRONTIER
 
 namespace Content.Shared.Interaction
 {
@@ -484,22 +486,25 @@ namespace Content.Shared.Interaction
             return uid != null && IsDeleted(uid.Value);
         }
 
-        public void InteractHand(EntityUid user, EntityUid target)
+        //public void InteractHand(EntityUid user, EntityUid target) // GOOBSTATION: change upstream
+        public bool InteractHand(EntityUid user, EntityUid target) // GOOBSTATION, add bool return value to indicate if successful?
         {
             if (IsDeleted(user) || IsDeleted(target))
-                return;
+                //return; // GOOBSTATION: change upstream
+                return false; // GOOBSTATION
 
             var complexInteractions = _actionBlockerSystem.CanComplexInteract(user);
             if (!complexInteractions)
             {
-                InteractionActivate(user,
+                //InteractionActivate(user, // GOOBSTATION: change upstream
+                return InteractionActivate(user, // GOOBSTATION
                     target,
                     checkCanInteract: false,
                     checkUseDelay: true,
                     checkAccess: false,
                     complexInteractions: complexInteractions,
                     checkDeletion: false);
-                return;
+                //return; // GOOBSTATION: change upstream
             }
 
             // allow for special logic before main interaction
@@ -508,21 +513,27 @@ namespace Content.Shared.Interaction
             if (ev.Handled)
             {
                 _adminLogger.Add(LogType.InteractHand, LogImpact.Low, $"{ToPrettyString(user):user} interacted with {ToPrettyString(target):target}, but it was handled by another system");
-                return;
+                //return; // GOOBSTATION: change upstream
+                return false; // GOOBSTATION
             }
 
             DebugTools.Assert(!IsDeleted(user) && !IsDeleted(target));
             // all interactions should only happen when in range / unobstructed, so no range check is needed
             var message = new InteractHandEvent(user, target);
             RaiseLocalEvent(target, message, true);
-            _adminLogger.Add(LogType.InteractHand, LogImpact.Low, $"{user} interacted with {target}");
+
+            var extraLogs = LoggingExtensions.GetExtraLogs(EntityManager, target); // FRONTIER: adds extra things to the log
+            //_adminLogger.Add(LogType.InteractHand, LogImpact.Low, $"{user} interacted with {target}"); // FRONTIER: change upstream
+            _adminLogger.Add(LogType.InteractHand, LogImpact.Low, $"{ToPrettyString(user):user} interacted with {ToPrettyString(target):target}{extraLogs}");  // FRONTIER: adds extra things to the log
             DoContactInteraction(user, target, message);
             if (message.Handled)
-                return;
+                //return; // GOOBSTATION: change upstream
+                return true; // GOOBSTATION
 
             DebugTools.Assert(!IsDeleted(user) && !IsDeleted(target));
             // Else we run Activate.
-            InteractionActivate(user,
+            //InteractionActivate(user, // GOOBSTATION: change upstream
+            return InteractionActivate(user, // GOOBSTATION
                 target,
                 checkCanInteract: false,
                 checkUseDelay: true,
@@ -1096,6 +1107,11 @@ namespace Content.Shared.Interaction
             if (target == null)
                 return false;
 
+            // UNKNOWN START: Prevent firing assertion if the target was deleted after do-after completion
+            if (IsDeleted(target))
+                return false;
+            // UNKNOWN END
+
             DebugTools.Assert(!IsDeleted(user) && !IsDeleted(used) && !IsDeleted(target));
             var afterInteractUsingEvent = new AfterInteractUsingEvent(user, used, target, clickLocation, canReach);
             RaiseLocalEvent(target.Value, afterInteractUsingEvent);
@@ -1260,6 +1276,15 @@ namespace Content.Shared.Interaction
 
             var dropMsg = new DroppedEvent(user);
             RaiseLocalEvent(item, dropMsg, true);
+
+            // FRONTIER START: log on drop
+            if (dropMsg.Handled)
+            {
+                var extraLogs = LoggingExtensions.GetExtraLogs(EntityManager, item);
+
+                _adminLogger.Add(LogType.Drop, LogImpact.Low, $"{ToPrettyString(user):user} dropped {ToPrettyString(item):entity}{extraLogs}");
+            }
+            // FRONTIER END
 
             // If the dropper is rotated then use their targetrelativerotation as the drop rotation
             var rotation = Angle.Zero;

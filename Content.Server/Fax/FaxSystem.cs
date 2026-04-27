@@ -30,6 +30,7 @@ using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
+using Content.Shared.Tag; // Frontier
 
 namespace Content.Server.Fax;
 
@@ -51,6 +52,7 @@ public sealed class FaxSystem : EntitySystem
     [Dependency] private readonly MetaDataSystem _metaData = default!;
     [Dependency] private readonly FaxecuteSystem _faxecute = default!;
     [Dependency] private readonly EmagSystem _emag = default!;
+    [Dependency] private readonly TagSystem _tag = default!; // Frontier
 
     private static readonly ProtoId<ToolQualityPrototype> ScrewingQuality = "Screwing";
 
@@ -73,6 +75,7 @@ public sealed class FaxSystem : EntitySystem
         // Interaction
         SubscribeLocalEvent<FaxMachineComponent, InteractUsingEvent>(OnInteractUsing);
         SubscribeLocalEvent<FaxMachineComponent, GotEmaggedEvent>(OnEmagged);
+        SubscribeLocalEvent<FaxMachineComponent, GotUnEmaggedEvent>(OnUnemagged); // Frontier
 
         // UI
         SubscribeLocalEvent<FaxMachineComponent, AfterActivatableUIOpenEvent>(OnToggleInterface);
@@ -152,7 +155,12 @@ public sealed class FaxSystem : EntitySystem
 
     private void OnComponentInit(EntityUid uid, FaxMachineComponent component, ComponentInit args)
     {
-        _itemSlotsSystem.AddItemSlot(uid, PaperSlotId, component.PaperSlot);
+        // Goobstation START - define the slot in ItemSlots instead of adding it
+        if (_itemSlotsSystem.TryGetSlot(uid, PaperSlotId, out var slot))
+            component.PaperSlot = slot;
+        else // Goobstation END
+            _itemSlotsSystem.AddItemSlot(uid, PaperSlotId, component.PaperSlot);
+        
         UpdateAppearance(uid, component);
     }
 
@@ -258,6 +266,19 @@ public sealed class FaxSystem : EntitySystem
         args.Handled = true;
     }
 
+    // Frontier: demag
+    private void OnUnemagged(EntityUid uid, FaxMachineComponent component, ref GotUnEmaggedEvent args)
+    {
+        if (!_emag.CompareFlag(args.Type, EmagType.Interaction))
+            return;
+
+        if (!_emag.CheckFlag(uid, EmagType.Interaction))
+            return;
+
+        args.Handled = true;
+    }
+    // End Frontier: demag
+
     private void OnPacketReceived(EntityUid uid, FaxMachineComponent component, DeviceNetworkPacketEvent args)
     {
         if (!HasComp<DeviceNetworkComponent>(uid) || string.IsNullOrEmpty(args.SenderAddress))
@@ -300,8 +321,10 @@ public sealed class FaxSystem : EntitySystem
                     args.Data.TryGetValue(FaxConstants.FaxPaperStampedByData, out List<StampDisplayInfo>? stampedBy);
                     args.Data.TryGetValue(FaxConstants.FaxPaperPrototypeData, out string? prototypeId);
                     args.Data.TryGetValue(FaxConstants.FaxPaperLockedData, out bool? locked);
+                    args.Data.TryGetValue(FaxConstants.FaxPaperStampProtectedData, out bool? stampProtected); // Frontier
 
-                    var printout = new FaxPrintout(content, name, label, prototypeId, stampState, stampedBy, locked ?? false);
+                    var printout = new FaxPrintout(content, name, label, prototypeId, stampState, stampedBy, locked ?? false, 
+                        stampProtected ?? false); // Frontier: add stampProtected
                     Receive(uid, printout, args.SenderAddress);
 
                     break;
@@ -474,7 +497,8 @@ public sealed class FaxSystem : EntitySystem
                                        metadata.EntityPrototype?.ID ?? component.PrintPaperId,
                                        paper.StampState,
                                        paper.StampedBy,
-                                       paper.EditingDisabled);
+                                       paper.EditingDisabled,
+                                       _tag.HasTag(sendEntity.Value, "NFPaperStampProtected")); // Frontier: add stamp protection
 
         component.PrintingQueue.Enqueue(printout);
         component.SendTimeoutRemaining += component.SendTimeout;
@@ -482,7 +506,17 @@ public sealed class FaxSystem : EntitySystem
         // Don't play component.SendSound - it clashes with the printing sound, which
         // will start immediately.
 
+        // Frontier: check if paper should be destroyed on sending.
+        if (paper.DestroyOnFax)
+        {
+            DeleteFax(uid, sendEntity.Value, paper);
+        }
+        // End Frontier
+
         UpdateUserInterface(uid, component);
+
+        if (!args.Actor.IsValid()) // Goobstation - no log for automation
+            return;
 
         _adminLogger.Add(LogType.Action,
             LogImpact.Low,
@@ -528,6 +562,7 @@ public sealed class FaxSystem : EntitySystem
             { FaxConstants.FaxPaperLabelData, labelComponent?.CurrentLabel },
             { FaxConstants.FaxPaperContentData, paper.Content },
             { FaxConstants.FaxPaperLockedData, paper.EditingDisabled },
+            { FaxConstants.FaxPaperStampProtectedData, _tag.HasTag(sendEntity.Value, "NFPaperStampProtected") }, // Frontier
         };
 
         if (metadata.EntityPrototype != null)
@@ -547,6 +582,7 @@ public sealed class FaxSystem : EntitySystem
 
         _deviceNetworkSystem.QueuePacket(uid, component.DestinationFaxAddress, payload);
 
+        if (!args.Actor.IsValid()) // Goobstation - no log for automation
         _adminLogger.Add(LogType.Action,
             LogImpact.Low,
             $"{ToPrettyString(args.Actor):actor} " +
@@ -557,6 +593,13 @@ public sealed class FaxSystem : EntitySystem
         component.SendTimeoutRemaining += component.SendTimeout;
 
         _audioSystem.PlayPvs(component.SendSound, uid);
+
+        // Frontier: check if paper should be destroyed on sending.
+        if (paper.DestroyOnFax)
+        {
+            DeleteFax(uid, sendEntity.Value, paper);
+        }
+        // End Frontier
 
         UpdateUserInterface(uid, component);
     }
@@ -607,6 +650,13 @@ public sealed class FaxSystem : EntitySystem
             }
 
             paper.EditingDisabled = printout.Locked;
+
+            // Frontier: stamp protection
+            if (printout.StampProtected)
+            {
+                _tag.AddTag(printed, "NFPaperStampProtected");
+            }
+            // End Frontier
         }
 
         _metaData.SetEntityName(printed, printout.Name);
@@ -624,4 +674,16 @@ public sealed class FaxSystem : EntitySystem
         _chat.SendAdminAnnouncement(Loc.GetString("fax-machine-chat-notify", ("fax", faxName)));
         _audioSystem.PlayGlobal("/Audio/Machines/high_tech_confirm.ogg", Filter.Empty().AddPlayers(_adminManager.ActiveAdmins), false, AudioParams.Default.WithVolume(-8f));
     }
+
+    // Frontier: delete sensitive items on fax to prevent duplication
+    private void DeleteFax(EntityUid faxMachine, EntityUid itemToFax, PaperComponent paper)
+    {
+        if (paper.DestroyMessage != null)
+        {
+            _popupSystem.PopupEntity(Loc.GetString(paper.DestroyMessage), faxMachine);
+        }
+
+        Del(itemToFax);
+    }
+    // End Frontier
 }

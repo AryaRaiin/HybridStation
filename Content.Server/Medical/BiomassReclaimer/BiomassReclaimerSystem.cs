@@ -1,3 +1,26 @@
+// SPDX-FileCopyrightText: 2022 0x6273
+// SPDX-FileCopyrightText: 2022 Flipp Syder
+// SPDX-FileCopyrightText: 2022 Jackrost
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Jezithyr
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2023 Rane
+// SPDX-FileCopyrightText: 2023 ShadowCommander
+// SPDX-FileCopyrightText: 2023 keronshb
+// SPDX-FileCopyrightText: 2024 AJCM-git
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Ilya246
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 Scribbles0
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 checkraze
+// SPDX-FileCopyrightText: 2024 metalgearsloth
+// SPDX-FileCopyrightText: 2024 nikthechampiongr
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Numerics;
 using Content.Server.Botany.Components;
 using Content.Server.Fluids.EntitySystems;
@@ -32,6 +55,7 @@ using Robust.Shared.Configuration;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
+using Content.Shared.Contraband; // Frontier
 
 namespace Content.Server.Medical.BiomassReclaimer
 {
@@ -105,6 +129,8 @@ namespace Content.Server.Medical.BiomassReclaimer
             SubscribeLocalEvent<ActiveBiomassReclaimerComponent, UnanchorAttemptEvent>(OnUnanchorAttempt);
             SubscribeLocalEvent<BiomassReclaimerComponent, AfterInteractUsingEvent>(OnAfterInteractUsing);
             SubscribeLocalEvent<BiomassReclaimerComponent, ClimbedOnEvent>(OnClimbedOn);
+            SubscribeLocalEvent<BiomassReclaimerComponent, RefreshPartsEvent>(OnRefreshParts); // Mono?
+            SubscribeLocalEvent<BiomassReclaimerComponent, UpgradeExamineEvent>(OnUpgradeExamine); // Mono?
             SubscribeLocalEvent<BiomassReclaimerComponent, PowerChangedEvent>(OnPowerChanged);
             SubscribeLocalEvent<BiomassReclaimerComponent, SuicideByEnvironmentEvent>(OnSuicideByEnvironment);
             SubscribeLocalEvent<BiomassReclaimerComponent, ReclaimerDoAfterEvent>(OnDoAfter);
@@ -156,7 +182,8 @@ namespace Content.Server.Medical.BiomassReclaimer
         }
         private void OnAfterInteractUsing(Entity<BiomassReclaimerComponent> reclaimer, ref AfterInteractUsingEvent args)
         {
-            if (!args.CanReach || args.Target == null)
+            if (!args.CanReach || args.Target == null
+                    || args.Handled) // Mono
                 return;
 
             if (!CanGib(reclaimer, args.Used))
@@ -166,7 +193,9 @@ namespace Content.Server.Medical.BiomassReclaimer
                 return;
 
             var delay = reclaimer.Comp.BaseInsertionDelay * physics.FixturesMass;
-            _doAfterSystem.TryStartDoAfter(new DoAfterArgs(EntityManager, args.User, delay, new ReclaimerDoAfterEvent(), reclaimer, target: args.Target, used: args.Used)
+            //Mono
+            //_doAfterSystem.TryStartDoAfter(new DoAfterArgs(EntityManager, args.User, delay, new ReclaimerDoAfterEvent(), reclaimer, target: args.Target, used: args.Used)
+            args.Handled=_doAfterSystem.TryStartDoAfter(new DoAfterArgs(EntityManager, args.User, delay, new ReclaimerDoAfterEvent(), reclaimer, target: args.Target, used: args.Used)
             {
                 NeedHand = true,
                 BreakOnMove = true,
@@ -185,6 +214,28 @@ namespace Content.Server.Medical.BiomassReclaimer
 
             StartProcessing(args.Climber, reclaimer);
         }
+
+        // Mono? START
+        private void OnRefreshParts(EntityUid uid, BiomassReclaimerComponent component, RefreshPartsEvent args)
+        {
+            var laserRating = args.PartRatings[component.MachinePartProcessingSpeed];
+            var manipRating = args.PartRatings[component.MachinePartYieldAmount];
+
+            // Processing time slopes downwards with part rating.
+            component.ProcessingTimePerUnitMass =
+                component.BaseProcessingTimePerUnitMass / MathF.Pow(component.PartRatingSpeedMultiplier, laserRating - 1);
+
+            // Yield slopes upwards with part rating.
+            component.YieldPerUnitMass =
+                component.BaseYieldPerUnitMass * MathF.Pow(component.PartRatingYieldAmountMultiplier, manipRating - 1);
+        }
+
+        private void OnUpgradeExamine(EntityUid uid, BiomassReclaimerComponent component, UpgradeExamineEvent args)
+        {
+            args.AddPercentageUpgrade("biomass-reclaimer-component-upgrade-speed", component.BaseProcessingTimePerUnitMass / component.ProcessingTimePerUnitMass);
+            args.AddPercentageUpgrade("biomass-reclaimer-component-upgrade-biomass-yield", component.YieldPerUnitMass / component.BaseYieldPerUnitMass);
+        }
+        // Mono? END
 
         private void OnDoAfter(Entity<BiomassReclaimerComponent> reclaimer, ref ReclaimerDoAfterEvent args)
         {
@@ -227,7 +278,8 @@ namespace Content.Server.Medical.BiomassReclaimer
             var inventory = _inventory.GetHandOrInventoryEntities(toProcess);
             foreach (var item in inventory)
             {
-                _transform.DropNextTo(item, ent.Owner);
+                if (!HasComp<ContrabandComponent>(item)) // Frontier - delete contraband
+                    _transform.DropNextTo(item, ent.Owner);
             }
 
             QueueDel(toProcess);

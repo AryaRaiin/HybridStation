@@ -31,6 +31,7 @@ namespace Content.Server.Construction
             InitializeInteractions();
             InitializeInitial();
             InitializeMachines();
+            InitializeMachineUpgrades(); // Frontier
 
             SubscribeLocalEvent<ConstructionComponent, ComponentInit>(OnConstructionInit);
             SubscribeLocalEvent<ConstructionComponent, ComponentStartup>(OnConstructionStartup);

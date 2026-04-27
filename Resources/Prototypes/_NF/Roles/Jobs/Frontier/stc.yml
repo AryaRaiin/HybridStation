@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: 2023 Kesiath
+# SPDX-FileCopyrightText: 2024 Checkraze
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 ErhardSteinhauer
+# SPDX-FileCopyrightText: 2024 Salvantrix
+# SPDX-FileCopyrightText: 2024 Whatstone
+# SPDX-FileCopyrightText: 2024 deltanedas
+# SPDX-FileCopyrightText: 2025 LukeZurg22
+# SPDX-FileCopyrightText: 2025 ScyronX
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: job
+  id: StationTrafficController
+  name: job-name-stc
+  description: job-description-stc
+  playTimeTracker: JobStc
+  startingGear: StcGear
+  alwaysUseSpawner: true
+  requirements:
+    - !type:OverallPlaytimeRequirement
+      time: 54000 # 20 hrs # mono - change to 15 hr
+    - !type:RoleTimeRequirement
+      role: JobSecurityGuard
+      time: 3600 # 3 hrs as security guard # mono - change to 1 hr
+  canBeAntag: false
+  icon: "JobIconStc"
+  supervisors: job-supervisors-sr
+  weight: 160
+  displayWeight: 50 # Second from the top
+  setPreference: true
+  access:
+  - Service
+  - Maintenance
+  - External
+  - Frontier
+  - StationTrafficController
+  special:
+  - !type:GiveItemOnHolidaySpecial
+    holiday: FrontierBirthday
+    prototype: FrontierBirthdayGift
+
+- type: startingGear
+  id: StcGear
+  equipment:
+    id: StcPDA
+  storage:
+    back:
+    - Flash
+    - RubberStampStc
+    - EncryptionKeyStationMaster

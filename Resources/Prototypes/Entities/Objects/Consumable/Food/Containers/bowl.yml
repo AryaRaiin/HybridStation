@@ -66,6 +66,8 @@
   - type: Tag
     tags:
     - Trash
+  - type: StaticPrice # Frontier
+    price: 4 # Frontier
 
 - type: entity
   parent: BaseItem
@@ -88,7 +90,7 @@
       Glass: 50
   - type: SpaceGarbage
   - type: StaticPrice
-    price: 0
+    price: 4 # Frontier 0<4 4 needed for arbitrage
 
 - type: entity
   name: bowl
@@ -103,3 +105,5 @@
     - map: ["enum.SolutionContainerLayers.Fill"]
       state: fill-1
       visible: false
+  - type: StaticPrice # Frontier
+    price: 5 # Frontier

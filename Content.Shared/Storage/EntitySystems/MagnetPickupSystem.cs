@@ -1,8 +1,28 @@
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Nemanja
+// SPDX-FileCopyrightText: 2023 Stray-Pyramid
+// SPDX-FileCopyrightText: 2023 crystalHex
+// SPDX-FileCopyrightText: 2024 Kara
+// SPDX-FileCopyrightText: 2024 Mnemotechnican
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 TemporalOroboros
+// SPDX-FileCopyrightText: 2024 metalgearsloth
+// SPDX-FileCopyrightText: 2025 Dvir
+// SPDX-FileCopyrightText: 2025 GreaseMonk
+// SPDX-FileCopyrightText: 2025 Kyle Tyo
+// SPDX-FileCopyrightText: 2025 Whatstone
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Shared.Inventory;
 using Content.Shared.Storage.Components;
 using Content.Shared.Whitelist;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Timing;
+using Content.Shared.Item.ItemToggle; // DeltaV
+using Content.Shared.Item; // Frontier
+using Content.Shared.Verbs; // Frontier
 
 namespace Content.Shared.Storage.EntitySystems;
 
@@ -17,9 +37,12 @@ public sealed class MagnetPickupSystem : EntitySystem
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly SharedStorageSystem _storage = default!;
     [Dependency] private readonly EntityWhitelistSystem _whitelistSystem = default!;
+    [Dependency] private readonly ItemToggleSystem _toggle = default!; // DeltaV
+    [Dependency] private readonly SharedItemSystem _item = default!; // Frontier
 
 
     private static readonly TimeSpan ScanDelay = TimeSpan.FromSeconds(1);
+    private const int MaxEntitiesToInsert = 15; // Frontier
 
     private EntityQuery<PhysicsComponent> _physicsQuery;
 
@@ -28,12 +51,65 @@ public sealed class MagnetPickupSystem : EntitySystem
         base.Initialize();
         _physicsQuery = GetEntityQuery<PhysicsComponent>();
         SubscribeLocalEvent<MagnetPickupComponent, MapInitEvent>(OnMagnetMapInit);
+        SubscribeLocalEvent<MagnetPickupComponent, ExaminedEvent>(OnExamined); // Frontier
+        SubscribeLocalEvent<MagnetPickupComponent, GetVerbsEvent<AlternativeVerb>>(AddToggleMagnetVerb); // Frontier
     }
 
     private void OnMagnetMapInit(EntityUid uid, MagnetPickupComponent component, MapInitEvent args)
     {
         component.NextScan = _timing.CurTime;
     }
+
+
+    // FRONTIER START: togglable magnets
+    private void AddToggleMagnetVerb(EntityUid uid, MagnetPickupComponent component, GetVerbsEvent<AlternativeVerb> args)
+    {
+        // Magnet run by other means (e.g. toggles)
+        if (!component.MagnetCanBeEnabled)
+            return;
+
+        if (!args.CanAccess || !args.CanInteract)
+            return;
+
+        if (!HasComp<HandsComponent>(args.User))
+            return;
+
+        AlternativeVerb verb = new()
+        {
+            Act = () =>
+            {
+                ToggleMagnet(uid, component);
+            },
+            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/VerbIcons/Spare/poweronoff.svg.192dpi.png")),
+            Text = Loc.GetString("magnet-pickup-component-toggle-verb"),
+            Priority = component.MagnetTogglePriority // Frontier: 3 < component.MagnetTogglePriority
+        };
+
+        args.Verbs.Add(verb);
+    }
+    // Show the magnet state on examination
+    private void OnExamined(EntityUid uid, MagnetPickupComponent component, ExaminedEvent args)
+    {
+        // Magnet run by other means (e.g. toggles)
+        if (!component.MagnetCanBeEnabled)
+            return;
+
+        args.PushMarkup(Loc.GetString("magnet-pickup-component-on-examine-main",
+                        ("stateText", Loc.GetString(component.MagnetEnabled
+                        ? "magnet-pickup-component-magnet-on"
+                        : "magnet-pickup-component-magnet-off"))));
+    }
+    //Toggles the magnet on the ore bag/box
+    public void ToggleMagnet(EntityUid uid, MagnetPickupComponent comp)
+    {
+        // Magnet run by other means (e.g. toggles)
+        if (!comp.MagnetCanBeEnabled)
+            return;
+
+        comp.MagnetEnabled = !comp.MagnetEnabled;
+        Dirty(uid, comp);
+    }
+    // FRONTIER END: togglable magnets
 
     public override void Update(float frameTime)
     {
@@ -49,11 +125,26 @@ public sealed class MagnetPickupSystem : EntitySystem
             comp.NextScan += ScanDelay;
             Dirty(uid, comp);
 
+            // FRONTIER START: combine DeltaV/White Dream's magnet toggle with old system
+            if (comp.MagnetCanBeEnabled)
+            {
+                if (!comp.MagnetEnabled)
+                    continue;
+            }
+            else
+            {
+                if (!_toggle.IsActivated(uid))
+                    continue;
+            }
+            // FRONTIER END
+
+            /* DELTAV START: Removals, Allow ore bags to work inhand
             if (!_inventory.TryGetContainingSlot((uid, xform, meta), out var slotDef))
                 continue;
 
             if ((slotDef.SlotFlags & comp.SlotFlags) == 0x0)
                 continue;
+            */ // DELTAV END
 
             // No space
             if (!_storage.HasSpace((uid, storage)))

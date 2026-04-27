@@ -1,5 +1,6 @@
 - type: cargoProduct
   id: SecurityArmor
+  abstract: true # Frontier
   icon:
     sprite: Clothing/OuterClothing/Armor/bulletproof.rsi
     state: icon
@@ -10,6 +11,7 @@
 
 - type: cargoProduct
   id: SecurityHelmet
+  abstract: true # Frontier
   icon:
     sprite: Clothing/Head/Helmets/security.rsi
     state: icon
@@ -20,6 +22,7 @@
 
 - type: cargoProduct
   id: SecurityNonLethal
+  abstract: true # Frontier
   icon:
     sprite: Objects/Weapons/Guns/Battery/disabler.rsi
     state: base
@@ -30,6 +33,7 @@
 
 - type: cargoProduct
   id: SecuritySupplies
+  abstract: true # Frontier
   icon:
     sprite: Objects/Storage/boxes.rsi
     state: box_security
@@ -40,6 +44,7 @@
 
 - type: cargoProduct
   id: SecurityRestraints
+  abstract: true # Frontier
   icon:
     sprite: Objects/Misc/handcuffs.rsi
     state: handcuff
@@ -50,6 +55,7 @@
 
 - type: cargoProduct
   id: SecurityBiosuit
+  abstract: true # Frontier
   icon:
     sprite: Clothing/Head/Hoods/Bio/security.rsi
     state: icon
@@ -60,6 +66,7 @@
 
 - type: cargoProduct
   id: SecurityBarrier
+  abstract: true # Frontier
   icon:
     sprite: Objects/Specific/Security/barrier.rsi
     state: idle

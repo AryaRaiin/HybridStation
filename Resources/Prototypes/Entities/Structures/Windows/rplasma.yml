@@ -1,3 +1,39 @@
+# SPDX-FileCopyrightText: 2021 Galactic Chimp
+# SPDX-FileCopyrightText: 2021 SethLafuente
+# SPDX-FileCopyrightText: 2021 ShadowCommander
+# SPDX-FileCopyrightText: 2021 Swept
+# SPDX-FileCopyrightText: 2021 cheesePizza2
+# SPDX-FileCopyrightText: 2021 mirrorcult
+# SPDX-FileCopyrightText: 2022 Alex Evgrashin
+# SPDX-FileCopyrightText: 2022 Delete69
+# SPDX-FileCopyrightText: 2022 Flipp Syder
+# SPDX-FileCopyrightText: 2022 Moony
+# SPDX-FileCopyrightText: 2022 Peptide90
+# SPDX-FileCopyrightText: 2022 metalgearsloth
+# SPDX-FileCopyrightText: 2023 Checkraze
+# SPDX-FileCopyrightText: 2023 Darkie
+# SPDX-FileCopyrightText: 2023 Emisse
+# SPDX-FileCopyrightText: 2023 Flareguy
+# SPDX-FileCopyrightText: 2023 Leon Friedrich
+# SPDX-FileCopyrightText: 2023 brainfood1183
+# SPDX-FileCopyrightText: 2023 lzk
+# SPDX-FileCopyrightText: 2024 Alzore
+# SPDX-FileCopyrightText: 2024 ErhardSteinhauer
+# SPDX-FileCopyrightText: 2024 K-Dynamic
+# SPDX-FileCopyrightText: 2024 Kara
+# SPDX-FileCopyrightText: 2024 MACMAN2003
+# SPDX-FileCopyrightText: 2024 chromiumboy
+# SPDX-FileCopyrightText: 2024 cohanna
+# SPDX-FileCopyrightText: 2025 Ark
+# SPDX-FileCopyrightText: 2025 Dvir
+# SPDX-FileCopyrightText: 2025 Ilya246
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 Southbridge
+# SPDX-FileCopyrightText: 2025 bitcrushing
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: MPL-2.0
+
 - type: entity
   id: ReinforcedPlasmaWindow
   name: reinforced plasma window
@@ -17,7 +53,7 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 300
+        damage: 1500 # Mono
       behaviors: #excess damage, don't spawn entities.
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
@@ -26,7 +62,7 @@
           collection: WindowShatter
     - trigger:
         !type:DamageTrigger
-        damage: 150
+        damage: 750 # Mono 150->750
       behaviors:
       - !type:PlaySoundBehavior
         sound:
@@ -54,7 +90,19 @@
     damageOverlay:
       sprite: Structures/Windows/cracks.rsi
   - type: StaticPrice
-    price: 132
+    price: 65
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.5,-0.5,0.5,0.5"
+        mask:
+        - FullTileMask
+        layer:
+        - WallLayer
+        density: 2000
+  - type: HitscanDiffractTarget # Mono - Causes diffraction
 
 - type: entity
   id: PlasmaReinforcedWindowDirectional
@@ -90,13 +138,13 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 150
+        damage: 700 # Mono
       behaviors: #excess damage, don't spawn entities.
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
     - trigger:
         !type:DamageTrigger
-        damage: 75
+        damage: 350 # Mono
       behaviors:
       - !type:PlaySoundBehavior
         sound:
@@ -112,7 +160,8 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: StaticPrice
-    price: 66
+    price: 30
+  - type: HitscanDiffractTarget # Mono - Causes diffraction
 
 - type: entity
   parent: ReinforcedPlasmaWindow
@@ -133,20 +182,20 @@
     - Window
   - type: IconSmooth
     mode: Diagonal
-    key: windows
+    key: walls # Frontier: windows<walls
     base: state
   - type: Icon
-    sprite: Structures/Windows/reinforced_plasma_diagonal.rsi
+    sprite: Structures/Windows/plasma_diagonal.rsi
     state: state0
   - type: Fixtures
     fixtures:
       fix1:
         shape:
           !type:PolygonShape
-            vertices:
-            - "-0.5,-0.5"
-            - "0.5,0.5"
-            - "0.5,-0.5"
+          vertices:
+          - "-0.5,-0.5"
+          - "0.5,0.5"
+          - "0.5,-0.5"
         mask:
         - FullTileMask
         layer:
@@ -163,3 +212,4 @@
   - type: Construction
     graph: WindowDiagonal
     node: reinforcedPlasmaWindowDiagonal
+  - type: HitscanDiffractTarget # Mono - Causes diffraction

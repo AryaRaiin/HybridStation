@@ -119,7 +119,7 @@
     - secret
     - sekrit
   name: secret-title
-  showInVote: true
+  showInVote: false # Frontier: true < false
   description: secret-description
   rules:
     - Secret
@@ -160,7 +160,7 @@
   name: death-match-title
   description: death-match-description
   maxPlayers: 15
-  showInVote: true
+  showInVote: false # Frontier: true < false
   supportedMaps: DeathMatchMapPool
   rules:
     - DeathMatch31

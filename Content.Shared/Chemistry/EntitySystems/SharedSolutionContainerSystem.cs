@@ -1,3 +1,21 @@
+// SPDX-FileCopyrightText: 2023 Emisse
+// SPDX-FileCopyrightText: 2023 Nemanja
+// SPDX-FileCopyrightText: 2023 TemporalOroboros
+// SPDX-FileCopyrightText: 2024 Jezithyr
+// SPDX-FileCopyrightText: 2024 Kara
+// SPDX-FileCopyrightText: 2024 Leon Friedrich
+// SPDX-FileCopyrightText: 2024 Mr. 27
+// SPDX-FileCopyrightText: 2024 SlamBamActionman
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 beck-thompson
+// SPDX-FileCopyrightText: 2024 drteaspoon420
+// SPDX-FileCopyrightText: 2024 neuPanda
+// SPDX-FileCopyrightText: 2025 metalgearsloth
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
@@ -366,6 +384,41 @@ public abstract partial class SharedSolutionContainerSystem : EntitySystem
         return splitSol;
     }
 
+    // Frontier START: cryogenics filtering functions (#1443)
+    /// <summary>
+    /// Splits a solution removing a specified amount of each reagent, if available.
+    /// </summary>
+    /// <param name="soln">The container to split the solution from.</param>
+    /// <param name="quantity">The amount of each reagent to split.</param>
+    /// <returns>The solution that was removed.</returns>
+    public Solution SplitSolutionPerReagent(Entity<SolutionComponent> soln, FixedPoint2 quantity)
+    {
+        var (uid, comp) = soln;
+        var solution = comp.Solution;
+
+        var splitSol = solution.SplitSolutionPerReagent(quantity);
+        UpdateChemicals(soln);
+        return splitSol;
+    }
+
+    /// <summary>
+    /// Splits a solution removing a specified amount of each reagent, if available.
+    /// </summary>
+    /// <param name="soln">The container to split the solution from.</param>
+    /// <param name="quantity">The amount of each reagent to split.</param>
+    /// <param name="reagents">The list of reagents to split a fixed amount of, if present.</param>
+    /// <returns>The solution that was removed.</returns>
+    public Solution SplitSolutionPerReagentWithOnly(Entity<SolutionComponent> soln, FixedPoint2 quantity, params string[] reagents)
+    {
+        var (uid, comp) = soln;
+        var solution = comp.Solution;
+
+        var splitSol = solution.SplitSolutionPerReagentWithOnly(quantity, reagents);
+        UpdateChemicals(soln);
+        return splitSol;
+    }
+    // Frontier END
+
     public Solution SplitStackSolution(Entity<SolutionComponent> soln, FixedPoint2 quantity, int stackCount)
     {
         var (uid, comp) = soln;
@@ -680,6 +733,17 @@ public abstract partial class SharedSolutionContainerSystem : EntitySystem
         UpdateChemicals(soln);
         return true;
     }
+
+    // UNKNOWN START
+    public void BurnFlammableReagents(Entity<SolutionComponent> soln, float fraction)
+    {
+        var (uid, comp) = soln;
+        var solution = comp.Solution;
+
+        solution.BurnFlammableReagents(fraction, PrototypeManager);
+        UpdateChemicals(soln);
+    }
+    // UNKNOWN END
 
     /// <summary>
     ///     Removes an amount from all reagents in a solution, adding it to a new solution.

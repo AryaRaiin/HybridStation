@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2025 Blu
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: playTimeTracker
+  id: JobUSSPCommissar
+
+- type: playTimeTracker
+  id: JobUSSPCorporal
+
+- type: playTimeTracker
+  id: JobUSSPMedic
+
+- type: playTimeTracker
+  id: JobUSSPRifleman
+
+- type: playTimeTracker
+  id: JobUSSPSergeant
+
+- type: playTimeTracker
+  id: JobTsfEngineer
+
+- type: playTimeTracker
+  id: MdMedic

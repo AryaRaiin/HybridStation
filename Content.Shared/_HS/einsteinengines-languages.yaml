@@ -1,0 +1,278 @@
+--- ### BASE ###
+file: Resources/Prototypes/Entities/Mobs/base.yml
+- match:
+    - id: BaseMob
+  action: merge
+  data:
+    components:
+    - type: LanguageSpeaker # Einstein Engines - Language. This component is required to support speech, but it does not define known languages.
+
+--- ### ANIMALS ###
+file: Resources/Prototypes/Entities/Mobs/NPCs/animals.yml
+- match:
+    - id: MobBat
+    - id: MobMouse
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Mouse]
+      understands: [Mouse]
+- match:
+    - id: MobChicken
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Chicken]
+      understands: [Chicken]
+- match:
+    - id: MobCockroach
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Languages
+      speaks: [Hissing]
+      understands: [Hissing]
+- match:
+    - id: MobMothroach
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Moffic]
+      understands: [Moffic]
+- match:
+    - id: MobDuckMallard
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Duck]
+      understands: [Duck]
+- match:
+    - id: MobCrab
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Crab]
+      understands: [Crab]
+- match:
+    - id: MobKangaroo
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Kangaroo]
+      understands: [Kangaroo]
+- match:
+    - id: MobMonkey
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Monkey]
+      understands: [Monkey,Kobold]
+- match:
+    - id: MobBaseSyndicateMonkey
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Monkey]
+      understands: [Monkey,Kobold,TauCetiBasic]
+- match:
+    - id: MobKobold
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Kobold]
+      understands: [Kobold,Monkey]
+- match:
+    - id: MobParrot?
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [TauCetiBasic]
+      understands: [TauCetiBasic]
+
+--- ### PETS ###
+file: Resources/Prototypes/Entities/Mobs/NPCs/pets.yml
+- match:
+    - id: MobCorgiIan.*
+    - id: MobMcGriff
+    - id: MobWalter
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Dog]
+      understands: [Dog,TauCetiBasic]
+- match:
+    - id: MobCat.*
+    - id: MobBingus
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Cat]
+      understands: [Cat,TauCetiBasic]
+- match:
+    - id: MobBandito
+    - id: MobPaperwork
+    - id: MobPossumMorty
+    - id: MobRaccoonMorticia
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Hissing]
+      understands: [Hissing,TauCetiBasic]
+- match:
+    - id: MobAlexander
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Pig]
+      understands: [Pig,TauCetiBasic]
+- match:
+    - id: MobFoxRenault
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Fox]
+      understands: [Fox,TauCetiBasic]
+- match:
+    - id: MobHamsterHamlet
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Mouse]
+      understands: [Mouse,TauCetiBasic]
+- match:
+    - id: MobSpiderShiva
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Xeno]
+      understands: [Xeno,TauCetiBasic]
+- match:
+    - id: MobKangarooWillow
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Kangaroo]
+      understands: [Kangaroo,TauCetiBasic]
+- match:
+    - id: MobSlimesPet
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Bubblish]
+      understands: [Bubblish,TauCetiBasic]
+- match:
+    - id: MobMonkeyPunpun
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Monkey]
+      understands: [Monkey,Kobold,TauCetiBasic]
+- match:
+    - id: MobCrabAtmos
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Crab]
+      understands: [Crab,TauCetiBasic]
+
+--- ### REGALRAT ###
+file: Resources/Prototypes/Entities/Mobs/NPCs/regalrat.yml
+- match:
+    - id: MobRatKing
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Mouse]
+      understands: [Mouse,TauCetiBasic]
+- match:
+    - id: MobRatServant
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Mouse]
+      understands: [Mouse,TauCetiBasic]
+
+--- ### SILICON ###
+file: Resources/Prototypes/Entities/Mobs/NPCs/silicon.yml
+- match:
+    - id: MobRobotic
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Languages
+      speaks: [RobotTalk,TauCetiBasic]
+      understands: [RobotTalk,TauCetiBasic]
+
+--- ### SPACE ###
+file: Resources/Prototypes/Entities/Mobs/NPCs/space.yml
+- match:
+    - id: MobKangarooSpace
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Kangaroo]
+      understands: [Kangaroo]
+- match:
+    - id: MobSpiderSpace
+    - id: MobCobraSpace
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge # Einstein Engines - Language
+      speaks: [Xeno]
+      understands: [Xeno]
+
+
+--- ### SPACE ###
+file: Resources/Prototypes/Entities/Objects/Fun/pai.yml
+- match:
+    - id: PersonalAI
+  action: merge
+  data:
+    components:
+    - type: LanguageKnowledge
+        speaks: &speakable-languages
+        - TauCetiBasic # Add individual languages so they can speak in said language for privacy.
+        - Canilunzt
+        - Bubblish
+        - Nekomimetic
+        - Draconic
+        - SolCommon
+        - RootSpeak
+        - Moffic
+        - ValyrianStandard
+        - Chittin
+        - SiikMaas
+        - RobotTalk
+        - DroneTalk
+        - Marish
+        - Freespeak
+        - Tradeband
+        understands:
+        <<: *speakable-languages
+        - Sign # Should know it but not speak it, for obvious reasons.
+

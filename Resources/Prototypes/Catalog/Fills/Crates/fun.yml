@@ -304,6 +304,19 @@
       - id: PaperCNCSheet
         amount: 6
 
+# FRONTIER START
+- type: entity
+  id: CrateFunATV
+  parent: CrateLivestock
+  name: ATV crate
+  description: An Absolutely Taxable Vehicle to help cargo with hauling.
+  components:
+  - type: StorageFill
+    contents:
+      - id: VehicleATVNF # Frontier
+      - id: VehicleKeyATV
+# FRONTIER END
+
 - type: entity
   id: CrateFunSadTromboneImplants
   parent: CrateGenericSteel
@@ -384,6 +397,19 @@
       amount: 2
     - id: GrenadeFoamDart
       amount: 4
+
+# FRONTIER START
+- type: entity
+  id: CrateFunSyndicateSegway
+  parent: CrateLivestock
+  name: Syndicate segway crate
+  description: A crate containing a two-wheeler that will help you escape from the security officers. Or not.
+  components:
+    - type: StorageFill
+      contents:
+        - id: VehicleSyndicateSegway
+        - id: VehicleKeySyndicateSegway
+# FRONTIER END
 
 - type: entity
   id: CrateFunBoxing

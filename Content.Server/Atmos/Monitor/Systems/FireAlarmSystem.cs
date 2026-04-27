@@ -25,6 +25,7 @@ public sealed class FireAlarmSystem : EntitySystem
         SubscribeLocalEvent<FireAlarmComponent, InteractHandEvent>(OnInteractHand);
         SubscribeLocalEvent<FireAlarmComponent, DeviceListUpdateEvent>(OnDeviceListSync);
         SubscribeLocalEvent<FireAlarmComponent, GotEmaggedEvent>(OnEmagged);
+        SubscribeLocalEvent<FireAlarmComponent, GotUnEmaggedEvent>(OnUnemagged); // Frontier
     }
 
     private void OnDeviceListSync(EntityUid uid, FireAlarmComponent component, DeviceListUpdateEvent args)
@@ -86,4 +87,23 @@ public sealed class FireAlarmSystem : EntitySystem
         RemCompDeferred<AtmosAlarmableComponent>(uid);
         args.Handled = true;
     }
+
+    // Frontier: demag
+    private void OnUnemagged(EntityUid uid, FireAlarmComponent component, ref GotUnEmaggedEvent args)
+    {
+        if (!_emag.CompareFlag(args.Type, EmagType.Interaction))
+            return;
+
+        if (!_emag.CheckFlag(uid, EmagType.Interaction))
+            return;
+
+        if (!HasComp<AtmosAlarmableComponent>(uid))
+        {
+            // Restore the atmos alarmable component to this device.
+            var alarmable = EnsureComp<AtmosAlarmableComponent>(uid);
+            _atmosAlarmable.Reset(uid, alarmable);
+        }
+        args.Handled = true;
+    }
+    // End Frontier
 }

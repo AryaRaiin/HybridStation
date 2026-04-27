@@ -120,11 +120,12 @@
     sprite: Clothing/OuterClothing/Misc/chaplain_hoodie.rsi
   - type: Clothing
     sprite: Clothing/OuterClothing/Misc/chaplain_hoodie.rsi
-  - type: ToggleableClothing
-    clothingPrototype: ClothingHeadHatHoodChaplainHood
+  - type: ToggleableClothing # Goobstation - Modsuits change
+    clothingPrototypes: 
+      head: ClothingHeadHatHoodChaplainHood
 
 - type: entity
-  parent: ClothingOuterBase
+  parent: ClothingNeckBase # Frontier - Change to neck
   id: ClothingOuterPonchoClassic
   name: classic poncho
   description: A warm and comfy classic poncho.
@@ -137,7 +138,7 @@
     accent: SpanishAccent
 
 - type: entity
-  parent: ClothingOuterBase
+  parent: [ClothingOuterBase, ContrabandClothing] # Frontier: added ContrabandClothing as parent
   id: ClothingOuterRobesCult
   name: cult robes
   description: There's no cult without classic red/crimson cult robes.
@@ -159,7 +160,7 @@
     sprite: Clothing/OuterClothing/Misc/judge.rsi
 
 - type: entity
-  parent: ClothingOuterBase
+  parent: ClothingNeckBase # Frontier - Change to neck
   id: ClothingOuterPoncho
   name: poncho
   description: A warm and comfy poncho.
@@ -184,14 +185,14 @@
 
 - type: entity
   abstract: true
-  parent: [ ClothingOuterBase, AllowSuitStorageClothingGasTanks, BaseMagicalContraband ]
+  parent: [ ClothingOuterBase, AllowSuitStorageClothingGasTanks, BaseC3WizardContraband ] # Frontier: BaseMagicalContraband<BaseC3WizardContraband
   id: ClothingOuterWizardBase
   components:
   - type: WizardClothes
 
 # Is this wizard wearing a fanny pack???
 - type: entity
-  parent: ClothingOuterWizardBase
+  parent: [ClothingOuterWizardBase, ContrabandClothing] # Frontier: added ContrabandClothing as parent
   id: ClothingOuterWizardViolet
   name: violet wizard robes
   description: A bizarre gem-encrusted violet robe that radiates magical energies.
@@ -206,7 +207,7 @@
     - WhitelistChameleon
 
 - type: entity
-  parent: ClothingOuterWizardBase
+  parent: [ClothingOuterWizardBase, ContrabandClothing] # Frontier: added ContrabandClothing as parent
   id: ClothingOuterWizard
   name: wizard robes
   description: A bizarre gem-encrusted blue robe that radiates magical energies.
@@ -221,7 +222,7 @@
     - WhitelistChameleon
 
 - type: entity
-  parent: ClothingOuterWizardBase
+  parent: [ClothingOuterWizardBase, ContrabandClothing] # Frontier: added ContrabandClothing as parent
   id: ClothingOuterWizardRed
   name: red wizard robes
   description: Strange-looking, red, hat-wear that most certainly belongs to a real magic user.

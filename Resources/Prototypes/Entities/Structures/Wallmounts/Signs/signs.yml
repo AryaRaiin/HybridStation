@@ -145,7 +145,7 @@
   parent: BaseSignDirectional
   id: SignDirectionalHop
   name: hop sign
-  description: A direction sign, pointing out which way Head of Personnel's office is.
+  description: A direction sign, pointing out which way the head of personnel's office is.
   components:
   - type: Sprite
     state: direction_hop

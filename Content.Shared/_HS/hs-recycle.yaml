@@ -1,0 +1,9 @@
+---
+file: Resources/Prototypes/Entities/Objects/Consumable/Food/produce.yml
+- match:
+  - id: ProduceBase
+  action: merge
+  data:
+    parent: 
+      - BaseItem
+      - RecyclableItemOrganicTiny # Frontier: added RecyclableItemOrganicTiny

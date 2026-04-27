@@ -8,6 +8,8 @@
     - 0,0,6,1
   - type: Item
     size: Small
+  - type: StaticPrice # Frontier
+    price: 10 # Frontier
 
 - type: entity
   name: match stick
@@ -20,6 +22,7 @@
     - Matchstick
     - Trash
   - type: SpaceGarbage
+    cleanupExempt: true # Mono
   - type: Sprite
     sprite: Objects/Tools/matches.rsi
     layers:
@@ -47,6 +50,15 @@
     unlitIcon: match_unlit
     litIcon: match_lit
     burntIcon: match_burnt
+  - type: StaticPrice
+    price: 2
+  - type: Cautery # Shitmed
+    speed: 0.2
+  - type: SurgeryTool # Shitmed
+    startSound:
+      path: /Audio/Weapons/Guns/Hits/energy_meat1.ogg
+    endSound:
+      path: /Audio/Weapons/Guns/Hits/energy_meat1.ogg
 
 - type: entity
   parent: Matchstick
@@ -58,6 +70,10 @@
       - state: match_burnt
   - type: Matchstick
     state: Burnt
+  - type: SpaceGarbage # Mono
+    cleanupExempt: false # Mono
+  - type: StaticPrice
+    price: 1
 
 - type: entity
   name: match box
@@ -108,6 +124,7 @@
     tags:
     - Trash
   - type: SpaceGarbage
+     cleanupExempt: true # Mono
 
 - type: entity
   parent: [Matchbox, BaseSyndicateContraband]

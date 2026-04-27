@@ -1,0 +1,8 @@
+- ID: FoodPieBase
+  FLAV: 11
+- ID: FoodPieSliceBase
+  FLAV: 2
+- ID: FoodPieAmanita
+  FLAV: 6
+- ID: FoodTartCoco
+  FLAV: 15

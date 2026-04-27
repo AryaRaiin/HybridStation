@@ -1,3 +1,32 @@
+// SPDX-FileCopyrightText: 2021 Paul Ritter
+// SPDX-FileCopyrightText: 2022 Emisse
+// SPDX-FileCopyrightText: 2022 Kara
+// SPDX-FileCopyrightText: 2022 Moony
+// SPDX-FileCopyrightText: 2022 ShadowCommander
+// SPDX-FileCopyrightText: 2022 keronshb
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 IntegerTempest
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 MisterMecky
+// SPDX-FileCopyrightText: 2023 Visne
+// SPDX-FileCopyrightText: 2023 deltanedas
+// SPDX-FileCopyrightText: 2023 deltanedas <@deltanedas:kde.org>
+// SPDX-FileCopyrightText: 2023 metalgearsloth
+// SPDX-FileCopyrightText: 2024 Krunklehorn
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 PrPleGoo
+// SPDX-FileCopyrightText: 2024 SlamBamActionman
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 beck-thompson
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 Milon
+// SPDX-FileCopyrightText: 2025 Princess Cheeseballs
+// SPDX-FileCopyrightText: 2025 Zachary Higgs
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Shared.Armor;
 using Content.Shared.Atmos;
 using Content.Shared.Chat;
@@ -31,6 +60,9 @@ using Content.Shared.Verbs;
 using Content.Shared.Weapons.Ranged.Events;
 using Content.Shared.Wieldable;
 using Content.Shared.Zombies;
+
+using Content.Shared._Goobstation.Flashbang; // Goobstation
+using Content.Shared._White.Overlays; // Goobstation
 
 namespace Content.Shared.Inventory;
 
@@ -99,6 +131,12 @@ public partial class InventorySystem
         SubscribeLocalEvent<InventoryComponent, GetVerbsEvent<EquipmentVerb>>(OnGetEquipmentVerbs);
         SubscribeLocalEvent<InventoryComponent, GetVerbsEvent<InnateVerb>>(OnGetInnateVerbs);
 
+        // Goobstation
+        SubscribeLocalEvent<InventoryComponent, TakeStaminaDamageEvent>(RelayInventoryEvent); // goobstation - stun resistance
+        SubscribeLocalEvent<InventoryComponent, GetFlashbangedEvent>(RelayInventoryEvent); // goob edit
+        SubscribeLocalEvent<InventoryComponent, FlashDurationMultiplierEvent>(RelayInventoryEvent); // goob edit
+        SubscribeLocalEvent<InventoryComponent, RefreshEquipmentHudEvent<NightVisionComponent>>(RefRelayInventoryEvent); // Goobstation
+        SubscribeLocalEvent<InventoryComponent, RefreshEquipmentHudEvent<ThermalVisionComponent>>(RefRelayInventoryEvent); // Goobstation
     }
 
     protected void RefRelayInventoryEvent<T>(EntityUid uid, InventoryComponent component, ref T args) where T : IInventoryRelayEvent

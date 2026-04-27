@@ -1,0 +1,326 @@
+---
+file: Resources/Prototypes/Recipes/Cooking/meal_recipes.yml
+
+# came up with list by doing yq. explanation: look for all objects with recipeType either equal to or has an array object containing "Oven", print the id
+#   cat $file | yq -r '.[] | select( .recipeType | if type!="array" then contains("Oven") else contains(["Oven"]) end ) | .id'
+
+
+- match:
+    - id: RecipePlainGrits
+  action: mergeadd
+  data:
+    recipeType:
+      type: microwaveMealRecipe
+      name: butter grits recipe
+      result: FoodPlainGrits
+      time: 10
+      group: Savory
+      reagents:
+        Cornmeal: 5
+        Water: 10
+      solids:
+        FoodButterSlice: 1
+        FoodBowlBig: 1
+
+- match:
+    - id: RecipeCheeseGrits
+  action: mergeadd
+  data:
+      type: microwaveMealRecipe
+      name: cheese grits recipe
+      result: FoodCheeseGrits
+      time: 10
+      group: Savory
+      reagents:
+        Cornmeal: 5
+        Water: 10
+      solids:
+        FoodCheeseSlice: 1
+        FoodButterSlice: 1
+        FoodBowlBig: 1
+
+
+### OVEN
+- match:
+    - id: RecipeBun
+    - id: RecipeBagel
+    - id: RecipeBagelPoppy
+    - id: RecipeBagelCotton
+    - id: RecipeAppendixBurger
+    - id: RecipeBaconBurger
+    - id: RecipeBaseballBurger
+    - id: RecipeBearger
+    - id: RecipeBigBiteBurger
+    - id: RecipeBrainBurger
+    - id: RecipeCatBurger
+    - id: RecipeCheeseburger
+    - id: RecipeChickenSandwich
+    - id: RecipeClownBurger
+    - id: RecipeCorgiBurger
+    - id: RecipeCrabBurger
+    - id: RecipeCrazyHamburger
+    - id: RecipeDuckBurger
+    - id: RecipeEmpoweredBurger
+    - id: RecipeCarpBurger
+    - id: RecipeFiveBurger
+    - id: RecipeGhostBurger
+    - id: RecipeHumanBurger
+    - id: RecipeJellyBurger
+    - id: RecipeBurgerMcguffin
+    - id: RecipeBurgerMcrib
+    - id: RecipeMimeBurger
+    - id: RecipePlainBurger
+    - id: RecipeRatBurger
+    - id: RecipeRobotBurger
+    - id: RecipeSoylentBurger
+    - id: RecipeSpellBurger
+    - id: RecipeSuperBiteBurger
+    - id: RecipeTofuBurger
+    - id: RecipeXenoburger
+    - id: RecipeBananaBread
+    - id: RecipeCornbread
+    - id: RecipeCreamCheeseBread
+    - id: RecipeMeatBread
+    - id: RecipeMimanaBread
+    - id: RecipeBread
+    - id: RecipeBreadCotton
+    - id: RecipeSausageBread
+    - id: RecipeSpiderMeatBread
+    - id: RecipeTofuBread
+    - id: RecipeXenoMeatBread
+    - id: RecipeBaguette
+    - id: RecipeBaguetteCotton
+    - id: RecipeBaguetteSword
+    - id: RecipeButteredToast
+    - id: RecipeFrenchToast
+    - id: RecipeGarlicBread
+    - id: RecipeJellyToast
+    - id: RecipeMoldyBreadSlice
+    - id: RecipeTwoBreadSlice
+    - id: RecipeOnionRings
+    - id: RecipeMargheritaPizza
+    - id: RecipeMushroomPizza
+    - id: RecipeMeatPizza
+    - id: RecipeVegetablePizza
+    - id: RecipeHawaiianPizza
+    - id: RecipeDankPizza
+    - id: RecipeDonkpocketPizza
+    - id: RecipeUraniumPizza
+    - id: RecipeCottonPizza
+    - id: RecipeBoiledSpaghetti
+    - id: RecipePastaTomato
+    - id: RecipeMeatballSpaghetti
+    - id: RecipeButterNoodles
+    - id: RecipeChowMein
+    - id: RecipeOatmeal
+    - id: RecipeBoiledRice
+    - id: RecipeRicePudding
+    - id: RecipeRicePork
+    - id: RecipeRiceGumbo
+    - id: RecipeEggRice
+    - id: RecipeCopypasta
+    - id: RecipeBisque
+    - id: RecipeMeatballSoup
+    - id: RecipeNettleSoup
+    - id: RecipeEyeballSoup
+    - id: RecipeAmanitaJelly
+    - id: RecipeOnionSoup
+    - id: RecipeMushroomSoup
+    - id: RecipeStewSoup
+    - id: RecipeTomatoSoup
+    - id: RecipeTomatoBloodSoup
+    - id: RecipeWingFangChuSoup
+    - id: RecipeWingFangChuSoupSpider
+    - id: RecipeVegetableSoup
+    - id: RecipeClownTearsSoup
+    - id: RecipeMonkeysDelightSoup
+    - id: RecipeBungoSoup
+    - id: RecipeBoiledSnail
+    - id: RecipeEscargotSoup
+    - id: RecipeAmanitaPie
+    - id: RecipeApplePie
+    - id: RecipeBaklava
+    - id: RecipeBananaCreamPie
+    - id: RecipeBerryClafoutis
+    - id: RecipeCherryPie
+    - id: RecipeFrostyPie
+    - id: RecipeMeatPie
+    - id: RecipePumpkinPie
+    - id: RecipeXenoPie
+    - id: RecipeCocoTart
+    - id: RecipeGappleTart
+    - id: RecipeGrapeTart
+    - id: RecipeMimeTart
+    - id: RecipeCubanCarp
+    - id: RecipeMisoColaSoup
+    - id: RecipeLoadedBakedPotato
+    - id: RecipeFries
+    - id: RecipeCheesyFries
+    - id: RecipeCarrotFries
+    - id: RecipeNachos
+    - id: RecipeNachosCheesy
+    - id: RecipeNachosCuban
+    - id: RecipePopcorn
+    - id: RecipePancake
+    - id: RecipeBlueberryPancake
+    - id: RecipeWaffles
+    - id: RecipeWaffleSoy
+    - id: RecipeCookie
+    - id: RecipeSugarCookie
+    - id: RecipeRaisinCookie
+    - id: RecipeCookieOatmeal
+    - id: RecipeChocolateChipPancake
+    - id: RecipeCake
+    - id: RecipeDumplings
+    - id: RecipeBrownies
+    - id: RecipeHotChili
+    - id: RecipeClownTears
+    - id: RecipeChiliClown
+    - id: RecipeQueso
+    - id: RecipeRibs
+    - id: RecipeEnchiladas
+    - id: RecipeMuffin
+    - id: RecipeMuffinChocolate
+    - id: RecipeMuffinBerry
+    - id: RecipeMuffinBanana
+    - id: RecipeMuffinCherry
+    - id: RecipeDriedTeaLeaves
+    - id: RecipeDriedTobacco
+    - id: RecipeDriedCannabis
+    - id: RecipeDriedCannabisRainbow
+    - id: RecipeTrashBakedBananaPeel
+    - id: RecipeSuppermatter
+    - id: RecipeFoodBakedChevreChaud
+    - id: RecipeCookedSpaceshroom
+    - id: RecipeCannabisButter
+    - id: RecipeCannabisBrownies
+    - id: RecipeCornInButter
+    - id: RecipePeaSoup
+    - id: RecipeTacoShell
+    - id: RecipeTacoBeef
+    - id: RecipeTacoChicken
+    - id: RecipeTacoFish
+    - id: RecipeTacoRat
+    - id: RecipeTacoBeefSupreme
+    - id: RecipeTacoChickenSupreme
+    - id: RecipeCroissant
+    - id: RecipeCroissantCotton
+    - id: RecipeThrowingCroissant
+    - id: RecipeInertAnomalyMeat
+    - id: RecipeAnomalyMeat
+    - id: RecipeAnomalyMeatCooked
+    - id: RecipeGrilledCheeseSandwich
+    - id: RecipePlainGrits
+    - id: RecipeCheeseGrits
+  action: merge
+  data:
+    recipeType:
+    - Oven
+
+### MICROWAVE
+- match:
+    - id: RecipeMothRoachburger
+    - id: RecipeMoldyBreadSlice
+    - id: RecipeTwoBreadSlice
+    - id: RecipeBoiledSpaghetti
+    - id: RecipeOatmeal
+    - id: RecipeBoiledRice
+    - id: RecipeRicePudding
+    - id: RecipeRicePork
+    - id: RecipeRiceGumbo
+    - id: RecipeEggRice
+    - id: RecipeBisque
+    - id: RecipeMeatballSoup
+    - id: RecipeNettleSoup
+    - id: RecipeEyeballSoup
+    - id: RecipeAmanitaJelly
+    - id: RecipeOnionSoup
+    - id: RecipeMushroomSoup
+    - id: RecipeStewSoup
+    - id: RecipeTomatoSoup
+    - id: RecipeTomatoBloodSoup
+    - id: RecipeWingFangChuSoup
+    - id: RecipeWingFangChuSoupSpider
+    - id: RecipeVegetableSoup
+    - id: RecipeClownTearsSoup
+    - id: RecipeMonkeysDelightSoup
+    - id: RecipeBungoSoup
+    - id: RecipeBoiledSnail
+    - id: RecipeEscargotSoup
+    - id: RecipeMisoColaSoup
+    - id: RecipeLoadedBakedPotato
+    - id: RecipeFries
+    - id: RecipeCheesyFries
+    - id: RecipeCarrotFries
+    - id: RecipeNachos
+    - id: RecipeNachosCheesy
+    - id: RecipeNachosCuban
+    - id: RecipePopcorn
+    - id: RecipeDumplings
+    - id: RecipeWarmDonkpocket
+    - id: RecipeWarmDankpocket
+    - id: RecipeWarmDonkpocketSpicy
+    - id: RecipeWarmDonkpocketTeriyaki
+    - id: RecipeWarmDonkpocketPizza
+    - id: RecipeDonkpocketHonk
+    - id: RecipeDonkpocketBerry
+    - id: RecipeDonkpocketStonk
+    - id: RecipeDonkpocketCarp
+    - id: RecipeHotChili
+    - id: RecipeClownTears
+    - id: RecipeQueso
+    - id: RecipeDriedTeaLeaves
+    - id: RecipeDriedTobacco
+    - id: RecipeDriedCannabis
+    - id: RecipeDriedCannabisRainbow
+    - id: RecipeTrashBakedBananaPeel
+    - id: RecipeFoodBakedChevreChaud
+    - id: RecipeCookedSpaceshroom
+    - id: RecipeCannabisButter
+    - id: RecipeCornInButter
+    - id: RecipePeaSoup
+    - id: RecipeTacoShell
+    - id: RecipeInertAnomalyMeat
+    - id: RecipeAnomalyMeat
+    - id: RecipeAnomalyMeatCooked
+    - id: RecipePlainGrits
+    - id: RecipeCheeseGrits
+  action: merge
+  data:
+    recipeType:
+    - Microwave
+
+### ASSEMBLER
+- match:
+    - id: RecipeSashimi
+    - id: RecipeAppleCake
+    - id: RecipeCarrotCake
+    - id: RecipeLemonCake
+    - id: RecipeLemoonCake
+    - id: RecipeOrangeCake
+    - id: RecipeBlueberryCake
+    - id: RecipeLimeCake
+    - id: RecipeCheeseCake
+    - id: RecipePumpkinCake
+    - id: RecipeClownCake
+    - id: RecipeBirthdayCake
+    - id: RecipeChocolateCake
+    - id: RecipeBrainCake
+    - id: RecipeSlimeCake
+    - id: RecipeCatCake
+    - id: RecipeBreadDog
+    - id: RecipeColdChili
+    - id: RecipeHerbSalad
+    - id: RecipeValidSalad
+    - id: RecipeColeslaw
+    - id: RecipeCaesarSalad
+    - id: RecipeCitrusSalad
+    - id: RecipeKimchiSalad
+    - id: RecipeFruitSalad
+    - id: RecipeJungleSalad
+    - id: RecipeWatermelonFruitBowlSalad
+  action: merge
+  data:
+    recipeType:
+    - Assembler
+

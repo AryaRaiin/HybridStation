@@ -112,6 +112,8 @@
   - type: SolutionContainerVisuals
     maxFillLevels: 2
     fillBaseName: packet-trans-
+  - type: StaticPrice # Frontier
+    price: 5 # Frontier
 
 - type: entity
   parent: BaseFoodCondimentPacketDrink
@@ -382,6 +384,8 @@
   - type: PhysicalComposition
     materialComposition:
       Glass: 50
+  - type: StaticPrice # Frontier
+    price: 13.5 # Frontier
 
 - type: entity
   parent: BaseFoodCondimentBottle
@@ -583,6 +587,8 @@
     state: shaker-empty
   - type: RefillableSolution
     solution: food
+  - type: StaticPrice # Frontier
+    price: 9 # Frontier
 
 - type: entity
   parent: BaseFoodShaker

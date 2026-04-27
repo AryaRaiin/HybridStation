@@ -11,6 +11,11 @@ namespace Content.Shared.Standing
         [DataField]
         public SoundSpecifier? DownSound { get; private set; } = new SoundCollectionSpecifier("BodyFall");
 
+        // WD EDIT START
+        [DataField, AutoNetworkedField]
+        public StandingState CurrentState { get; set; } = StandingState.Standing;
+        // WD EDIT END
+
         [DataField, AutoNetworkedField]
         public bool Standing { get; set; } = true;
 
@@ -27,4 +32,13 @@ namespace Content.Shared.Standing
         [DataField, AutoNetworkedField]
         public List<string> ChangedFixtures = new();
     }
+
+    // WD EDIT START
+    public enum StandingState
+    {
+        Lying,
+        GettingUp,
+        Standing,
+    }
+    // WD EDIT END
 }

@@ -28,6 +28,7 @@ using Content.Shared.Zombies;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
+using Content.Shared._NF.Bed.Sleep; // Frontier
 
 namespace Content.Shared.Bed.Sleep;
 
@@ -247,10 +248,17 @@ public sealed partial class SleepingSystem : EntitySystem
     /// </summary>
     private void OnDamageChanged(Entity<SleepingComponent> ent, ref DamageChangedEvent args)
     {
-        if (!args.DamageIncreased || args.DamageDelta == null)
+        if (args.DamageDelta == null)
             return;
 
-        if (args.DamageDelta.GetTotal() >= ent.Comp.WakeThreshold)
+        var totalChange = args.DamageDelta.GetTotal();
+        if (totalChange == 0)
+            return;
+
+        // Wake up if either damage or healing exceeds the threshold
+        if ((totalChange > 0 || -totalChange > 0) && 
+            (totalChange >= ent.Comp.WakeThreshold || -totalChange >= ent.Comp.WakeThreshold)
+            && !HasComp<ForcedSleepingComponent>(ent))
             TryWaking((ent, ent.Comp));
     }
 
@@ -302,6 +310,10 @@ public sealed partial class SleepingSystem : EntitySystem
             return false;
 
         EnsureComp<SleepingComponent>(ent);
+        // Frontier: set auto-wakeup time
+        if (TryComp<AutoWakeUpComponent>(ent, out var autoWakeUp))
+            autoWakeUp.NextWakeUp = _gameTiming.CurTime + autoWakeUp.Length;
+        // End Frontier: auto-wakeup
         return true;
     }
 
@@ -362,6 +374,26 @@ public sealed partial class SleepingSystem : EntitySystem
     {
         args.Prefix = ent.Comp.ForceSaySleepDataset;
     }
+
+    // Frontier: auto-wakeup
+    /// <summary>
+    /// Handles auto-wakeup
+    /// </summary>
+    public override void Update(float frameTime)
+    {
+        var query = EntityQueryEnumerator<AutoWakeUpComponent, SleepingComponent>();
+        var curTime = _gameTiming.CurTime;
+        while (query.MoveNext(out var uid, out var wakeUp, out var sleeping))
+        {
+            if (curTime >= wakeUp.NextWakeUp)
+            {
+                Wake((uid, sleeping));
+                _statusEffectsSystem.TryRemoveStatusEffect(uid, "Drowsiness");
+            }
+        }
+    }
+    // End Frontier: auto-wakeup
+
 }
 
 

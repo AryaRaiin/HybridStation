@@ -4,6 +4,9 @@ using Content.Shared.VendingMachines;
 using Robust.Client.UserInterface;
 using Robust.Shared.Input;
 using System.Linq;
+using Content.Shared._NF.Bank.Components; // Frontier
+using Content.Shared.Containers.ItemSlots; // Frontier
+using Content.Shared.Stacks; // Frontier
 
 namespace Content.Client.VendingMachines
 {
@@ -15,6 +18,18 @@ namespace Content.Client.VendingMachines
         [ViewVariables]
         private List<VendingMachineInventoryEntry> _cachedInventory = new();
 
+        // Frontier START: market price modifier & balance
+        private UserInterfaceSystem _uiSystem = default!;
+        private ItemSlotsSystem _itemSlots = default!;
+
+        [ViewVariables]
+        private float _mod = 1f;
+        [ViewVariables]
+        private int _balance = 0;
+        [ViewVariables]
+        private int _cashSlotBalance = 0;
+        // Frontier END
+
         public VendingMachineBoundUserInterface(EntityUid owner, Enum uiKey) : base(owner, uiKey)
         {
         }
@@ -22,6 +37,14 @@ namespace Content.Client.VendingMachines
         protected override void Open()
         {
             base.Open();
+
+            // Frontier START: state, market modifier, balance status
+            _uiSystem = EntMan.System<UserInterfaceSystem>();
+            _itemSlots = EntMan.System<ItemSlotsSystem>();
+
+            if (EntMan.TryGetComponent<MarketModifierComponent>(Owner, out var market))
+                _mod = market.Mod;
+            // Frontier END
 
             _menu = this.CreateWindowCenteredLeft<VendingMachineMenu>();
             _menu.Title = EntMan.GetComponent<MetaDataComponent>(Owner).EntityName;
@@ -36,7 +59,28 @@ namespace Content.Client.VendingMachines
             var system = EntMan.System<VendingMachineSystem>();
             _cachedInventory = system.GetAllInventory(Owner);
 
-            _menu?.Populate(_cachedInventory, enabled);
+            // Frontier START: state, market modifier, balance status
+            var uiUsers = _uiSystem.GetActors(Owner, UiKey);
+            foreach (var uiUser in uiUsers)
+            {
+                if (EntMan.TryGetComponent<BankAccountComponent>(uiUser, out var bank))
+                    _balance = bank.Balance;
+            }
+            int? cashSlotValue = null;
+            if (EntMan.TryGetComponent<VendingMachineComponent>(Owner, out var vendingMachine))
+            {
+                _cashSlotBalance = vendingMachine.CashSlotBalance;
+                if (vendingMachine.CashSlotName != null)
+                    cashSlotValue = _cashSlotBalance;
+            }
+            else
+            {
+                _cashSlotBalance = 0;
+            }
+            // Frontier END
+
+            _menu?.Populate(_cachedInventory, enabled, 
+                _balance, cashSlotValue); // Frontier: add _balance
         }
 
         public void UpdateAmounts()

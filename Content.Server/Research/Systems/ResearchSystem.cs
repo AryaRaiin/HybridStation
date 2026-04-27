@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Content.Server.Administration.Logs;
+using Content.Server.Station.Systems;
 using Content.Server.Radio.EntitySystems;
 using Content.Shared.Access.Systems;
 using Content.Shared.Popups;
@@ -22,6 +23,8 @@ namespace Content.Server.Research.Systems
         [Dependency] private readonly UserInterfaceSystem _uiSystem = default!;
         [Dependency] private readonly SharedPopupSystem _popup = default!;
         [Dependency] private readonly RadioSystem _radio = default!;
+        [Dependency] private readonly StationSystem _station = default!;
+        [Dependency] private readonly EntityLookupSystem _lookup = default!;
 
         public override void Initialize()
         {
@@ -86,6 +89,49 @@ namespace Content.Server.Research.Systems
             var set = new HashSet<Entity<ResearchServerComponent>>();
             _lookup.GetGridEntities(grid, set);
             return set;
+        }
+
+        /// <summary>
+        /// Frontier copies of the original get servers. We need our research system to be isolated on a per-grid basis.
+        /// </summary>
+        /// <param name="gridUid"></param>
+        /// <returns></returns>
+        public string[] GetNFServerNames(EntityUid gridUid)
+        {
+            var allServers = EntityQueryEnumerator<ResearchServerComponent>();
+            var list = new List<string>();
+            var station = _station.GetOwningStation(gridUid);
+
+            if (station is { } stationUid)
+            {
+                while (allServers.MoveNext(out var uid, out var comp))
+                {
+                    if (_station.GetOwningStation(uid) == stationUid)
+                        list.Add(comp.ServerName);
+                }
+            }
+
+            var serverList = list.ToArray();
+            return serverList;
+        }
+
+        public int[] GetNFServerIds(EntityUid gridUid)
+        {
+            var allServers = EntityQueryEnumerator<ResearchServerComponent>();
+            var list = new List<int>();
+            var station = _station.GetOwningStation(gridUid);
+
+            if (station is { } stationUid)
+            {
+                while (allServers.MoveNext(out var uid, out var comp))
+                {
+                    if (_station.GetOwningStation(uid) == stationUid)
+                        list.Add(comp.Id);
+                }
+            }
+
+            var serverList = list.ToArray();
+            return serverList;
         }
 
         public override void Update(float frameTime)

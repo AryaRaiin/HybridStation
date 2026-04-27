@@ -340,6 +340,26 @@ public abstract partial class SharedCryoPodSystem : EntitySystem
         args.Handled = true;
     }
 
+    // Frontier: demag
+    protected void OnUnemagged(EntityUid uid, CryoPodComponent? cryoPodComponent, ref GotUnEmaggedEvent args)
+    {
+        if (!Resolve(uid, ref cryoPodComponent))
+            return;
+
+        if (!_emag.CompareFlag(args.Type, EmagType.Interaction))
+            return;
+
+        if (!_emag.CheckFlag(uid, EmagType.Interaction))
+            return;
+
+        // Clear fields regardless of their state
+        cryoPodComponent.PermaLocked = false;
+        cryoPodComponent.Locked = false;
+        Dirty(uid, cryoPodComponent);
+        args.Handled = true;
+    }
+    // End Frontier: demag
+
     [Serializable, NetSerializable]
     public sealed partial class CryoPodPryFinished : SimpleDoAfterEvent;
 

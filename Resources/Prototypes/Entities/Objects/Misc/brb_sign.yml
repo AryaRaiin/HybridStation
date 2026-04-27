@@ -12,3 +12,5 @@
     quickEquip: false
     slots:
     - Neck
+  - type: StaticPrice # Frontier
+    price: 10

@@ -87,7 +87,8 @@ guide-entry-traversal-distorter = Traversal Distorter
 guide-entry-machine-upgrading = Machine Upgrading
 guide-entry-robotics = Robotics
 guide-entry-cyborgs = Cyborgs
-guide-entry-security = Security
+# Frontier: Security<TSFMC
+guide-entry-security = TSFMC
 guide-entry-forensics = Forensics
 guide-entry-defusal = Large Bomb Defusal
 guide-entry-criminal-records = Criminal Records
@@ -205,3 +206,9 @@ guide-entry-rules-ban-durations = Ban Durations
 
 guide-entry-writing = Writing
 guide-entry-glossary = Glossary
+
+## Shitmed Change
+guide-entry-surgery = Surgery
+guide-entry-partmanipulation = Part Manipulation
+guide-entry-organmanipulation = Organ Manipulation
+guide-entry-utilitysurgeries = Utility Surgeries

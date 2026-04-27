@@ -207,7 +207,22 @@ public sealed partial class DamageableSystem
 ///     Raised before damage is done, so stuff can cancel it if necessary.
 /// </summary>
 [ByRefEvent]
-public record struct BeforeDamageChangedEvent(DamageSpecifier Damage, EntityUid? Origin = null, bool Cancelled = false);
+public record struct BeforeDamageChangedEvent(DamageSpecifier Damage, EntityUid? Origin = null, bool Cancelled = false,
+        TargetBodyPart? TargetPart = null); // SHITMED
+
+// SHITMED START
+/// <summary>
+///     Shitmed: Raised on parts before damage is done so we can cancel the damage if they evade.
+/// </summary>
+[ByRefEvent]
+public record struct TryChangePartDamageEvent(DamageSpecifier Damage, EntityUid? Origin = null, bool Cancelled = false,
+        TargetBodyPart? TargetPart = null,
+        bool IgnoreResistances = false,
+        bool CanSever = true,
+        bool CanEvade = false,
+        float PartMultiplier = 1.00f,
+        bool Evaded = false);
+// SHITMED END
 
 /// <summary>
 ///     Raised on an entity when damage is about to be dealt,
@@ -216,7 +231,9 @@ public record struct BeforeDamageChangedEvent(DamageSpecifier Damage, EntityUid?
 ///
 ///     For example, armor.
 /// </summary>
-public sealed class DamageModifyEvent(DamageSpecifier damage, EntityUid? origin = null)
+public sealed class DamageModifyEvent(DamageSpecifier damage, EntityUid? origin = null,
+    float armorPenetration = 0, // GOOBSTATION
+    TargetBodyPart? targetPart = null) // SHITMED
     : EntityEventArgs, IInventoryRelayEvent
 {
     // Whenever locational damage is a thing, this should just check only that bit of armour.
@@ -224,6 +241,8 @@ public sealed class DamageModifyEvent(DamageSpecifier damage, EntityUid? origin 
 
     public readonly DamageSpecifier OriginalDamage = damage;
     public DamageSpecifier Damage = damage;
+    public float ArmorPenetration; // GOOBSTATION
+    public readonly TargetBodyPart? TargetPart; // SHITMED
 }
 
 public sealed class DamageChangedEvent : EntityEventArgs
@@ -261,16 +280,25 @@ public sealed class DamageChangedEvent : EntityEventArgs
     /// </summary>
     public readonly EntityUid? Origin;
 
+    // SHITMED START
+    /// <summary>
+    ///     Shitmed Change: Can this damage event sever parts?
+    /// </summary>
+    public readonly bool CanSever;
+    // SHITMED END
+
     public DamageChangedEvent(
         DamageableComponent damageable,
         DamageSpecifier? damageDelta,
         bool interruptsDoAfters,
-        EntityUid? origin
+        EntityUid? origin,
+        bool canSever = true // SHITMED
     )
     {
         Damageable = damageable;
         DamageDelta = damageDelta;
         Origin = origin;
+        CanSever = canSever; // SHITMED
 
         if (DamageDelta is null)
             return;

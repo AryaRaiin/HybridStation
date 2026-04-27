@@ -165,7 +165,7 @@ public sealed partial class CrewMonitoringWindow : FancyWindow
         // Show monitor on nav map
         if (monitorCoords != null && _blipTexture != null)
         {
-            NavMap.TrackedEntities[_entManager.GetNetEntity(monitor)] = new NavMapBlip(monitorCoords.Value, _blipTexture, Color.Cyan, true, false);
+             NavMap.TrackedEntities[_entManager.GetNetEntity(monitor)] = new NavMapBlip(monitorCoords.Value, _blipTexture, Color.Cyan, true, false); // Frontier modification
         }
     }
 
@@ -293,22 +293,23 @@ public sealed partial class CrewMonitoringWindow : FancyWindow
                 jobContainer.AddChild(jobIcon);
             }
 
-            // Job name
+            // Frontier: show location instead of job label
             var jobLabel = new Label()
             {
-                Text = sensor.Job,
+                Text = sensor.LocationName,
                 HorizontalExpand = true,
                 ClipText = true,
             };
 
             jobContainer.AddChild(jobLabel);
+            // End Frontier
 
             // Add user coordinates to the navmap
             if (coordinates != null && NavMap.Visible && _blipTexture != null)
             {
                 NavMap.TrackedEntities.TryAdd(sensor.SuitSensorUid,
                     new NavMapBlip
-                    (CoordinatesToLocal(coordinates.Value),
+                    (CoordinatesToMap(coordinates.Value), // Frontier: Local<Map
                     _blipTexture,
                     (_trackedEntity == null || sensor.SuitSensorUid == _trackedEntity) ? Color.LimeGreen : Color.LimeGreen * Color.DimGray,
                     sensor.SuitSensorUid == _trackedEntity));
@@ -374,7 +375,7 @@ public sealed partial class CrewMonitoringWindow : FancyWindow
             if (NavMap.TrackedEntities.TryGetValue(castSensor.SuitSensorUid, out var data))
             {
                 data = new NavMapBlip
-                    (CoordinatesToLocal(data.Coordinates),
+                    (CoordinatesToMap(data.Coordinates), // Frontier: Local<Map
                     data.Texture,
                     (currTrackedEntity == null || castSensor.SuitSensorUid == currTrackedEntity) ? Color.LimeGreen : Color.LimeGreen * Color.DimGray,
                     castSensor.SuitSensorUid == currTrackedEntity);
@@ -420,25 +421,19 @@ public sealed partial class CrewMonitoringWindow : FancyWindow
         return false;
     }
 
+    // Frontier: all crew monitoring happens in map coords.
     /// <summary>
-    /// Converts the input coordinates to an EntityCoordinates which are in
-    /// reference to the grid that the map is displaying. This is a stylistic
-    /// choice; this window deliberately limits the rate that blips update,
-    /// but if the blip is attached to another grid which is moving, that
-    /// blip will move smoothly, unlike the others. By converting the
-    /// coordinates, we are back in control of the blip movement.
+    /// report all 
     /// </summary>
-    private EntityCoordinates CoordinatesToLocal(EntityCoordinates refCoords)
+    private EntityCoordinates CoordinatesToMap(EntityCoordinates refCoords)
     {
-        if (NavMap.MapUid != null)
-        {
-            return _transformSystem.WithEntityId(refCoords, (EntityUid)NavMap.MapUid);
-        }
+        var mapUid = _transformSystem.GetMap(refCoords);
+        if (mapUid != null)
+            return _transformSystem.WithEntityId(refCoords, mapUid.Value);
         else
-        {
             return refCoords;
-        }
     }
+    // End Frontier
 
     private void ClearOutDatedData()
     {

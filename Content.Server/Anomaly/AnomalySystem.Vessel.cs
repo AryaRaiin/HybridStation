@@ -1,4 +1,5 @@
 ﻿using Content.Server.Anomaly.Components;
+using Content.Server.Construction;
 using Content.Server.Power.EntitySystems;
 using Content.Shared.Anomaly;
 using Content.Shared.Anomaly.Components;
@@ -19,6 +20,7 @@ public sealed partial class AnomalySystem
     {
         SubscribeLocalEvent<AnomalyVesselComponent, ComponentShutdown>(OnVesselShutdown);
         SubscribeLocalEvent<AnomalyVesselComponent, MapInitEvent>(OnVesselMapInit);
+        SubscribeLocalEvent<AnomalyVesselComponent, UpgradeExamineEvent>(OnUpgradeExamine);
         SubscribeLocalEvent<AnomalyVesselComponent, InteractUsingEvent>(OnVesselInteractUsing);
         SubscribeLocalEvent<AnomalyVesselComponent, ExaminedEvent>(OnExamined);
         SubscribeLocalEvent<AnomalyVesselComponent, ResearchServerGetPointsPerSecondEvent>(OnVesselGetPointsPerSecond);
@@ -51,6 +53,11 @@ public sealed partial class AnomalySystem
         UpdateVesselAppearance(uid,  component);
     }
 
+    private void OnUpgradeExamine(EntityUid uid, AnomalyVesselComponent component, UpgradeExamineEvent args)
+    {
+        args.AddPercentageUpgrade("anomaly-vessel-component-upgrade-output", component.PointMultiplier);
+    }
+
     private void OnVesselInteractUsing(EntityUid uid, AnomalyVesselComponent component, InteractUsingEvent args)
     {
         if (component.Anomaly != null ||
@@ -75,7 +82,16 @@ public sealed partial class AnomalySystem
         if (!this.IsPowered(uid, EntityManager) || component.Anomaly is not {} anomaly)
             return;
 
-        args.Points += (int) (GetAnomalyPointValue(anomaly) * component.PointMultiplier);
+        var rawPointValue = GetAnomalyPointValue(anomaly); // Frontier: cache value
+        args.Points += (int)(rawPointValue * component.PointMultiplier); // Frontier: GetAnomalyPointValue() < rawPointValue
+        // Frontier: increase anomaly points
+        if (TryComp<AnomalyComponent>(anomaly, out var anomalyComp)
+            && anomalyComp.LastTickPointsEarned != Timing.CurTick)
+        {
+            anomalyComp.LastTickPointsEarned = Timing.CurTick;
+            anomalyComp.PointsEarned += rawPointValue;
+        }
+        // End Frontier
     }
 
     private void OnVesselAnomalyShutdown(ref AnomalyShutdownEvent args)

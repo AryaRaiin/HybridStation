@@ -1,3 +1,13 @@
+// SPDX-FileCopyrightText: 2023 Kara
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 themias
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 Daniel Lenrd
+// SPDX-FileCopyrightText: 2025 ErhardSteinhauer
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Shared.ActionBlocker;
 using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Hands.Components;
@@ -38,6 +48,14 @@ public sealed class SmartEquipSystem : EntitySystem
             .Bind(ContentKeyFunctions.SmartEquipPocket1, InputCmdHandler.FromDelegate(HandleSmartEquipPocket1, handle: false, outsidePrediction: false))
             .Bind(ContentKeyFunctions.SmartEquipPocket2, InputCmdHandler.FromDelegate(HandleSmartEquipPocket2, handle: false, outsidePrediction: false))
             .Bind(ContentKeyFunctions.SmartEquipSuitStorage, InputCmdHandler.FromDelegate(HandleSmartEquipSuitStorage, handle: false, outsidePrediction: false))
+
+            // Frontier
+            .Bind(ContentKeyFunctions.SmartEquipWallet, InputCmdHandler.FromDelegate(HandleSmartEquipWallet, handle: false, outsidePrediction: false))
+            // Mono START
+            .Bind(ContentKeyFunctions.SmartEquipID, InputCmdHandler.FromDelegate(HandleSmartEquipID, handle: false, outsidePrediction: false))
+            .Bind(ContentKeyFunctions.SmartEquipShoes, InputCmdHandler.FromDelegate(HandleSmartEquipShoes, handle: false, outsidePrediction: false))
+            .Bind(ContentKeyFunctions.SmartEquipOuterClothing, InputCmdHandler.FromDelegate(HandleSmartEquipOuterClothing, handle: false, outsidePrediction: false))
+            // Mono END
             .Register<SmartEquipSystem>();
     }
 
@@ -47,6 +65,12 @@ public sealed class SmartEquipSystem : EntitySystem
 
         CommandBinds.Unregister<SmartEquipSystem>();
     }
+
+    // Mono, Partial Application of 2nd Argument
+    private StateInputCmdDelegate HandleSmartEquipPartial(string equipmentSlot) {
+        return (x) => HandleSmartEquip(x, equipmentSlot);
+    }
+    // Mono End
 
     private void HandleSmartEquipBackpack(ICommonSession? session)
     {
@@ -72,6 +96,15 @@ public sealed class SmartEquipSystem : EntitySystem
     {
         HandleSmartEquip(session, "suitstorage");
     }
+
+    // Frontier
+    private void HandleSmartEquipWallet(ICommonSession? session) { HandleSmartEquip(session, "wallet"); }
+    // Mono Start
+    private void HandleSmartEquipID(ICommonSession? session) { HandleSmartEquip(session, "id"); }
+    private void HandleSmartEquipShoes(ICommonSession? session) { HandleSmartEquip(session, "shoes"); }
+    private void HandleSmartEquipOuterClothing(ICommonSession? session) { HandleSmartEquip(session, "outerClothing"); }
+    // Mono END
+
 
     private void HandleSmartEquip(ICommonSession? session, string equipmentSlot)
     {

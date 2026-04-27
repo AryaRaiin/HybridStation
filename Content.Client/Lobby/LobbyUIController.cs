@@ -1,10 +1,12 @@
 using System.Linq;
+using Content.Client._Mono.MonoCoins;
 using Content.Client.Guidebook;
 using Content.Client.Humanoid;
 using Content.Client.Inventory;
 using Content.Client.Lobby.UI;
 using Content.Client.Players.PlayTimeTracking;
 using Content.Client.Station;
+using Content.Shared._Mono.Company;
 using Content.Shared.CCVar;
 using Content.Shared.Clothing;
 using Content.Shared.GameTicking;
@@ -42,6 +44,7 @@ public sealed class LobbyUIController : UIController, IOnStateEntered<LobbyState
     [UISystemDependency] private readonly ClientInventorySystem _inventory = default!;
     [UISystemDependency] private readonly StationSpawningSystem _spawn = default!;
     [UISystemDependency] private readonly GuidebookSystem _guide = default!;
+    [UISystemDependency] private readonly MonoCoinsSystem _monoCoins = default!;
 
     private CharacterSetupGui? _characterSetup;
     private HumanoidProfileEditor? _profileEditor;
@@ -75,6 +78,40 @@ public sealed class LobbyUIController : UIController, IOnStateEntered<LobbyState
         _configurationManager.OnValueChanged(CCVars.GameRoleLoadoutTimers, _ => RefreshProfileEditor());
 
         _configurationManager.OnValueChanged(CCVars.GameRoleWhitelist, _ => RefreshProfileEditor());
+    }
+
+    private bool _monoCoinsSubscribed = false;
+
+    /// <summary>
+    /// Safely subscribes to MonoCoins balance updates if not already subscribed.
+    /// </summary>
+    private void EnsureMonoCoinsSubscription()
+    {
+        if (!_monoCoinsSubscribed && _monoCoins != null)
+        {
+            _monoCoins.BalanceUpdated += OnMonoCoinsBalanceUpdated;
+            _monoCoinsSubscribed = true;
+        }
+    }
+
+    /// <summary>
+    /// Called when MonoCoins balance is updated from the server.
+    /// </summary>
+    private void OnMonoCoinsBalanceUpdated(int balance)
+    {
+        UpdateMonoCoinsDisplay();
+    }
+
+    /// <summary>
+    /// Updates the MonoCoins display in the lobby preview panel.
+    /// </summary>
+    private void UpdateMonoCoinsDisplay()
+    {
+        if (PreviewPanel == null)
+            return;
+
+        var balance = _monoCoins?.GetLastKnownBalance() ?? -1;
+        PreviewPanel.SetMonoCoinsText($"MonoCoins: {balance}");
     }
 
     private LobbyCharacterPreviewPanel? GetLobbyPreview()
@@ -144,6 +181,10 @@ public sealed class LobbyUIController : UIController, IOnStateEntered<LobbyState
     {
         PreviewPanel?.SetLoaded(_preferencesManager.ServerDataLoaded);
         ReloadCharacterSetup();
+
+        // Ensure MonoCoins subscription and request balance when entering lobby
+        EnsureMonoCoinsSubscription();
+        _monoCoins?.RequestBalance();
     }
 
     public void OnStateExited(LobbyState state)
@@ -184,12 +225,47 @@ public sealed class LobbyUIController : UIController, IOnStateEntered<LobbyState
         {
             PreviewPanel.SetSprite(EntityUid.Invalid);
             PreviewPanel.SetSummaryText(string.Empty);
+            PreviewPanel.SetBankBalanceText(string.Empty); // Frontier
+            PreviewPanel.SetCompanyText(string.Empty); // Company Display
+            PreviewPanel.SetMonoCoinsText("MonoCoins: -1"); // MonoCoins Display
             return;
+        }
+
+        // Verify company exists, if not set it to "None"
+        if (!string.IsNullOrEmpty(humanoid.Company) &&
+            humanoid.Company != "None" &&
+            !_prototypeManager.HasIndex<CompanyPrototype>(humanoid.Company))
+        {
+            // Create a new profile with the company set to "None"
+            humanoid = humanoid.WithCompany("None");
+
+            // Update the character in preferences
+            if (_preferencesManager.Preferences != null)
+            {
+                _preferencesManager.UpdateCharacter(humanoid, _preferencesManager.Preferences.SelectedCharacterIndex);
+            }
         }
 
         var dummy = LoadProfileEntity(humanoid, null, true);
         PreviewPanel.SetSprite(dummy);
         PreviewPanel.SetSummaryText(humanoid.Summary);
+        PreviewPanel.SetBankBalanceText(humanoid.BankBalanceText); // Frontier
+
+        // Company Display
+        var companyId = humanoid.Company;
+        if (_prototypeManager.TryIndex<CompanyPrototype>(companyId, out var company))
+        {
+            PreviewPanel.SetCompanyText($"[color=white]Company:[/color] [color={company.Color.ToHex()}]{company.Name}[/color]");
+        }
+        else
+        {
+            PreviewPanel.SetCompanyText($"[color=white]Company:[/color] [color=yellow]{companyId}[/color]");
+        }
+
+        // MonoCoins Display - Request balance from server and update display
+        EnsureMonoCoinsSubscription();
+        _monoCoins?.RequestBalance();
+        UpdateMonoCoinsDisplay();
     }
 
     private void RefreshProfileEditor()

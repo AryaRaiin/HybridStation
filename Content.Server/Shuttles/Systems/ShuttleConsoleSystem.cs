@@ -1,4 +1,27 @@
 using Content.Server.Power.Components;
+// SPDX-FileCopyrightText: 2022 Myctai
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2023 Artjom
+// SPDX-FileCopyrightText: 2023 Kevin Zheng
+// SPDX-FileCopyrightText: 2023 Morb
+// SPDX-FileCopyrightText: 2023 TemporalOroboros
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Ed
+// SPDX-FileCopyrightText: 2024 Leon Friedrich
+// SPDX-FileCopyrightText: 2024 Mervill
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 neuPanda
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 Ilya246
+// SPDX-FileCopyrightText: 2025 ark1368
+// SPDX-FileCopyrightText: 2025 gus
+// SPDX-FileCopyrightText: 2025 sleepyyapril
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Server.Power.EntitySystems;
 using Content.Server.Shuttles.Components;
 using Content.Server.Shuttles.Events;
@@ -22,6 +45,17 @@ using Robust.Shared.Map;
 using Robust.Shared.Utility;
 using Content.Shared.UserInterface;
 using Robust.Shared.Prototypes;
+using Content.Server._Mono.Ships.Systems; // Mono
+using Content.Server._Mono.Shuttles.Components; // Mono
+using Content.Shared._Mono.FireControl; // Mono
+using Content.Shared._Mono.Ships.Components; // Mono
+using Content.Shared._NF.Shuttles.Events; // Frontier
+using Content.Shared.Access.Systems; // Frontier
+using Content.Shared.Construction.Components; // Frontier
+using Content.Shared.Verbs; // UNKNOWN
+using Content.Server.Radio.EntitySystems; // UNKNOWN
+using Content.Server.Station.Components; // UNKNOWN
+
 
 namespace Content.Server.Shuttles.Systems;
 
@@ -38,6 +72,13 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
     [Dependency] private readonly TagSystem _tags = default!;
     [Dependency] private readonly UserInterfaceSystem _ui = default!;
     [Dependency] private readonly SharedContentEyeSystem _eyeSystem = default!;
+    [Dependency] private readonly AccessReaderSystem _access = default!; // Frontier
+    [Dependency] private readonly RadioSystem _radioSystem = default!; // UNKNOWN
+    [Dependency] private readonly StationJobsSystem _stationJobs = default!; // Frontier
+    [Dependency] private readonly ILogManager _log = default!; // Frontier?
+    [Dependency] private readonly CrewedShuttleSystem _crewedShuttle = default!; // Mono
+
+    private ISawmill _sawmill = default!; // UNKNOWN
 
     private EntityQuery<MetaDataComponent> _metaQuery;
     private EntityQuery<TransformComponent> _xformQuery;
@@ -53,6 +94,11 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
         _metaQuery = GetEntityQuery<MetaDataComponent>();
         _xformQuery = GetEntityQuery<TransformComponent>();
 
+        _sawmill = _log.GetSawmill("shuttle-console"); // Frontier?
+
+        InitializeDeviceLinking(); // Frontier
+
+        SubscribeLocalEvent<ShuttleConsoleComponent, ComponentStartup>(OnConsoleStartup); // Frontier?
         SubscribeLocalEvent<ShuttleConsoleComponent, ComponentShutdown>(OnConsoleShutdown);
         SubscribeLocalEvent<ShuttleConsoleComponent, PowerChangedEvent>(OnConsolePowerChange);
         SubscribeLocalEvent<ShuttleConsoleComponent, AnchorStateChangedEvent>(OnConsoleAnchorChange);
@@ -61,6 +107,7 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
         {
             subs.Event<ShuttleConsoleFTLBeaconMessage>(OnBeaconFTLMessage);
             subs.Event<ShuttleConsoleFTLPositionMessage>(OnPositionFTLMessage);
+            subs.Event<ToggleFTLLockRequestMessage>(OnToggleFTLLock); // UNKNOWN
             subs.Event<BoundUIClosedEvent>(OnConsoleUIClose);
         });
 
@@ -81,6 +128,8 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
         SubscribeLocalEvent<FTLDestinationComponent, ComponentShutdown>(OnFtlDestShutdown);
 
         InitializeFTL();
+
+        InitializeNFDrone(); // Frontier: add our drone subscriptions
     }
 
     private void OnFtlDestStartup(EntityUid uid, FTLDestinationComponent component, ComponentStartup args)
@@ -152,7 +201,23 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
     private void OnConsoleUIOpenAttempt(EntityUid uid, ShuttleConsoleComponent component,
         AfterActivatableUIOpenEvent args)
     {
-        TryPilot(args.User, uid);
+        // UNKNOWN START
+        //TryPilot(args.User, uid);
+        var shuttle = _transform.GetParentUid(uid);
+        var uiOpen = _crewedShuttle.AnyGunneryConsoleActiveByPlayer(shuttle, args.User);
+        var forceOne = HasComp<CrewedShuttleComponent>(shuttle) && !HasComp<AdvancedPilotComponent>(args.User);
+
+        // Crewed shuttles should not allow people to have both gunnery and shuttle consoles open.
+        if (uiOpen && forceOne)
+        {
+            args.Cancel();
+            _popup.PopupClient(Loc.GetString("shuttle-console-crewed"), args.User);
+            return;
+        }
+
+        if (!TryPilot(args.User, uid))
+            args.Cancel();
+        // UNKNOWN END
     }
 
     private void OnConsoleAnchorChange(EntityUid uid, ShuttleConsoleComponent component,
@@ -166,6 +231,8 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
     {
         DockingInterfaceState? dockState = null;
         UpdateState(uid, ref dockState);
+        _shuttle.NfSetPowered(uid, component, args.Powered); // Frontier
+        HandleJobSlotsOnPowerChange(uid, component, args.Powered); // UNKNOWN: Handle job slots when power changes
     }
 
     private bool TryPilot(EntityUid user, EntityUid uid)
@@ -178,6 +245,22 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
         {
             return false;
         }
+
+        if (!_access.IsAllowed(user, uid)) // Frontier: check access
+            return false; // Frontier
+
+        // UNKNOWN START
+        // Check if console is locked using effective lock state (considers grid-level locks)
+        if (TryComp<ShuttleConsoleLockComponent>(uid, out var lockComp))
+        {
+            var lockSystem = EntityManager.EntitySysManager.GetEntitySystem<SharedShuttleConsoleLockSystem>();
+            if (lockSystem.GetEffectiveLockState(uid, lockComp))
+            {
+                // _popup.PopupEntity(Loc.GetString("shuttle-console-locked"), uid, user); // Mono
+                return false;
+            }
+        }
+        // UNKNOWN END
 
         var pilotComponent = EnsureComp<PilotComponent>(user);
         var console = pilotComponent.Console;
@@ -208,6 +291,94 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
         }
     }
 
+
+    // UNKNOWN START
+    /// <summary>
+    /// Handles FTL lock toggling for docked shuttles
+    /// </summary>
+    private void OnToggleFTLLock(EntityUid uid, ShuttleConsoleComponent component, ToggleFTLLockRequestMessage args)
+    {
+        // Get the console's grid (shuttle)
+        var consoleXform = Transform(uid);
+        var shuttleGrid = consoleXform.GridUid;
+
+        Logger.DebugS("shuttle", $"Server received FTL lock request with {args.DockedEntities.Count} entities, enabled={args.Enabled}");
+
+        // If the shuttleGrid is null, we can't do anything
+        if (shuttleGrid == null)
+        {
+            Logger.DebugS("shuttle", $"Cannot toggle FTL lock: console {ToPrettyString(uid)} is not on a grid");
+            return;
+        }
+
+        bool processedMainGrid = false;
+
+        // Process each entity in the request
+        foreach (var dockedEntityNet in args.DockedEntities)
+        {
+            var dockedEntity = GetEntity(dockedEntityNet);
+
+            // Check if this is the main shuttle grid
+            if (dockedEntity == shuttleGrid)
+            {
+                processedMainGrid = true;
+            }
+
+            if (TryComp<FTLLockComponent>(dockedEntity, out var ftlLock))
+            {
+                Logger.DebugS("shuttle", $"Setting FTL lock for {ToPrettyString(dockedEntity)} to {args.Enabled}");
+                ftlLock.Enabled = args.Enabled;
+                Dirty(dockedEntity, ftlLock);
+            }
+        }
+
+        // If we didn't process the main grid yet, do it now
+        if (!processedMainGrid && shuttleGrid != null)
+        {
+            if (TryComp<FTLLockComponent>(shuttleGrid, out var ftlLock))
+            {
+                Logger.DebugS("shuttle", $"Setting FTL lock for main grid {ToPrettyString(shuttleGrid.Value)} to {args.Enabled}");
+                ftlLock.Enabled = args.Enabled;
+                Dirty(shuttleGrid.Value, ftlLock);
+            }
+        }
+    }
+    /// <summary>
+    /// Sets the FTL lock state of a shuttle entity.
+    /// </summary>
+    /// <param name="shuttleUid">The shuttle entity to modify</param>
+    /// <param name="dockedEntities">List of docked entities to also modify, or empty to only modify the shuttle</param>
+    /// <param name="enabled">The desired FTL lock state (true to enable, false to disable)</param>
+    /// <returns>True if at least one entity was modified, false otherwise</returns>
+    public bool ToggleFTLLock(EntityUid shuttleUid, List<NetEntity> dockedEntities, bool enabled)
+    {
+        var modified = false;
+
+        // Modify the main shuttle if it has the component
+        if (TryComp<FTLLockComponent>(shuttleUid, out var shuttleFtlLock))
+        {
+            shuttleFtlLock.Enabled = enabled;
+            Dirty(shuttleUid, shuttleFtlLock);
+            modified = true;
+        }
+
+        // Modify any docked entities if provided
+        foreach (var dockedEntityNet in dockedEntities)
+        {
+            var dockedEntity = GetEntity(dockedEntityNet);
+
+            if (TryComp<FTLLockComponent>(dockedEntity, out var ftlLock))
+            {
+                ftlLock.Enabled = enabled;
+                Dirty(dockedEntity, ftlLock);
+                modified = true;
+            }
+        }
+
+        return modified;
+    }
+    // UNKNOWN END
+
     /// <summary>
     /// Returns the position and angle of all dockingcomponents.
     /// </summary>
@@ -221,6 +392,11 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
         {
             if (xform.ParentUid != xform.GridUid)
                 continue;
+
+            // Frontier: skip unanchored docks (e.g. portable gaslocks)
+            if (HasComp<AnchorableComponent>(uid) && !xform.Anchored)
+                continue;
+            // End Frontier
 
             var gridDocks = result.GetOrNew(GetNetEntity(xform.GridUid.Value));
 
@@ -236,6 +412,12 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
                     null,
                 Color = comp.RadarColor,
                 HighlightedColor = comp.HighlightedRadarColor
+
+                LabelName = comp.Name != null ? Loc.GetString(comp.Name) : null, // Frontier: docking labels
+                //RadarColor = comp.RadarColor, // Frontier, PulsarsEdge: don't rename, keep upstrem name
+                //HighlightedRadarColor = comp.HighlightedRadarColor, // Frontier, PulsarsEdge: don't rename, keep upstrem name
+                DockType = comp.DockType, // Frontier
+                ReceiveOnly = comp.ReceiveOnly, // Frontier
             };
 
             gridDocks.Add(state);
@@ -270,7 +452,8 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
         }
         else
         {
-            navState = new NavInterfaceState(0f, null, null, new Dictionary<NetEntity, List<DockingPortState>>());
+            navState = new NavInterfaceState(0f, null, null, new Dictionary<NetEntity, List<DockingPortState>>(),
+                InertiaDampeningMode.Dampen); // Frontier: inertia dampening);
             mapState = new ShuttleMapInterfaceState(
                 FTLState.Invalid,
                 default,
@@ -384,30 +567,49 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
     /// </summary>
     public NavInterfaceState GetNavState(Entity<RadarConsoleComponent?, TransformComponent?> entity, Dictionary<NetEntity, List<DockingPortState>> docks)
     {
-        if (!Resolve(entity, ref entity.Comp1, ref entity.Comp2))
-            return new NavInterfaceState(SharedRadarConsoleSystem.DefaultMaxRange, null, null, docks);
+        if (!Resolve(entity, ref entity.Comp1, ref entity.Comp2,
+                false))// UNKNOWN
+            return new NavInterfaceState(SharedRadarConsoleSystem.DefaultMaxRange, null, null, docks,
+                Shared._NF.Shuttles.Events.InertiaDampeningMode.Dampen); // Frontier: add inertia dampening
+
+        // UNKNOWN START
+        // Get port names from the console component if available
+        var portNames = new Dictionary<string, string>();
+        if (TryComp<ShuttleConsoleComponent>(entity, out var consoleComp))
+        {
+            portNames = consoleComp.PortNames;
+        }
+        // UNKNOWN END
 
         return GetNavState(
             entity,
             docks,
             entity.Comp2.Coordinates,
-            entity.Comp2.LocalRotation);
+            entity.Comp2.LocalRotation,
+            portNames); // UNKNOWN
     }
 
     public NavInterfaceState GetNavState(
         Entity<RadarConsoleComponent?, TransformComponent?> entity,
         Dictionary<NetEntity, List<DockingPortState>> docks,
         EntityCoordinates coordinates,
-        Angle angle)
+        Angle angle,
+        Dictionary<string, string>? portNames = null) // UNKNOWN
     {
-        if (!Resolve(entity, ref entity.Comp1, ref entity.Comp2))
-            return new NavInterfaceState(SharedRadarConsoleSystem.DefaultMaxRange, GetNetCoordinates(coordinates), angle, docks);
+        if (!Resolve(entity, ref entity.Comp1, ref entity.Comp2, 
+                false)) // UNKNOWN
+            return new NavInterfaceState(SharedRadarConsoleSystem.DefaultMaxRange, GetNetCoordinates(coordinates), angle, docks,
+                InertiaDampeningMode.Dampen); // Frontier: add inertial dampening
 
         return new NavInterfaceState(
             entity.Comp1.MaxRange,
             GetNetCoordinates(coordinates),
             angle,
-            docks);
+            docks,
+            _shuttle.NfGetInertiaDampeningMode(entity), // Frontier: inertia dampening
+            portNames, // UNKNOWN
+            entity.Comp1.Pannable, // Mono
+            entity.Comp1.RelativePanning); // Mono
     }
 
     /// <summary>
@@ -445,4 +647,132 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
             beacons ?? new List<ShuttleBeaconObject>(),
             exclusions ?? new List<ShuttleExclusionObject>());
     }
+
+
+    // UNKNOWN START
+    /// <summary>
+    /// Handles job slots when shuttle console power changes.
+    /// </summary>
+    private void HandleJobSlotsOnPowerChange(EntityUid consoleUid, ShuttleConsoleComponent component, bool powered)
+    {
+        // Get the console's transform to find the grid
+        if (!TryComp<TransformComponent>(consoleUid, out var consoleXform) || consoleXform.GridUid == null)
+            return;
+
+        var gridUid = consoleXform.GridUid.Value;
+
+        // Only handle job slots for shuttles (grids with ShuttleComponent)
+        if (!HasComp<ShuttleComponent>(gridUid))
+            return;
+
+        // Find the station that owns this shuttle
+        var owningStation = _station.GetOwningStation(gridUid);
+        if (owningStation == null)
+            return;
+
+        // Check if the grid has any powered shuttle consoles
+        var hasPoweredConsole = HasPoweredShuttleConsole(gridUid);
+
+        if (!hasPoweredConsole)
+        {
+            // No powered consoles
+            SaveAndCloseJobSlots(gridUid, owningStation.Value);
+        }
+        else
+        {
+            // Has powered console
+            RestoreJobSlots(gridUid, owningStation.Value);
+        }
+    }
+
+    /// <summary>
+    /// Checks if the grid has any powered shuttle consoles.
+    /// </summary>
+    private bool HasPoweredShuttleConsole(EntityUid gridUid)
+    {
+        var query = AllEntityQuery<ShuttleConsoleComponent, TransformComponent>();
+
+        while (query.MoveNext(out var consoleUid, out _, out var xform))
+        {
+            // Check if this console is on our grid
+            if (xform.GridUid != gridUid)
+                continue;
+
+            // Check if this console is powered
+            if (this.IsPowered(consoleUid, EntityManager))
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Saves the current job slots for the station and sets them all to 0 (closed).
+    /// </summary>
+    private void SaveAndCloseJobSlots(EntityUid gridUid, EntityUid station)
+    {
+        // Get or create the job slots component on the grid
+        var jobSlotsComp = EnsureComp<ShuttleConsoleJobSlotsComponent>(gridUid);
+
+        // If we already have saved slots, don't save again
+        if (jobSlotsComp.SavedJobSlots.Count > 0)
+            return;
+
+        // Clear any previous saved state and set the owning station
+        jobSlotsComp.SavedJobSlots.Clear();
+        jobSlotsComp.OwningStation = station;
+
+        // Get all current job slots for the station
+        if (!TryComp<StationJobsComponent>(station, out var stationJobs))
+            return;
+
+        // Save current job slots
+        foreach (var (jobId, slots) in stationJobs.JobList)
+        {
+            // Only save jobs that have slots available (not 0)
+            if (slots != 0)
+            {
+                jobSlotsComp.SavedJobSlots[jobId] = slots;
+
+                // Set the job slot to 0 (closed)
+                _stationJobs.TrySetJobSlot(station, jobId, 0);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Restores the previously saved job slots for the station.
+    /// </summary>
+    private void RestoreJobSlots(EntityUid gridUid, EntityUid station)
+    {
+        // Get the job slots component from the grid
+        if (!TryComp<ShuttleConsoleJobSlotsComponent>(gridUid, out var jobSlotsComp))
+            return;
+
+        // If no saved slots, nothing to restore
+        if (jobSlotsComp.SavedJobSlots.Count == 0)
+            return;
+
+        // Verify this is for the correct station
+        if (jobSlotsComp.OwningStation != station)
+            return;
+
+        // Restore all saved job slots
+        foreach (var (jobId, savedSlots) in jobSlotsComp.SavedJobSlots)
+        {
+            if (savedSlots.HasValue)
+            {
+                _stationJobs.TrySetJobSlot(station, jobId, savedSlots.Value);
+            }
+            else
+            {
+                _stationJobs.MakeJobUnlimited(station, jobId);
+            }
+        }
+
+        // Clear the saved state
+        jobSlotsComp.SavedJobSlots.Clear();
+        jobSlotsComp.OwningStation = null;
+    }
+    // UNKNOWN END
 }

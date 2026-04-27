@@ -92,11 +92,25 @@ public sealed partial class FaxMachineComponent : Component
     public float SendTimeoutRemaining;
 
     /// <summary>
+    /// Message copying timeout
+    /// </summary>
+    [ViewVariables]
+    [DataField]
+    public float CopyTimeoutRemaining;
+
+    /// <summary>
     /// Message sending timeout
     /// </summary>
     [ViewVariables]
     [DataField]
     public float SendTimeout = 5f;
+
+    /// <summary>
+    /// Message copying timeout
+    /// </summary>
+    [ViewVariables]
+    [DataField]
+    public float CopyTimeout = 5f;
 
     /// <summary>
     /// Remaining time of inserting animation
@@ -135,6 +149,27 @@ public sealed partial class FaxMachineComponent : Component
     /// </summary>
     [DataField]
     public EntProtoId PrintOfficePaperId = "PaperOffice";
+
+    /// <summary>
+    /// Frontier - If true, will sync fax name with a station name.
+    /// </summary>
+    [ViewVariables]
+    [DataField]
+    public bool UseStationName { get; set; }
+
+    /// <summary>
+    /// Frontier - If added with UseStationName will add a Prefix to the name
+    /// </summary>
+    [ViewVariables]
+    [DataField]
+    public string? StationNamePrefix { get; set; } = null;
+
+    /// <summary>
+    /// Frontier - If added with UseStationName will add a suffix to the name
+    /// </summary>
+    [ViewVariables]
+    [DataField]
+    public string? StationNameSuffix { get; set; } = null;
 }
 
 [DataDefinition]
@@ -161,11 +196,14 @@ public sealed partial class FaxPrintout
     [DataField]
     public bool Locked { get; private set; }
 
+    [DataField] // Frontier
+    public bool StampProtected { get; private set; } // Frontier
+
     private FaxPrintout()
     {
     }
 
-    public FaxPrintout(string content, string name, string? label = null, string? prototypeId = null, string? stampState = null, List<StampDisplayInfo>? stampedBy = null, bool locked = false)
+    public FaxPrintout(string content, string name, string? label = null, string? prototypeId = null, string? stampState = null, List<StampDisplayInfo>? stampedBy = null, bool locked = false, bool stampProtected = false) // Frontier: add stampProtected
     {
         Content = content;
         Name = name;
@@ -174,5 +212,6 @@ public sealed partial class FaxPrintout
         StampState = stampState;
         StampedBy = stampedBy ?? new List<StampDisplayInfo>();
         Locked = locked;
+        StampProtected = stampProtected; // Frontier
     }
 }

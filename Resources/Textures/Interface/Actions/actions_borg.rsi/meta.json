@@ -77,6 +77,12 @@
             "name":"adv-chem-module"
         },
         {
+            "name":"surgery-module"
+        },
+        {
+            "name":"adv-surgery-module"
+        },
+        {
             "name":"adv-diagnosis-module"
         },
         {

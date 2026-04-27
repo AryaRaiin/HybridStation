@@ -286,6 +286,39 @@ public abstract class SharedIdCardSystem : EntitySystem
             .Trim();
     }
 
+    // Frontier START: rename IDs & shuttles
+    [Serializable, NetSerializable]
+    public sealed class WriteToTargetIdMessage : BoundUserInterfaceMessage
+    {
+        public readonly string FullName;
+        public readonly string JobTitle;
+        public readonly List<ProtoId<AccessLevelPrototype>> AccessList;
+        public readonly string JobPrototype;
+
+        public WriteToTargetIdMessage(string fullName, string jobTitle, List<ProtoId<AccessLevelPrototype>> accessList, string jobPrototype)
+        {
+            FullName = fullName;
+            JobTitle = jobTitle;
+            AccessList = accessList;
+            JobPrototype = jobPrototype;
+        }
+    }
+
+    [Serializable, NetSerializable]
+    public sealed class WriteToShuttleDeedMessage : BoundUserInterfaceMessage
+    {
+        public readonly string ShuttleName;
+        public readonly string ShuttleSuffix;
+
+        public WriteToShuttleDeedMessage(string shuttleName, string shuttleSuffix)
+        {
+            ShuttleName = shuttleName;
+            ShuttleSuffix = shuttleSuffix;
+        }
+    }
+    // Frontier END: rename IDs & shuttles
+
+
     public void SetExpireTime(Entity<ExpireIdCardComponent?> ent, TimeSpan time)
     {
         if (!Resolve(ent, ref ent.Comp))

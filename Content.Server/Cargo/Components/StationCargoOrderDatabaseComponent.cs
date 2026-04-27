@@ -68,3 +68,4 @@ public record struct FulfillCargoOrderEvent(Entity<StationDataComponent> Station
     public EntityUid? FulfillmentEntity;
     public bool Handled = false;
 }
+

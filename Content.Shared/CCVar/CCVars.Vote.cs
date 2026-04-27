@@ -1,4 +1,10 @@
-﻿using Robust.Shared.Configuration;
+// SPDX-FileCopyrightText: 2024 Simon
+// SPDX-FileCopyrightText: 2025 GreaseMonk
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: MPL-2.0
+
+using Robust.Shared.Configuration;
 
 namespace Content.Shared.CCVar;
 
@@ -14,7 +20,7 @@ public sealed partial class CCVars
     ///     See vote.enabled, but specific to restart votes
     /// </summary>
     public static readonly CVarDef<bool> VoteRestartEnabled =
-        CVarDef.Create("vote.restart_enabled", true, CVar.SERVERONLY);
+        CVarDef.Create("vote.restart_enabled", false, CVar.SERVERONLY); // Frontier: false
 
     /// <summary>
     ///     Config for when the restart vote should be allowed to be called regardless with less than this amount of players.
@@ -32,7 +38,7 @@ public sealed partial class CCVars
     ///     See vote.enabled, but specific to preset votes
     /// </summary>
     public static readonly CVarDef<bool> VotePresetEnabled =
-        CVarDef.Create("vote.preset_enabled", true, CVar.SERVERONLY);
+        CVarDef.Create("vote.preset_enabled", true, CVar.SERVERONLY); // Mono: true
 
     /// <summary>
     ///     See vote.enabled, but specific to map votes
@@ -62,7 +68,7 @@ public sealed partial class CCVars
     ///     Sets the duration of the map vote timer.
     /// </summary>
     public static readonly CVarDef<int>
-        VoteTimerMap = CVarDef.Create("vote.timermap", 90, CVar.SERVERONLY);
+        VoteTimerMap = CVarDef.Create("vote.timermap", 150, CVar.SERVERONLY); // Mono - 30 seconds below lobby duration (180), although I don't see this being used.
 
     /// <summary>
     ///     Sets the duration of the restart vote timer.
@@ -74,7 +80,7 @@ public sealed partial class CCVars
     ///     Sets the duration of the gamemode/preset vote timer.
     /// </summary>
     public static readonly CVarDef<int>
-        VoteTimerPreset = CVarDef.Create("vote.timerpreset", 30, CVar.SERVERONLY);
+        VoteTimerPreset = CVarDef.Create("vote.timerpreset", 150, CVar.SERVERONLY); // Mono - 30 seconds below lobby duration (180)
 
     /// <summary>
     ///     Sets the duration of the map vote timer when ALONE.
@@ -86,7 +92,7 @@ public sealed partial class CCVars
     ///     Allows enabling/disabling player-started votekick for ultimate authority
     /// </summary>
     public static readonly CVarDef<bool> VotekickEnabled =
-        CVarDef.Create("votekick.enabled", true, CVar.SERVERONLY);
+        CVarDef.Create("votekick.enabled", false, CVar.SERVERONLY); // Frontier: true<false
 
     /// <summary>
     ///     Config for when the votekick should be allowed to be called based on number of eligible voters.

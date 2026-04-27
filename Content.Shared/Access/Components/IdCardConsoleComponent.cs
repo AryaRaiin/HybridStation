@@ -1,9 +1,30 @@
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Kesiath
+// SPDX-FileCopyrightText: 2023 Mnemotechnican
+// SPDX-FileCopyrightText: 2023 Moony
+// SPDX-FileCopyrightText: 2023 Velcroboy
+// SPDX-FileCopyrightText: 2023 moonheart08
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 ErhardSteinhauer
+// SPDX-FileCopyrightText: 2024 Kara
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Salvantrix
+// SPDX-FileCopyrightText: 2024 c4llv07e
+// SPDX-FileCopyrightText: 2024 deltanedas
+// SPDX-FileCopyrightText: 2024 neuPanda
+// SPDX-FileCopyrightText: 2025 HungryCuban
+// SPDX-FileCopyrightText: 2025 Onezero0
+// SPDX-FileCopyrightText: 2025 Whatstone
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Shared.Access.Systems;
 using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Roles;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
+using Content.Shared.Roles; // Frontier
 
 namespace Content.Shared.Access.Components;
 
@@ -42,6 +63,7 @@ public sealed partial class IdCardConsoleComponent : Component
     [DataField, AutoNetworkedField]
     public List<ProtoId<AccessLevelPrototype>> AccessLevels = new()
     {
+        /* Pulsars Edge START: comment out upstream, keep separate list below.
         "Armory",
         "Atmospherics",
         "Bar",
@@ -72,6 +94,31 @@ public sealed partial class IdCardConsoleComponent : Component
         "Security",
         "Service",
         "Theatre",
+        */
+        "Armory",
+        "Brig",
+        "Detective",
+        "Captain",
+        "Command",
+        "External",
+        "HeadOfPersonnel",
+        "HeadOfSecurity",
+        "Janitor",
+        "Lawyer",
+        "Maintenance",
+        "Medical",
+        "Security",
+        "Service",
+        "Bailiff", // Frontier
+        "Frontier", // Frontier
+        "Mail", // Frontier
+        "Mercenary", // Frontier
+        "Sergeant", // Frontier
+        "StationTrafficController", // Frontier
+        //"USSP", // Mono
+        //"USSPHigh", // Mono
+        //"USSPCommand", // Mono
+        // Pulsars Edge END
     };
 
     [Serializable, NetSerializable]
@@ -87,6 +134,8 @@ public sealed partial class IdCardConsoleComponent : Component
         public readonly List<ProtoId<AccessLevelPrototype>>? TargetIdAccessList;
         public readonly List<ProtoId<AccessLevelPrototype>>? AllowedModifyAccessList;
         public readonly ProtoId<JobPrototype> TargetIdJobPrototype;
+        public readonly bool HasOwnedShuttle; // Frontier
+        public readonly string?[]? TargetShuttleNameParts; // Frontier
 
         public IdCardConsoleBoundUserInterfaceState(bool isPrivilegedIdPresent,
             bool isPrivilegedIdAuthorized,
@@ -97,7 +146,9 @@ public sealed partial class IdCardConsoleComponent : Component
             List<ProtoId<AccessLevelPrototype>>? allowedModifyAccessList,
             ProtoId<JobPrototype> targetIdJobPrototype,
             string privilegedIdName,
-            string targetIdName)
+            string targetIdName,
+            bool hasOwnedShuttle, // Frontier
+            string?[]? targetShuttleNameParts) // Frontier
         {
             IsPrivilegedIdPresent = isPrivilegedIdPresent;
             IsPrivilegedIdAuthorized = isPrivilegedIdAuthorized;
@@ -109,6 +160,8 @@ public sealed partial class IdCardConsoleComponent : Component
             TargetIdJobPrototype = targetIdJobPrototype;
             PrivilegedIdName = privilegedIdName;
             TargetIdName = targetIdName;
+            HasOwnedShuttle = hasOwnedShuttle; // Frontier
+            TargetShuttleNameParts = targetShuttleNameParts; // Frontier
         }
     }
 

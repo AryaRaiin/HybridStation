@@ -63,7 +63,20 @@
         powerGenerationEfficiency: 1
         reactantBreakdownRate: 0.0001
   - type: RadiationReceiver
+  - type: RadCollectorSignal # Goobstation
+  - type: AutomationSlots # Goobstation
+    slots:
+    - !type:AutomatedItemSlot
+      input: AutomationSlotGasTank
+      output: AutomationSlotGasTank
+      slotId: gas_tank
+    - !type:AutomatedPorts
+      sources:
+      - RadEmpty
+      - RadLow
+      - RadFull
   - type: PowerSupplier
+  - type: ThermalSignature # Mono
   - type: Anchorable
   - type: Rotatable
   - type: Pullable

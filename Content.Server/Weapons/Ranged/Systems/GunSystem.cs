@@ -1,3 +1,48 @@
+// SPDX-FileCopyrightText: 2022 Flipp Syder
+// SPDX-FileCopyrightText: 2022 Nemanja
+// SPDX-FileCopyrightText: 2022 Paul Ritter
+// SPDX-FileCopyrightText: 2022 Rane
+// SPDX-FileCopyrightText: 2022 Visne
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2022 themias
+// SPDX-FileCopyrightText: 2023 AJCM-git
+// SPDX-FileCopyrightText: 2023 Arendian
+// SPDX-FileCopyrightText: 2023 Chief-Engineer
+// SPDX-FileCopyrightText: 2023 Ilya Chvilyov
+// SPDX-FileCopyrightText: 2023 Kara
+// SPDX-FileCopyrightText: 2023 MendaxxDev
+// SPDX-FileCopyrightText: 2023 Slava0135
+// SPDX-FileCopyrightText: 2023 TaralGit
+// SPDX-FileCopyrightText: 2023 and_a
+// SPDX-FileCopyrightText: 2023 deltanedas
+// SPDX-FileCopyrightText: 2023 deltanedas <@deltanedas:kde.org>
+// SPDX-FileCopyrightText: 2024 Aviu00
+// SPDX-FileCopyrightText: 2024 Bixkitts
+// SPDX-FileCopyrightText: 2024 Cojoke
+// SPDX-FileCopyrightText: 2024 DrSmugleaf
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Ed
+// SPDX-FileCopyrightText: 2024 Jake Huxell
+// SPDX-FileCopyrightText: 2024 Jessica M
+// SPDX-FileCopyrightText: 2024 LordCarve
+// SPDX-FileCopyrightText: 2024 RiceMar1244
+// SPDX-FileCopyrightText: 2024 Sigil
+// SPDX-FileCopyrightText: 2024 VividPups
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 beck-thompson
+// SPDX-FileCopyrightText: 2024 eoineoineoin
+// SPDX-FileCopyrightText: 2024 keronshb
+// SPDX-FileCopyrightText: 2024 nikthechampiongr
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 Leon Friedrich
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 SlamBamActionman
+// SPDX-FileCopyrightText: 2025 bitcrushing
+// SPDX-FileCopyrightText: 2025 tonotom
+// SPDX-FileCopyrightText: 2025 tonotom1
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Numerics;
 using Content.Server.Cargo.Systems;
 using Content.Server.Weapons.Ranged.Components;
@@ -18,6 +63,14 @@ using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 
+using Content.Server._Mono.FireControl; // Mono
+using Content.Shared._Mono; // Mono
+using Content.Shared.Interaction; // Frontier
+using Content.Shared.Examine; // Frontier
+using Content.Shared.Hands.Components;
+using Content.Shared.Power;
+using Robust.Shared.Physics.Components; // Frontier
+
 namespace Content.Server.Weapons.Ranged.Systems;
 
 public sealed partial class GunSystem : SharedGunSystem
@@ -31,6 +84,12 @@ public sealed partial class GunSystem : SharedGunSystem
     {
         base.Initialize();
         SubscribeLocalEvent<BallisticAmmoProviderComponent, PriceCalculationEvent>(OnBallisticPrice);
+        SubscribeLocalEvent<AutoShootGunComponent, ActivateInWorldEvent>(OnActivateGun); // Frontier
+        SubscribeLocalEvent<AutoShootGunComponent, ComponentInit>(OnGunInit); // Frontier
+        SubscribeLocalEvent<AutoShootGunComponent, ComponentShutdown>(OnGunShutdown); // Frontier
+        SubscribeLocalEvent<AutoShootGunComponent, ExaminedEvent>(OnGunExamine); // Frontier
+        SubscribeLocalEvent<AutoShootGunComponent, PowerChangedEvent>(OnPowerChange); // Frontier
+        SubscribeLocalEvent<AutoShootGunComponent, AnchorStateChangedEvent>(OnAnchorChange); // Frontier
     }
 
     private void OnBallisticPrice(EntityUid uid, BallisticAmmoProviderComponent component, ref PriceCalculationEvent args)
@@ -80,6 +139,12 @@ public sealed partial class GunSystem : SharedGunSystem
         toMap = fromMap.Position + angle.ToVec() * mapDirection.Length();
         mapDirection = toMap - fromMap.Position;
         var gunVelocity = Physics.GetMapLinearVelocity(fromEnt);
+        //UNKNOWN START - Get gun's velocity and also account for grid's velocity if firing from a grid-mounted weapon
+        if (gridUid != null && gridUid != EntityUid.Invalid && TryComp<PhysicsComponent>(gridUid, out var gridPhysics))
+        {
+            gunVelocity += gridPhysics.LinearVelocity;
+        }
+        //UNKNOWN END
 
         // I must be high because this was getting tripped even when true.
         // DebugTools.Assert(direction != Vector2.Zero);
@@ -122,7 +187,8 @@ public sealed partial class GunSystem : SharedGunSystem
 
                     // Something like ballistic might want to leave it in the container still
                     if (!cartridge.DeleteOnSpawn && !Containers.IsEntityInContainer(ent!.Value))
-                        EjectCartridge(ent.Value, angle);
+                        EjectCartridge(ent.Value, angle, 
+                            false); //Mono: false: prevents shotguns from overlapping ejection sound
 
                     Dirty(ent!.Value, cartridge);
                     break;
@@ -211,6 +277,12 @@ public sealed partial class GunSystem : SharedGunSystem
         }
 
         ShootProjectile(uid, mapDirection, gunVelocity, gunUid, user, gun.ProjectileSpeedModified);
+        // Unknown START
+        if (HasComp<FireControllableComponent>(gunUid))
+        {
+            EnsureComp<ProjectileGridPhaseComponent>(uid);
+        }
+        // Unknown END
     }
 
     /// <summary>

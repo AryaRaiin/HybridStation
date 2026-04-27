@@ -14,6 +14,7 @@ using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Serialization;
 using Robust.Shared.Timing;
+using Content.Shared.Buckle.Components; // Frontier: throwing on vehicles in space
 
 namespace Content.Shared.Throwing;
 
@@ -250,6 +251,15 @@ public sealed class ThrowingSystem : EntitySystem
         var pushEv = new ThrowerImpulseEvent();
         RaiseLocalEvent(user.Value, ref pushEv);
         const float massLimit = 5f;
+
+        // Frontier START: apply impulse to buckled object if buckled
+        if (TryComp<BuckleComponent>(user, out var buckle) && buckle.BuckledTo is not null
+            && TryComp<PhysicsComponent>(buckle.BuckledTo, out var buckledPhys))
+        {
+            _physics.ApplyLinearImpulse(buckle.BuckledTo.Value, -impulseVector / buckledPhys.Mass * pushbackRatio * MathF.Min(massLimit, physics.Mass), body: buckledPhys)
+            return
+        }
+        // Frontier END
 
         if (pushEv.Push)
             _physics.ApplyLinearImpulse(user.Value, -impulseVector / physics.Mass * pushbackRatio * MathF.Min(massLimit, physics.Mass), body: userPhysics);

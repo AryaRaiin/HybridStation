@@ -1,3 +1,35 @@
+// SPDX-FileCopyrightText: 2020 Víctor Aguilera Puerto
+// SPDX-FileCopyrightText: 2020 chairbender
+// SPDX-FileCopyrightText: 2021 Acruid
+// SPDX-FileCopyrightText: 2021 Galactic Chimp
+// SPDX-FileCopyrightText: 2021 Moony
+// SPDX-FileCopyrightText: 2021 Paul
+// SPDX-FileCopyrightText: 2021 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2021 ShadowCommander
+// SPDX-FileCopyrightText: 2021 Silver
+// SPDX-FileCopyrightText: 2021 Vera Aguilera Puerto
+// SPDX-FileCopyrightText: 2022 wrexbe
+// SPDX-FileCopyrightText: 2023 AJCM-git
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Kara
+// SPDX-FileCopyrightText: 2023 PixelTK
+// SPDX-FileCopyrightText: 2023 Slava0135
+// SPDX-FileCopyrightText: 2024 Arendian
+// SPDX-FileCopyrightText: 2024 Leon Friedrich
+// SPDX-FileCopyrightText: 2024 LordCarve
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 Winkarst
+// SPDX-FileCopyrightText: 2024 metalgearsloth
+// SPDX-FileCopyrightText: 2024 nikthechampiongr
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 Ilya246
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 SlamBamActionman
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Server.Administration.Logs;
 using Content.Server.Destructible;
 using Content.Server.Effects;
@@ -10,6 +42,10 @@ using Content.Shared.FixedPoint;
 using Content.Shared.Projectiles;
 using Robust.Shared.Physics.Events;
 using Robust.Shared.Player;
+using Content.Server.Chat.Systems; // Frontier
+using Content.Shared.Eye.Blinding.Components; // Frontier
+using Content.Shared.Eye.Blinding.Systems; // Frontier
+using Robust.Shared.Random; // Frontier
 
 namespace Content.Server.Projectiles;
 
@@ -21,6 +57,11 @@ public sealed class ProjectileSystem : SharedProjectileSystem
     [Dependency] private readonly DestructibleSystem _destructibleSystem = default!;
     [Dependency] private readonly GunSystem _guns = default!;
     [Dependency] private readonly SharedCameraRecoilSystem _sharedCameraRecoil = default!;
+
+    [Dependency] private readonly StatusEffectsSystem _statusEffectsSystem = default!; // Frontier
+    [Dependency] private readonly BlindableSystem _blindingSystem = default!; // Frontier
+    [Dependency] private readonly IRobustRandom _random = default!; // Frontier
+    [Dependency] private readonly ChatSystem _chat = default!; // Frontier
 
     public override void Initialize()
     {
@@ -47,6 +88,11 @@ public sealed class ProjectileSystem : SharedProjectileSystem
 
         var ev = new ProjectileHitEvent(component.Damage * _damageableSystem.UniversalProjectileDamageModifier, target, component.Shooter);
         RaiseLocalEvent(uid, ref ev);
+
+        if (component.RandomBlindChance > 0.0f && _random.Prob(component.RandomBlindChance)) // Frontier - bb make you go blind
+        {
+            TryBlind(target);
+        }
 
         var otherName = ToPrettyString(target);
         var damageRequired = _destructibleSystem.DestroyedAt(target);
@@ -125,4 +171,29 @@ public sealed class ProjectileSystem : SharedProjectileSystem
             RaiseNetworkEvent(new ImpactEffectEvent(component.ImpactEffect, GetNetCoordinates(xform.Coordinates)), Filter.Pvs(xform.Coordinates, entityMan: EntityManager));
         }
     }
+
+    // Frontier START - bb make you go blind
+    private void TryBlind(EntityUid target)
+    {
+        if (!TryComp<BlindableComponent>(target, out var blindable) || blindable.IsBlind)
+            return;
+
+        var eyeProtectionEv = new GetEyeProtectionEvent();
+        RaiseLocalEvent(target, eyeProtectionEv);
+
+        var time = (float)(TimeSpan.FromSeconds(2) - eyeProtectionEv.Protection).TotalSeconds;
+        if (time <= 0)
+            return;
+
+        var emoteId = "Scream";
+        _chat.TryEmoteWithoutChat(target, emoteId);
+
+        // Add permanent eye damage if they had zero protection, also somewhat scale their temporary blindness by
+        // how much damage they already accumulated.
+        _blindingSystem.AdjustEyeDamage((target, blindable), 1);
+        var statusTimeSpan = TimeSpan.FromSeconds(time * MathF.Sqrt(blindable.EyeDamage));
+        _statusEffectsSystem.TryAddStatusEffect(target, TemporaryBlindnessSystem.BlindingStatusEffect,
+            statusTimeSpan, false, TemporaryBlindnessSystem.BlindingStatusEffect);
+    }
+    // Frontier END
 }

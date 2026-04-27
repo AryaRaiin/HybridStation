@@ -17,6 +17,7 @@ public sealed class LungSystem : EntitySystem
     [Dependency] private readonly SharedAtmosphereSystem _atmos = default!;
     [Dependency] private readonly SharedInternalsSystem _internals = default!;
     [Dependency] private readonly SharedSolutionContainerSystem _solutionContainerSystem = default!;
+    [Dependency] private readonly InventorySystem _inventory = default!; // Goobstaiton
 
     public override void Initialize()
     {
@@ -24,6 +25,7 @@ public sealed class LungSystem : EntitySystem
         SubscribeLocalEvent<LungComponent, ComponentInit>(OnComponentInit);
         SubscribeLocalEvent<BreathToolComponent, GotEquippedEvent>(OnGotEquipped);
         SubscribeLocalEvent<BreathToolComponent, GotUnequippedEvent>(OnGotUnequipped);
+        SubscribeLocalEvent<BreathToolComponent, ComponentInit>(OnBreathToolInit); // Goobstation - Modsuits - Update on component toggle
     }
 
     private void OnGotUnequipped(Entity<BreathToolComponent> ent, ref GotUnequippedEvent args)
@@ -63,6 +65,28 @@ public sealed class LungSystem : EntitySystem
         GasToReagent(lung.Air, solution);
         _solutionContainerSystem.UpdateChemicals(lung.Solution.Value);
     }
+
+    // Goobstation START - Update component state on component toggle
+    private void OnBreathToolInit(Entity<BreathToolComponent> ent, ref ComponentInit args)
+    {
+        var comp = ent.Comp;
+
+        comp.IsFunctional = true;
+
+        if (!_inventory.TryGetContainingEntity(ent.Owner, out var parent) || !_inventory.TryGetContainingSlot(ent.Owner, out var slot))
+            return;
+
+        if ((slot.SlotFlags & comp.AllowedSlots) == 0)
+            return;
+
+        if (TryComp(parent, out InternalsComponent? internals))
+        {
+            ent.Comp.ConnectedInternalsEntity = parent;
+            _internals.ConnectBreathTool((parent.Value, internals), ent);
+        }
+    }
+    // Goobstation END
+
 
     /* This should really be moved to somewhere in the atmos system and modernized,
      so that other systems, like CondenserSystem, can use it.

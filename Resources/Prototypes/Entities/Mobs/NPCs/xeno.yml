@@ -1,9 +1,70 @@
+# SPDX-FileCopyrightText: 2020 AJCM-git
+# SPDX-FileCopyrightText: 2020 Metal Gear Sloth
+# SPDX-FileCopyrightText: 2020 Paul Ritter
+# SPDX-FileCopyrightText: 2020 Víctor Aguilera Puerto
+# SPDX-FileCopyrightText: 2021 FoLoKe
+# SPDX-FileCopyrightText: 2021 Pieter-Jan Briers
+# SPDX-FileCopyrightText: 2021 Swept
+# SPDX-FileCopyrightText: 2022 Alex Evgrashin
+# SPDX-FileCopyrightText: 2022 Carou02
+# SPDX-FileCopyrightText: 2022 CrudeWax
+# SPDX-FileCopyrightText: 2022 EmoGarbage404
+# SPDX-FileCopyrightText: 2022 Flipp Syder
+# SPDX-FileCopyrightText: 2022 Jacob Tong
+# SPDX-FileCopyrightText: 2022 Júlio César Ueti
+# SPDX-FileCopyrightText: 2022 Kara
+# SPDX-FileCopyrightText: 2022 Pancake
+# SPDX-FileCopyrightText: 2022 Peptide90
+# SPDX-FileCopyrightText: 2022 Rane
+# SPDX-FileCopyrightText: 2022 T-Stalker
+# SPDX-FileCopyrightText: 2022 Veritius
+# SPDX-FileCopyrightText: 2022 keronshb
+# SPDX-FileCopyrightText: 2022 metalgearsloth
+# SPDX-FileCopyrightText: 2022 mirrorcult
+# SPDX-FileCopyrightText: 2022 rolfero
+# SPDX-FileCopyrightText: 2023 Banshee
+# SPDX-FileCopyrightText: 2023 Checkraze
+# SPDX-FileCopyrightText: 2023 DrSmugleaf
+# SPDX-FileCopyrightText: 2023 I.K
+# SPDX-FileCopyrightText: 2023 Jezithyr
+# SPDX-FileCopyrightText: 2023 Leon Friedrich
+# SPDX-FileCopyrightText: 2023 Nairod
+# SPDX-FileCopyrightText: 2023 Nim
+# SPDX-FileCopyrightText: 2023 Vordenburg
+# SPDX-FileCopyrightText: 2023 deltanedas
+# SPDX-FileCopyrightText: 2023 deltanedas <@deltanedas:kde.org>
+# SPDX-FileCopyrightText: 2023 lzk228
+# SPDX-FileCopyrightText: 2023 nikthechampiongr
+# SPDX-FileCopyrightText: 2023 notquitehadouken <1isthisameme>
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 ErhardSteinhauer
+# SPDX-FileCopyrightText: 2024 IProduceWidgets
+# SPDX-FileCopyrightText: 2024 JIPDawg
+# SPDX-FileCopyrightText: 2024 MilenVolf
+# SPDX-FileCopyrightText: 2024 Nemanja
+# SPDX-FileCopyrightText: 2024 TsjipTsjip
+# SPDX-FileCopyrightText: 2024 Verm
+# SPDX-FileCopyrightText: 2024 Whisper
+# SPDX-FileCopyrightText: 2024 checkraze
+# SPDX-FileCopyrightText: 2024 lzk
+# SPDX-FileCopyrightText: 2024 no
+# SPDX-FileCopyrightText: 2024 timur2011
+# SPDX-FileCopyrightText: 2025 AndresE55
+# SPDX-FileCopyrightText: 2025 Ark
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 ScyronX
+# SPDX-FileCopyrightText: 2025 mikusssssss
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # Hacky for the stress test so don't even consider adding to this
 - type: entity
   name: burrower
   id: MobXeno
   parent: SimpleSpaceMobBase
   description: They mostly come at night. Mostly.
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: Insulated
   - type: CombatMode
@@ -24,9 +85,11 @@
   - type: Prying
     pryPowered: true
     force: true
-    speedModifier: 1.5
+    speedModifier: 3 # 1.5-> 3 Mono
     useSound:
       path: /Audio/Items/crowbar.ogg
+  - type: UseDelay # Goobstation - For insta prying
+    delay: 1
   - type: Reactive
     groups:
       Flammable: [Touch]
@@ -77,7 +140,7 @@
     animation: WeaponArcBite
     damage:
       groups:
-        Brute: 6
+        Brute: 18
   - type: DamageStateVisuals
     states:
       Alive:
@@ -88,10 +151,12 @@
         Base: dead
   - type: Puller
   - type: Butcherable
-    butcheringType: Spike
+    butcheringType: Knife # Mono
     spawned:
     - id: FoodMeatXeno
       amount: 5
+    - id: ResinJelly # Mono
+    - id: ChitinChunk # Mono
   - type: GhostRole
     allowMovement: true
     allowSpeech: true
@@ -101,6 +166,7 @@
     rules: ghost-role-information-xeno-rules
     raffle:
       settings: default
+    prob: 0 # Frontier
   - type: GhostTakeoverAvailable
   - type: TypingIndicator
     proto: alien
@@ -114,15 +180,26 @@
       - DoorBumpOpener
       - FootstepSound
   - type: NoSlip
+  - type: ProtectedFromStepTriggers
   - type: Perishable #Ummmm the acid kills a lot of the bacteria or something
     molsPerSecondPerUnitMass: 0.0005
   - type: Speech
     speechVerb: LargeMob
+  - type: LanguageKnowledge # Einstein Engines - Languages
+    speaks:
+    - Xeno
+    understands:
+    - Xeno
+  - type: ThermalVision
+    lightRadius: 15
+    activateSound: null
+    deactivateSound: null
 
 - type: entity
   name: praetorian
   parent: MobXeno
   id: MobXenoPraetorian
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -156,6 +233,7 @@
   name: drone
   parent: MobXeno
   id: MobXenoDrone
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -174,7 +252,7 @@
   - type: MeleeWeapon
     damage:
       groups:
-        Brute: 6
+        Brute: 18
   - type: MovementSpeedModifier
     baseSprintSpeed: 4
   - type: Fixtures
@@ -193,6 +271,7 @@
   name: queen
   parent: MobXeno
   id: MobXenoQueen
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -212,7 +291,7 @@
   - type: MeleeWeapon
     damage:
      groups:
-       Brute: 12
+       Brute: 36 # Mono
   - type: Fixtures
     fixtures:
       fix1:
@@ -227,11 +306,19 @@
   - type: Tag
     tags:
     - CannotSuicide
+  - type: LanguageKnowledge # Einstein Engines - Language
+    speaks:
+    - TauCetiBasic
+    - Xeno
+    understands:
+    - TauCetiBasic
+    - Xeno
 
 - type: entity
   name: ravager
   parent: MobXeno
   id: MobXenoRavager
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -249,7 +336,7 @@
   - type: MeleeWeapon
     damage:
      groups:
-       Brute: 10
+       Brute: 36
   - type: SlowOnDamage
     speedModifierThresholds:
       50: 0.7
@@ -269,6 +356,7 @@
   name: runner
   parent: MobXeno
   id: MobXenoRunner
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -282,7 +370,8 @@
   - type: MeleeWeapon
     damage:
      groups:
-       Brute: 5
+       Brute: 12
+    attackRate: 2
   - type: Fixtures
     fixtures:
       fix1:
@@ -299,6 +388,7 @@
   name: rouny
   parent: MobXenoRunner
   id: MobXenoRouny
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -314,6 +404,7 @@
   name: spitter
   parent: MobXeno
   id: MobXenoSpitter
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -325,7 +416,7 @@
   - type: MobThresholds
     thresholds:
       0: Alive
-      50: Dead
+      75: Dead
   - type: SlowOnDamage
     speedModifierThresholds:
       25: 0.7
@@ -333,13 +424,13 @@
     rootTask:
       task: SimpleRangedHostileCompound
   - type: RechargeBasicEntityAmmo
-    rechargeCooldown: 0.75
+    rechargeCooldown: 0.1
   - type: BasicEntityAmmoProvider
     proto: BulletAcid
     capacity: 1
     count: 1
   - type: Gun
-    fireRate: 0.75
+    fireRate: 1
     useKey: false
     selectedMode: FullAuto
     availableModes:
@@ -362,6 +453,7 @@
   parent: SimpleSpaceMobBase
   id: MobPurpleSnake
   description: A menacing purple snake from Kepler-283c.
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -433,6 +525,7 @@
   id: MobSmallPurpleSnake
   suffix: small
   description: A smaller version of the menacing purple snake from Kepler-283c.
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: Sprite
     drawdepth: Mobs

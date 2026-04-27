@@ -1,3 +1,22 @@
+// SPDX-FileCopyrightText: 2023 Alex Evgrashin
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Flipp Syder
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Morb
+// SPDX-FileCopyrightText: 2023 Visne
+// SPDX-FileCopyrightText: 2023 Vordenburg
+// SPDX-FileCopyrightText: 2023 csqrb
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 deltanedas
+// SPDX-FileCopyrightText: 2024 ike709
+// SPDX-FileCopyrightText: 2024 metalgearsloth
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 Zachary Higgs
+// SPDX-FileCopyrightText: 2025 sleepyyapril
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -20,6 +39,7 @@ using Robust.Shared.Serialization.Manager;
 using Robust.Shared.Serialization.Markdown;
 using Robust.Shared.Utility;
 using YamlDotNet.RepresentationModel;
+using Content.Shared._Shitmed.Humanoid.Events; // SHITMED
 
 namespace Content.Shared.Humanoid;
 
@@ -41,6 +61,7 @@ public abstract class SharedHumanoidAppearanceSystem : EntitySystem
     [Dependency] private readonly MarkingManager _markingManager = default!;
     [Dependency] private readonly GrammarSystem _grammarSystem = default!;
     [Dependency] private readonly IdentitySystem _identity = default!;
+    [Dependency] private readonly SharedAppearanceSystem _appearance = default!; // UNKNOWN
 
     public static readonly ProtoId<SpeciesPrototype> DefaultSpecies = "Human";
 
@@ -155,9 +176,22 @@ public abstract class SharedHumanoidAppearanceSystem : EntitySystem
         targetHumanoid.Age = sourceHumanoid.Age;
         targetHumanoid.CustomBaseLayers = new(sourceHumanoid.CustomBaseLayers);
         targetHumanoid.MarkingSet = new(sourceHumanoid.MarkingSet);
+        // UNKNOWN START
+        targetHumanoid.Height = sourceHumanoid.Height;
+        targetHumanoid.Width = sourceHumanoid.Width;
+        // UNKNOWN END
 
         SetSex(target, sourceHumanoid.Sex, false, targetHumanoid);
         SetGender((target, targetHumanoid), sourceHumanoid.Gender);
+
+        // UNKNOWN START: Apply scaling (height and width)
+        if (sourceHumanoid.Height != 1.0f || sourceHumanoid.Width != 1.0f)
+        {
+            var scaleVisuals = EnsureComp<ScaleVisualsComponent>(target);
+            var appearance = EnsureComp<AppearanceComponent>(target);
+            _appearance.SetData(target, ScaleVisuals.Scale, new Vector2(sourceHumanoid.Width, sourceHumanoid.Height), appearance);
+        }
+        // UNKNOWN END
 
         Dirty(target, targetHumanoid);
     }
@@ -460,7 +494,19 @@ public abstract class SharedHumanoidAppearanceSystem : EntitySystem
         }
 
         humanoid.Age = profile.Age;
+        // UNKNOWN START
+        humanoid.Height = profile.Appearance.Height;
+        humanoid.Width = profile.Appearance.Width;
+        // Apply scaling (height and width)
+        if (profile.Appearance.Height != 1.0f || profile.Appearance.Width != 1.0f)
+        {
+            var scaleVisuals = EnsureComp<ScaleVisualsComponent>(uid);
+            var appearance = EnsureComp<AppearanceComponent>(uid);
+            _appearance.SetData(uid, ScaleVisuals.Scale, new Vector2(profile.Appearance.Width, profile.Appearance.Height), appearance);
+        }
+        // UNKNOWN END
 
+        RaiseLocalEvent(uid, new ProfileLoadFinishedEvent()); // SHITMED
         Dirty(uid, humanoid);
     }
 

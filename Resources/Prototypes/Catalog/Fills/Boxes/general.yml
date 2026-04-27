@@ -1,11 +1,28 @@
 - type: entity
   name: cardboard box
-  parent: BoxBase
+  parent: [BoxBase, RecyclableItemCardboard] # Frontier: added RecyclableItemCardboard
   id: BoxCardboard
   description: A cardboard box for storing things.
   components:
+  # Goobstation edit start
+  - type: EmitSoundOnPickup
+    sound:
+      path: /Audio/_Goobstation/Items/handling/cardboardbox_pickup.ogg
+      params:
+        volume: -3
+  - type: EmitSoundOnDrop
+    sound:
+      path: /Audio/_Goobstation/Items/handling/cardboardbox_drop.ogg
+      params:
+        volume: -3
+  - type: EmitSoundOnLand
+    sound:
+      path: /Audio/_Goobstation/Items/handling/cardboardbox_drop.ogg
+      params:
+        volume: -3
+  # Goobstation edit end
   - type: Item
-    size: Large
+    size: Normal # Frontier Large<Normal
     shape:
     - 0,0,2,2
   - type: Storage
@@ -17,6 +34,7 @@
   - type: Tag
     tags:
     - BoxCardboard
+    - Trash # Frontier
 
 - type: entity
   name: mousetrap box
@@ -55,7 +73,7 @@
         amount: 12
 
 - type: entity
-  name: lightbulb box warm
+  name: warm lightbulb box # Frontier: "warm" to beginning
   parent: BoxLightbulb
   id: BoxWarmLightbulb
   components:
@@ -350,7 +368,7 @@
         amount: 4
 
 - type: entity
-  name: security encryption key box
+  name: TSFMC encryption key box
   parent: BoxEncryptionKeyPassenger
   id: BoxEncryptionKeySecurity
   components:
@@ -360,7 +378,7 @@
         amount: 4
 
 - type: entity
-  name: service encryption key box
+  name: colonial staff encryption key box
   parent: BoxEncryptionKeyPassenger
   id: BoxEncryptionKeyService
   components:
@@ -371,7 +389,7 @@
 
 - type: entity
   name: syndicate encryption key box
-  parent: [BoxEncryptionKeyPassenger, BaseSyndicateContraband]
+  parent: [BoxEncryptionKeyPassenger, BaseC3SyndicateContraband] # Frontier: BaseSyndicateContraband<BaseC3SyndicateContraband
   id: BoxEncryptionKeySyndie
   description: Two syndicate encryption keys for the price of one. Miniaturized for ease of use.
   components:

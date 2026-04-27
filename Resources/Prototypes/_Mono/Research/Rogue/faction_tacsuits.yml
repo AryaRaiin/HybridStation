@@ -1,0 +1,91 @@
+# SPDX-FileCopyrightText: 2025 Onezero0
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: technology
+  id: RogueBasicEquipment
+  name: research-technology-rogue-basic-equipment
+  entityIcon: ClothingOuterHardsuitPirateScaf
+  discipline: RogueEquipment
+  tier: 1
+  cost: 20000
+  recipeUnlocks:
+  - ClothingOuterHardsuitPirateScafRogue
+  - ClothingOuterVestWebRogue
+  technologyPrerequisites:
+  - UniversalMaterialResearchT1
+  position: 20, 1
+
+- type: technology
+  id: RogueAdvancedEquipment
+  name: research-technology-rogue-advanced-equipment
+  entityIcon: ClothingOuterHardsuitViperGroupStandard
+  discipline: RogueEquipment
+  tier: 2
+  cost: 35000
+  recipeUnlocks:
+  - ClothingOuterHardsuitViperGroupStandardRogue
+  - ClothingOuterHardsuitViperGroupMedicRogue
+  - ClothingShoesBootsMagSyndieRogue
+  - ClothingMaskGasSyndicateRogue
+  technologyPrerequisites:
+  - RogueBasicEquipment
+  - UniversalMaterialResearchT2
+  position: 20, 6
+
+- type: technology
+  id: RogueSyndicateTacsuits
+  name: research-technology-rogue-syndicate-tacsuits
+  entityIcon: ClothingOuterHardsuitAshen
+  discipline: RogueEquipment
+  tier: 2
+  cost: 50000
+  recipeUnlocks:
+  - ClothingOuterHardsuitSyndieRogue
+  - ClothingOuterHardsuitSyndieEliteRogue
+  technologyPrerequisites:
+  - RogueAdvancedEquipment
+  - UniversalMaterialResearchT3
+  position: 20, 11
+
+- type: technology
+  id: RogueStealthsuit
+  name: research-technology-rogue-stealthsuit
+  entityIcon: ClothingOuterHardsuitCybersunStealth
+  discipline: RogueEquipment
+  tier: 2
+  cost: 20000
+  recipeUnlocks:
+  - ClothingOuterHardsuitCybersunStealthRogue
+  technologyPrerequisites:
+  - RogueSyndicateTacsuits
+  position: 21, 11
+
+- type: technology
+  id: RogueSyndicateTacsuitsT3
+  name: research-technology-rogue-syndicate-tacsuits-t3
+  entityIcon: ClothingOuterHardsuitJuggernaut
+  discipline: RogueEquipment
+  tier: 3
+  cost: 65000
+  recipeUnlocks:
+  - ClothingOuterHardsuitJuggernautRogue
+# - ClothingOuterHardsuitSyndieCommanderRogue
+  technologyPrerequisites:
+  - RogueSyndicateTacsuits
+  position: 21, 12
+
+- type: technology
+  id: RogueRx01
+  name: research-technology-rogue-rx01
+  entityIcon: ClothingModsuitRoguePowerCell
+  discipline: RogueEquipment
+  tier: 3
+  cost: 35000
+  recipeUnlocks:
+  - ClothingModsuitRoguePowerCellRogue
+  technologyPrerequisites:
+  - RogueAdvancedEquipment
+  position: 21, 6

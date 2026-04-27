@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2025 BlueHNT
+# SPDX-FileCopyrightText: 2025 Suyo
+#
+# SPDX-License-Identifier: MPL-2.0
+
+- type: soundCollection
+  id: Bubbles
+  files:
+    - /Audio/_Impstation/Voice/Slime/s_bubble.ogg
+
+- type: soundCollection
+  id: Pops
+  files:
+    - /Audio/_Impstation/Voice/Slime/s_pop.ogg
+
+- type: soundCollection
+  id: Cracks
+  files:
+    - /Audio/_Impstation/Effects/Emotes/knuckles.ogg

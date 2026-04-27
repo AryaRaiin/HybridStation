@@ -1,3 +1,37 @@
+# SPDX-FileCopyrightText: 2021 Galactic Chimp
+# SPDX-FileCopyrightText: 2021 ShadowCommander
+# SPDX-FileCopyrightText: 2021 Swept
+# SPDX-FileCopyrightText: 2021 cheesePizza2
+# SPDX-FileCopyrightText: 2021 mirrorcult
+# SPDX-FileCopyrightText: 2022 Alex Evgrashin
+# SPDX-FileCopyrightText: 2022 Delete69
+# SPDX-FileCopyrightText: 2022 Flipp Syder
+# SPDX-FileCopyrightText: 2022 Moony
+# SPDX-FileCopyrightText: 2022 Peptide90
+# SPDX-FileCopyrightText: 2022 metalgearsloth
+# SPDX-FileCopyrightText: 2023 Checkraze
+# SPDX-FileCopyrightText: 2023 Darkie
+# SPDX-FileCopyrightText: 2023 Emisse
+# SPDX-FileCopyrightText: 2023 Flareguy
+# SPDX-FileCopyrightText: 2023 Leon Friedrich
+# SPDX-FileCopyrightText: 2023 brainfood1183
+# SPDX-FileCopyrightText: 2023 lzk
+# SPDX-FileCopyrightText: 2024 Alzore
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 ErhardSteinhauer
+# SPDX-FileCopyrightText: 2024 K-Dynamic
+# SPDX-FileCopyrightText: 2024 Kara
+# SPDX-FileCopyrightText: 2024 MACMAN2003
+# SPDX-FileCopyrightText: 2024 Nemanja
+# SPDX-FileCopyrightText: 2024 chromiumboy
+# SPDX-FileCopyrightText: 2024 cohanna
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 Southbridge
+# SPDX-FileCopyrightText: 2025 bitcrushing
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: MPL-2.0
+
 - type: entity
   id: PlasmaWindow
   name: plasma window
@@ -15,7 +49,7 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 150
+        damage: 600 # Mono
       behaviors:
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
@@ -24,7 +58,7 @@
           collection: WindowShatter
     - trigger:
         !type:DamageTrigger
-        damage: 75
+        damage: 300 # Mono 75->300
       behaviors:
       - !type:PlaySoundBehavior
         sound:
@@ -49,9 +83,10 @@
     damageOverlay:
       sprite: Structures/Windows/cracks.rsi
   - type: StaticPrice
-    price: 100
+    price: 50 # Frontier: 100<50
   - type: RadiationBlocker
     resistance: 2
+  - type: HitscanDiffractTarget # Mono - Causes diffraction
 
 - type: entity
   id: PlasmaWindowDirectional
@@ -83,7 +118,7 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 75
+        damage: 300 # Mono
       behaviors:
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
@@ -92,7 +127,7 @@
           collection: WindowShatter
     - trigger:
         !type:DamageTrigger
-        damage: 37
+        damage: 150 # Mono 37->150
       behaviors:
       - !type:PlaySoundBehavior
         sound:
@@ -105,9 +140,10 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: StaticPrice
-    price: 50
+    price: 25 # Frontier:50<25
   - type: RadiationBlocker
     resistance: 1
+  - type: HitscanDiffractTarget # Mono - Causes diffraction
 
 - type: entity
   parent: PlasmaWindow
@@ -128,7 +164,7 @@
     - Window
   - type: IconSmooth
     mode: Diagonal
-    key: windows
+    key: walls # Frontier: windows<walls
     base: state
   - type: Icon
     sprite: Structures/Windows/plasma_diagonal.rsi
@@ -157,3 +193,4 @@
   - type: Construction
     graph: WindowDiagonal
     node: plasmaWindowDiagonal
+  - type: HitscanDiffractTarget # Mono - Causes diffraction

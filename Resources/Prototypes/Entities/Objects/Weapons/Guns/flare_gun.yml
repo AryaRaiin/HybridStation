@@ -1,5 +1,23 @@
+# SPDX-FileCopyrightText: 2022 Kara
+# SPDX-FileCopyrightText: 2022 Leon Friedrich
+# SPDX-FileCopyrightText: 2022 Nairod
+# SPDX-FileCopyrightText: 2022 Swept
+# SPDX-FileCopyrightText: 2022 T-Stalker
+# SPDX-FileCopyrightText: 2023 IData-RedactedI
+# SPDX-FileCopyrightText: 2023 MendaxxDev
+# SPDX-FileCopyrightText: 2023 Nemanja
+# SPDX-FileCopyrightText: 2024 BramvanZijp
+# SPDX-FileCopyrightText: 2024 ErhardSteinhauer
+# SPDX-FileCopyrightText: 2024 Whatstone
+# SPDX-FileCopyrightText: 2024 metalgearsloth
+# SPDX-FileCopyrightText: 2024 nikthechampiongr
+# SPDX-FileCopyrightText: 2024 vanx
+# SPDX-FileCopyrightText: 2025 core-mene
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 - type: entity
-  name: flare gun
+  name: flare gun (12 gauge)
   parent: BaseItem
   id: WeaponFlareGun
   description: A compact, single-shot pistol that fires shotgun shells. Comes with a safety feature that prevents the user from fitting lethal shells inside.
@@ -19,12 +37,12 @@
     slots:
       gun_chamber:
         name: Chamber
-        startingItem: ShellShotgunFlare
+        startingItem: ShellShotgun12_gaugeFlare
         priority: 1
         whitelist:
           tags: ## TODO: Add a risk of the gun blowing up if using non-light shotgun shells, and then re-enable them.
-            ## - ShellShotgun
-            - ShellShotgunLight
+            ## - ShellShotgun12_gaugeBuckshot
+            - ShellShotgun12_gaugeLight
   - type: ContainerContainer
     containers:
       gun_chamber: !type:ContainerSlot
@@ -49,11 +67,30 @@
       - SemiAuto
     soundGunshot:
       path: /Audio/Weapons/Guns/Gunshots/flaregun.ogg
+  - type: StaticPrice # Frontier
+    price: 150 # Frontier
+  # Goobstation edit start
+  - type: EmitSoundOnPickup
+    sound:
+      path: /Audio/_Goobstation/Items/handling/gun_pickup.ogg
+      params:
+        volume: -8
+  - type: EmitSoundOnDrop
+    sound:
+      path: /Audio/_Goobstation/Items/handling/gun_drop.ogg
+      params:
+        volume: -8
+  - type: EmitSoundOnLand
+    sound:
+      path: /Audio/_Goobstation/Items/handling/gun_drop.ogg
+      params:
+        volume: -8
+  # Goobstation edit end
 
 
 - type: entity
   name: security shell gun
-  parent: [WeaponFlareGun, BaseSecurityContraband]
+  parent: [WeaponFlareGun, BaseC1Contraband] # Frontier: BaseSecurityContraband<BaseC1Contraband
   id: WeaponFlareGunSecurity
   description: A modified flare gun originally designed to be used by security to launch non-lethal shotgun shells, however it can also fire lethal shells without risk.
   components:
@@ -72,7 +109,7 @@
         priority: 1
         whitelist:
           tags:
-            - ShellShotgun
+            - ShellShotgun12_gaugeBuckshot
   - type: Tag
     tags:
     - Sidearm

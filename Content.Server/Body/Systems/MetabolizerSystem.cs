@@ -157,7 +157,8 @@ public sealed class MetabolizerSystem : SharedMetabolizerSystem
             }
 
             // we're done here entirely if this is true
-            if (reagents >= ent.Comp1.MaxReagentsProcessable)
+            if (reagents >= ent.Comp1.MaxReagentsProcessable 
+                    && !proto.Metabolisms.ContainsKey("Cryogenic")) // Frontier: all cryogenic reagents in the solution should be processed, others should be limited (buff cryo meds)
                 return;
 
 
@@ -233,7 +234,8 @@ public sealed class MetabolizerSystem : SharedMetabolizerSystem
             if (mostToRemove > FixedPoint2.Zero)
             {
                 solution.RemoveReagent(reagent, mostToRemove);
-
+                
+                if (!proto.Metabolisms.ContainsKey("Cryogenic"))// Frontier: do not count cryogenics chems against the reagent limit (to buff cryo meds)
                 // We have processed a reagant, so count it towards the cap
                 reagents += 1;
             }

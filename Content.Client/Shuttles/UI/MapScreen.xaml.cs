@@ -1,6 +1,21 @@
+// SPDX-FileCopyrightText: 2024 Checkraze
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 SlamBamActionman
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 metalgearsloth
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 Ilya246
+// SPDX-FileCopyrightText: 2025 sleepyyapril
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Linq;
 using System.Numerics;
 using Content.Client.Shuttles.Systems;
+using Content.Shared._Mono.Detection;
+using Content.Shared._NF.Shuttles.Components;
 using Content.Shared.Shuttles.BUIStates;
 using Content.Shared.Shuttles.Components;
 using Content.Shared.Shuttles.Systems;
@@ -30,6 +45,7 @@ public sealed partial class MapScreen : BoxContainer
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly IMapManager _mapManager = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
+    private readonly DetectionSystem _detection; // Mono
     private readonly SharedAudioSystem _audio;
     private readonly SharedMapSystem _maps;
     private readonly ShuttleSystem _shuttles;
@@ -72,6 +88,7 @@ public sealed partial class MapScreen : BoxContainer
         RobustXamlLoader.Load(this);
         IoCManager.InjectDependencies(this);
 
+        _detection = _entManager.System<DetectionSystem>(); // Mono
         _audio = _entManager.System<SharedAudioSystem>();
         _maps = _entManager.System<SharedMapSystem>();
         _shuttles = _entManager.System<ShuttleSystem>();
@@ -113,6 +130,16 @@ public sealed partial class MapScreen : BoxContainer
         _ftlTime = state.FTLTime;
         MapRadar.InFtl = true;
         MapFTLState.Text = Loc.GetString($"shuttle-console-ftl-state-{_state.ToString()}");
+
+        //frontier - we only allow pre-approved vessels to FTL
+        if (!_entManager.HasComponent<ShuttleFTLComponent>(_shuttleEntity))
+        {
+            MapFTLButton.Visible = true;
+        }
+        else
+        {
+            MapFTLButton.Visible = true;
+        }
 
         switch (_state)
         {
@@ -171,6 +198,7 @@ public sealed partial class MapScreen : BoxContainer
             // Unselect FTL
             MapFTLButton.Pressed = false;
             MapRadar.FtlMode = false;
+            MapRadar.ShowFTLRangeOnly = false;
             MapFTLButton.Disabled = true;
         }
     }
@@ -178,11 +206,18 @@ public sealed partial class MapScreen : BoxContainer
     private void FtlPreviewToggled(BaseButton.ButtonToggledEventArgs obj)
     {
         MapRadar.FtlMode = obj.Pressed;
+
+        // When FTL button is toggled, disable the ShowFTLRangeOnly mode
+        if (obj.Pressed)
+        {
+            MapRadar.ShowFTLRangeOnly = false;
+        }
     }
 
     public void SetConsole(EntityUid? console)
     {
         _console = console;
+        MapRadar.SetConsole(console); // Mono
     }
 
     public void SetShuttle(EntityUid? shuttle)
@@ -215,7 +250,13 @@ public sealed partial class MapScreen : BoxContainer
         }
 
         RebuildMapObjects();
-        BumpMapDequeue();
+
+        // Immediately add all objects to the map instead of queueing them
+        foreach (var mapObj in _pendingMapObjects)
+        {
+            AddMapObject(mapObj.mapId, mapObj.mapobj);
+        }
+        _pendingMapObjects.Clear();
 
         _nextPing = _timing.CurTime + _pingCooldown;
         MapRebuildButton.Disabled = true;
@@ -228,7 +269,11 @@ public sealed partial class MapScreen : BoxContainer
 
     private void MapRebuildPressed(BaseButton.ButtonEventArgs obj)
     {
+        MapRadar.ShowFTLRangeOnly = true;
         PingMap();
+
+        // Reset range back after map pinging is complete.
+        MapRadar.ShowFTLRangeOnly = !MapFTLButton.Pressed;
     }
 
     /// <summary>
@@ -315,11 +360,23 @@ public sealed partial class MapScreen : BoxContainer
             {
                 _entManager.TryGetComponent(grid.Owner, out IFFComponent? iffComp);
 
+                // Mono
+                var hideLabel = iffComp != null && (iffComp.Flags & IFFFlags.HideLabel) != 0x0 && grid.Owner != _shuttleEntity; // never hide our own label
+                var detectionLevel = _console == null ? DetectionLevel.Detected : _detection.IsGridDetected(grid.Owner, _console.Value);
+                var detected = detectionLevel != DetectionLevel.Undetected || !hideLabel;
+                if (!detected || iffComp != null && (iffComp.Flags & IFFFlags.Hide) != 0x0)
+                    continue;
+                var name = hideLabel ?
+                    detectionLevel == DetectionLevel.PartialDetected ?
+                        Loc.GetString($"shuttle-console-signature-infrared")
+                        : Loc.GetString($"shuttle-console-signature-unknown")
+                    : _entManager.GetComponent<MetaDataComponent>(grid.Owner).EntityName;
+
                 var gridObj = new GridMapObject()
                 {
-                    Name = _entManager.GetComponent<MetaDataComponent>(grid.Owner).EntityName,
+                    Name = name, // Mono
                     Entity = grid.Owner,
-                    HideButton = iffComp != null && (iffComp.Flags & IFFFlags.HideLabel) != 0x0,
+                    HideButton = iffComp != null && (iffComp.Flags & IFFFlags.HideLabelAlways) != 0x0,
                 };
 
                 // Always show our shuttle immediately
@@ -327,6 +384,7 @@ public sealed partial class MapScreen : BoxContainer
                 {
                     AddMapObject(mapComp.MapId, gridObj);
                 }
+
                 // If we can show it then add it to pending.
                 else if (!_shuttles.IsBeaconMap(mapUid) && (iffComp == null ||
                          (iffComp.Flags & IFFFlags.Hide) == 0x0) &&
@@ -498,13 +556,14 @@ public sealed partial class MapScreen : BoxContainer
 
         var curTime = _timing.CurTime;
 
-        if (_nextMapDequeue < curTime && _pendingMapObjects.Count > 0)
-        {
-            var mapObj = _pendingMapObjects[^1];
-            _pendingMapObjects.RemoveAt(_pendingMapObjects.Count - 1);
-            AddMapObject(mapObj.mapId, mapObj.mapobj);
-            BumpMapDequeue();
-        }
+        // Skip the gradual reveal of map objects - they're already added in PingMap
+        // if (_nextMapDequeue < curTime && _pendingMapObjects.Count > 0)
+        // {
+        //     var mapObj = _pendingMapObjects[^1];
+        //     _pendingMapObjects.RemoveAt(_pendingMapObjects.Count - 1);
+        //     AddMapObject(mapObj.mapId, mapObj.mapobj);
+        //     BumpMapDequeue();
+        // }
 
         if (!IsFTLBlocked() && _nextPing < curTime)
         {

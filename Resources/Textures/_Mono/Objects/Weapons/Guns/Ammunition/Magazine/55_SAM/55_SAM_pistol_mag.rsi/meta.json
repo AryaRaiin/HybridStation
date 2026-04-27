@@ -1,0 +1,54 @@
+{
+    "version": 1,
+<<<<<<< HEAD:Resources/Textures/Objects/Weapons/Guns/Ammunition/Magazine/Rifle/rifle_mag.rsi/meta.json
+    "license": "CC-BY-SA-3.0",
+    "copyright": "All sprites by https://github.com/august-sun, inhands by TiniestShark (GitHub), stripes by SeamLesss (GitHub)",
+=======
+>>>>>>> monolith/main:Resources/Textures/_Mono/Objects/Weapons/Guns/Ammunition/Magazine/55_SAM/55_SAM_pistol_mag.rsi/meta.json
+    "size": {
+        "x": 32,
+        "y": 32
+    },
+    "license": "CC-BY-SA-3.0",
+    "copyright": "All art made by Warlord Toby, adapted ingame by avtomata",
+    "states": [
+        {
+            "name": "base"
+        },
+        {
+<<<<<<< HEAD:Resources/Textures/Objects/Weapons/Guns/Ammunition/Magazine/Rifle/rifle_mag.rsi/meta.json
+            "name": "stripe"
+        },
+        {
+            "name": "mag-1"
+        },
+        {
+            "name": "inhand-left-mag",
+            "directions": 4
+        },
+        {
+            "name": "inhand-left-stripe",
+            "directions": 4
+        },
+        {
+            "name": "inhand-right-mag",
+            "directions": 4
+        },
+        {
+            "name": "inhand-right-stripe",
+            "directions": 4
+=======
+            "name": "mag-1"
+        },
+        {
+            "name": "mag-2"
+        },
+        {
+            "name": "mag-3"
+        },
+        {
+            "name": "mag-4"
+>>>>>>> monolith/main:Resources/Textures/_Mono/Objects/Weapons/Guns/Ammunition/Magazine/55_SAM/55_SAM_pistol_mag.rsi/meta.json
+        }
+    ]
+}

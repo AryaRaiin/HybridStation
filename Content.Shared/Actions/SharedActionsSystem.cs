@@ -17,6 +17,7 @@ using Robust.Shared.GameStates;
 using Robust.Shared.Map;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
+using Robust.Shared.Network; // Goobstation
 
 namespace Content.Shared.Actions;
 
@@ -32,6 +33,7 @@ public abstract partial class SharedActionsSystem : EntitySystem
     [Dependency] private   readonly SharedInteractionSystem _interaction = default!;
     [Dependency] private   readonly SharedTransformSystem _transform = default!;
     [Dependency] private   readonly SharedDoAfterSystem _doAfter = default!;
+    [Dependency] private readonly INetManager _net = default!; // Goobstation
 
     private EntityQuery<ActionComponent> _actionQuery;
     private EntityQuery<ActionsComponent> _actionsQuery;

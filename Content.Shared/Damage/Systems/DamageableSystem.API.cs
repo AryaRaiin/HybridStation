@@ -41,12 +41,17 @@ public sealed partial class DamageableSystem
         bool ignoreResistances = false,
         bool interruptsDoAfters = true,
         EntityUid? origin = null,
-        bool ignoreGlobalModifiers = false
+        bool ignoreGlobalModifiers = false,
+        float armorPenetration = 0f, // GOOBSTATION
+        bool? canSever = true, // SHITMED
+        bool? canEvade = false, // SHITMED
+        float? partMultiplier = 1.00f, // SHITMED
+        TargetBodyPart? targetPart = null // SHITMED
     )
     {
         //! Empty just checks if the DamageSpecifier is _literally_ empty, as in, is internal dictionary of damage types is empty.
         // If you deal 0.0 of some damage type, Empty will be false!
-        return !TryChangeDamage(ent, damage, out _, ignoreResistances, interruptsDoAfters, origin, ignoreGlobalModifiers);
+        return !TryChangeDamage(ent, damage, out _, ignoreResistances, interruptsDoAfters, origin, ignoreGlobalModifiers, armorPenetration, canSever, canEvade, partMultiplier, targetPart);
     }
 
     /// <summary>
@@ -67,12 +72,17 @@ public sealed partial class DamageableSystem
         bool ignoreResistances = false,
         bool interruptsDoAfters = true,
         EntityUid? origin = null,
-        bool ignoreGlobalModifiers = false
+        bool ignoreGlobalModifiers = false,
+        float armorPenetration = 0f, // GOOBSTATION
+        bool? canSever = true, // SHITMED
+        bool? canEvade = false, // SHITMED
+        float? partMultiplier = 1.00f, // SHITMED
+        TargetBodyPart? targetPart = null // SHITMED
     )
     {
         //! Empty just checks if the DamageSpecifier is _literally_ empty, as in, is internal dictionary of damage types is empty.
         // If you deal 0.0 of some damage type, Empty will be false!
-        newDamage = ChangeDamage(ent, damage, ignoreResistances, interruptsDoAfters, origin, ignoreGlobalModifiers);
+        newDamage = ChangeDamage(ent, damage, ignoreResistances, interruptsDoAfters, origin, ignoreGlobalModifiers, armorPenetration, canSever, canEvade, partMultiplier, targetPart);
         return !damage.Empty;
     }
 
@@ -93,7 +103,12 @@ public sealed partial class DamageableSystem
         bool ignoreResistances = false,
         bool interruptsDoAfters = true,
         EntityUid? origin = null,
-        bool ignoreGlobalModifiers = false
+        bool ignoreGlobalModifiers = false,
+        float armorPenetration = 0f, // GOOBSTATION
+        bool? canSever = true, // SHITMED
+        bool? canEvade = false, // SHITMED
+        float? partMultiplier = 1.00f, // SHITMED
+        TargetBodyPart? targetPart = null // SHITMED
     )
     {
         var damageDone = new DamageSpecifier();
@@ -104,11 +119,19 @@ public sealed partial class DamageableSystem
         if (damage.Empty)
             return damageDone;
 
-        var before = new BeforeDamageChangedEvent(damage, origin);
+        var before = new BeforeDamageChangedEvent(damage, origin,
+            targetPart); // SHITMED
         RaiseLocalEvent(ent, ref before);
 
         if (before.Cancelled)
             return damageDone;
+
+        // SHITMED START
+        var partDamage = new TryChangePartDamageEvent(damage, origin, targetPart, ignoreResistances, canSever ?? true, canEvade ?? false, partMultiplier ?? 1.00f);
+        RaiseLocalEvent(uid.Value, ref partDamage);
+        if (partDamage.Evaded || partDamage.Cancelled)
+            return null;
+        // SHITMED END
 
         // Apply resistances
         if (!ignoreResistances)
@@ -117,11 +140,16 @@ public sealed partial class DamageableSystem
                 ent.Comp.DamageModifierSetId != null &&
                 _prototypeManager.Resolve(ent.Comp.DamageModifierSetId, out var modifierSet)
             )
+                /* GOOBSTATION START - disable upstream, overwrite modifierSet
                 damage = DamageSpecifier.ApplyModifierSet(damage, modifierSet);
+                */
+                damage = DamageSpecifier.ApplyModifierSet(damage, DamageSpecifier.PenetrateArmor(modifierSet, armorPenetration));
+                // GOOBSTATION END
 
             // TODO DAMAGE
             // byref struct event.
-            var ev = new DamageModifyEvent(damage, origin);
+            var ev = new DamageModifyEvent(damage, origin,
+                armorPenetration, targetPart); // Shitmed Change
             RaiseLocalEvent(ent, ev);
             damage = ev.Damage;
 
@@ -151,7 +179,8 @@ public sealed partial class DamageableSystem
         }
 
         if (!damageDone.Empty)
-            OnEntityDamageChanged((ent, ent.Comp), damageDone, interruptsDoAfters, origin);
+            OnEntityDamageChanged((ent, ent.Comp), damageDone, interruptsDoAfters, origin,
+                canSever); // SHITMED
 
         return damageDone;
     }
@@ -216,6 +245,19 @@ public sealed partial class DamageableSystem
         // Setting damage does not count as 'dealing' damage, even if it is set to a larger value, so we pass an
         // empty damage delta.
         OnEntityDamageChanged((ent, ent.Comp), new DamageSpecifier());
+
+        // SHITMED START
+        if (HasComp<TargetingComponent>(uid))
+        {
+            foreach (var (part, _) in _body.GetBodyChildren(uid))
+            {
+                if (!TryComp(part, out DamageableComponent? damageComp))
+                    continue;
+
+                SetAllDamage(part, damageComp, newValue);
+            }
+        }
+        // SHITMED END
     }
 
     /// <summary>

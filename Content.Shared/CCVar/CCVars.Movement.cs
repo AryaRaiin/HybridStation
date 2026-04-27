@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 metalgearsloth
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Shared.Administration;
 using Content.Shared.CCVar.CVarAccess;
 using Robust.Shared.Configuration;
@@ -18,21 +23,24 @@ public sealed partial class CCVars
     /// </summary>
     [CVarControl(AdminFlags.VarEdit)]
     public static readonly CVarDef<bool> MovementPushingStatic =
-        CVarDef.Create("movement.pushing_static", true, CVar.SERVER | CVar.REPLICATED);
+        //CVarDef.Create("movement.pushing_static", true, CVar.SERVER | CVar.REPLICATED);
+        CVarDef.Create("movement.pushing_static", false, CVar.SERVER | CVar.REPLICATED); // UNKNOWN
 
     /// <summary>
     /// Dot product for the pushed entity's velocity to a target entity's velocity before it gets moved.
     /// </summary>
     [CVarControl(AdminFlags.VarEdit)]
     public static readonly CVarDef<float> MovementPushingVelocityProduct =
-        CVarDef.Create("movement.pushing_velocity_product", -9999f, CVar.SERVER | CVar.REPLICATED);
+        //CVarDef.Create("movement.pushing_velocity_product", -9999f, CVar.SERVER | CVar.REPLICATED);
+        CVarDef.Create("movement.pushing_velocity_product", -1f, CVar.SERVER | CVar.REPLICATED); // UNKNOWN
 
     /// <summary>
     /// Cap for how much an entity can be pushed per second.
     /// </summary>
     [CVarControl(AdminFlags.VarEdit)]
     public static readonly CVarDef<float> MovementPushingCap =
-        CVarDef.Create("movement.pushing_cap", 25f, CVar.SERVER | CVar.REPLICATED);
+        //CVarDef.Create("movement.pushing_cap", 25f, CVar.SERVER | CVar.REPLICATED);
+        CVarDef.Create("movement.pushing_cap", 100f, CVar.SERVER | CVar.REPLICATED); // UNKNOWN
 
     /// <summary>
     /// Minimum pushing impulse per tick. If the value is below this it rounds to 0.
@@ -40,7 +48,8 @@ public sealed partial class CCVars
     /// </summary>
     [CVarControl(AdminFlags.VarEdit)]
     public static readonly CVarDef<float> MovementMinimumPush =
-        CVarDef.Create("movement.minimum_push", 0f, CVar.SERVER | CVar.REPLICATED);
+        //CVarDef.Create("movement.minimum_push", 0f, CVar.SERVER | CVar.REPLICATED);
+        CVarDef.Create("movement.minimum_push", 0.1f, CVar.SERVER | CVar.REPLICATED); // UNKNOWN
 
     // Really this just exists because hot reloading is cooked on rider.
     /// <summary>
@@ -48,7 +57,8 @@ public sealed partial class CCVars
     /// </summary>
     [CVarControl(AdminFlags.VarEdit)]
     public static readonly CVarDef<float> MovementPenetrationCap =
-        CVarDef.Create("movement.penetration_cap", 0.5f, CVar.SERVER | CVar.REPLICATED);
+        //CVarDef.Create("movement.penetration_cap", 0.5f, CVar.SERVER | CVar.REPLICATED);
+        CVarDef.Create("movement.penetration_cap", 0.3f, CVar.SERVER | CVar.REPLICATED); // UNKNOWN
 
     /// <summary>
     /// Based on the mass difference multiplies the push amount by this proportionally.

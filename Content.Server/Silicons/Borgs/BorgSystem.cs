@@ -1,3 +1,27 @@
+// SPDX-FileCopyrightText: 2023 Checkraze
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 ShadowCommander
+// SPDX-FileCopyrightText: 2023 TemporalOroboros
+// SPDX-FileCopyrightText: 2023 metalgearsloth
+// SPDX-FileCopyrightText: 2024 Cojoke
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Ed
+// SPDX-FileCopyrightText: 2024 Krunklehorn
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 deltanedas
+// SPDX-FileCopyrightText: 2025 BeBright
+// SPDX-FileCopyrightText: 2025 Errant
+// SPDX-FileCopyrightText: 2025 Ilya246
+// SPDX-FileCopyrightText: 2025 ScarKy0
+// SPDX-FileCopyrightText: 2025 eoineoineoin
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Content.Server.Actions;
@@ -34,6 +58,7 @@ using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
+using Content.Server.Access.Systems; // Frontier
 
 namespace Content.Server.Silicons.Borgs;
 
@@ -61,6 +86,7 @@ public sealed partial class BorgSystem : SharedBorgSystem
     [Dependency] private readonly SharedContainerSystem _container = default!;
     [Dependency] private readonly EntityWhitelistSystem _whitelistSystem = default!;
     [Dependency] private readonly ISharedPlayerManager _player = default!;
+    [Dependency] private readonly AccessSystem _access = default!; // Frontier
 
     public static readonly ProtoId<JobPrototype> BorgJobId = "Borg";
 
@@ -181,6 +207,12 @@ public sealed partial class BorgSystem : SharedBorgSystem
     private void OnMindAdded(EntityUid uid, BorgChassisComponent component, MindAddedMessage args)
     {
         BorgActivate(uid, component);
+
+        // Goobstation START: Customizable borgs sprites
+        if (TryComp<BorgSwitchableTypeComponent>(uid, out var switchable))
+            if (switchable.SelectedBorgType == null)
+                _ui.TryOpenUi(uid, BorgSwitchableTypeUiKey.SelectBorgType, uid);
+        // Goobstation END
     }
 
     private void OnMindRemoved(EntityUid uid, BorgChassisComponent component, MindRemovedMessage args)

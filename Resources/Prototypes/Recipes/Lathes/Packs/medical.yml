@@ -74,16 +74,44 @@
   - MedkitAdvanced
   - MedkitRadiation
   - MedkitCombat
+  - SyringeCase
+  - SyringeCaseAlt
 
 - type: latheRecipePack
   id: MedicalBoardsStatic
   recipes:
   - ElectrolysisUnitMachineCircuitboard
   - CentrifugeMachineCircuitboard
-  - ChemDispenserMachineCircuitboard
-  - ChemMasterMachineCircuitboard
+  # - ChemDispenserMachineCircuitboard # Frontier: dynamic
+  # - ChemMasterMachineCircuitboard # Frontier: dynamic
   - CondenserMachineCircuitBoard
-  - HotplateMachineCircuitboard
+  # - HotplateMachineCircuitboard # Frontier: dynamic
+  - OperatingTableCircuitboard # Shitmed Change
+
+# Shitmed
+- type: latheRecipePack
+  id: MedicalSynthLimbsStatic
+  recipes:
+  - SynthLiver
+  - SynthHeart
+  - SynthLungs
+  - SynthEyes
+  - SynthHeadEmpty
+  - SynthLeftLeg
+  - SynthRightLeg
+  - SynthLeftFoot
+  - SynthRightFoot
+  - SynthLeftArm
+  - SynthRightArm
+  - SynthLeftHand
+  - SynthRightHand
+
+# Shitmed
+- type: latheRecipePack
+  id: MedicalPizzaLimbsStatic
+  recipes:
+  - PizzaLeftArm
+  - PizzaRightArm
 
 ## Dynamic
 

@@ -38,7 +38,8 @@ public sealed class EntityHeaterSystem : SharedEntityHeaterSystem
             // don't divide by total entities since it's a big grill
             // excess would just be wasted in the air but that's not worth simulating
             // if you want a heater thermomachine just use that...
-            var energy = power.PowerReceived * deltaTime;
+            //var energy = power.PowerReceived * deltaTime;
+            var energy = (power.PowerReceived - power.PassivePower) * deltaTime; // Frontier: subtract PassivePower
             foreach (var ent in placer.PlacedEntities)
             {
                 _temperature.ChangeHeat(ent, energy);
@@ -57,6 +58,7 @@ public sealed class EntityHeaterSystem : SharedEntityHeaterSystem
         if (!TryComp<ApcPowerReceiverComponent>(ent, out var power))
             return;
 
-        power.Load = SettingPower(setting, ent.Comp.Power);
+        power.Load = SettingPower(setting, ent.Comp.Power)
+            + ent.Comp.PassivePower; // Frontier: add PassivePower
     }
 }

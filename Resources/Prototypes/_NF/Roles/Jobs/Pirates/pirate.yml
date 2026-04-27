@@ -1,0 +1,65 @@
+# SPDX-FileCopyrightText: 2024 Checkraze
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 Qulibly
+# SPDX-FileCopyrightText: 2024 Salvantrix
+# SPDX-FileCopyrightText: 2024 Whatstone
+# SPDX-FileCopyrightText: 2025 LukeZurg22
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 ScyronX
+# SPDX-FileCopyrightText: 2025 sleepyyapril
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: job
+  id: Pirate
+  name: job-name-pirate
+  description: job-description-pirate
+  playTimeTracker: JobPirate
+  requirements: # Mono
+  - !type:OverallPlaytimeRequirement
+    time: 7200 # 2 hours
+  startingGear: PirateNFGear
+  alwaysUseSpawner: true
+  hideConsoleVisibility: true
+  canBeAntag: true
+  icon: "JobIconPirate"
+  supervisors: job-supervisors-pirate
+  weight: 20
+  displayWeight: 20
+  setPreference: true
+  guides: [ BasicLore, AshenRepublic ] # Mono
+  access:
+  - Pirate
+  accessGroups:
+  - GeneralAccess
+  special:
+  - !type:AddComponentSpecial
+    components:
+    - type: MailDisabled
+    - type: SpecialSectorStationRecord
+      recordGeneration: FalseRecord
+    - type: NpcFactionMember
+      factions:
+      - PirateNF
+  - !type:AddImplantSpecial
+    implants: [ FreelanceTrackingImplant ]
+  - !type:AddLanguageSpecial # Monolith - Languages
+    languagesSpoken:
+    - Freespeak
+    languagesUnderstood:
+    - Freespeak
+  - !type:GiveItemOnHolidaySpecial # Even pirates get a piece of cake.
+    holiday: FrontierBirthday
+    prototype: FrontierBirthdayGift
+
+- type: startingGear
+  id: PirateNFGear
+  equipment:
+    ears: ClothingHeadsetAltFreelancer
+    #belt: ClothingBeltUtility
+    pocket1: BasePirateUplinkPirateCrew
+    #pocket2: AppraisalTool
+  storage:
+    back:
+    - RadioHandheldNF

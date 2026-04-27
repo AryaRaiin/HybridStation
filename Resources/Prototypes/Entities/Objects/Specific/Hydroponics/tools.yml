@@ -155,3 +155,28 @@
         - Produce
         - Seed
   - type: Dumpable
+  - type: MagnetPickup # Frontier
+    magnetEnabled: false # Frontier
+    magnetCanBeEnabled: false # Frontier
+  - type: NFPlantBag # Frontier
+  # DeltaV START
+  - type: ItemToggle
+    soundActivate: &soundActivate
+      collection: sparks
+      params:
+        variation: 0.25
+    soundDeactivate: *soundActivate
+    onUse: false # Frontier
+    onAltUse: true # Frontier
+    onActivate: false # Frontier
+  - type: ItemToggleExamine
+    on: item-toggle-examine-magnet-on
+    off: item-toggle-examine-magnet-off
+  - type: Appearance
+  - type: GenericVisualizer
+    visuals:
+      enum.ToggleVisuals.Toggled:
+        enum.ToggleVisuals.Layer:
+          True: { visible: True }
+          False: { visible: False }
+  # DeltaV END

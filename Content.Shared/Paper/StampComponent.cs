@@ -22,7 +22,20 @@ public partial struct StampDisplayInfo
 
     [DataField("stampedColor")]
     public Color StampedColor;
+
+    [DataField("stampType")]
+    public StampType Type = StampType.RubberStamp;
+
+    [DataField("reapply")] // Frontier: allow reapplying stamps
+    public bool Reapply = false; // Frontier: allow reapplying stamps
 };
+
+// FRONTIER - Stamp types, put it into an enum for modularity purposes.
+public enum StampType
+{
+    RubberStamp,
+    Signature
+}
 
 [RegisterComponent]
 public sealed partial class StampComponent : Component
@@ -50,4 +63,19 @@ public sealed partial class StampComponent : Component
     /// </summary>
     [DataField("sound")]
     public SoundSpecifier? Sound = null;
+
+    // Frontier: allow reapplying stamps, protected stamps
+    /// <summary>
+    /// Whether or not a stamp can be reapplied
+    /// </summary>
+    [DataField("reapply")]
+    public bool Reapply { get; set; } = false;
+
+    /// <summary>
+    /// When true, stamped papers are marked as protected
+    /// </summary>
+
+    [DataField]
+    public bool Protected = false;
+    // End Frontier
 }

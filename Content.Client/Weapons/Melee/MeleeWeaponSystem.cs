@@ -1,5 +1,6 @@
 using System.Linq;
 using Content.Client.Gameplay;
+using Content.Shared._White.Blink; //PULSARSEDGE
 using Content.Shared.CombatMode;
 using Content.Shared.Effects;
 using Content.Shared.Hands.Components;
@@ -9,6 +10,7 @@ using Content.Shared.Weapons.Melee;
 using Content.Shared.Weapons.Melee.Components;
 using Content.Shared.Weapons.Melee.Events;
 using Content.Shared.Weapons.Ranged.Components;
+using Content.Shared.Wieldable.Components; //PULSARSEDGE
 using Robust.Client.GameObjects;
 using Robust.Client.Graphics;
 using Robust.Client.Input;
@@ -31,6 +33,7 @@ public sealed partial class MeleeWeaponSystem : SharedMeleeWeaponSystem
     [Dependency] private readonly SharedColorFlashEffectSystem _color = default!;
     [Dependency] private readonly MapSystem _map = default!;
     [Dependency] private readonly SpriteSystem _sprite = default!;
+    [Dependency] private readonly TransformSystem _transform = default!; // Goobstation
 
     private EntityQuery<TransformComponent> _xformQuery;
 
@@ -142,6 +145,25 @@ public sealed partial class MeleeWeaponSystem : SharedMeleeWeaponSystem
                 ClientDisarm(entity, mousePos, coordinates);
                 return;
             }
+
+            // WD EDIT START
+            if (TryComp(weaponUid, out BlinkComponent? blink) && blink.IsActive)
+            {
+                if (!_xformQuery.TryGetComponent(entity, out var userXform))
+                    return;
+
+                var targetMap = _transform.ToMapCoordinates(coordinates);
+
+                if (targetMap.MapId != userXform.MapID)
+                    return;
+
+                var userPos = TransformSystem.GetWorldPosition(userXform);
+                var direction = targetMap.Position - userPos;
+
+                RaisePredictiveEvent(new BlinkEvent(GetNetEntity(weaponUid), direction));
+                return;
+            }
+            // WD EDIT END
 
             ClientHeavyAttack(entity, coordinates, weaponUid, weapon);
             return;

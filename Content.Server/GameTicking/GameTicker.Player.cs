@@ -5,6 +5,7 @@ using Content.Shared.GameWindow;
 using Content.Shared.Players;
 using Content.Shared.Preferences;
 using JetBrains.Annotations;
+using Robust.Server.GameObjects;
 using Robust.Server.Player;
 using Robust.Shared.Audio;
 using Robust.Shared.Enums;
@@ -49,6 +50,7 @@ namespace Content.Server.GameTicking
                     {
                         var data = new ContentPlayerData(session.UserId, args.Session.Name);
                         data.Mind = mindId;
+                        data.Whitelisted = await _db.GetWhitelistStatusAsync(session.UserId); // Nyanotrasen - Whitelist
                         session.Data.ContentDataUncast = data;
                     }
 
@@ -221,7 +223,7 @@ namespace Content.Server.GameTicking
 
     public sealed class PlayerJoinedLobbyEvent : EntityEventArgs
     {
-        public readonly ICommonSession PlayerSession;
+        public ICommonSession PlayerSession;
 
         public PlayerJoinedLobbyEvent(ICommonSession playerSession)
         {

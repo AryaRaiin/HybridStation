@@ -1,0 +1,45 @@
+# SPDX-FileCopyrightText: 2025 Avalon
+# SPDX-FileCopyrightText: 2025 BoskiYourk
+# SPDX-FileCopyrightText: 2025 HungryCuban
+# SPDX-FileCopyrightText: 2025 Ilya246
+# SPDX-FileCopyrightText: 2025 Onezero0
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 significant harassment
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: vessel
+  id: Natisk
+  parent: BaseVesselAntag
+  name: NCS Natisk
+  description: A tank with a layer of reinforced walls under its exterior hull, ensuring its able to send out obscene amounts of firepower.
+  price: 53500
+  category: Medium
+  group: Ussp
+  access: Mercenary
+  shuttlePath: /Maps/_Mono/Shuttles/USSP/natisk.yml
+  guidebookPage: Null
+  class:
+  - Pursuit
+  engine:
+  - AME
+
+- type: gameMap
+  id: Natisk
+  mapName: 'Natisk'
+  mapPath: /Maps/_Mono/Shuttles/USSP/natisk.yml
+  minPlayers: 0
+  stations:
+    Natisk:
+      stationProto: StandardFrontierVessel
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: 'Natisk MIL{1}'
+          nameGenerator:
+            !type:NanotrasenNameGenerator
+            prefixCreator: '14'
+        - type: StationJobs
+          availableJobs:
+            Mercenary: [ 0, 0 ]
+            Pilot: [ 0, 0 ]

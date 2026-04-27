@@ -21,6 +21,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Replays;
 using System.Linq;
+using Content.Server._EinsteinEngines.Language; // Einstein Engines - Language
 
 namespace Content.Server.Telephone;
 
@@ -36,6 +37,7 @@ public sealed class TelephoneSystem : SharedTelephoneSystem
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly IAdminLogManager _adminLogger = default!;
     [Dependency] private readonly IReplayRecordingManager _replay = default!;
+    [Dependency] private readonly LanguageSystem _language = default!; // Einstein Engines - Language
 
     // Has set used to prevent telephone feedback loops
     private HashSet<(EntityUid, string, Entity<TelephoneComponent>)> _recentChatMessages = new();
@@ -114,7 +116,8 @@ public sealed class TelephoneSystem : SharedTelephoneSystem
         var range = args.TelephoneSource.Comp.LinkedTelephones.Count > 1 ? ChatTransmitRange.HideChat : ChatTransmitRange.GhostRangeLimit;
         var volume = entity.Comp.SpeakerVolume == TelephoneVolume.Speak ? InGameICChatType.Speak : InGameICChatType.Whisper;
 
-        _chat.TrySendInGameICMessage(speaker, args.Message, volume, range, nameOverride: name, checkRadioPrefix: false);
+        _chat.TrySendInGameICMessage(speaker, args.Message, volume, range, nameOverride: name, checkRadioPrefix: false,
+            languageOverride: args.Language); // Einstein Engines - Language
     }
 
     #endregion

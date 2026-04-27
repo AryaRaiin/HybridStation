@@ -1,0 +1,44 @@
+--- ### ANIMALS ###
+file: Resources/Prototypes/Entities/Mobs/NPCs/animals.yml
+# two hand the animal
+- match:
+    - id: MobBat
+    - id: MobGoat
+    - id: MobGoose
+    - id: MobBaseAncestor
+    - id: MobLizard
+  action: add
+  data:
+    components:
+      - type: Carriable
+# one hand the animal
+- match:
+    - id: MobChicken
+    - id: MobDuckMallard
+    - id: MobCrab
+    - id: MobSlug
+    - id: MobFrog
+    - id: MobParrot
+  action: add
+  data:
+    components:
+      - type: Carriable
+        freeHandsRequired: 1
+--- ### CARP ###
+file: Resources/Prototypes/Entities/Mobs/NPCs/carp.yml
+- match:
+    - id: BaseMobCarp
+  action: add
+  data:
+    components:
+    - type: Carriable
+
+--- ### REGALRAT ###
+file: Resources/Prototypes/Entities/Mobs/NPCs/regalrat.yml
+- match:
+    - id: MobRatServant
+  action: add
+  data:
+    components:
+      - type: Carriable
+        freeHandsRequired: 1

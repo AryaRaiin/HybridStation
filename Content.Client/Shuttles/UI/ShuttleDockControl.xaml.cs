@@ -1,3 +1,13 @@
+// SPDX-FileCopyrightText: 2024 ErhardSteinhauer
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 eoineoineoin
+// SPDX-FileCopyrightText: 2024 metalgearsloth
+// SPDX-FileCopyrightText: 2025 Ilya246
+// SPDX-FileCopyrightText: 2025 RikuTheKiller
+// SPDX-FileCopyrightText: 2025 Whatstone
+//
+// SPDX-License-Identifier: MPL-2.0
+
 using System.Numerics;
 using Content.Client.Shuttles.Systems;
 using Content.Shared.Shuttles.BUIStates;
@@ -93,6 +103,8 @@ public sealed partial class ShuttleDockControl : BaseShuttleControl
 
     protected override void Draw(DrawingHandleScreen handle)
     {
+        UseCircleMaskShader(handle); // Mono
+
         base.Draw(handle);
 
         DrawBacking(handle);
@@ -107,6 +119,7 @@ public sealed partial class ShuttleDockControl : BaseShuttleControl
         }
 
         DrawCircles(handle);
+        DrawNorthLine(handle, _angle.Value); // Frontier Corvax: north line drawing
         var gridNent = EntManager.GetNetEntity(GridEntity);
         var mapPos = _xformSystem.ToMapCoordinates(_coordinates.Value);
         var ourGridToWorld = _xformSystem.GetWorldMatrix(GridEntity.Value);
@@ -134,6 +147,9 @@ public sealed partial class ShuttleDockControl : BaseShuttleControl
         var canDockChange = _timing.CurTime > _nextDockChange;
         var lineOffset = (float) _timing.RealTime.TotalSeconds * 30f;
 
+        var viewedDockType = _viewedState?.DockType ?? DockType.None; // Frontier: cache dock type
+        var viewedReceiveOnly = _viewedState?.ReceiveOnly ?? true; // Frontier: cache receive only
+
         foreach (var grid in _grids)
         {
             EntManager.TryGetComponent(grid.Owner, out IFFComponent? iffComp);
@@ -144,6 +160,15 @@ public sealed partial class ShuttleDockControl : BaseShuttleControl
             var curGridToWorld = _xformSystem.GetWorldMatrix(grid.Owner);
             var curGridToView = curGridToWorld * worldToSelectedDock * selectedDockToView;
             var color = _shuttles.GetIFFColor(grid.Owner, grid.Owner == GridEntity, component: iffComp);
+
+            // Mono START - hide color if needed
+            if(iffComp != null &&
+                (iffComp.Flags & IFFFlags.HideLabel) != 0x0 && 
+                (iffComp.Flags & IFFFlags.AlwaysShowColor) == 0x0)
+            {
+                color = Color.White
+            }
+            // MONO END
 
             DrawGrid(handle, curGridToView, grid, color);
 
@@ -215,11 +240,11 @@ public sealed partial class ShuttleDockControl : BaseShuttleControl
 
                 if (HighlightedDock == dock.Entity)
                 {
-                    otherDockColor = Color.ToSrgb(dock.HighlightedColor);
+                    otherDockColor = Color.ToSrgb(dock.HighlightedRadarColor); // Frontier: HighlightedColor -> HighlightedRadarColor
                 }
                 else
                 {
-                    otherDockColor = Color.ToSrgb(dock.Color);
+                    otherDockColor = Color.ToSrgb(dock.RadarColor); // Frontier: Color -> RadarColor
                 }
 
                 /*
@@ -237,6 +262,7 @@ public sealed partial class ShuttleDockControl : BaseShuttleControl
                 if (dockButton != null && dock.GridDockedWith != null)
                 {
                     dockButton.Disabled = !canDockChange;
+                    dockButton.Visible = true; // Frontier: undock should always be visible.
                 }
 
                 // If the dock is in range then also do highlighting
@@ -266,10 +292,17 @@ public sealed partial class ShuttleDockControl : BaseShuttleControl
                             var canDock = distanceSq < maxDockDistSq && inAlignment;
 
                             if (dockButton != null)
-                                dockButton.Disabled = !canDock || !canDockChange;
+                            {
+                                dockButton.Disabled = !canDock && dock.GridDockedWith == null || !canDockChange; // Frontier: add "&& dock.GridDockedWith == null"
+                                dockButton.Visible = dock.GridDockedWith != null || (dock.DockType & viewedDockType) != DockType.None && !viewedReceiveOnly; // Frontier: do not enable docking for receive-only docks
+                            }
 
                             var lineColor = inAlignment ? Color.Lime : Color.Red;
                             handle.DrawDottedLine(viewedDockPos.Value, collisionCenter, lineColor, offset: lineOffset);
+                        }
+                        else if (dockButton != null)
+                        {
+                            dockButton.Visible = dock.GridDockedWith != null; // Frontier: do not enable docking for receive-only docks
                         }
 
                         canDraw = true;
@@ -277,7 +310,10 @@ public sealed partial class ShuttleDockControl : BaseShuttleControl
                     else
                     {
                         if (dockButton != null)
+                        {
                             dockButton.Disabled = true;
+                            dockButton.Visible = dock.GridDockedWith != null || (dock.DockType & viewedDockType) != DockType.None && !viewedReceiveOnly; // Frontier
+                        }
                     }
                 }
 
@@ -322,6 +358,8 @@ public sealed partial class ShuttleDockControl : BaseShuttleControl
         // Draw the dock itself
         handle.DrawRect(ourDock, dockColor.WithAlpha(0.2f));
         handle.DrawRect(ourDock, dockColor, filled: false);
+
+        ClearShader(handle); // Mono
     }
 
     private void HideDocks()
@@ -438,7 +476,7 @@ public sealed partial class ShuttleDockControl : BaseShuttleControl
 
                 container.AddChild(new Label()
                 {
-                    Text = dock.Name,
+                    Text = dock.LabelName ?? dock.Name, // Frontier: add dock.LabelName
                     HorizontalAlignment = HAlignment.Center,
                 });
 

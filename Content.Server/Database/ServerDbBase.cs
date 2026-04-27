@@ -11,6 +11,7 @@ using Content.Server.Administration.Managers;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Construction.Prototypes;
 using Content.Shared.Database;
+using Content.Shared.Ghost.Roles;
 using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Markings;
 using Content.Shared.Preferences;
@@ -218,6 +219,8 @@ namespace Content.Server.Database
             if (Enum.TryParse<Gender>(profile.Gender, true, out var genderVal))
                 gender = genderVal;
 
+            var balance = profile.BankBalance;
+
             // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
             var markingsRaw = profile.Markings?.Deserialize<List<string>>();
 
@@ -258,6 +261,14 @@ namespace Content.Server.Database
                 loadouts[role.RoleName] = loadout;
             }
 
+            // Get the company with fallback to default "None"
+            var company = profile.Company ?? "None";
+
+            // Validate height and width to prevent sprite scale errors
+            // Database migration set default values to 0f for existing profiles
+            var height = profile.Height <= 0.005f ? 1.0f : profile.Height;
+            var width = profile.Width <= 0.005f ? 1.0f : profile.Width;
+
             return new HumanoidCharacterProfile(
                 profile.CharacterName,
                 profile.FlavorText,
@@ -265,6 +276,7 @@ namespace Content.Server.Database
                 profile.Age,
                 sex,
                 gender,
+                balance,
                 new HumanoidCharacterAppearance
                 (
                     profile.HairName,
@@ -273,15 +285,17 @@ namespace Content.Server.Database
                     Color.FromHex(profile.FacialHairColor),
                     Color.FromHex(profile.EyeColor),
                     Color.FromHex(profile.SkinColor),
-                    markings
+                    markings,
+                    height,
+                    width
                 ),
                 spawnPriority,
                 jobs,
                 (PreferenceUnavailableMode) profile.PreferenceUnavailable,
                 antags.ToHashSet(),
                 traits.ToHashSet(),
-                loadouts
-            );
+                loadouts,
+                company);
         }
 
         private static Profile ConvertProfiles(HumanoidCharacterProfile humanoid, int slot, Profile? profile = null)
@@ -301,16 +315,20 @@ namespace Content.Server.Database
             profile.Age = humanoid.Age;
             profile.Sex = humanoid.Sex.ToString();
             profile.Gender = humanoid.Gender.ToString();
+            profile.BankBalance = humanoid.BankBalance;
             profile.HairName = appearance.HairStyleId;
             profile.HairColor = appearance.HairColor.ToHex();
             profile.FacialHairName = appearance.FacialHairStyleId;
             profile.FacialHairColor = appearance.FacialHairColor.ToHex();
             profile.EyeColor = appearance.EyeColor.ToHex();
             profile.SkinColor = appearance.SkinColor.ToHex();
+            profile.Height = appearance.Height;
+            profile.Width = appearance.Width;
             profile.SpawnPriority = (int) humanoid.SpawnPriority;
             profile.Markings = markings;
             profile.Slot = slot;
             profile.PreferenceUnavailable = (DbPreferenceUnavailableMode) humanoid.PreferenceUnavailable;
+            profile.Company = humanoid.Company;
 
             profile.Jobs.Clear();
             profile.Jobs.AddRange(
@@ -387,6 +405,69 @@ namespace Content.Server.Database
 
             await db.DbContext.SaveChangesAsync();
         }
+        #endregion
+
+        #region MonoCoins
+
+        public async Task<int> GetMonoCoinsAsync(NetUserId userId, CancellationToken cancel = default)
+        {
+            await using var db = await GetDb(cancel);
+
+            var prefs = await db.DbContext.Preference
+                .SingleOrDefaultAsync(p => p.UserId == userId.UserId, cancel);
+
+            return prefs?.MonoCoins ?? 0;
+        }
+
+        public async Task SetMonoCoinsAsync(NetUserId userId, int balance, CancellationToken cancel = default)
+        {
+            await using var db = await GetDb(cancel);
+
+            var prefs = await db.DbContext.Preference
+                .SingleOrDefaultAsync(p => p.UserId == userId.UserId, cancel);
+
+            if (prefs != null)
+            {
+                prefs.MonoCoins = Math.Max(0, balance); // Ensure balance is never negative
+                await db.DbContext.SaveChangesAsync(cancel);
+            }
+        }
+
+        public async Task<int> AddMonoCoinsAsync(NetUserId userId, int amount, CancellationToken cancel = default)
+        {
+            await using var db = await GetDb(cancel);
+
+            var prefs = await db.DbContext.Preference
+                .SingleOrDefaultAsync(p => p.UserId == userId.UserId, cancel);
+
+            if (prefs != null)
+            {
+                prefs.MonoCoins += amount;
+                prefs.MonoCoins = Math.Max(0, prefs.MonoCoins); // Ensure balance is never negative
+                await db.DbContext.SaveChangesAsync(cancel);
+                return prefs.MonoCoins;
+            }
+
+            return 0;
+        }
+
+        public async Task<bool> TrySubtractMonoCoinsAsync(NetUserId userId, int amount, CancellationToken cancel = default)
+        {
+            await using var db = await GetDb(cancel);
+
+            var prefs = await db.DbContext.Preference
+                .SingleOrDefaultAsync(p => p.UserId == userId.UserId, cancel);
+
+            if (prefs != null && prefs.MonoCoins >= amount)
+            {
+                prefs.MonoCoins -= amount;
+                await db.DbContext.SaveChangesAsync(cancel);
+                return true;
+            }
+
+            return false;
+        }
+
         #endregion
 
         #region Bans
@@ -1751,6 +1832,58 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
             await db.DbContext.SaveChangesAsync();
             return true;
         }
+
+        // Frontier: Ghost role handling
+        # endregion
+
+        # region Ghost Role Whitelists
+
+        public async Task<bool> AddGhostRoleWhitelist(Guid player, ProtoId<GhostRolePrototype> ghostRole)
+        {
+            await using var db = await GetDb();
+            var exists = await db.DbContext.RoleWhitelists
+                .Where(w => w.PlayerUserId == player)
+                .Where(w => w.RoleId == ghostRole.Id)
+                .AnyAsync();
+
+            if (exists)
+                return false;
+
+            var whitelist = new RoleWhitelist
+            {
+                PlayerUserId = player,
+                RoleId = ghostRole
+            };
+            db.DbContext.RoleWhitelists.Add(whitelist);
+            await db.DbContext.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> IsGhostRoleWhitelisted(Guid player, ProtoId<GhostRolePrototype> ghostRole)
+        {
+            await using var db = await GetDb();
+            return await db.DbContext.RoleWhitelists
+                .Where(w => w.PlayerUserId == player)
+                .Where(w => w.RoleId == ghostRole.Id)
+                .AnyAsync();
+        }
+
+        public async Task<bool> RemoveGhostRoleWhitelist(Guid player, ProtoId<GhostRolePrototype> ghostRole)
+        {
+            await using var db = await GetDb();
+            var entry = await db.DbContext.RoleWhitelists
+                .Where(w => w.PlayerUserId == player)
+                .Where(w => w.RoleId == ghostRole.Id)
+                .SingleOrDefaultAsync();
+
+            if (entry == null)
+                return false;
+
+            db.DbContext.RoleWhitelists.Remove(entry);
+            await db.DbContext.SaveChangesAsync();
+            return true;
+        }
+        // End Frontier: Ghost role handling
 
         #endregion
 

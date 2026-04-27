@@ -22,6 +22,7 @@ using Robust.Shared.Network;
 using Robust.Shared.Player;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
+using Content.Shared._EinsteinEngines.Silicon.Components; // Goobstation
 
 namespace Content.Shared.Mind;
 
@@ -627,17 +628,20 @@ public abstract partial class SharedMindSystem : EntitySystem
     /// Returns a list of every living humanoid player's minds, except for a single one which is exluded.
     /// A new hashset is allocated for every call, consider using <see cref="AddAliveHumans"/> instead.
     /// </summary>
-    public HashSet<Entity<MindComponent>> GetAliveHumans(EntityUid? exclude = null)
+    public HashSet<Entity<MindComponent>> GetAliveHumans(EntityUid? exclude = null,
+        bool excludeSilicon = false) // Goobstation
     {
         var allHumans = new HashSet<Entity<MindComponent>>();
-        AddAliveHumans(allHumans, exclude);
+        AddAliveHumans(allHumans, exclude,
+            excludeSilicon); // Pulsarsedge
         return allHumans;
     }
 
     /// <summary>
     /// Adds to a hashset every living humanoid player's minds, except for a single one which is exluded.
     /// </summary>
-    public void AddAliveHumans(HashSet<Entity<MindComponent>> allHumans, EntityUid? exclude = null)
+    public void AddAliveHumans(HashSet<Entity<MindComponent>> allHumans, EntityUid? exclude = null, 
+        bool excludeSilicon = false) // Goobstation
     {
         // HumanoidAppearanceComponent is used to prevent mice, pAIs, etc from being chosen
         var query = EntityQueryEnumerator<HumanoidAppearanceComponent, MobStateComponent>();
@@ -647,6 +651,7 @@ public abstract partial class SharedMindSystem : EntitySystem
             // the player has to be alive
             if (!TryGetMind(uid, out var mind, out var mindComp) || mind == exclude || !_mobState.IsAlive(uid, mobState))
                 continue;
+            if (excludeSilicon && HasComp<SiliconComponent>(uid)){continue;} // Goobstation: Skip IPCs from selections
 
             allHumans.Add((mind, mindComp));
         }

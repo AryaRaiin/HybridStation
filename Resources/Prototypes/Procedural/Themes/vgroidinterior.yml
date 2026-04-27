@@ -128,6 +128,7 @@
   id: VGRoidInteriorRoomMarker
   parent: BaseRoomMarker
   name: VGRoid interior marker
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: RoomFill
     roomWhitelist:

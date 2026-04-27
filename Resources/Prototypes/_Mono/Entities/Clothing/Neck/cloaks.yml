@@ -1,0 +1,63 @@
+# SPDX-FileCopyrightText: 2025 Coenx-flex
+# SPDX-FileCopyrightText: 2025 Cojoke
+# SPDX-FileCopyrightText: 2025 HungryCuban
+# SPDX-FileCopyrightText: 2025 Hyenh
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 ScyronX
+# SPDX-FileCopyrightText: 2025 core-mene
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+
+- type: entity
+  parent: [ClothingNeckBase] # Frontier: BaseCommandContraband<BaseC2ContrabandUnredeemable
+  id: ClothingNeckCloakUssp
+  name: Commissar parade cloak
+  description: An exquisite white, red, blue and gold cloak fitting for those who can assert dominance over their troops.
+  components:
+  - type: Sprite
+    sprite: _Mono/Clothing/Neck/Cloaks/ussp.rsi
+  - type: StealTarget
+    stealGroup: HeadCloak
+
+- type: entity
+  parent: ClothingNeckBase
+  id: ClothingNeckCloakBlack
+  name: black cloak
+  description: A black cloak, looks old.
+  components:
+  - type: Sprite
+    sprite: _Mono/Clothing/Neck/Cloaks/blackcloak.rsi
+
+- type: entity
+  parent: ClothingNeckBase
+  id: ClothingNeckCloakRogueCommander
+  name: Rogue commander's cloak
+  description: An Ashenveil Cell-Comm cloak, only given to those who have proven their loyalty and worth to the cause. Some say Ashenveil never would've formed beyond a prisoner colony if it wasn't for the Syndicate Remnants elevating them.
+  components:
+  - type: Sprite
+    sprite: _Mono/Clothing/Neck/Cloaks/ashenveilcloak.rsi
+
+- type: entity
+  parent: ClothingNeckBase
+  id: ClothingNeckCloakCOG
+  name: Old robe
+  description: An ancient crimson draping from a now-defunct cult.
+  components:
+  - type: Sprite
+    scale: 0.6, 0.6
+    sprite: _Mono/Clothing/Neck/Cloaks/cogcloakicon.rsi
+  - type: Clothing
+    sprite: _Mono/Clothing/Neck/Cloaks/cogcloak.rsi
+  - type: ContainerContainer
+    containers:
+      toggleable-clothing: !type:Container { }
+      storagebase: !type:Container
+        ents: [ ]
+  - type: ToggleableClothing
+    requiredSlot: neck
+    blockUnequipWhenAttached: false
+    replaceCurrentClothing: true
+    clothingPrototypes:
+      head: ClothingHeadHatCOG
+

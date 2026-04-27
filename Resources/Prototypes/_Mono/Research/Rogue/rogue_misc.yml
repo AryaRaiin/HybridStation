@@ -1,0 +1,86 @@
+# SPDX-FileCopyrightText: 2025 HungryCuban
+# SPDX-FileCopyrightText: 2025 Onezero0
+# SPDX-FileCopyrightText: 2025 ScyronX
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: technology
+  id: RogueProwler
+  name: research-technology-rogue-prowler-voucher
+  entityIcon: ShipVoucherProwler
+  discipline: RogueShipyard
+  tier: 1
+  cost: 100000
+  recipeUnlocks:
+  - ProwlerVoucherRogue
+  technologyPrerequisites:
+  - RogueStealthsuit
+  - UniversalMaterialResearchT3
+  position: 22, 11
+
+- type: technology
+  id: RogueJaws
+  name: research-technology-rogue-jaws
+  entityIcon: JawsOfLife
+  discipline: RogueGear
+  tier: 1
+  cost: 10000
+  recipeUnlocks:
+  - JawsOfLifeRogue
+  - NaniteApplicatorSyndicate
+  technologyPrerequisites:
+  - UniversalMaterialResearchT1
+  position: 20, -1
+
+- type: technology
+  id: RogueHypospray
+  name: research-technology-rogue-hypospray
+  entityIcon: Hypospray
+  discipline: RogueGear
+  tier: 2
+  cost: 10000
+  recipeUnlocks:
+  - HyposprayRogue
+  technologyPrerequisites:
+  - UniversalMaterialResearchT1
+  position: 20, -2
+
+- type: technology
+  id: RogueEmag
+  name: research-technology-rogue-emag
+  entityIcon: Emag
+  discipline: RogueGear
+  tier: 2
+  cost: 25000
+  recipeUnlocks:
+  - EmagRogue
+  technologyPrerequisites:
+  - UniversalMaterialResearchT2
+  position: 21, 4
+
+- type: technology
+  id: RogueEmag2
+  name: research-technology-rogue-access-breaker
+  entityIcon: AccessBreaker
+  discipline: RogueGear
+  tier: 3
+  cost: 25000
+  recipeUnlocks:
+  - AccessBreakerRogue
+  technologyPrerequisites:
+  - UniversalMaterialResearchT2
+  position: 21, 3
+
+- type: technology
+  id: RogueThermals
+  name: research-technology-rogue-thermals
+  entityIcon: ClothingEyesThermalVisionGoggles
+  discipline: RogueGear
+  tier: 1
+  cost: 15000
+  recipeUnlocks:
+  - ClothingEyesThermalVisionGoggles
+  technologyPrerequisites:
+  - UniversalMaterialResearchT1
+  position: 20, -3

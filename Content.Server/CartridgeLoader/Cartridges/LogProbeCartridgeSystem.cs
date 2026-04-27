@@ -1,3 +1,9 @@
+// SPDX-FileCopyrightText: 2023 Chief-Engineer
+// SPDX-FileCopyrightText: 2025 J
+// SPDX-FileCopyrightText: 2025 deltanedas
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Shared.Access.Components;
 using Content.Shared.Administration.Logs;
 using Content.Shared.CartridgeLoader;
@@ -7,6 +13,7 @@ using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Labels.EntitySystems;
 using Content.Shared.Paper;
 using Content.Shared.Popups;
+using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Timing;
 using System.Text;

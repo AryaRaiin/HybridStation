@@ -3,12 +3,13 @@ using Content.Shared.Shuttles.BUIStates;
 using Content.Shared.Shuttles.Events;
 using JetBrains.Annotations;
 using Robust.Client.UserInterface;
+using Robust.Shared.Log;
 using Robust.Shared.Map;
 
 namespace Content.Client.Shuttles.BUI;
 
 [UsedImplicitly]
-public sealed class ShuttleConsoleBoundUserInterface : BoundUserInterface
+public sealed partial class ShuttleConsoleBoundUserInterface : BoundUserInterface // Frontier: added partial
 {
     [ViewVariables]
     private ShuttleConsoleWindow? _window;
@@ -26,6 +27,20 @@ public sealed class ShuttleConsoleBoundUserInterface : BoundUserInterface
         _window.RequestBeaconFTL += OnFTLBeaconRequest;
         _window.DockRequest += OnDockRequest;
         _window.UndockRequest += OnUndockRequest;
+        _window.UndockAllRequest += OnUndockAllRequest;
+        _window.ToggleFTLLockRequest += OnToggleFTLLockRequest;
+        NfOpen(); // Frontier
+    }
+
+    private void OnToggleFTLLockRequest(List<NetEntity> dockEntities, bool enabled)
+    {
+        Logger.DebugS("shuttle", $"ShuttleConsoleBUI: Sending FTL lock request with enabled={enabled}, entities={string.Join(", ", dockEntities)}");
+        SendMessage(new ToggleFTLLockRequestMessage(dockEntities, enabled));
+    }
+
+    private void OnUndockAllRequest(List<NetEntity> dockEntities)
+    {
+        SendMessage(new UndockAllRequestMessage(dockEntities));
     }
 
     private void OnUndockRequest(NetEntity entity)

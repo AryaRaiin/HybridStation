@@ -16,6 +16,10 @@
   components:
   - type: Item
     size: Normal
+  - type: Storage
+    maxItemSize: Small
+    grid:
+    - 0,0,2,2
 
 - type: entity
   id: PresentRandomUnsafe
@@ -312,7 +316,7 @@
         orGroup: GiftPool
       - id: ClothingOuterHoodieGrey
         orGroup: GiftPool
-      - id: ClothingOuterVestWebMerc
+      - id: ClothingOuterVestWebMercenary # Frontier - Name fix
         orGroup: GiftPool
       - id: ClothingShoesFlippers
         orGroup: GiftPool

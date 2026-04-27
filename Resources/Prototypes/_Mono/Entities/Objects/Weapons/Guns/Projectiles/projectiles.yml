@@ -1,0 +1,45 @@
+# SPDX-FileCopyrightText: 2025 Avalon
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 core-mene
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: MPL-2.0
+
+- type: entity
+  name: 45_magnum bolt
+  id: BulletEnergyGun45_magnum
+  parent: BaseBullet
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Reflective
+    reflective:
+    - Energy
+  - type: FlyBySound
+    sound:
+      collection: EnergyMiss
+      params:
+        volume: 5
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles_tg.rsi
+    layers:
+    - state: heavylaser
+      shader: unshaded
+  - type: Ammo
+  - type: Physics
+  - type: Fixtures
+    fixtures:
+      projectile:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.2,-0.2,0.2,0.2"
+        hard: false
+        mask:
+        - Opaque
+  - type: Projectile
+    impactEffect: BulletImpactEffectRedDisabler
+    damage:
+      types:
+        Heat: 35
+    soundHit:
+      collection: MeatLaserImpact
+

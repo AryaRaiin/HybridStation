@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Content.Shared._Goobstation.DoAfter;
 using Content.Shared.ActionBlocker;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Systems;
@@ -87,6 +88,15 @@ public abstract partial class SharedDoAfterSystem : EntitySystem
         else if (doAfter.Args.Broadcast)
             RaiseLocalEvent((object)ev);
 
+        // <Goobstation>
+        if (component.RaiseEndedEvent
+            && Exists(doAfter.Args.User))
+        {
+            var ended = new DoAfterEndedEvent(doAfter.Args.Target, doAfter.Cancelled);
+            RaiseLocalEvent(doAfter.Args.User, ref ended);
+        }
+        // </Goobstation>
+
         if (component.AwaitedDoAfters.Remove(doAfter.Index, out var tcs))
             tcs.SetResult(doAfter.Cancelled ? DoAfterStatus.Cancelled : DoAfterStatus.Finished);
     }
@@ -120,6 +130,7 @@ public abstract partial class SharedDoAfterSystem : EntitySystem
             doAfterArgs.Used = EnsureEntity<DoAfterComponent>(doAfterArgs.NetUsed, uid);
             doAfterArgs.User = EnsureEntity<DoAfterComponent>(doAfterArgs.NetUser, uid);
             doAfterArgs.EventTarget = EnsureEntity<DoAfterComponent>(doAfterArgs.NetEventTarget, uid);
+            doAfterArgs.ShowTo = EnsureEntity<DoAfterComponent>(doAfterArgs.NetShowTo, uid); // Goobstation - Show doAfter popup to another entity
         }
 
         comp.NextId = state.NextId;
@@ -195,6 +206,15 @@ public abstract partial class SharedDoAfterSystem : EntitySystem
             id = null;
             return false;
         }
+
+        // Goobstation start
+        if (args.MultiplyDelay)
+        {
+            var delayMultiplierEv = new GetDoAfterDelayMultiplierEvent();
+            RaiseLocalEvent(args.User, delayMultiplierEv);
+            args.Delay *= delayMultiplierEv.Multiplier;
+        }
+        // Goobstation end
 
         id = new DoAfterId(args.User, comp.NextId++);
         var doAfter = new DoAfter(id.Value.Index, args, GameTiming.CurTime);

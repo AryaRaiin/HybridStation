@@ -1,3 +1,26 @@
+// SPDX-FileCopyrightText: 2022 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2022 eoineoineoin
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Justin
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Moony
+// SPDX-FileCopyrightText: 2023 TemporalOroboros
+// SPDX-FileCopyrightText: 2023 Thom
+// SPDX-FileCopyrightText: 2023 chromiumboy
+// SPDX-FileCopyrightText: 2024 Cojoke
+// SPDX-FileCopyrightText: 2024 Crotalus
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 metalgearsloth
+// SPDX-FileCopyrightText: 2024 plykiya
+// SPDX-FileCopyrightText: 2025 Ilya246
+// SPDX-FileCopyrightText: 2025 Whatstone
+// SPDX-FileCopyrightText: 2025 deltanedas
+// SPDX-FileCopyrightText: 2025 starch
+// SPDX-FileCopyrightText: 2025 āda
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Linq;
 using System.Text;
 using Content.Client.Materials;
@@ -179,7 +202,7 @@ public sealed partial class LatheMenu : DefaultWindow
     private string GenerateTooltipText(LatheRecipePrototype prototype)
     {
         StringBuilder sb = new();
-        var multiplier = _entityManager.GetComponent<LatheComponent>(Entity).MaterialUseMultiplier;
+        var multiplier = _entityManager.GetComponent<LatheComponent>(Entity).FinalMaterialUseMultiplier; // Frontier: MaterialUseMultiplier -> FinalMaterialUseMultiplier
 
         foreach (var (id, amount) in prototype.Materials)
         {

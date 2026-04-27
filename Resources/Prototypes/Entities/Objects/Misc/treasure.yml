@@ -151,7 +151,15 @@
   - type: Item
     size: Tiny
   - type: StaticPrice
+  - type: PhysicalComposition
+    materialComposition:
+      Steel: 300
+  - type: StackPrice # Frontier: Static<Stack
     price: 75
+  - type: Stack # Frontier
+    stackType: TreasureCoinIron # Frontier
+    count: 1 # Frontier
+  - type: NFCoin # Frontier: relying on inheritance for other coins.
 
 - type: entity
   parent: TreasureCoinIron
@@ -159,8 +167,15 @@
   components:
   - type: Sprite
     state: coin_silver
-  - type: StaticPrice
-    price: 125
+  - type: PhysicalComposition
+    materialComposition:
+      Steel: 100
+      Silver: 200
+  - type: StackPrice # Frontier: Static<Stack
+    price: 135
+  - type: Stack # Frontier
+    stackType: TreasureCoinSilver # Frontier
+    count: 1 # Frontier
 
 - type: entity
   parent: TreasureCoinIron
@@ -168,8 +183,15 @@
   components:
   - type: Sprite
     state: coin_gold
-  - type: StaticPrice
+  - type: PhysicalComposition
+    materialComposition:
+      Steel: 100
+      Gold: 200
+  - type: StackPrice # Frontier: Static<Stack
     price: 175
+  - type: Stack # Frontier
+    stackType: TreasureCoinGold # Frontier
+    count: 1 # Frontier
 
 - type: entity
   parent: TreasureCoinIron
@@ -177,8 +199,15 @@
   components:
   - type: Sprite
     state: coin_adamantine
-  - type: StaticPrice
+  - type: PhysicalComposition
+    materialComposition:
+      Steel: 400
+      Diamond: 5
+  - type: StackPrice # Frontier: Static<Stack
     price: 250
+  - type: Stack # Frontier
+    stackType: TreasureCoinAdamantine # Frontier
+    count: 1 # Frontier
 
 - type: entity
   parent: TreasureCoinIron
@@ -186,6 +215,13 @@
   components:
   - type: Sprite
     state: coin_diamond
-  - type: StaticPrice
+  - type: PhysicalComposition
+    materialComposition:
+      Steel: 300
+      Diamond: 15
+  - type: StackPrice # Frontier: Static<Stack
     price: 500
+  - type: Stack # Frontier
+    stackType: TreasureCoinDiamond # Frontier
+    count: 1 # Frontier
 

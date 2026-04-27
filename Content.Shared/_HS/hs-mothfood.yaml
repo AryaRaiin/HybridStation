@@ -1,0 +1,16 @@
+# --- ### BREAD ###
+# file: Resources/Prototypes/Entities/Objects/Consumable/Food/Baked/bread.yml
+# - match:
+#     components:
+#       - type: Tag
+#         tags:
+#         - ClothMade
+#     # - id: FoodBreadCottonSlice
+#     # - id: FoodBreadBaguetteCotton
+#     # - id: FoodBreadBaguetteCottonSlice
+#     # - id: !type:REGEX Food.*Cotton.*
+#   action: merge
+#   data:
+#     components:
+#     - type: MothFood # Frontier
+

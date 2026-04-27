@@ -1,3 +1,39 @@
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2023 AJCM-git
+// SPDX-FileCopyrightText: 2023 Checkraze
+// SPDX-FileCopyrightText: 2023 Chief-Engineer
+// SPDX-FileCopyrightText: 2023 Darkie
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Errant
+// SPDX-FileCopyrightText: 2023 I.K
+// SPDX-FileCopyrightText: 2023 Justin Trotter
+// SPDX-FileCopyrightText: 2023 Nemanja
+// SPDX-FileCopyrightText: 2023 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2023 Vordenburg
+// SPDX-FileCopyrightText: 2023 deltanedas
+// SPDX-FileCopyrightText: 2023 deltanedas <@deltanedas:kde.org>
+// SPDX-FileCopyrightText: 2023 jicksaw
+// SPDX-FileCopyrightText: 2023 notquitehadouken <1isthisameme>
+// SPDX-FileCopyrightText: 2024 Bixkitts
+// SPDX-FileCopyrightText: 2024 Calecute
+// SPDX-FileCopyrightText: 2024 Kara
+// SPDX-FileCopyrightText: 2024 Leon Friedrich
+// SPDX-FileCopyrightText: 2024 LordCarve
+// SPDX-FileCopyrightText: 2024 Scribbles0
+// SPDX-FileCopyrightText: 2024 ShadowCommander
+// SPDX-FileCopyrightText: 2024 Veritius
+// SPDX-FileCopyrightText: 2024 beck-thompson
+// SPDX-FileCopyrightText: 2024 eoineoineoin
+// SPDX-FileCopyrightText: 2024 themias
+// SPDX-FileCopyrightText: 2024 Джексон Миссиссиппи
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 Avalon
+// SPDX-FileCopyrightText: 2025 SlamBamActionman
+// SPDX-FileCopyrightText: 2025 ark1368
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
@@ -222,7 +258,8 @@ public abstract class SharedMeleeWeaponSystem : EntitySystem
             return;
 
         if (!TryGetWeapon(user, out var weaponUid, out var weapon) ||
-            weaponUid != GetEntity(msg.Weapon))
+            weaponUid != GetEntity(msg.Weapon) ||
+            !weapon.CanWideSwing) // GOOBSTATION
         {
             return;
         }
@@ -250,6 +287,13 @@ public abstract class SharedMeleeWeaponSystem : EntitySystem
         var ev = new GetMeleeDamageEvent(uid, new(component.Damage * Damageable.UniversalMeleeDamageModifier), new(), user, component.ResistanceBypass);
         RaiseLocalEvent(uid, ref ev);
 
+        // Begin DeltaV additions
+        // Allow users of melee weapons to have bonuses applied
+        if (user != uid)
+        {
+            RaiseLocalEvent(user, ref ev);
+        }
+        // End DeltaV additions
         return DamageSpecifier.ApplyModifierSets(ev.Damage, ev.Modifiers);
     }
 
@@ -543,7 +587,10 @@ public abstract class SharedMeleeWeaponSystem : EntitySystem
 
         var modifiedDamage = DamageSpecifier.ApplyModifierSets(damage + hitEvent.BonusDamage + attackedEvent.BonusDamage, hitEvent.ModifiersList);
 
-        if (!Damageable.TryChangeDamage(target.Value, modifiedDamage, out var damageResult, origin:user, ignoreResistances:resistanceBypass))
+        if (!Damageable.TryChangeDamage(target.Value, modifiedDamage, out var damageResult, origin:user, ignoreResistances:resistanceBypass,
+            armorPenetration: component.ArmorPenetration, // GOOBSTATION
+            partMultiplier: component.ClickPartDamageMultiplier // SHITMED
+        ))
         {
             // If the target has stamina and is taking blunt damage, they should also take stamina damage based on their blunt to stamina factor
             if (damageResult.DamageDict.TryGetValue("Blunt", out var bluntDamage))
@@ -697,7 +744,9 @@ public abstract class SharedMeleeWeaponSystem : EntitySystem
             RaiseLocalEvent(entity, attackedEvent);
             var modifiedDamage = DamageSpecifier.ApplyModifierSets(damage + hitEvent.BonusDamage + attackedEvent.BonusDamage, hitEvent.ModifiersList);
 
-            var damageResult = Damageable.ChangeDamage(entity, modifiedDamage, origin: user, ignoreResistances: resistanceBypass);
+            var damageResult = Damageable.ChangeDamage(entity, modifiedDamage, origin: user, ignoreResistances: resistanceBypass,
+                armorPenetration: component.ArmorPenetration, // GOOBSTATION
+                partMultiplier: component.HeavyPartDamageMultiplier); // Shitmed Change
 
             if (damageResult.GetTotal() > FixedPoint2.Zero)
             {

@@ -8,7 +8,7 @@
       steps:
       - tag: MimeHappyHonk
         icon:
-          sprite: Objects/Storage/Happyhonk/mime.rsi
+          sprite: _NF/Objects/Storage/Happyhonk/mime.rsi # Frontier: add _NF prefix
           state: box
         name: construction-graph-tag-mime-meal
       - tag: MimeBelt

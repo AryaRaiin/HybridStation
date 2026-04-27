@@ -95,6 +95,8 @@
     delay: 10
   - type: Prying
     speedModifier: 0.05
+  - type: UseDelay # Goobstation - For insta prying
+    delay: 3 # slow because mooooooooooooo
 
 - type: entity
   name: mooltitool
@@ -158,13 +160,21 @@
   components:
   - type: Sprite
     sprite: Objects/Tools/Cowtools/cow_toolbox.rsi
-    state: cow_toolbox
+    state: icon # cow_toolbox < icon
   - type: Item
     sprite: Objects/Tools/Cowtools/cow_toolbox.rsi
   - type: MeleeWeapon
     damage:
       types:
         Blunt: 4
+  # Frontier: why
+  - type: GenericVisualizer
+    visuals:
+      enum.StorageVisuals.Open:
+        base:
+          True: { state: icon }
+          False: { state: icon }
+  # End Frontier
 
 - type: entity
   id: CowToolboxFilled

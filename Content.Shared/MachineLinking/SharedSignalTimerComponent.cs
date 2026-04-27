@@ -1,3 +1,9 @@
+// SPDX-FileCopyrightText: 2023 Nemanja
+// SPDX-FileCopyrightText: 2025 Ilya246
+// SPDX-FileCopyrightText: 2025 shab00m
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Robust.Shared.Serialization;
 
 namespace Content.Shared.MachineLinking;
@@ -15,24 +21,24 @@ public enum SignalTimerUiKey : byte
 public sealed class SignalTimerBoundUserInterfaceState : BoundUserInterfaceState
 {
     public string CurrentText;
-    public string CurrentDelayMinutes;
-    public string CurrentDelaySeconds;
+    public TimeSpan CurrentDelay; // Mono
+    public bool CurrentRepeat; //Frontier
     public bool ShowText;
     public TimeSpan TriggerTime;
     public bool TimerStarted;
     public bool HasAccess;
 
     public SignalTimerBoundUserInterfaceState(string currentText,
-        string currentDelayMinutes,
-        string currentDelaySeconds,
+        TimeSpan currentDelay, // Mono
+        bool currentRepeat, //Frontier
         bool showText,
         TimeSpan triggerTime,
         bool timerStarted,
         bool hasAccess)
     {
         CurrentText = currentText;
-        CurrentDelayMinutes = currentDelayMinutes;
-        CurrentDelaySeconds = currentDelaySeconds;
+        CurrentDelay = currentDelay; // Mono
+        CurrentRepeat = currentRepeat; //Frontier
         ShowText = showText;
         TriggerTime = triggerTime;
         TimerStarted = timerStarted;
@@ -50,6 +56,19 @@ public sealed class SignalTimerTextChangedMessage : BoundUserInterfaceMessage
         Text = text;
     }
 }
+
+//Frontier: SignalTimerRepeatToggled class
+[Serializable, NetSerializable]
+public sealed class SignalTimerRepeatToggled : BoundUserInterfaceMessage
+{
+    public bool Repeat { get; }
+
+    public SignalTimerRepeatToggled(bool repeat)
+    {
+        Repeat = repeat;
+    }
+}
+//End Frontier
 
 [Serializable, NetSerializable]
 public sealed class SignalTimerDelayChangedMessage : BoundUserInterfaceMessage

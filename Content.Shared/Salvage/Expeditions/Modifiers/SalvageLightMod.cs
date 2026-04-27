@@ -3,7 +3,7 @@ using Robust.Shared.Prototypes;
 namespace Content.Shared.Salvage.Expeditions.Modifiers;
 
 [Prototype("salvageLightMod")]
-public sealed partial class SalvageLightMod : IPrototype, IBiomeSpecificMod
+public sealed class SalvageLightMod : IPrototype, IBiomeSpecificMod
 {
     [IdDataField] public string ID { get; private set; } = default!;
 

@@ -217,7 +217,8 @@ namespace Content.Server.Lathe
 
             var lathe = EnsureComp<LatheProducingComponent>(uid);
             lathe.StartTime = _timing.CurTime;
-            lathe.ProductionLength = time;
+            //lathe.ProductionLength = time;
+            lathe.ProductionLength = time * component.FinalTimeMultiplier; // Frontier: TimeMultiplier<FinalTimeMultiplier
             component.CurrentRecipe = recipe;
 
             var ev = new LatheStartPrintingEvent(recipe);
@@ -245,6 +246,16 @@ namespace Content.Server.Lathe
                 if (currentRecipe.Result is { } resultProto)
                 {
                     var result = Spawn(resultProto, Transform(uid).Coordinates);
+
+                    // Frontier: adjust price before merge (stack prices changed once)
+                    if (result.Valid)
+                    {
+                        ModifyPrintedEntityPrice(uid, comp, result);
+
+                        _contraband.ClearContrabandValue(result);
+                    }
+                    // End Frontier
+
                     _stack.TryMergeToContacts(result);
                 }
 
@@ -349,6 +360,11 @@ namespace Content.Server.Lathe
             _appearance.SetData(uid, LatheVisuals.IsRunning, false);
 
             _materialStorage.UpdateMaterialWhitelist(uid);
+            // New Frontiers - Lathe Upgrades - initialization of upgrade coefficients
+            // This code is licensed under AGPLv3. See AGPLv3.txt
+            component.FinalTimeMultiplier = component.TimeMultiplier;
+            component.FinalMaterialUseMultiplier = component.MaterialUseMultiplier;
+            // End of modified code
         }
 
         /// <summary>
@@ -566,5 +582,58 @@ namespace Content.Server.Lathe
             FinishProducing(uid, component);
         }
         #endregion
+
+
+        // Frontier START - Lathe Upgrades - upgrading lathe speed through machine parts
+        // This code is licensed under AGPLv3. See AGPLv3.txt
+        private void OnPartsRefresh(EntityUid uid, LatheComponent component, RefreshPartsEvent args)
+        {
+            var printTimeRating = args.PartRatings[component.MachinePartPrintSpeed];
+            var materialUseRating = args.PartRatings[component.MachinePartMaterialUse];
+
+            component.FinalTimeMultiplier = component.TimeMultiplier * MathF.Pow(component.PartRatingPrintTimeMultiplier, printTimeRating - 1);
+            component.FinalMaterialUseMultiplier = component.MaterialUseMultiplier * MathF.Pow(component.PartRatingMaterialUseMultiplier, materialUseRating - 1);
+            Dirty(uid, component);
+        }
+
+        private void OnUpgradeExamine(EntityUid uid, LatheComponent component, UpgradeExamineEvent args)
+        {
+            args.AddPercentageUpgrade("lathe-component-upgrade-speed", 1 / component.FinalTimeMultiplier);
+            args.AddPercentageUpgrade("lathe-component-upgrade-material-use", component.FinalMaterialUseMultiplier);
+        }
+
+        // Frontier: modify item value
+        private void ModifyPrintedEntityPrice(EntityUid uid, LatheComponent component, EntityUid target)
+        {
+            // Cannot reduce value, leave item as-is
+            if (component.ProductValueModifier == null
+            || !float.IsFinite(component.ProductValueModifier.Value)
+            || component.ProductValueModifier < 0f)
+                return;
+
+            if (TryComp<StackPriceComponent>(target, out var stackPrice))
+            {
+                if (stackPrice.Price > 0)
+                    stackPrice.Price *= component.ProductValueModifier.Value;
+            }
+            if (TryComp<StaticPriceComponent>(target, out var staticPrice))
+            {
+                if (staticPrice.Price > 0)
+                    staticPrice.Price *= component.ProductValueModifier.Value;
+            }
+
+            // Recurse into contained entities
+            if (TryComp<ContainerManagerComponent>(target, out var containers))
+            {
+                foreach (var container in containers.Containers.Values)
+                {
+                    foreach (var ent in container.ContainedEntities)
+                    {
+                        ModifyPrintedEntityPrice(uid, component, ent);
+                    }
+                }
+            }
+        }
+        // Frontier END
     }
 }

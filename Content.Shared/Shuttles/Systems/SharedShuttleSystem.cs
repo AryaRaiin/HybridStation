@@ -1,3 +1,18 @@
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Jake Huxell
+// SPDX-FileCopyrightText: 2024 Julian Giebel
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 SlamBamActionman
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 RikuTheKiller
+// SPDX-FileCopyrightText: 2025 gus
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Shuttles.BUIStates;
 using Content.Shared.Shuttles.Components;
@@ -9,6 +24,8 @@ using Robust.Shared.Physics;
 using Robust.Shared.Physics.Collision.Shapes;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Systems;
+using Content.Shared._Mono.Ships; // MONO
+using Content.Shared.Power.EntitySystems; // UNKNOWN
 
 namespace Content.Shared.Shuttles.Systems;
 
@@ -21,9 +38,15 @@ public abstract partial class SharedShuttleSystem : EntitySystem
     [Dependency] protected readonly SharedPhysicsSystem Physics = default!;
     [Dependency] protected readonly SharedTransformSystem XformSystem = default!;
     [Dependency] private readonly EntityWhitelistSystem _whitelistSystem = default!;
+    [Dependency] private readonly SharedPowerReceiverSystem _powerReceiverSystem = default!; // UNKNOWN
 
+    /* UNKNOWN START
     public const float FTLRange = 256f;
     public const float FTLBufferRange = 8f;
+    */
+    public const float FTLRange = 0f;
+    public const float FTLBufferRange = 20f;
+    // UNKNOWN END
     public const float TileDensityMultiplier = 0.5f;
 
     private EntityQuery<MapGridComponent> _gridQuery;
@@ -171,7 +194,53 @@ public abstract partial class SharedShuttleSystem : EntitySystem
         return HasComp<MapComponent>(coordinates.EntityId);
     }
 
+    /* MONO START - FTL REWORK
     public float GetFTLRange(EntityUid shuttleUid) => FTLRange;
+    */
+        public float GetFTLRange(EntityUid shuttleUid) // Monolith - FTL Rework
+    {
+        // Return the default FTL range if no powered drive was found
+        // In the future, we could return a different range if an unpowered drive was found
+        if (!TryGetFTLDrive(shuttleUid, out var drive, out var driveComp) || !_powerReceiverSystem.IsPowered(drive.Value))
+            return FTLRange;
+
+        return driveComp.Range;
+    }
+
+    /// <summary>
+    /// Tries to get the highest range FTL drive on the shuttle. Prioritizes powered drives.
+    /// </summary>
+    public bool TryGetFTLDrive(EntityUid shuttleUid, [NotNullWhen(true)] out EntityUid? driveUid, [NotNullWhen(true)] out FTLDriveComponent? drive)
+    {
+        var highestRange = 0f;
+        driveUid = null;
+        drive = null;
+        // Okay so, this is fucking stupid, but it works.
+        // When making this method smarter I needed to do two things.
+        // 1. Maintain parity between TryGetFTLDrive results regardless of what they're used for. (so I don't cause weird bugs)
+        // 2. Get a powered drive if one exists since those are the only ones you can actually jump with.
+        // So instead of only getting powered drives we prioritize powered drives.
+        var poweredDriveFound = false;
+        var query = AllEntityQuery<FTLDriveComponent>();
+        while (query.MoveNext(out var uid, out var comp))
+        {
+            if (Transform(uid).GridUid != shuttleUid)
+                continue;
+            var isPowered = _powerReceiverSystem.IsPowered(uid);
+            // If we've already found an powered drive, ignore unpowered ones.
+            if (poweredDriveFound && !isPowered)
+                continue;
+            var isBetterCandidate = (comp.Range > highestRange) || (isPowered && !poweredDriveFound);
+            if (!isBetterCandidate)
+                continue;
+            highestRange = comp.Range;
+            driveUid = uid;
+            drive = comp;
+            poweredDriveFound = isPowered;
+        }
+        return driveUid != null;
+    }
+    // MONO END
 
     public float GetFTLBufferRange(EntityUid shuttleUid, MapGridComponent? grid = null)
     {
@@ -204,8 +273,14 @@ public abstract partial class SharedShuttleSystem : EntitySystem
         // This is the already adjusted position
         var targetPosition = mapCoordinates.Position;
 
+        /* UNKNOWN START - disable upstream, rewrite
         // Check range even if it's cross-map.
         if ((targetPosition - ourPos).Length() > FTLRange)
+        */
+        var range = GetFTLRange(shuttleUid);
+        // Check range even if it's cross-map.
+        if (range <= 0 || (targetPosition - ourPos).Length() > range)
+        // UNKNOWN END
         {
             return false;
         }
@@ -243,6 +318,28 @@ public abstract partial class SharedShuttleSystem : EntitySystem
 
         return true;
     }
+
+    // UNKNOWN START
+    /// <summary>
+    /// Returns the given EntityCoordinates with the distance clamped to the maximum FTL range of the given shuttle.
+    /// </summary>
+    public EntityCoordinates ClampCoordinatesToFTLRange(EntityUid shuttleUid, EntityCoordinates coordinates)
+    {
+        if (!_physicsQuery.TryGetComponent(shuttleUid, out var shuttlePhysics) || !_xformQuery.TryGetComponent(shuttleUid, out var shuttleTransform))
+            return coordinates;
+        var targetMapCoordinates = XformSystem.ToMapCoordinates(coordinates);
+        if (targetMapCoordinates == MapCoordinates.Nullspace)
+            return coordinates;
+        var targetPosition = targetMapCoordinates.Position;
+        var shuttlePosition = Maps.GetGridPosition((shuttleUid, shuttlePhysics, shuttleTransform));
+        var shuttleToTarget = targetPosition - shuttlePosition;
+        var targetDistance = shuttleToTarget.Length();
+        var maximumDistance = GetFTLRange(shuttleUid);
+        if (targetDistance > maximumDistance)
+            return coordinates.WithPosition(shuttlePosition + shuttleToTarget.Normalized() * maximumDistance);
+        return coordinates;
+    }
+    // UNKNOWN END
 }
 
 [Flags]

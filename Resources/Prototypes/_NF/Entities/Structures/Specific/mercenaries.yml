@@ -1,0 +1,48 @@
+# SPDX-FileCopyrightText: 2024 ErhardSteinhauer
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: entity
+  parent: XenoWardingTower
+  id: MercenaryCounterfeitCache
+  name: counterfeit cache
+  description: "Cache with counterfeit credits, bootleg movie posters."
+  components:
+  - type: Sprite
+    sprite: _NF/Structures/Specific/Mercenaries/counterfeitcache.rsi
+    layers:
+    - state: base
+    - state: unshaded
+      shader: unshaded
+  - type: RangedDamageSound
+    soundGroups:
+      Brute:
+        collection:
+          MetalBulletImpact
+    soundTypes:
+      Heat:
+        collection:
+          MetalLaserImpact
+  - type: Damageable
+    damageContainer: Inorganic
+    damageModifierSet: Metallic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 60
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 30
+      behaviors:
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          SpaceCashCounterfeit:
+            min: 100
+            max: 2500

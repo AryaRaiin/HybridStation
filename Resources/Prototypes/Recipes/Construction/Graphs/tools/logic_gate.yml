@@ -1,4 +1,13 @@
-﻿- type: constructionGraph
+# SPDX-FileCopyrightText: 2023 deltanedas <@deltanedas:kde.org>
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 TheWaffleJesus
+# SPDX-FileCopyrightText: 2024 deltanedas
+# SPDX-FileCopyrightText: 2024 lzk
+# SPDX-FileCopyrightText: 2025 Ilya246
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: constructionGraph
   id: LogicGate
   start: start
   graph:
@@ -38,7 +47,7 @@
       steps:
       - tag: Multitool
         icon:
-          sprite: Objects/Tools/multitool.rsi
+          sprite: _NF/Objects/Tools/multitool.rsi # Frontier: separate sprites (add _NF folder)
           state: icon
         name: construction-graph-tag-multitool
       - material: Cable
@@ -48,6 +57,14 @@
       steps:
       - material: Manipulator
         amount: 2
+      - material: Cable
+        amount: 2
+        doAfter: 1
+    # Mono
+    - to: timer
+      steps:
+      - material: Steel
+        amount: 1
       - material: Cable
         amount: 2
         doAfter: 1
@@ -99,6 +116,20 @@
       completed:
       - !type:SpawnPrototype
         prototype: MicroManipulatorStockPart
+      - !type:SpawnPrototype
+        prototype: CableApcStack1
+        amount: 2
+  # Mono
+  - node: timer
+    entity: SignalTimerItem
+    edges:
+    - to: empty
+      steps:
+      - tool: Prying
+        doAfter: 2
+      completed:
+      - !type:SpawnPrototype
+        prototype: SheetSteel1
       - !type:SpawnPrototype
         prototype: CableApcStack1
         amount: 2

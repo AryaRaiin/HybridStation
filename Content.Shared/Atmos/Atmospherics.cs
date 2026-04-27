@@ -1,3 +1,38 @@
+// SPDX-FileCopyrightText: 2020 DrSmugleaf
+// SPDX-FileCopyrightText: 2020 Metal Gear Sloth
+// SPDX-FileCopyrightText: 2020 Víctor Aguilera Puerto
+// SPDX-FileCopyrightText: 2020 metalgearsloth
+// SPDX-FileCopyrightText: 2021 20kdc
+// SPDX-FileCopyrightText: 2021 Vera Aguilera Puerto
+// SPDX-FileCopyrightText: 2021 Visne
+// SPDX-FileCopyrightText: 2021 py01
+// SPDX-FileCopyrightText: 2022 Rane
+// SPDX-FileCopyrightText: 2022 mirrorcult
+// SPDX-FileCopyrightText: 2022 wrexbe
+// SPDX-FileCopyrightText: 2023 Dvir
+// SPDX-FileCopyrightText: 2023 Errant
+// SPDX-FileCopyrightText: 2023 Kara
+// SPDX-FileCopyrightText: 2023 Kevin Zheng
+// SPDX-FileCopyrightText: 2023 Tom Leys
+// SPDX-FileCopyrightText: 2023 deltanedas
+// SPDX-FileCopyrightText: 2023 deltanedas <@deltanedas:kde.org>
+// SPDX-FileCopyrightText: 2023 username
+// SPDX-FileCopyrightText: 2023 whateverusername0 <whateveremail>
+// SPDX-FileCopyrightText: 2024 Ilya246
+// SPDX-FileCopyrightText: 2024 Leon Friedrich
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 chromiumboy
+// SPDX-FileCopyrightText: 2024 router
+// SPDX-FileCopyrightText: 2025 ArtisticRoomba
+// SPDX-FileCopyrightText: 2025 Whatstone
+// SPDX-FileCopyrightText: 2025 bitcrushing
+// SPDX-FileCopyrightText: 2025 marc-pelletier
+// SPDX-FileCopyrightText: 2025 starch
+// SPDX-FileCopyrightText: 2025 tonotom
+// SPDX-FileCopyrightText: 2025 tonotom1
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Robust.Shared.Serialization;
 // ReSharper disable InconsistentNaming
 
@@ -177,7 +212,32 @@ namespace Content.Shared.Atmos
             [Gas.Plasma] = Loc.GetString("gas-plasma-abbreviation"),
             [Gas.Tritium] = Loc.GetString("gas-tritium-abbreviation"),
             [Gas.WaterVapor] = Loc.GetString("gas-water-vapor-abbreviation"),
+            [Gas.BZ] = Loc.GetString("gas-bz-abbreviation"), // Funky/Goob - Ported gas
+            [Gas.Healium] = Loc.GetString("gas-healium-abbreviation"), // Funky/Goob - Ported gas
+            [Gas.Nitrium] = Loc.GetString("gas-nitrium-abbreviation"), // Funky/Goob - Ported gas
         };
+
+
+        // FUNKY START
+        /// <summary>
+        ///     Funkystation - Dictionary of names for <see cref="Gas"/>
+        /// </summary>
+        public static Dictionary<Gas, string> GasNames = new Dictionary<Gas, string>()
+        {
+            [Gas.Ammonia] = Loc.GetString("gases-ammonia"),
+            [Gas.CarbonDioxide] = Loc.GetString("gases-co2"),
+            [Gas.Frezon] = Loc.GetString("gases-frezon"),
+            [Gas.Nitrogen] = Loc.GetString("gases-nitrogen"),
+            [Gas.NitrousOxide] = Loc.GetString("gases-n2o"),
+            [Gas.Oxygen] = Loc.GetString("gases-oxygen"),
+            [Gas.Plasma] = Loc.GetString("gases-plasma"),
+            [Gas.Tritium] = Loc.GetString("gases-tritium"),
+            [Gas.WaterVapor] = Loc.GetString("gases-water-vapor"),
+            [Gas.BZ] = Loc.GetString("gases-bz"), // Funky/Goob - Ported gas
+            [Gas.Healium] = Loc.GetString("gases-healium"), // Funky/Goob - Ported gas
+            [Gas.Nitrium] = Loc.GetString("gases-nitrium"), // Funky/Goob - Ported gas
+        };
+        // FUNKY END
 
         #region Excited Groups
 
@@ -206,7 +266,8 @@ namespace Content.Shared.Atmos
         /// <summary>
         ///     Total number of gases. Increase this if you want to add more!
         /// </summary>
-        public const int TotalNumberOfGases = 9;
+        //public const int TotalNumberOfGases = 9;
+        public const int TotalNumberOfGases = 12; //Funky/Goob: 9 >> 12!!!
 
         /// <summary>
         ///     This is the actual length of the gases arrays in mixtures.
@@ -224,12 +285,15 @@ namespace Content.Shared.Atmos
         public const float FirePlasmaEnergyReleased = 160e3f; // methane is 16 kJ/mol, plus plasma's spark of magic
         public const float FireGrowthRate = 40000f;
 
-        public const float SuperSaturationThreshold = 96f;
-        public const float SuperSaturationEnds = SuperSaturationThreshold / 3;
+        //public const float SuperSaturationThreshold = 96f;
+        public const float SuperSaturationThreshold = 30f; // Frontier: 96f<30
+        //public const float SuperSaturationEnds = SuperSaturationThreshold / 3;
+        public const float SuperSaturationEnds = 10f; // Frontier: SuperSaturationThreshold / 3 < 10
 
         public const float OxygenBurnRateBase = 1.4f;
         public const float PlasmaMinimumBurnTemperature = (100f+T0C);
-        public const float PlasmaUpperTemperature = (1370f+T0C);
+        //public const float PlasmaUpperTemperature = (1370f+T0C);
+        public const float PlasmaUpperTemperature = 700; // Frontier: (1370f+T0C)<700
         public const float PlasmaOxygenFullburn = 10f;
         public const float PlasmaBurnRateDelta = 9f;
 
@@ -353,6 +417,31 @@ namespace Content.Shared.Atmos
         public const float MaxTransferRate = 200;
 
         #endregion
+
+
+        ///Funky/Goob START
+        /// <summary>
+        ///     The amount of energy 1 mole of BZ forming from N2O and plasma releases.
+        /// </summary>
+        public const float BZFormationEnergy = 80e3f;
+
+        /// <summary>
+        ///     The amount of energy 1 mol of Healium forming from BZ and frezon releases.
+        /// </summary>
+        public const float HealiumProductionEnergy = 9e3f;
+
+        /// <summary>
+        ///     The amount of energy 1 mol of Nitrium forming from Tritium, Nitrogen and BZ releases.
+        /// </summary>
+        public const float NitriumProductionEnergy = 100e3f;
+
+        /// <summary>
+        ///     The amount of energy 1 mol of Nitrium decomposing into nitrogen and water vapor releases.
+        /// </summary>
+        public const float NitriumDecompositionEnergy = 30e3f;
+        ///Funky/Goob END
+
+        public const float MolesCellShuttle = 2500f; // Frontier Shuttles
     }
 
     /// <summary>
@@ -369,6 +458,9 @@ namespace Content.Shared.Atmos
         WaterVapor = 5,
         Ammonia = 6,
         NitrousOxide = 7,
-        Frezon = 8
+        Frezon = 8,
+        BZ = 9, //Funky/Goob
+        Healium = 10, //Funky/Goob
+        Nitrium = 11, //Funky/Goob
     }
 }

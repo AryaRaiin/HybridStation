@@ -1,0 +1,10 @@
+- ID: FoodNoodlesBase
+  FLAV: 10
+- ID: FoodNoodlesCopy
+  FLAV: 10
+- ID: FoodNoodlesMeatball
+  FLAV: 5
+- ID: FoodNoodlesSpesslaw
+  FLAV: 5
+- ID: FoodNoodlesChowmein
+  FLAV: 11

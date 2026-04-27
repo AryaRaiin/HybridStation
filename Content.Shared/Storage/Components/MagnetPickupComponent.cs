@@ -24,4 +24,24 @@ public sealed partial class MagnetPickupComponent : Component
 
     [ViewVariables(VVAccess.ReadWrite), DataField("range")]
     public float Range = 1f;
+
+    // FRONTIER START: togglable magnets
+    /// <summary>
+    /// Is the magnet currently enabled?
+    /// </summary>
+    [AutoNetworkedField, ViewVariables(VVAccess.ReadWrite), DataField]
+    public bool MagnetEnabled = true;
+
+    /// <summary>
+    /// Is the magnet currently enabled?
+    /// </summary>
+    [ViewVariables(VVAccess.ReadWrite), DataField]
+    public bool MagnetCanBeEnabled = true;
+
+    /// <summary>
+    /// Is the magnet currently enabled?
+    /// </summary>
+    [ViewVariables(VVAccess.ReadWrite), DataField]
+    public int MagnetTogglePriority = 3;
+    // FRONTIER END: togglable magnets
 }

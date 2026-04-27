@@ -1,3 +1,14 @@
+// SPDX-FileCopyrightText: 2022 Júlio César Ueti
+// SPDX-FileCopyrightText: 2022 rolfero
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Wrexbe (Josh)
+// SPDX-FileCopyrightText: 2023 metalgearsloth
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 ScyronX
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Server.Atmos.Components;
 using Content.Server.Atmos.EntitySystems;
 using Content.Shared.Atmos.Components;
@@ -5,6 +16,7 @@ using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Systems;
 using Robust.Shared.Collections;
 using Robust.Shared.Timing;
+using Content.Server._Mono.Radar; // Mono
 
 namespace Content.Server.Movement.Systems;
 
@@ -13,12 +25,44 @@ public sealed class JetpackSystem : SharedJetpackSystem
     [Dependency] private readonly GasTankSystem _gasTank = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
 
+    // Mono START
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        // Subscribe to ActiveJetpackComponent events
+        SubscribeLocalEvent<ActiveJetpackComponent, ComponentStartup>(OnJetpackActivated);
+        SubscribeLocalEvent<ActiveJetpackComponent, ComponentShutdown>(OnJetpackDeactivated);
+    }
+    // Mono END
+
     protected override bool CanEnable(EntityUid uid, JetpackComponent component)
     {
         return base.CanEnable(uid, component) &&
                TryComp<GasTankComponent>(uid, out var gasTank) &&
                !(gasTank.Air.TotalMoles < component.MoleUsage);
     }
+
+    // Mono START
+    /// <summary>
+    /// Adds radar blip to jetpacks when they are activated
+    /// </summary>
+    private void OnJetpackActivated(EntityUid uid, ActiveJetpackComponent component, ComponentStartup args)
+    {
+        var blip = EnsureComp<RadarBlipComponent>(uid);
+        blip.RadarColor = Color.Cyan;
+        blip.Scale = 0.5f;
+        blip.VisibleFromOtherGrids = true;
+    }
+
+    /// <summary>
+    /// Removes radar blip from jetpacks when they are deactivated
+    /// </summary>
+    private void OnJetpackDeactivated(EntityUid uid, ActiveJetpackComponent component, ComponentShutdown args)
+    {
+        RemComp<RadarBlipComponent>(uid);
+    }
+    // Mono END
 
     public override void Update(float frameTime)
     {

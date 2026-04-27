@@ -1,9 +1,11 @@
-﻿- type: tile
+- type: tile
   id: Plating
   name: tiles-plating
   sprite: /Textures/Tiles/plating.png
   baseTurf: Lattice
   isSubfloor: true
+  deconstructTools: [ Axing ] # DeltaV - The return of fireaxe prying
+  deconstructTimeMultiplier: 5 # Goobstation
   footstepSounds:
     collection: FootstepPlating
   friction: 1.5
@@ -20,6 +22,8 @@
   - 1.0
   baseTurf: Lattice
   isSubfloor: true
+  deconstructTools: [ Axing ] # DeltaV - The return of fireaxe prying
+  deconstructTimeMultiplier: 5 # Goobstation
   footstepSounds:
     collection: FootstepPlating
   friction: 1.5
@@ -31,6 +35,8 @@
   sprite: /Textures/Tiles/Asteroid/asteroid_plating.png
   baseTurf: Lattice
   isSubfloor: true
+  deconstructTools: [ Axing ] # DeltaV - The return of fireaxe prying
+  deconstructTimeMultiplier: 5 # Goobstation
   footstepSounds:
     collection: FootstepPlating
   friction: 1.5
@@ -42,6 +48,8 @@
   sprite: /Textures/Tiles/Misc/clockwork/clockwork_floor.png
   baseTurf: Lattice
   isSubfloor: true
+  deconstructTools: [ Axing ] # DeltaV - The return of fireaxe prying
+  deconstructTimeMultiplier: 5 # Goobstation
   footstepSounds:
     collection: FootstepPlating
   friction: 1.5
@@ -53,6 +61,8 @@
   sprite: /Textures/Tiles/snow_plating.png #Not in the snow planet RSI because it doesn't have any metadata. Should probably be moved to its own folder later.
   baseTurf: Lattice
   isSubfloor: true
+  deconstructTools: [ Axing ] # DeltaV - The return of fireaxe prying
+  deconstructTimeMultiplier: 5 # Goobstation
   footstepSounds:
     collection: FootstepPlating
   friction: 0.75 #a little less then actual snow
@@ -65,6 +75,7 @@
   baseTurf: Space
   isSubfloor: true
   deconstructTools: [ Cutting ]
+  deconstructTimeMultiplier: 1 # Goobstation
   weather: true
   footstepSounds:
     collection: FootstepCatwalk
@@ -81,6 +92,7 @@
   baseTurf: Space
   isSubfloor: true
   deconstructTools: [ Cutting ]
+  deconstructTimeMultiplier: 1 # Goobstation
   weather: true
   footstepSounds:
     collection: FootstepPlating

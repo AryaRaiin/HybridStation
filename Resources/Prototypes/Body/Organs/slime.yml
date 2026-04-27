@@ -36,7 +36,9 @@
     - type: Item
       size: Small
       heldPrefix: brain
-
+  - type: Organ #Shitmed
+    slotId: core #Shitmed
+  - type: Brain #Shitmed
 
 - type: entity
   id: OrganSlimeLungs
@@ -49,6 +51,8 @@
     layers:
       - state: lung-l-slime
       - state: lung-r-slime
+  - type: Organ #Shitmed
+    slotId: lungs #Shitmed
   - type: Lung
     alert: LowNitrogen
   - type: Metabolizer

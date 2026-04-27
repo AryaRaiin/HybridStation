@@ -43,6 +43,8 @@ namespace Content.Server.Singularity.EntitySystems
             SubscribeLocalEvent<EmitterComponent, ActivateInWorldEvent>(OnActivate);
             SubscribeLocalEvent<EmitterComponent, AnchorStateChangedEvent>(OnAnchorStateChanged);
             SubscribeLocalEvent<EmitterComponent, SignalReceivedEvent>(OnSignalReceived);
+            SubscribeLocalEvent<EmitterComponent, RefreshPartsEvent>(OnRefreshParts); // UNKNOWN
+            SubscribeLocalEvent<EmitterComponent, UpgradeExamineEvent>(OnUpgradeExamine); // UNKNOWN
         }
 
         private void OnAnchorStateChanged(EntityUid uid, EmitterComponent component, ref AnchorStateChangedEvent args)
@@ -128,6 +130,22 @@ namespace Content.Server.Singularity.EntitySystems
                 PowerOn(uid, component);
             }
         }
+
+        // UNKNOWN START
+        private void OnRefreshParts(EntityUid uid, EmitterComponent component, RefreshPartsEvent args)
+        {
+            var fireRateRating = args.PartRatings[component.MachinePartFireRate];
+
+            component.FireInterval = component.BaseFireInterval * MathF.Pow(component.FireRateMultiplier, fireRateRating - 1);
+            component.FireBurstDelayMin = component.BaseFireBurstDelayMin * MathF.Pow(component.FireRateMultiplier, fireRateRating - 1);
+            component.FireBurstDelayMax = component.BaseFireBurstDelayMax * MathF.Pow(component.FireRateMultiplier, fireRateRating - 1);
+        }
+
+        private void OnUpgradeExamine(EntityUid uid, EmitterComponent component, UpgradeExamineEvent args)
+        {
+            args.AddPercentageUpgrade("emitter-component-upgrade-fire-rate", (float) (component.BaseFireInterval.TotalSeconds / component.FireInterval.TotalSeconds));
+        }
+        // UNKNOWN END
 
         public void SwitchOff(EntityUid uid, EmitterComponent component)
         {

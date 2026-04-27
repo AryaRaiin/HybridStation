@@ -1,0 +1,38 @@
+# SPDX-FileCopyrightText: 2025 Blu
+# SPDX-FileCopyrightText: 2025 Redrover1760
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Resomi steak
+- type: constructionGraph
+  id: ResomiSteak
+  start: start
+  graph:
+
+  - node: start
+    edges:
+    - to: resomi steak
+      completed:
+      - !type:PlaySound
+        sound: /Audio/Effects/sizzle.ogg
+      steps:
+      - minTemperature: 335
+
+  - node: resomi steak
+    entity: FoodMeatResomiSteak
+
+# Resomi cutlet
+- type: constructionGraph
+  id: ResomiCutlet
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: resomi cutlet
+      completed:
+      - !type:PlaySound
+        sound: /Audio/Effects/sizzle.ogg
+      steps:
+      - minTemperature: 335
+  - node: resomi cutlet
+    entity: FoodMeatResomiCutletCooked

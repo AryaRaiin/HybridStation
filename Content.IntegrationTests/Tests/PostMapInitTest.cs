@@ -1,3 +1,44 @@
+// SPDX-FileCopyrightText: 2021 20kdc
+// SPDX-FileCopyrightText: 2021 Acruid
+// SPDX-FileCopyrightText: 2021 Javier Guardia Fernández
+// SPDX-FileCopyrightText: 2022 Vordenburg
+// SPDX-FileCopyrightText: 2022 corentt
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2022 mirrorcult
+// SPDX-FileCopyrightText: 2022 wrexbe
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Kara
+// SPDX-FileCopyrightText: 2023 Moony
+// SPDX-FileCopyrightText: 2023 Nemanja
+// SPDX-FileCopyrightText: 2023 TemporalOroboros
+// SPDX-FileCopyrightText: 2023 TsjipTsjip
+// SPDX-FileCopyrightText: 2023 Ubaser
+// SPDX-FileCopyrightText: 2023 Visne
+// SPDX-FileCopyrightText: 2023 Ygg01
+// SPDX-FileCopyrightText: 2023 deltanedas
+// SPDX-FileCopyrightText: 2024 778b
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Ed
+// SPDX-FileCopyrightText: 2024 Emisse
+// SPDX-FileCopyrightText: 2024 Errant
+// SPDX-FileCopyrightText: 2024 IProduceWidgets
+// SPDX-FileCopyrightText: 2024 Leon Friedrich
+// SPDX-FileCopyrightText: 2024 Rainfey
+// SPDX-FileCopyrightText: 2024 Southbridge
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 TytosB
+// SPDX-FileCopyrightText: 2025 Deerstop
+// SPDX-FileCopyrightText: 2025 ElectroJr
+// SPDX-FileCopyrightText: 2025 Killerqu00
+// SPDX-FileCopyrightText: 2025 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2025 Spessmann
+// SPDX-FileCopyrightText: 2025 Vortebo
+// SPDX-FileCopyrightText: 2025 Whatstone
+// SPDX-FileCopyrightText: 2025 compilatron
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,6 +65,7 @@ using Robust.Shared.IoC;
 using Robust.Shared.Utility;
 using YamlDotNet.RepresentationModel;
 using Robust.Shared.Map.Events;
+using Content.IntegrationTests.Tests._NF; // Frontier
 
 namespace Content.IntegrationTests.Tests
 {
@@ -31,8 +73,9 @@ namespace Content.IntegrationTests.Tests
     public sealed class PostMapInitTest
     {
         private const bool SkipTestMaps = true;
-        private const string TestMapsPath = "/Maps/Test/";
+        private const string TestMapsPath = "/Maps/_Mono/Test/"; // Mono: _Mono
 
+        // Frontier: TODO - define this to our set of maps of interest
         private static readonly string[] NoSpawnMaps =
         {
             "CentComm",
@@ -41,8 +84,13 @@ namespace Content.IntegrationTests.Tests
 
         private static readonly string[] Grids =
         {
-            "/Maps/centcomm.yml",
-            AdminTestArenaSystem.ArenaMapPath
+            // Frontier: no upstream maps, define our own.
+            // "/Maps/centcomm.yml",
+            AdminTestArenaSystem.ArenaMapPath,
+            "/Maps/_NF/Shuttles/Admin/fishbowl.yml",
+            "/Maps/_NF/Shuttles/Bus/publicts.yml",
+            "/Maps/_NF/Shuttles/Admin/fishbowl.yml"
+            // End Frontier
         };
 
         /// <summary>
@@ -72,8 +120,14 @@ namespace Content.IntegrationTests.Tests
         /// </remarks>
         private static readonly string[] DoNotMapWhitelist =
         {
-            "/Maps/centcomm.yml",
-            "/Maps/Shuttles/AdminSpawn/**" // admin gaming
+            // Frontier: no upstream maps
+            //"/Maps/centcomm.yml",
+            //"/Maps/Shuttles/AdminSpawn/**" // admin gaming
+            "/Maps/_NF/Outpost/frontier.yml", // Contains janitorial bomb suit closet
+            "/Maps/_NF/POI/tinnia.yml", // Contains syndicate rubber stamp
+            "/Maps/_NF/POI/lpbravo.yml", // Contains syndicate rubber stamp
+            "/Maps/_NF/Shuttles/Admin/fishbowl.yml", // Contains CentComm folder
+            // End Frontier
         };
 
         /// <summary>
@@ -83,6 +137,7 @@ namespace Content.IntegrationTests.Tests
             .Select(glob => new Regex(GlobToRegex(glob), RegexOptions.IgnoreCase | RegexOptions.Compiled))
             .ToArray();
 
+        /* Frontier START: not inline constants
         private static readonly string[] GameMaps =
         {
             "Dev",
@@ -104,6 +159,9 @@ namespace Content.IntegrationTests.Tests
             "dm01-entryway",
             "Exo",
         };
+        */
+        private static readonly string[] GameMaps = FrontierConstants.GameMapPrototypes; 
+        // Frontier END
 
         private static readonly ProtoId<EntityCategoryPrototype> DoNotMapCategory = "DoNotMap";
 
@@ -201,13 +259,17 @@ namespace Content.IntegrationTests.Tests
             var protoManager = server.ResolveDependency<IPrototypeManager>();
             var loader = server.System<MapLoaderSystem>();
 
-            var mapFolder = new ResPath("/Maps");
+            //var mapFolder = new ResPath("/Maps");
+            var mapFolder = new ResPath("/Maps/_Mono"); // Mono
             var maps = resourceManager
                 .ContentFindFiles(mapFolder)
                 .Where(filePath => filePath.Extension == "yml" && !filePath.Filename.StartsWith(".", StringComparison.Ordinal))
                 .ToArray();
 
             var v7Maps = new List<ResPath>();
+            // Frontier START: allow multiple asserts to happen
+            Assert.Multiple(() => {
+
             foreach (var map in maps)
             {
                 var rootedPath = map.ToRootedPath();
@@ -245,6 +307,8 @@ namespace Content.IntegrationTests.Tests
                 var postMapInit = meta["postmapinit"].AsBool();
                 Assert.That(postMapInit, Is.False, $"Map {map.Filename} was saved postmapinit");
             }
+
+            }); // Frontier END
 
             var deps = server.ResolveDependency<IEntitySystemManager>().DependencyCollection;
             var ev = new BeforeEntityReadEvent();
@@ -512,6 +576,16 @@ namespace Content.IntegrationTests.Tests
 
             var gameMaps = protoMan.EnumeratePrototypes<GameMapPrototype>()
                 .Where(x => !pair.IsTestPrototype(x))
+                // Frontier: FIXME - hacky test fix
+                .Where(x =>
+                    x.ID == PoolManager.TestMap || // Frontier: check test map
+                    (x.MapPath.ToString().StartsWith("/Maps/_Mono") && // Mono: check Mono maps only
+                    !x.MapPath.ToString().StartsWith("/Maps/_Mono/Shuttles") && // Mono: skip shuttles (not loaded as maps)
+                    !x.MapPath.ToString().StartsWith("/Maps/_Mono/Deprecated") && // Mono: skip deprecated (not loaded as maps)
+                    !x.MapPath.ToString().StartsWith("/Maps/_Mono/ShuttleEvent") && // Mono: skip shuttleevents (not loaded as maps)
+                    !x.MapPath.ToString().StartsWith("/Maps/_Mono/POI")) // Mono: skip POIs (not loaded as maps)
+                    )
+                // End Frontier
                 .Select(x => x.ID)
                 .ToHashSet();
 
@@ -536,7 +610,8 @@ namespace Content.IntegrationTests.Tests
 
             var gameMaps = protoManager.EnumeratePrototypes<GameMapPrototype>().Select(o => o.MapPath).ToHashSet();
 
-            var mapFolder = new ResPath("/Maps");
+            //var mapFolder = new ResPath("/Maps");
+            var mapFolder = new ResPath("/Maps/_Mono"); // Mono
             var maps = resourceManager
                 .ContentFindFiles(mapFolder)
                 .Where(filePath => filePath.Extension == "yml" && !filePath.Filename.StartsWith(".", StringComparison.Ordinal))

@@ -59,7 +59,7 @@
       maxTriggers: 1
     - type: EmpOnTrigger
       range: 2
-      energyConsumption: 5000
+      energyConsumption: 270000 # Frontier: 5kJ<270kJ
     - type: DeleteOnTrigger
 
 - type: entity

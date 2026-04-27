@@ -71,3 +71,13 @@ trait-hemophilia-desc = Your body fails to make blood clots.
 
 trait-impaired-mobility-name = Impaired Mobility
 trait-impaired-mobility-desc = You have difficulty moving without a mobility aid.
+
+# MONO START
+trait-russian-name = Russian accent
+trait-russian-desc = You reek of vodka smell.
+# MONO END
+
+# FRONTIER START
+trait-wheelchair-bound-name = Wheelchair-bound
+trait-wheelchair-bound-desc = You cannot move without your wheelchair. Wheelchair included.
+# FRONTIER END

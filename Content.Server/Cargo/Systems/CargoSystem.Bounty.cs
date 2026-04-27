@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Content.Server.Cargo.Components;
 using Content.Server.NameIdentifier;
+using Content.Shared._NF.Bank; // Frontier
 using Content.Shared.Access.Components;
 using Content.Shared.Cargo;
 using Content.Shared.Cargo.Components;
@@ -130,12 +131,11 @@ public sealed partial class CargoSystem
                 ("item", Loc.GetString(entry.Name)))}");
             msg.PushNewline();
         }
-        msg.AddMarkupOrThrow(Loc.GetString("bounty-console-manifest-reward", ("reward", prototype.Reward)));
+        msg.AddMarkupOrThrow(Loc.GetString("bounty-console-manifest-reward", ("reward", BankSystemExtensions.ToSpesoString(prototype.Reward)))); // Frontier: add ToSpesoString
         _paperSystem.SetContent((uid, paper), msg.ToMarkup());
     }
 
     /// <summary>
-    /// Bounties do not sell for any currency. The reward for a bounty is
     /// calculated after it is sold separately from the selling system.
     /// </summary>
     private void OnGetBountyPrice(EntityUid uid, CargoBountyLabelComponent component, ref PriceCalculationEvent args)

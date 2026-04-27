@@ -1,6 +1,8 @@
 using Content.Shared.Kitchen;
 using Content.Server.Kitchen.EntitySystems;
+using Content.Shared.Construction.Prototypes;
 using Robust.Shared.Audio;
+using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 
 namespace Content.Server.Kitchen.Components
 {
@@ -11,16 +13,30 @@ namespace Content.Server.Kitchen.Components
     /// it contained, juice an apple and get "apple juice".
     /// </summary>
     [Access(typeof(ReagentGrinderSystem)), RegisterComponent]
-    public sealed partial class ReagentGrinderComponent : Component
-    {
+    public sealed partial class ReagentGrinderComponent : Component {
         [DataField]
         public int StorageMaxEntities = 6;
+
+        [DataField]
+        public int BaseStorageMaxEntities = 4;
+
+        [DataField("machinePartStorageMax", customTypeSerializer: typeof(PrototypeIdSerializer<MachinePartPrototype>))]
+        public string MachinePartStorageMax = "MatterBin";
+
+        [DataField]
+        public int StoragePerPartRating = 4;
 
         [DataField]
         public TimeSpan WorkTime = TimeSpan.FromSeconds(3.5); // Roughly matches the grind/juice sounds.
 
         [DataField]
         public float WorkTimeMultiplier = 1;
+
+        [DataField("machinePartWorkTime", customTypeSerializer: typeof(PrototypeIdSerializer<MachinePartPrototype>))]
+        public string MachinePartWorkTime = "Manipulator";
+
+        [DataField]
+        public float PartRatingWorkTimerMulitplier = 0.6f;
 
         [DataField]
         public SoundSpecifier ClickSound { get; set; } = new SoundPathSpecifier("/Audio/Machines/machine_switch.ogg");

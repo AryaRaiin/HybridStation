@@ -5,7 +5,10 @@ cargo-console-menu-account-name-none-text = None
 cargo-console-menu-account-name-format = [bold][color={$color}]{$name}[/color][/bold] [font="Monospace"]\[{$code}\][/font]
 cargo-console-menu-shuttle-name-label = Shuttle name:{" "}
 cargo-console-menu-shuttle-name-none-text = None
-cargo-console-menu-points-label = Balance:{" "}
+# UNKNOWN START
+#cargo-console-menu-points-label = Balance:{" "}
+cargo-console-menu-points-label = Credits:{" "}
+# UNKNOWN END
 cargo-console-menu-points-amount = ${$amount}
 cargo-console-menu-shuttle-status-label = Shuttle status:{" "}
 cargo-console-menu-shuttle-status-away-text = Away
@@ -94,3 +97,8 @@ cargo-acquisition-slip-body = [head=3]Asset Detail[/head]
     {"[head=3]Purchase Detail[/head]"}
     {"[bold]Orderer:[/bold]"} {$orderer}
     {"[bold]Reason:[/bold]"} {$reason}
+
+# UNKNOWN
+cargo-telepad-delay-upgrade = Teleport delay
+# Frontier
+cargo-console-nf-no-bank-account = No bank account found

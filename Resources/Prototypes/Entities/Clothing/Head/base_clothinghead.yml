@@ -1,11 +1,15 @@
 - type: entity
   abstract: true
-  parent: Clothing
+  parent: [Clothing, RecyclableItemClothSmall] # Frontier: added RecyclableItemClothSmall
   id: ClothingHeadBase
   components:
   - type: Clothing
     slots:
     - HEAD
+  # Goobstation edit start
+    equipSound:
+      collection: GenericEquip
+  # Goobstation edit end
   - type: Sprite
     state: icon
   - type: Item
@@ -216,8 +220,8 @@
   - type: ItemTogglePointLight
   - type: PointLight
     enabled: false
-    radius: 3
-    energy: 2
+    radius: 4 # 3->4 Mono
+    energy: 3 # 2->3 Mono
     mask: /Textures/Effects/LightMasks/cone.png
     autoRot: true
     netsync: false

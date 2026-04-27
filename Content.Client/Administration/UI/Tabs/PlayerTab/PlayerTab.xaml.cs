@@ -23,7 +23,7 @@ public sealed partial class PlayerTab : Control
 
     private const string ArrowUp = "↑";
     private const string ArrowDown = "↓";
-    private readonly Color _altColor = Color.FromHex("#292B38");
+    private readonly Color _altColor = Color.FromHex("#363636");
     private readonly Color _defaultColor = Color.FromHex("#2F2F3B");
     private readonly AdminSystem _adminSystem;
     private IReadOnlyList<PlayerInfo> _players = new List<PlayerInfo>();
@@ -65,7 +65,6 @@ public sealed partial class PlayerTab : Control
         SearchList.ItemKeyBindDown += (args, data) => OnEntryKeyBindDown?.Invoke(args, data);
 
         RefreshPlayerList(_adminSystem.PlayerList);
-
     }
 
     #region Antag Overlay
@@ -240,6 +239,7 @@ public sealed partial class PlayerTab : Control
             Header.Job => Compare(x.StartingJob, y.StartingJob),
             Header.RoleType => y.SortWeight - x.SortWeight,
             Header.Playtime => TimeSpan.Compare(x.OverallPlaytime ?? default, y.OverallPlaytime ?? default),
+            Header.Balance => x.Balance.CompareTo(y.Balance), // Frontier
             _ => 1
         };
     }

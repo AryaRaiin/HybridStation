@@ -78,8 +78,9 @@ public sealed class HumanoidAppearanceSystem : SharedHumanoidAppearanceSystem
         // add custom layers
         foreach (var (key, info) in component.CustomBaseLayers)
         {
-            oldLayers.Remove(key);
-            SetLayerData(entity, key, info.Id, sexMorph: false, color: info.Color);
+            oldLayers.Remove(key);            
+            SetLayerData(entity, sprite, key, info.Id, sexMorph: false, color: info.Color, 
+                overrideSkin: true);// Shitmed Change: For whatever reason these weren't actually ignoring the skin color as advertised.
         }
 
         // hide old layers
@@ -96,7 +97,8 @@ public sealed class HumanoidAppearanceSystem : SharedHumanoidAppearanceSystem
         HumanoidVisualLayers key,
         string? protoId,
         bool sexMorph = false,
-        Color? color = null)
+        Color? color = null,
+        bool overrideSkin = false) // Shitmed Change
     {
         var component = entity.Comp1;
         var sprite = entity.Comp2;
@@ -117,7 +119,8 @@ public sealed class HumanoidAppearanceSystem : SharedHumanoidAppearanceSystem
         var proto = _prototypeManager.Index<HumanoidSpeciesSpriteLayer>(protoId);
         component.BaseLayers[key] = proto;
 
-        if (proto.MatchSkin)
+        if (proto.MatchSkin 
+            && !overrideSkin) // Shitmed Change
             layer.Color = component.SkinColor.WithAlpha(proto.LayerAlpha);
 
         if (proto.BaseSprite != null)
@@ -368,7 +371,13 @@ public sealed class HumanoidAppearanceSystem : SharedHumanoidAppearanceSystem
                 _sprite.LayerMapSet((entity.Owner, sprite), layerId, layer);
                 _sprite.LayerSetSprite((entity.Owner, sprite), layerId, rsi);
             }
-
+            // impstation edit begin - check if there's a shader defined in the markingPrototype's shader datafield, and if there is...
+            if (markingPrototype.Shader != null)
+            {
+            // use spriteComponent's layersetshader function to set the layer's shader to that which is specified.
+                _sprite.LayerSetShader(layerId, markingPrototype.Shader);
+            }
+            // impstation edit end
             _sprite.LayerSetVisible((entity.Owner, sprite), layerId, visible);
 
             if (!visible || setting == null) // this is kinda implied

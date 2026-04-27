@@ -1,7 +1,9 @@
-﻿using Content.Shared.Whitelist;
+using Content.Shared.Construction.Prototypes;
+using Content.Shared.Whitelist;
 using JetBrains.Annotations;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
 
@@ -53,8 +55,27 @@ public sealed partial class MaterialReclaimerComponent : Component
     /// How quickly it takes to consume X amount of materials per second.
     /// For example, with a rate of 50, an entity with 100 total material takes 2 seconds to process.
     /// </summary>
+    [DataField, ViewVariables(VVAccess.ReadWrite)]
+    public float BaseMaterialProcessRate = 100f;
+
+    /// <summary>
+    /// How quickly it takes to consume X amount of materials per second.
+    /// For example, with a rate of 50, an entity with 100 total material takes 2 seconds to process.
+    /// </summary>
     [DataField, AutoNetworkedField, ViewVariables(VVAccess.ReadWrite)]
     public float MaterialProcessRate = 100f;
+
+    /// <summary>
+    /// Machine part whose rating modifies <see cref="MaterialProcessRate"/>
+    /// </summary>
+    [DataField, ViewVariables(VVAccess.ReadWrite)]
+    public ProtoId<MachinePartPrototype> MachinePartProcessRate = "Manipulator";
+
+    /// <summary>
+    /// How much the machine part quality affects the <see cref="MaterialProcessRate"/>
+    /// </summary>
+    [DataField, ViewVariables(VVAccess.ReadWrite)]
+    public float PartRatingProcessRateMultiplier = 1.5f;
 
     /// <summary>
     /// The minimum amount fo time it can take to process an entity.
@@ -137,6 +158,13 @@ public sealed partial class MaterialReclaimerComponent : Component
     /// </remarks>
     [DataField, AutoNetworkedField]
     public int ItemsProcessed;
+
+    /// <summary>
+    /// Frontier: set to true for old material reclaimer solution drain logic, overrides OnlyReclaimDrainable
+    /// </summary>
+    [DataField]
+    public bool UseOldSolutionLogic = false;
+    // End Frontier
 }
 
 [NetSerializable, Serializable]

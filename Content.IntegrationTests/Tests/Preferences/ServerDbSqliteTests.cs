@@ -39,7 +39,7 @@ namespace Content.IntegrationTests.Tests.Preferences
 
         private static HumanoidCharacterProfile CharlieCharlieson()
         {
-            return new()
+            return new HumanoidCharacterProfile() // Frontier - added HumanoidCharacterProfile
             {
                 Name = "Charlie Charlieson",
                 FlavorText = "The biggest boy around.",
@@ -53,7 +53,7 @@ namespace Content.IntegrationTests.Tests.Preferences
                     Color.Azure,
                     Color.Beige,
                     new ())
-            };
+            }.WithBankBalance(27000); // Frontier - accessor issue
         }
 
         private static ServerDbSqlite GetDb(RobustIntegrationTest.ServerIntegrationInstance server)

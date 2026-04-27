@@ -148,7 +148,9 @@ public sealed class ClumsySystem : EntitySystem
         // TODO: Replace with RandomPredicted once the engine PR is merged
         var seed = SharedRandomExtensions.HashCodeCombine((int)_timing.CurTick.Value, GetNetEntity(ent).Id);
         var rand = new System.Random(seed);
-        if (!_cfg.GetCVar(CCVars.GameTableBonk) && !rand.Prob(ent.Comp.ClumsyDefaultCheck))
+        // goob station fix some bonks
+        //if (!_cfg.GetCVar(CCVars.GameTableBonk) && !rand.Prob(ent.Comp.ClumsyDefaultCheck))
+        if (!_cfg.GetCVar(CCVars.GameTableBonk) || args.PuttingOnTable !=ent.Owner || !rand.Prob(ent.Comp.ClumsyDefaultCheck))
             return;
 
         HitHeadClumsy(ent, args.BeingClimbedOn);

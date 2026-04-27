@@ -1,3 +1,25 @@
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2023 Alex Evgrashin
+// SPDX-FileCopyrightText: 2023 HerCoyote23
+// SPDX-FileCopyrightText: 2023 Interrobang01
+// SPDX-FileCopyrightText: 2023 Kara
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Visne
+// SPDX-FileCopyrightText: 2023 Vordenburg
+// SPDX-FileCopyrightText: 2023 gus
+// SPDX-FileCopyrightText: 2023 router
+// SPDX-FileCopyrightText: 2024 Checkraze
+// SPDX-FileCopyrightText: 2024 Kot
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 SlamBamActionman
+// SPDX-FileCopyrightText: 2024 Thomas
+// SPDX-FileCopyrightText: 2024 Vasilis
+// SPDX-FileCopyrightText: 2025 Ilya246
+// SPDX-FileCopyrightText: 2025 ScyronX
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Collections.Frozen;
 using System.Text.RegularExpressions;
 using Content.Shared.ActionBlocker;
@@ -14,6 +36,7 @@ using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
+using Content.Shared._Starlight.CollectiveMind; // Goobstation - Starlight collective mind port
 
 namespace Content.Shared.Chat;
 
@@ -31,6 +54,7 @@ public abstract partial class SharedChatSystem : EntitySystem
     public const char EmotesAltPrefix = '*';
     public const char AdminPrefix = ']';
     public const char WhisperPrefix = ',';
+    public const char CollectiveMindPrefix = '+'; // Goobstation - Starlight collective mind port
     public const char DefaultChannelKey = 'h';
 
     public const int VoiceRange = 10; // how far voice goes in world units
@@ -57,6 +81,8 @@ public abstract partial class SharedChatSystem : EntitySystem
     /// </summary>
     private FrozenDictionary<char, RadioChannelPrototype> _keyCodes = default!;
 
+    private FrozenDictionary<char, CollectiveMindPrototype> _mindKeyCodes = default!; // Goobstation - Starlight collective mind port
+
     public override void Initialize()
     {
         base.Initialize();
@@ -66,6 +92,7 @@ public abstract partial class SharedChatSystem : EntitySystem
         SubscribeLocalEvent<PrototypesReloadedEventArgs>(OnPrototypeReload);
         CacheRadios();
         CacheEmotes();
+        CacheCollectiveMinds(); // Goobstation - Starlight collective mind port
     }
 
     protected virtual void OnPrototypeReload(PrototypesReloadedEventArgs obj)
@@ -75,6 +102,11 @@ public abstract partial class SharedChatSystem : EntitySystem
 
         if (obj.WasModified<EmotePrototype>())
             CacheEmotes();
+
+        // Goobstation START - Starlight collective mind port
+        if (obj.WasModified<CollectiveMindPrototype>())
+            CacheCollectiveMinds();
+        // Goobstation END
     }
 
     private void CacheRadios()
@@ -82,6 +114,15 @@ public abstract partial class SharedChatSystem : EntitySystem
         _keyCodes = _prototypeManager.EnumeratePrototypes<RadioChannelPrototype>()
             .ToFrozenDictionary(x => x.KeyCode);
     }
+
+    // Goobstation START - Starlight collective mind port
+    private void CacheCollectiveMinds()
+    {
+        _prototypeManager.PrototypesReloaded -= OnPrototypeReload;
+        _mindKeyCodes = _prototypeManager.EnumeratePrototypes<CollectiveMindPrototype>()
+            .ToFrozenDictionary(x => x.KeyCode);
+    }
+    // Goobstation END
 
     /// <summary>
     ///     Attempts to find an applicable <see cref="SpeechVerbPrototype"/> for a speaking entity's message.
@@ -199,6 +240,60 @@ public abstract partial class SharedChatSystem : EntitySystem
 
         return true;
     }
+
+    // Goobstation START - Starlight collective mind port
+    public bool TryProccessCollectiveMindMessage(
+        EntityUid source,
+        string input,
+        out string output,
+        out CollectiveMindPrototype? channel,
+        bool quiet = false)
+    {
+        output = input.Trim();
+        channel = null;
+
+        if (input.Length == 0)
+            return false;
+
+        if (!input.StartsWith(CollectiveMindPrefix))
+            return false;
+
+        ProtoId<CollectiveMindPrototype>? defaultChannel = null;
+        if (TryComp<CollectiveMindComponent>(source, out var mind))
+            defaultChannel = mind.DefaultChannel;
+
+        if (input.Length < 2 || (char.IsWhiteSpace(input[1]) && defaultChannel == null))
+        {
+            output = SanitizeMessageCapital(input[1..].TrimStart());
+            if (!quiet)
+                _popup.PopupEntity(Loc.GetString("chat-manager-no-radio-key"), source, source);
+            return true;
+        }
+
+        var channelKey = input[1];
+        channelKey = char.ToLower(channelKey);
+
+        if (_mindKeyCodes.TryGetValue(channelKey, out channel))
+        {
+            output = SanitizeMessageCapital(input[2..].TrimStart());
+            return true;
+        }
+        else if (defaultChannel != null)
+        {
+            output = SanitizeMessageCapital(input[1..].TrimStart());
+            channel = _prototypeManager.Index<CollectiveMindPrototype>(defaultChannel.Value);
+            return true;
+        }
+
+        if (quiet)
+            return false;
+
+        var msg = Loc.GetString("chat-manager-no-such-channel", ("key", channelKey));
+        _popup.PopupEntity(msg, source, source);
+
+        return false;
+    }
+    // Goobstation END
 
     public string SanitizeMessageCapital(string message)
     {
@@ -464,7 +559,8 @@ public enum ChatTransmitRange : byte
     /// Hidden from the chat window.
     HideChat,
     /// Ghosts can't hear or see it at all. Regular players can if in-range.
-    NoGhosts
+    NoGhosts,
+    GhostRangeLimitNoAdminCheck, // Frontier: Normal, ghosts are still range-limited, and won't spam admins
 }
 
 /// <summary>
@@ -475,7 +571,8 @@ public enum InGameICChatType : byte
 {
     Speak,
     Emote,
-    Whisper
+    Whisper,
+    CollectiveMind // Goobstation
 }
 
 /// <summary>

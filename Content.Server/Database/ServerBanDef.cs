@@ -87,6 +87,7 @@ namespace Content.Server.Database
                    {loc.GetString("ban-banned-2", ("reason", Reason))}
                    {expires}
                    {loc.GetString("ban-banned-3")}
+                   {loc.GetString("ban-banned-4")}
                    """;
         }
     }

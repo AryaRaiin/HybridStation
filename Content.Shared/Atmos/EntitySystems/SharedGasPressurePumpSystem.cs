@@ -7,6 +7,7 @@ using Content.Shared.Database;
 using Content.Shared.Examine;
 using Content.Shared.Power;
 using Content.Shared.Power.EntitySystems;
+using Content.Shared._NF.Atmos.Piping.Binary.Messages; // Frontier
 
 namespace Content.Shared.Atmos.EntitySystems;
 
@@ -31,6 +32,9 @@ public abstract class SharedGasPressurePumpSystem : EntitySystem
 
         SubscribeLocalEvent<GasPressurePumpComponent, AtmosDeviceDisabledEvent>(OnPumpLeaveAtmosphere);
         SubscribeLocalEvent<GasPressurePumpComponent, ExaminedEvent>(OnExamined);
+
+        SubscribeLocalEvent<GasPressurePumpComponent, MapInitEvent>(OnMapInit); // Frontier
+        SubscribeLocalEvent<GasPressurePumpComponent, GasPressurePumpChangePumpDirectionMessage>(OnPumpSetDirectionMessage); // Frontier
     }
 
     private void OnExamined(Entity<GasPressurePumpComponent> ent, ref ExaminedEvent args)
@@ -48,6 +52,17 @@ public abstract class SharedGasPressurePumpSystem : EntitySystem
         }
     }
 
+    // Frontier START - Init on map
+    private void OnMapInit(EntityUid uid, GasPressurePumpComponent pump, MapInitEvent args)
+    {
+        if (pump.StartOnMapInit)
+        {
+            pump.Enabled = true;
+        }
+        UpdateAppearance(uid, pump);
+    }
+    // Frontier END - Init on map
+
     private void OnInit(Entity<GasPressurePumpComponent> ent, ref ComponentInit args)
     {
         UpdateAppearance(ent);
@@ -58,13 +73,15 @@ public abstract class SharedGasPressurePumpSystem : EntitySystem
         UpdateAppearance(ent);
     }
 
-    private void UpdateAppearance(Entity<GasPressurePumpComponent, AppearanceComponent?> ent)
+    //private void UpdateAppearance(Entity<GasPressurePumpComponent, AppearanceComponent?> ent)
+    protected void UpdateAppearance(Entity<GasPressurePumpComponent, AppearanceComponent?> ent) // Frontier: private->protected
     {
         if (!Resolve(ent, ref ent.Comp2, false))
             return;
 
         var pumpOn = ent.Comp1.Enabled && _receiver.IsPowered(ent.Owner);
         _appearance.SetData(ent, PumpVisuals.Enabled, pumpOn, ent.Comp2);
+        _appearance.SetData(ent, PumpVisuals.PumpingInwards, ent.Comp1.PumpingInwards, appearance); // Frontier
     }
 
     private void OnToggleStatusMessage(Entity<GasPressurePumpComponent> ent, ref GasPressurePumpToggleStatusMessage args)
@@ -100,4 +117,22 @@ public abstract class SharedGasPressurePumpSystem : EntitySystem
     protected virtual void UpdateUi(Entity<GasPressurePumpComponent> ent)
     {
     }
+
+    // Frontier START - bidirectional pumps
+    public void OnPumpSetDirectionMessage(EntityUid uid, GasPressurePumpComponent pump, GasPressurePumpChangePumpDirectionMessage args)
+    {
+        if (!pump.SettableDirection || pump.PumpingInwards == args.Inwards)
+            return;
+
+        var temp = pump.OutletName;
+        pump.OutletName = pump.InletName;
+        pump.InletName = temp;
+
+        pump.PumpingInwards = args.Inwards;
+        _adminLogger.Add(LogType.AtmosDirectionChanged, LogImpact.Medium,
+            $"{ToPrettyString(args.Actor):player} set the direction on {ToPrettyString(uid):device} to {(args.Inwards ? "in" : "out")}");
+        Dirty(uid, pump);
+        UpdateAppearance(uid, pump);
+    }
+    // Frontier END
 }

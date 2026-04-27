@@ -1,3 +1,14 @@
+# SPDX-FileCopyrightText: 2025 Ilya246
+# SPDX-FileCopyrightText: 2025 ScyronX
+# SPDX-FileCopyrightText: 2025 Whatstone
+# SPDX-FileCopyrightText: 2025 beck-thompson
+# SPDX-FileCopyrightText: 2025 deltanedas
+# SPDX-FileCopyrightText: 2025 starch
+# SPDX-FileCopyrightText: 2025 tonotom
+# SPDX-FileCopyrightText: 2025 tonotom1
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ## Static
 
 - type: latheRecipePack
@@ -9,12 +20,13 @@
   - Wrench
   - CrowbarGreen
   - Multitool
-  - NetworkConfigurator
+  - MaintenanceJack #Mono
+  # - NetworkConfigurator # Frontier: downgrade vs. multitool
   - Signaller
   - SprayPainter
   - SprayPainterAmmo
   - FlashlightLantern
-  - HandheldGPSBasic
+  # - HandheldGPSBasic # Frontier: little value
   - TRayScanner
   - UtilityBelt
   - ClothingOuterVestTank
@@ -60,18 +72,23 @@
   - PowerDrill
   - WelderExperimental
   - JawsOfLife
-  - Fulton
-  - FultonBeacon
+  - ExperimentalNaniteApplicator
+  # - Fulton # Frontier
+  # - FultonBeacon # Frontier
 
 - type: latheRecipePack
   id: AtmosTools
   recipes:
   - HolofanProjector
 
-- type: latheRecipePack
-  id: EngineeringWeapons
-  recipes:
-  - WeaponParticleDecelerator
+# Frontier: no engineering weapons to unlock
+
+# - type: latheRecipePack
+#   id: EngineeringWeapons
+#   recipes:
+#   - WeaponParticleDecelerator
+
+# End Frontier
 
 - type: latheRecipePack
   id: EngineeringBoards
@@ -86,6 +103,8 @@
   - PortableGeneratorSuperPacmanMachineCircuitboard
   - PortableGeneratorJrPacmanMachineCircuitboard
   - EmitterCircuitboard
+  - ContainmentFieldGeneratorCircuitboard # Mono
   - TelecomServerCircuitboard
   - SMESAdvancedMachineCircuitboard
-  - HolopadMachineCircuitboard
+  - CrystallizerMachineCircuitboard # Mono/Funky
+  # - HolopadMachineCircuitboard # Frontier: use NF variant

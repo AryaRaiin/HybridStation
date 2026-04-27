@@ -1,0 +1,613 @@
+--- ### BREAD ###
+file: Resources/Prototypes/Entities/Objects/Consumable/Food/Baked/bread.yml
+##### Bread + Slices
+- match:
+    - id: FoodBreadBase
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 31
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 20
+          - ReagentId: Flavorol
+            Quantity: 5
+- match:
+    - id: FoodBreadSliceBase
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 9
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 4
+          - ReagentId: Flavorol
+            Quantity: 1
+- match:
+    - id: FoodBreadCorn
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 25
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 15
+          - ReagentId: Flavorol
+            Quantity: 5
+- match:
+    - id: FoodBreadCornSlice
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 6
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 3
+          - ReagentId: Flavorol
+            Quantity: 1
+- match:
+    - id: FoodBreadCreamcheese
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 40
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 20
+          - ReagentId: Vitamin
+            Quantity: 5
+          - ReagentId: Flavorol
+            Quantity: 5
+- match:
+    - id: FoodBreadCreamcheeseSlice
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 10
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 4
+          - ReagentId: Vitamin
+            Quantity: 1.2
+          - ReagentId: Flavorol
+            Quantity: 1.5
+- match:
+    - id: FoodBreadMeat
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 50
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 30
+          - ReagentId: Vitamin
+            Quantity: 5
+          - ReagentId: Flavorol
+            Quantity: 10
+- match:
+    - id: FoodBreadMeatSlice
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 10
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 6
+          - ReagentId: Vitamin
+            Quantity: 1.2
+          - ReagentId: Flavorol
+            Quantity: 2
+- match:
+    - id: FoodBreadMimana
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 45
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 15
+          - ReagentId: Vitamin
+            Quantity: 5
+          - ReagentId: Nothing
+            Quantity: 5
+          - ReagentId: MuteToxin
+            Quantity: 5
+          - ReagentId: Flavorol
+            Quantity: 5
+- match:
+    - id: FoodBreadMimanaSlice
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 10
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 3
+          - ReagentId: Vitamin
+            Quantity: 1
+          - ReagentId: Nothing
+            Quantity: 1
+          - ReagentId: MuteToxin
+            Quantity: 1
+          - ReagentId: Flavorol
+            Quantity: 1
+- match:
+    - id: FoodBreadSausage
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 45
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 10
+          - ReagentId: Vitamin
+            Quantity: 5
+          - ReagentId: Protein
+            Quantity: 5
+          - ReagentId: Flavorol
+            Quantity: 5
+- match:
+    - id: FoodBreadSausageSlice
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 10
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 2
+          - ReagentId: Vitamin
+            Quantity: 1
+          - ReagentId: Protein
+            Quantity: 1
+          - ReagentId: Flavorol
+            Quantity: 2
+- match:
+    - id: FoodBreadMeatSpider
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 55
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 30
+          - ReagentId: Vitamin
+            Quantity: 5
+          - ReagentId: Flavorol
+            Quantity: 10
+- match:
+    - id: FoodBreadMeatSpiderSlice
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 14.5
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 6
+          - ReagentId: Vitamin
+            Quantity: 1.2
+          - ReagentId: Flavorol
+            Quantity: 2
+- match:
+    - id: FoodBreadTofu
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 62
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 30
+          - ReagentId: Protein
+            Quantity: 12
+          - ReagentId: Flavorol
+            Quantity: 15
+- match:
+    - id: FoodBreadTofuSlice
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 13
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 6
+          - ReagentId: Vitamin
+            Quantity: 2.4
+          - ReagentId: Flavorol
+            Quantity: 3
+- match:
+    - id: FoodBreadMeatXeno
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 55
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 30
+          - ReagentId: Vitamin
+            Quantity: 5
+          - ReagentId: Flavorol
+            Quantity: 10
+- match:
+    - id: FoodBreadMeatXenoSlice
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 12.4
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 6
+          - ReagentId: Vitamin
+            Quantity: 1.2
+          - ReagentId: Flavorol
+            Quantity: 2.4
+##### Non-sliced bread variants
+- match:
+    - id: FoodBreadBaguette
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 20
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 6
+          - ReagentId: Vitamin
+            Quantity: 1
+          - ReagentId: TableSalt
+            Quantity: 1
+          - ReagentId: Blackpepper
+            Quantity: 1
+          - ReagentId: Flavorol # Frontier
+            Quantity: 5 # Frontier
+- match:
+    - id: FoodBreadButteredToast
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 11
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 5
+          - ReagentId: Vitamin
+            Quantity: 1
+          - ReagentId: Flavorol
+            Quantity: 1
+- match:
+    - id: FoodBreadFrenchToast
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 11
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 4
+          - ReagentId: Vitamin
+            Quantity: 2
+          - ReagentId: Flavorol
+            Quantity: 1
+- match:
+    - id: FoodBreadGarlicSlice
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 20
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 6
+          - ReagentId: Vitamin
+            Quantity: 5
+          - ReagentId: Flavorol
+            Quantity: 5
+- match:
+    - id: FoodBreadJellySlice
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 12
+          reagents:
+          - ReagentId: Nutriment
+            Quantity: 4
+          - ReagentId: Vitamin
+            Quantity: 4
+          - ReagentId: Flavorol
+            Quantity: 2
+### TODO: refactor ^ to use template
+--- ### SOUP
+file: Resources/Prototypes/Entities/Objects/Consumable/Food/soup.yml
+template: templ-flavorol-soup.yaml
+- match:
+  - id: ${ID}
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          reagents:
+          - ReagentId: Flavorol !Missing
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: +${FLAV} !Math
+          reagents:
+          - ReagentId: Flavorol
+            Quantity: ${FLAV}
+---
+file: Resources/Prototypes/Entities/Objects/Consumable/Food/soup.yml
+- match:
+  - id: FoodPlainGrits
+  action: mergeadd
+  data:
+    type: entity
+    name: buttered grits
+    parent: FoodBowlBase
+    id: FoodPlainGrits
+    description: A savory bowl of grits, topped with a pat of butter.
+    components:
+    - type: FlavorProfile
+      flavors:
+      - savory
+      - corn
+      - butter
+    - type: Sprite
+      layers:
+      - state: bowl
+      - state: grits-butter
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 25
+          reagents:
+          - ReagentId: Butter
+            Quantity: 5
+          - ReagentId: Nutriment
+            Quantity: 5
+          - ReagentId: Vitamin
+            Quantity: 5
+          - ReagentId: Flavorol
+            Quantity: 10
+- match:
+  - id: FoodCheeseGrits
+  action: mergeadd
+  data:
+    type: entity
+    name: cheese grits
+    parent: FoodBowlBase
+    id: FoodCheeseGrits
+    description: A thick, savory bowl of cheesy grits.
+    components:
+    - type: FlavorProfile
+      flavors:
+      - savory
+      - corn
+      - cheesy
+    - type: Sprite
+      layers:
+      - state: bowl
+      - state: grits-cheese
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 30
+          reagents:
+          - ReagentId: Butter
+            Quantity: 5
+          - ReagentId: Nutriment
+            Quantity: 10
+          - ReagentId: Vitamin
+            Quantity: 5
+          - ReagentId: Flavorol
+            Quantity: 10
+
+--- ### CAKE
+file: Resources/Prototypes/Entities/Objects/Consumable/Food/cake.yml
+template: templ-flavorol-cake.yaml
+- match:
+  - id: ${ID}
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          reagents:
+          - ReagentId: Flavorol !Missing
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: +${FLAV} !Math
+          reagents:
+          - ReagentId: Flavorol
+            Quantity: ${FLAV}
+
+--- ### NOODLES
+file: Resources/Prototypes/Entities/Objects/Consumable/Food/noodles.yml
+template: templ-flavorol-noodles.yaml
+- match:
+  - id: ${ID}
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          reagents:
+          - ReagentId: Flavorol !Missing
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: +${FLAV} !Math
+          reagents:
+          - ReagentId: Flavorol
+            Quantity: ${FLAV}
+
+--- ### MEALS
+file: Resources/Prototypes/Entities/Objects/Consumable/Food/meals.yml
+template: templ-flavorol-meals.yaml
+- match:
+  - id: ${ID}
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          reagents:
+          - ReagentId: Flavorol !Missing
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: +${FLAV} !Math
+          reagents:
+          - ReagentId: Flavorol
+            Quantity: ${FLAV}
+
+--- ### BURGER
+file: Resources/Prototypes/Entities/Objects/Consumable/Food/burger.yml
+template: templ-flavorol-burger.yaml
+- match:
+  - id: ${ID}
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          reagents:
+          - ReagentId: Flavorol !Missing
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: +${FLAV} !Math
+          reagents:
+          - ReagentId: Flavorol
+            Quantity: ${FLAV}
+
+--- ### PIZZA
+file: Resources/Prototypes/Entities/Objects/Consumable/Food/pizza.yml
+template: templ-flavorol-pizza.yaml
+- match:
+  - id: ${ID}
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          reagents:
+          - ReagentId: Flavorol !Missing
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: +${FLAV} !Math
+          reagents:
+          - ReagentId: Flavorol
+            Quantity: ${FLAV}
+
+
+--- ### PIE
+file: Resources/Prototypes/Entities/Objects/Consumable/Food/Baked/pie.yml
+template: templ-flavorol-pie.yaml
+- match:
+  - id: ${ID}
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          reagents:
+          - ReagentId: Flavorol !Missing
+  action: merge
+  data:
+    components:
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: +${FLAV} !Math
+          reagents:
+          - ReagentId: Flavorol
+            Quantity: ${FLAV}
+
+
+
+
+
+
+
+
+
+
+
+

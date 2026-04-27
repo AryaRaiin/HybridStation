@@ -1,0 +1,56 @@
+# SPDX-FileCopyrightText: 2025 Ark
+# SPDX-FileCopyrightText: 2025 Whatstone
+# SPDX-FileCopyrightText: 2025 dustylens
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: latheRecipePack
+  id: NFMedicalStatic
+  recipes:
+  - VehicleWheelchairFolded
+  - ClothingOuterEVASuitMedic
+  - BaseChemistryEmptyVial
+  - BlankMediPen
+  - MedicalAppraisalTool
+  - HandheldCrewMonitor
+  - PowerCellSmall # For small appliances, convenience if anything
+  - CraftChemBag
+  - BeltMedicalEMT
+  - BeltMedical
+  - CraftMedicalBag
+  - BoneGel # Shitmed Change
+
+- type: latheRecipePack
+  id: SM
+  recipes:
+  - VehicleWheelchairFolded
+  - ClothingOuterEVASuitMedic
+  - BaseChemistryEmptyVial
+  - BlankMediPen
+  - MedicalAppraisalTool
+  - HandheldCrewMonitor
+  - PowerCellSmall # For small appliances, convenience if anything
+  - CraftChemBag
+  - BeltMedicalEMT
+  - BeltMedical
+  - CraftMedicalBag
+  - BoneGel # Shitmed Change
+
+- type: latheRecipePack
+  id: NFMedical
+  recipes:
+  - JugBluespace
+  - ReinforcedJug
+  - VialBluespace
+  - ClothingOuterHardsuitMedical
+
+- type: latheRecipePack
+  id: NFMedicalBoards
+  recipes:
+  - MedicalAssemblerMachineCircuitboard # Frontier
+  - ChemDispenserMachineCircuitboard
+  - ChemMasterMachineCircuitboard
+  - ReagentGrinderMachineCircuitboard
+  - HotplateMachineCircuitboard
+  - AutodocCircuitboard # Shitmed Change

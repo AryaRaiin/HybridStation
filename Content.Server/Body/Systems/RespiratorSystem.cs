@@ -1,6 +1,38 @@
+// SPDX-FileCopyrightText: 2021 Fishfish458
+// SPDX-FileCopyrightText: 2021 Vera Aguilera Puerto
+// SPDX-FileCopyrightText: 2021 metalgearsloth
+// SPDX-FileCopyrightText: 2022 Acruid
+// SPDX-FileCopyrightText: 2022 Illiux
+// SPDX-FileCopyrightText: 2022 Jezithyr
+// SPDX-FileCopyrightText: 2022 Kevin Zheng
+// SPDX-FileCopyrightText: 2022 Rane
+// SPDX-FileCopyrightText: 2022 mirrorcult
+// SPDX-FileCopyrightText: 2022 wrexbe
+// SPDX-FileCopyrightText: 2023 Cheackraze
+// SPDX-FileCopyrightText: 2023 Checkraze
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Emisse
+// SPDX-FileCopyrightText: 2023 TemporalOroboros
+// SPDX-FileCopyrightText: 2024 0x6273
+// SPDX-FileCopyrightText: 2024 Cojoke
+// SPDX-FileCopyrightText: 2024 Errant
+// SPDX-FileCopyrightText: 2024 Leon Friedrich
+// SPDX-FileCopyrightText: 2024 Mervill
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 SlamBamActionman
+// SPDX-FileCopyrightText: 2024 Verm
+// SPDX-FileCopyrightText: 2024 checkraze
+// SPDX-FileCopyrightText: 2024 lzk
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 ScyronX
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Server.Administration.Logs;
 using Content.Server.Atmos.EntitySystems;
 using Content.Server.Body.Components;
+using Content.Shared._Shitmed.Body.Components; // Shitmed Change
+using Content.Shared._Shitmed.Body.Organ; // Shitmed Change
 using Content.Server.Chat.Systems;
 using Content.Shared.Body.Systems;
 using Content.Shared.Alert;
@@ -78,12 +110,12 @@ public sealed class RespiratorSystem : EntitySystem
 
             respirator.NextUpdate += respirator.AdjustedUpdateInterval;
 
-            if (_mobState.IsDead(uid))
+            if (_mobState.IsDead(uid) || HasComp<BreathingImmunityComponent>(uid)) // Shitmed: BreathingImmunity
                 continue;
 
             UpdateSaturation(uid, -(float)respirator.UpdateInterval.TotalSeconds, respirator);
 
-            if (!_mobState.IsIncapacitated(uid)) // cannot breathe in crit.
+            if (!_mobState.IsIncapacitated(uid) && !HasComp<DebrainedComponent>(uid)) // Shitmed Change - Cannot breathe in crit or when no brain.
             {
                 switch (respirator.Status)
                 {
@@ -367,7 +399,10 @@ public sealed class RespiratorSystem : EntitySystem
         if (ent.Comp.SuffocationCycles == 2)
             _adminLogger.Add(LogType.Asphyxiation, $"{ToPrettyString(ent):entity} started suffocating");
 
-        _damageableSys.ChangeDamage(ent.Owner, ent.Comp.Damage, interruptsDoAfters: false);
+        //_damageableSys.ChangeDamage(ent.Owner, ent.Comp.Damage, interruptsDoAfters: false);
+        _damageableSys.ChangeDamage(ent.Owner, 
+            HasComp<DebrainedComponent>(ent) ? ent.Comp.Damage * 4.5f : ent.Comp.Damage, //shitmed
+            interruptsDoAfters: false);
 
         if (ent.Comp.SuffocationCycles < ent.Comp.SuffocationCycleThreshold)
             return;

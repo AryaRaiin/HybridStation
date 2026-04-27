@@ -5,7 +5,7 @@
   - Food
   completetime: 3
   materials:
-    Biomass: 70
+    Biomass: 16 # Mono
 
 - type: latheRecipe
   id: BioGenKoboldCube
@@ -14,7 +14,7 @@
   - Food
   completetime: 3
   materials:
-    Biomass: 70
+    Biomass: 16 # Mono
 
 - type: latheRecipe
   id: BioGenMaterialCloth1

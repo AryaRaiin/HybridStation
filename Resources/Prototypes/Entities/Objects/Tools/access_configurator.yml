@@ -1,5 +1,5 @@
 - type: entity
-  parent: BaseItem
+  parent: [BaseItem, BaseCommandContraband] # Frontier: Added BaseCommandContraband
   id: AccessConfigurator
   name: access configurator
   description: Used to modify the access level requirements for airlocks and other lockable devices.
@@ -50,6 +50,11 @@
       - Theatre
       - GenpopEnter
       - GenpopLeave
+      - Frontier # Frontier
+      - Mail # Frontier
+      - Mercenary # Frontier
+      - Pirate # Frontier
+      - StationTrafficController # Frontier
       privilegedIdSlot:
         name: id-card-console-privileged-id
         ejectSound: /Audio/Machines/id_swipe.ogg
@@ -131,6 +136,11 @@
     - Xenoborg
     - GenpopEnter
     - GenpopLeave
+    - Frontier # Frontier
+    - Mail # Frontier
+    - Mercenary # Frontier
+    - Pirate # Frontier
+    - StationTrafficController # Frontier
     privilegedIdSlot:
       name: id-card-console-privileged-id
       startingItem: UniversalIDCard

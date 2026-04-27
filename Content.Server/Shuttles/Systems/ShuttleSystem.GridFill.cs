@@ -82,6 +82,11 @@ public sealed partial class ShuttleSystem
     {
         spawned = EntityUid.Invalid;
 
+        // Frontier: handle empty prototype list, _random.Pick throws
+        if (group.Protos.Count <= 0)
+            return false;
+        // End Frontier
+
         if (!_gridQuery.Resolve(targetGrid.Owner, ref targetGrid.Comp))
         {
             return false;
@@ -108,7 +113,7 @@ public sealed partial class ShuttleSystem
         var spawnedGrid = _mapManager.CreateGridEntity(mapId);
 
         _transform.SetMapCoordinates(spawnedGrid, new MapCoordinates(Vector2.Zero, mapId));
-        _dungeon.GenerateDungeon(dungeonProto, spawnedGrid.Owner, spawnedGrid.Comp, Vector2i.Zero, _random.Next(), spawnCoords);
+        _dungeon.GenerateDungeon(dungeonProto, dungeonProto.ID, spawnedGrid.Owner, spawnedGrid.Comp, Vector2i.Zero, _random.Next(), spawnCoords); // Frontier: add dungeonProto.ID
 
         spawned = spawnedGrid.Owner;
         return true;

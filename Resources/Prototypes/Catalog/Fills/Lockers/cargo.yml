@@ -2,25 +2,31 @@
   id: FillSalvageSpecialistHardsuitSpatio
   table: !type:AllSelector
     children:
-    - id: OxygenTankFilled
+    # - id: OxygenTankFilled # Frontier
+    - id: AirTankFilled # Frontier
     - id: ClothingShoesBootsMag
     - id: ClothingOuterHardsuitSpatio
     - id: ClothingMaskGasExplorer
+    - id: JetpackMiniFilled # Frontier
 
 - type: entityTable
   id: LockerFillSalvageSpecialist
   table: !type:AllSelector
     children:
-    - id: ClothingBeltUtilityFilled
+    - id: ClothingEyesGlassesMeson # Frontier
+    - id: ClothingBeltUtilityEngineering # Frontier: Filled<Engineering
     - id: SurvivalKnife
-    - id: HandheldGPSBasic
-    - id: RadioHandheld
+    - id: RadioHandheldNF # Frontier - RadioHandheld<RadioHandheldNF
+    - id: OreBag # Frontier
+    - id: ConstructionBag # Mono
     - id: AppraisalTool
-    - id: FireExtinguisher
-    - id: Flare
-      prob: 0.3
-      rolls: !type:ConstantNumberSelector
-        value: 3
+    # - id: Flare # Frontier
+    #   prob: 0.3 # Frontier
+    #   rolls: !type:ConstantNumberSelector # Frontier
+    #     value: 3 # Frontier
+    - id: BoxDispenserFlare # Frontier
+    - id: Pickaxe # Frontier
+    - id: WeaponProtoKineticAccelerator # Frontier
 
 - type: entity
   id: LockerSalvageSpecialistFilledHardsuit

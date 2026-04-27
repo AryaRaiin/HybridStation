@@ -1,11 +1,17 @@
+using System.Linq; // Frontier
 using Content.Server.Construction.Components;
 using Content.Shared.Construction.Components;
+using Content.Shared.Construction.Prototypes;
 using Robust.Shared.Containers;
+using Robust.Shared.Map.Components;
+using Robust.Shared.Prototypes; // Frontier
+using Robust.Shared.Utility;
 
 namespace Content.Server.Construction;
 
 public sealed partial class ConstructionSystem
 {
+    [Dependency] private readonly IPrototypeManager _prototypeManager = default!; // Frontier
     private void InitializeMachines()
     {
         SubscribeLocalEvent<MachineComponent, ComponentInit>(OnMachineInit);
@@ -21,6 +27,7 @@ public sealed partial class ConstructionSystem
     private void OnMachineMapInit(EntityUid uid, MachineComponent component, MapInitEvent args)
     {
         CreateBoardAndStockParts(uid, component);
+        RefreshParts(uid, component); // Frontier: get initial upgrade values
     }
 
     private void CreateBoardAndStockParts(EntityUid uid, MachineComponent component)
@@ -71,5 +78,19 @@ public sealed partial class ConstructionSystem
                     throw new Exception($"Couldn't insert machine component part with default prototype '{tagName}' to machine with prototype {Prototype(uid)?.ID ?? "N/A"}");
             }
         }
+
+        // Frontier: keep separate lists for upgradeable parts
+        foreach (var (part, amount) in machineBoard.Requirements)
+        {
+            var partProto = _prototypeManager.Index<MachinePartPrototype>(part);
+            for (var i = 0; i < amount; i++)
+            {
+                var p = EntityManager.SpawnEntity(partProto.StockPartPrototype, xform.Coordinates);
+
+                if (!_container.Insert(p, partContainer))
+                    throw new Exception($"Couldn't insert machine part of type {part} to machine with prototype {partProto.StockPartPrototype.ToString() ?? "N/A"}!");
+            }
+        }
+        // End Frontier: keep separate lists for upgradeable parts
     }
 }

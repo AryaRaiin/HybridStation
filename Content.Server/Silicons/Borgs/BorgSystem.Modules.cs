@@ -1,9 +1,26 @@
+// SPDX-FileCopyrightText: 2023 Checkraze
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 TemporalOroboros
+// SPDX-FileCopyrightText: 2023 metalgearsloth
+// SPDX-FileCopyrightText: 2024 LankLTE
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 ScarKy0
+// SPDX-FileCopyrightText: 2025 Ilya246
+// SPDX-FileCopyrightText: 2025 Whatstone
+// SPDX-FileCopyrightText: 2025 deltanedas
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Linq;
 using Content.Shared.Hands.Components;
 using Content.Shared.Interaction.Components;
 using Content.Shared.Silicons.Borgs.Components;
 using Content.Shared.Whitelist;
 using Robust.Shared.Containers;
+using Content.Shared._NF.Silicons.Borgs; // Frontier
 
 namespace Content.Server.Silicons.Borgs;
 
@@ -295,6 +312,13 @@ public sealed partial class BorgSystem
             return false;
         }
 
+        // Frontier - event for DroppableBorgModule to use
+        var ev = new BorgCanInsertModuleEvent((uid, component), user);
+        RaiseLocalEvent(module, ref ev);
+        if (ev.Cancelled)
+            return false;
+        // End Frontier
+
         if (TryComp<ItemBorgModuleComponent>(module, out var itemModuleComp))
         {
             foreach (var containedModuleUid in component.ModuleContainer.ContainedEntities)
@@ -302,8 +326,11 @@ public sealed partial class BorgSystem
                 if (!TryComp<ItemBorgModuleComponent>(containedModuleUid, out var containedItemModuleComp))
                     continue;
 
+                /* Frontier: no item check
                 if (containedItemModuleComp.Hands.Count == itemModuleComp.Hands.Count &&
                     containedItemModuleComp.Hands.All(itemModuleComp.Hands.Contains))
+                */
+                if (containedItemModuleComp.ModuleId == itemModuleComp.ModuleId) // Frontier: ID comparison
                 {
                     if (user != null)
                         Popup.PopupEntity(Loc.GetString("borg-module-duplicate"), uid, user.Value);
@@ -327,8 +354,10 @@ public sealed partial class BorgSystem
         Entity<BorgModuleComponent> module,
         EntityUid? user = null)
     {
+        /* Mono - can remove even if default
         if (module.Comp.DefaultModule)
             return false;
+        */
 
         return true;
     }

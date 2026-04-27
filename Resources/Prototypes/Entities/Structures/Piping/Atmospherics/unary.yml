@@ -1,5 +1,5 @@
 - type: entity
-  parent: GasPipeBase
+  parent: [RecyclableItemSteelSmall, GasPipeBase] # Frontier: add RecyclableItemSteelSmall
   abstract: true
   id: GasUnaryBase
   placement:
@@ -41,7 +41,8 @@
       - enum.SubfloorLayers.FirstLayer
     - type: Sprite
       drawdepth: FloorObjects
-      sprite: Structures/Piping/Atmospherics/vent.rsi
+      sprite: _NF/Structures/Piping/Atmospherics/vent.rsi # Frontier
+      noRot: true # Frontier
       layers:
         - sprite: Structures/Piping/Atmospherics/pipe.rsi
           state: pipeUnaryConnectors
@@ -91,7 +92,8 @@
       - enum.SubfloorLayers.FirstLayer
     - type: Sprite
       drawdepth: FloorObjects
-      sprite: Structures/Piping/Atmospherics/vent.rsi
+      sprite: _NF/Structures/Piping/Atmospherics/vent.rsi # Frontier
+      noRot: true # Frontier
       layers:
         - sprite: Structures/Piping/Atmospherics/pipe.rsi
           state: pipeUnaryConnectors
@@ -131,7 +133,8 @@
       - enum.SubfloorLayers.FirstLayer
     - type: Sprite
       drawdepth: FloorObjects
-      sprite: Structures/Piping/Atmospherics/scrubber.rsi
+      sprite: _NF/Structures/Piping/Atmospherics/scrubber.rsi # Frontier
+      noRot: true # Frontier
       layers:
         - sprite: Structures/Piping/Atmospherics/pipe.rsi
           state: pipeUnaryConnectors
@@ -434,7 +437,7 @@
   - type: AtmosDevice
   - type: PipeRestrictOverlap
   - type: ApcPowerReceiver
-    powerLoad: 10000
+    powerLoad: 3000 # Frontier 10000<3000
   - type: Machine
     board: CondenserMachineCircuitBoard
   - type: WiresPanel

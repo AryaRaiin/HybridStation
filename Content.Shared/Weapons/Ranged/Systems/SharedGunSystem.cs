@@ -1,3 +1,41 @@
+// SPDX-FileCopyrightText: 2022 Rane
+// SPDX-FileCopyrightText: 2022 Salex08
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2023 AJCM-git
+// SPDX-FileCopyrightText: 2023 Arendian
+// SPDX-FileCopyrightText: 2023 Errant
+// SPDX-FileCopyrightText: 2023 Kara
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Nemanja
+// SPDX-FileCopyrightText: 2023 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2023 TaralGit
+// SPDX-FileCopyrightText: 2023 and_a
+// SPDX-FileCopyrightText: 2023 deltanedas
+// SPDX-FileCopyrightText: 2023 deltanedas <@deltanedas:kde.org>
+// SPDX-FileCopyrightText: 2024 Dakamakat
+// SPDX-FileCopyrightText: 2024 DrSmugleaf
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Ed
+// SPDX-FileCopyrightText: 2024 I.K
+// SPDX-FileCopyrightText: 2024 MilenVolf
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 SlamBamActionman
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 TemporalOroboros
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 keronshb
+// SPDX-FileCopyrightText: 2024 nikthechampiongr
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 Avalon
+// SPDX-FileCopyrightText: 2025 Aviu00
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 beck-thompson
+// SPDX-FileCopyrightText: 2025 slarticodefast
+// SPDX-FileCopyrightText: 2025 sleepyyapril
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Content.Shared.ActionBlocker;
@@ -35,6 +73,10 @@ using Robust.Shared.Random;
 using Robust.Shared.Serialization;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
+
+using Content.Shared.Mech.Components; // Delta-V: Felinids in duffelbags can't shoot.
+using Content.Shared.Buckle.Components; // Frontier: firing when buckled in space
+
 
 namespace Content.Shared.Weapons.Ranged.Systems;
 
@@ -93,6 +135,7 @@ public abstract partial class SharedGunSystem : EntitySystem
         InitializeClothing();
         InitializeContainer();
         InitializeSolution();
+        InitializeGunExamine(); // Emberfall
 
         // Interactions
         SubscribeLocalEvent<GunComponent, GetVerbsEvent<AlternativeVerb>>(OnAltVerb);
@@ -100,6 +143,8 @@ public abstract partial class SharedGunSystem : EntitySystem
         SubscribeLocalEvent<GunComponent, CycleModeEvent>(OnCycleMode);
         SubscribeLocalEvent<GunComponent, HandSelectedEvent>(OnGunSelected);
         SubscribeLocalEvent<GunComponent, MapInitEvent>(OnMapInit);
+
+        InitializeHolders(); // DeltaV
     }
 
     private void OnMapInit(Entity<GunComponent> gun, ref MapInitEvent args)
@@ -130,18 +175,35 @@ public abstract partial class SharedGunSystem : EntitySystem
     {
         var user = args.SenderSession.AttachedEntity;
 
+        /* UNKNOWN START
         if (user == null ||
             !_combatMode.IsInCombatMode(user) ||
             !TryGetGun(user.Value, out var ent, out var gun))
         {
             return;
         }
+        */
+        if (user == null || !_combatMode.IsInCombatMode(user))
+            return;
+        if (TryComp<MechPilotComponent>(user.Value, out var mechPilot))
+            user = mechPilot.Mech;
+        if (!TryGetGun(user.Value, out var ent, out var gun) ||
+            HasComp<ItemComponent>(user))
+            return;
+        // UNKNOWN END
 
         if (ent != GetEntity(msg.Gun))
             return;
 
         gun.ShootCoordinates = GetCoordinates(msg.Coordinates);
+        
+        /* GOOBSTATION START
         gun.Target = GetEntity(msg.Target);
+        */
+        var potentialTarget = GetEntity(msg.Target);
+        if (gun.Target == null || !gun.BurstActivated || !gun.LockOnTargetBurst)
+            gun.Target = potentialTarget;
+        // GOOBSTATION END
         AttemptShoot(user.Value, ent, gun);
     }
 
@@ -149,6 +211,7 @@ public abstract partial class SharedGunSystem : EntitySystem
     {
         var gunUid = GetEntity(ev.Gun);
 
+        /* UNKNOWN START: disable upstream method
         if (args.SenderSession.AttachedEntity == null ||
             !TryComp<GunComponent>(gunUid, out var gun) ||
             !TryGetGun(args.SenderSession.AttachedEntity.Value, out _, out var userGun))
@@ -158,6 +221,20 @@ public abstract partial class SharedGunSystem : EntitySystem
 
         if (userGun != gun)
             return;
+        */
+        var user = args.SenderSession.AttachedEntity;
+        if (user == null)
+            return;
+        if (TryComp<MechPilotComponent>(user.Value, out var mechPilot))
+            user = mechPilot.Mech;
+        if (!TryComp<GunComponent>(gunUid, out var gun) ||
+            !TryGetGun(user.Value, out _, out var userGun))
+        {
+            return;
+        }
+        if (userGun != gun)
+            return;
+        // UNKNOWN END
 
         StopShooting(gunUid, gun);
     }
@@ -174,6 +251,17 @@ public abstract partial class SharedGunSystem : EntitySystem
     {
         gunEntity = default;
         gunComp = null;
+
+        // UNKNOWN START
+        if (TryComp<MechComponent>(entity, out var mech) &&
+            mech.CurrentSelectedEquipment.HasValue &&
+            TryComp<GunComponent>(mech.CurrentSelectedEquipment.Value, out var mechGun))
+        {
+            gunEntity = mech.CurrentSelectedEquipment.Value;
+            gunComp = mechGun;
+            return true;
+        }
+        // UNKNOWN END
 
         if (_hands.GetActiveItem(entity) is { } held &&
             TryComp(held, out GunComponent? gun))
@@ -201,9 +289,20 @@ public abstract partial class SharedGunSystem : EntitySystem
 
         gun.ShotCounter = 0;
         gun.ShootCoordinates = null;
-        gun.Target = null;
+        //gun.Target = null; // GOOBSTATION: change upstream
+        if (!gun.LockOnTargetBurst || !gun.BurstActivated) { gun.Target = null; } // GOOBSTATION: make conditional
         DirtyField(uid, gun, nameof(GunComponent.ShotCounter));
     }
+
+    // FRONTIER START
+    /// <summary>
+    /// Frontier - Sets the targeted entity of the gun. Should be called before attempting to shoot to avoid shooting over the target.
+    /// </summary>
+    public void SetTarget(GunComponent gun, EntityUid target)
+    {
+        gun.Target = target;
+    }
+    // FRONTIER END
 
     /// <summary>
     /// Attempts to shoot at the target coordinates. Resets the shot counter after every shot.
@@ -232,6 +331,9 @@ public abstract partial class SharedGunSystem : EntitySystem
 
     private bool AttemptShoot(EntityUid user, EntityUid gunUid, GunComponent gun)
     {
+        if (TryComp<AutoShootGunComponent>(gunUid, out var auto) && !auto.CanFire) // Frontier
+            return; // Frontier
+
         if (gun.FireRateModified <= 0f ||
             !_actionBlockerSystem.CanAttack(user))
         {
@@ -318,6 +420,7 @@ public abstract partial class SharedGunSystem : EntitySystem
             {
                 PopupSystem.PopupClient(attemptEv.Message, gunUid, user);
             }
+            if (!gun.LockOnTargetBurst || gun.ShootCoordinates == null){ gun.Target = null; } // Goobstation
             gun.BurstActivated = false;
             gun.BurstShotsCount = 0;
             gun.NextFire = TimeSpan.FromSeconds(Math.Max(lastFire.TotalSeconds + SafetyNextFire, gun.NextFire.TotalSeconds));
@@ -326,7 +429,8 @@ public abstract partial class SharedGunSystem : EntitySystem
 
         var fromCoordinates = Transform(user).Coordinates;
         // Remove ammo
-        var ev = new TakeAmmoEvent(shots, new List<(EntityUid? Entity, IShootable Shootable)>(), fromCoordinates, user);
+        var ev = new TakeAmmoEvent(shots, new List<(EntityUid? Entity, IShootable Shootable)>(), fromCoordinates, user,
+            true); // Frontier: add intent to fire
 
         // Listen it just makes the other code around it easier if shots == 0 to do this.
         if (shots > 0)
@@ -347,6 +451,7 @@ public abstract partial class SharedGunSystem : EntitySystem
             var emptyGunShotEvent = new OnEmptyGunShotEvent(user);
             RaiseLocalEvent(gunUid, ref emptyGunShotEvent);
 
+            if (!gun.LockOnTargetBurst || gun.ShootCoordinates == null){ gun.Target = null; } // Goobstation
             gun.BurstActivated = false;
             gun.BurstShotsCount = 0;
             gun.NextFire += TimeSpan.FromSeconds(gun.BurstCooldown);
@@ -378,6 +483,7 @@ public abstract partial class SharedGunSystem : EntitySystem
             if (gun.BurstShotsCount >= gun.ShotsPerBurstModified)
             {
                 gun.NextFire += TimeSpan.FromSeconds(gun.BurstCooldown);
+                if (!gun.LockOnTargetBurst || gun.ShootCoordinates == null){ gun.Target = null; } // Goobstation
                 gun.BurstActivated = false;
                 gun.BurstShotsCount = 0;
             }
@@ -430,8 +536,11 @@ public abstract partial class SharedGunSystem : EntitySystem
 
         var targetMapVelocity = gunVelocity + direction.Normalized() * speed;
         var currentMapVelocity = Physics.GetMapLinearVelocity(uid, physics);
-        var finalLinear = physics.LinearVelocity + targetMapVelocity - currentMapVelocity;
+        //var finalLinear = physics.LinearVelocity + targetMapVelocity - currentMapVelocity;
+        var finalLinear = physics.LinearVelocity + targetMapVelocity - currentMapVelocity * 2 // MONO
         Physics.SetLinearVelocity(uid, finalLinear, body: physics);
+        Physics.SetAngularDamping(uid, physics, 0); // HULLROT, do not let these slow down
+        Physics.SetLinearDamping(uid, physics, 0); // HULLROT, do not let these slow down
 
         var projectile = EnsureComp<ProjectileComponent>(uid);
         projectile.Weapon = gunUid;
@@ -541,7 +650,8 @@ public abstract partial class SharedGunSystem : EntitySystem
         Physics.ApplyLinearImpulse(user, -impulseVector, body: userPhysics);
     }
 
-    public void RefreshModifiers(Entity<GunComponent?> gun)
+    public void RefreshModifiers(Entity<GunComponent?> gun,
+        EntityUid? User = null) // GoobStation change - User for NoWieldNeeded
     {
         if (!Resolve(gun, ref gun.Comp))
             return;
@@ -557,8 +667,17 @@ public abstract partial class SharedGunSystem : EntitySystem
             comp.MinAngle,
             comp.ShotsPerBurst,
             comp.FireRate,
-            comp.ProjectileSpeed
+            comp.ProjectileSpeed,
+            User // GoobStation change - User for NoWieldNeeded
         );
+
+        // DELTAV START
+        // Raise an event at the user of the gun so they have a chance to modify the gun's details.
+        if (gun.Comp.Holder != null)
+        {
+            RaiseLocalEvent(gun.Comp.Holder.Value, ref ev);
+        }
+        // DELTAV END
 
         RaiseLocalEvent(gun, ref ev);
 

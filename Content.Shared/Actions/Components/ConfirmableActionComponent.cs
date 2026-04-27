@@ -2,6 +2,7 @@ using Content.Shared.Actions;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
+using Content.Shared.Popups; // Goobstation
 
 namespace Content.Shared.Actions.Components;
 
@@ -19,8 +20,17 @@ public sealed partial class ConfirmableActionComponent : Component
     /// <summary>
     /// Warning popup shown when priming the action.
     /// </summary>
-    [DataField(required: true)]
+    //[DataField(required: true)]
+    [DataField] // Goobstation - Modsuits - Removed required string
     public LocId Popup = string.Empty;
+
+    // GOOBSTATION START
+    /// <summary>
+    /// Type of warning popup - Goobstaiton - Modsuits
+    /// </summary>
+    [DataField("popupType")]
+    public PopupType PopupFontType = PopupType.LargeCaution;
+    // GOOBSTATION END
 
     /// <summary>
     /// If not null, this is when the action can be confirmed at.

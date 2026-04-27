@@ -21,3 +21,8 @@ mech-no-enter = You cannot pilot this.
 mech-eject-pilot-alert = {$user} is pulling the pilot out of the {$item}!
 
 mech-construction-guide-string = All mech parts must be attached to the harness.
+
+# UNKNOWN START
+mech-custom-action-popup = Mass scanner activated! Opening radar display...
+gun-no-fire-station = GRAVITY DETECTED!! Overriding weapon controls!
+# UNKNOWN END

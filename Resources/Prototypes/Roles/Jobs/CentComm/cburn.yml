@@ -28,13 +28,13 @@
     outerClothing: ClothingOuterHardsuitCBURN
     shoes: ClothingShoesBootsCombatFilled
     id: CBURNPDA
-    pocket1: RadioHandheld
-    pocket2: WeaponLaserGun
+    pocket1: RadioHandheldNF # Frontier: RadioHandheld<RadioHandheldNF
+    pocket2: WeaponLaserPistolNF # Frontier: WeaponLaserGun<WeaponLaserPistolNF
     belt: ClothingBeltBandolier
   storage:
     back:
     - WeaponShotgunDoubleBarreled
-    - BoxShotgunIncendiary
+    - AmmoBox12_gaugeIncendiary
     - GrenadeFlashBang
     - PillAmbuzolPlus
     - PillAmbuzol

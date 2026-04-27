@@ -1,5 +1,6 @@
 using Content.Shared.Species.Components;
 using Content.Shared.Actions;
+using Content.Shared._NF.Bank.Components; // Frontier
 using Content.Shared.DoAfter;
 using Content.Shared.Popups;
 using Content.Shared.Stunnable;
@@ -74,6 +75,7 @@ public sealed partial class ReformSystem : EntitySystem
             BreakOnDamage = true,
             CancelDuplicate = true,
             RequireCanInteract = false,
+            MultiplyDelay = false, // Goobstation
         };
 
         _doAfterSystem.TryStartDoAfter(doAfter);
@@ -96,6 +98,15 @@ public sealed partial class ReformSystem : EntitySystem
         if (_mindSystem.TryGetMind(uid, out var mindId, out var mind))
             _mindSystem.TransferTo(mindId, child, mind: mind);
 
+        // Frontier: bank account transfer
+        if (HasComp<BankAccountComponent>(uid))
+        {
+            EnsureComp<BankAccountComponent>(child);
+        }
+
+        // Frontier
+        RaiseLocalEvent(child, new SetDionaCargoBlacklistEvent(child), true);
+
         // Delete the old entity
         QueueDel(uid);
     }
@@ -109,4 +120,9 @@ public sealed partial class ReformSystem : EntitySystem
 
     [Serializable, NetSerializable]
     public sealed partial class ReformDoAfterEvent : SimpleDoAfterEvent { }
+
+    public sealed partial class SetDionaCargoBlacklistEvent(EntityUid entity) : EntityEventArgs
+    {
+        public EntityUid ReformedDiona { get; } = entity;
+    }
 }

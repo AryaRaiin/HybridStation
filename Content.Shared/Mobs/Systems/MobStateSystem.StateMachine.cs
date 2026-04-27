@@ -2,6 +2,7 @@
 using Content.Shared.Humanoid;
 using Content.Shared.Mobs.Components;
 using Robust.Shared.Player;
+using Content.Shared._Shitmed.Body.Organ; // Shitmed
 
 namespace Content.Shared.Mobs.Systems;
 
@@ -105,6 +106,7 @@ public partial class MobStateSystem
         if (oldState == newState || !component.AllowedStates.Contains(newState))
             return;
 
+        if (oldState == MobState.Dead && HasComp<DebrainedComponent>(target)){return;} // Shitmed Change
         OnExitState(target, component, oldState);
         component.CurrentState = newState;
         OnEnterState(target, component, newState);

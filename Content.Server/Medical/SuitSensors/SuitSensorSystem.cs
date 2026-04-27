@@ -17,9 +17,12 @@ public sealed class SuitSensorSystem : SharedSuitSensorSystem
         base.Update(frameTime);
 
         var curTime = _gameTiming.CurTime;
-        var sensors = EntityQueryEnumerator<SuitSensorComponent, DeviceNetworkComponent>();
+        // Frontier
+        //var sensors = EntityQueryEnumerator<SuitSensorComponent, DeviceNetworkComponent>();
+        var sensors = EntityQueryEnumerator<SuitSensorComponent, DeviceNetworkComponent, TransformComponent>();
 
-        while (sensors.MoveNext(out var uid, out var sensor, out var device))
+        while (sensors.MoveNext(out var uid, out var sensor, out var device,
+            out var xform)) // Frontier modification
         {
             if (device.TransmitFrequency is null)
                 continue;
@@ -28,8 +31,10 @@ public sealed class SuitSensorSystem : SharedSuitSensorSystem
             if (curTime < sensor.NextUpdate)
                 continue;
 
+            /* -- Frontier modification
             if (!CheckSensorAssignedStation((uid, sensor)))
                 continue;
+            */
 
             sensor.NextUpdate += sensor.UpdateRate;
 
@@ -41,7 +46,9 @@ public sealed class SuitSensorSystem : SharedSuitSensorSystem
             //Retrieve active server address if the sensor isn't connected to a server
             if (sensor.ConnectedServer == null)
             {
-                if (!_singletonServerSystem.TryGetActiveServerAddress<CrewMonitoringServerComponent>(sensor.StationId!.Value, out var address))
+                // Frontier - PR 1053 QoL changes to coordinates display
+                // if (!_singletonServerSystem.TryGetActiveServerAddress<CrewMonitoringServerComponent>(sensor.StationId!.Value, out var address))
+                if (!_singletonServerSystem.TryGetActiveServerAddress<CrewMonitoringServerComponent>(xform.MapID, out var address))
                     continue;
 
                 sensor.ConnectedServer = address;

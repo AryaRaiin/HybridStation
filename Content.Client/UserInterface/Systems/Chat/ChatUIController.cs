@@ -1,3 +1,33 @@
+// SPDX-FileCopyrightText: 2022 Dylan Corrales
+// SPDX-FileCopyrightText: 2022 Jezithyr
+// SPDX-FileCopyrightText: 2023 Checkraze
+// SPDX-FileCopyrightText: 2023 Chief-Engineer
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Flipp Syder
+// SPDX-FileCopyrightText: 2023 KP
+// SPDX-FileCopyrightText: 2023 Kot
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Morb
+// SPDX-FileCopyrightText: 2023 Vasilis
+// SPDX-FileCopyrightText: 2023 Vasilis The Pikachu
+// SPDX-FileCopyrightText: 2023 Visne
+// SPDX-FileCopyrightText: 2023 deathride58
+// SPDX-FileCopyrightText: 2023 gus
+// SPDX-FileCopyrightText: 2023 metalgearsloth
+// SPDX-FileCopyrightText: 2023 router
+// SPDX-FileCopyrightText: 2024 Julian Giebel
+// SPDX-FileCopyrightText: 2024 Kara
+// SPDX-FileCopyrightText: 2024 LordCarve
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 Sk1tch
+// SPDX-FileCopyrightText: 2024 SlamBamActionman
+// SPDX-FileCopyrightText: 2024 Tainakov
+// SPDX-FileCopyrightText: 2024 TemporalOroboros
+// SPDX-FileCopyrightText: 2025 Ilya246
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
@@ -15,6 +45,7 @@ using Content.Client.Stylesheets;
 using Content.Client.UserInterface.Screens;
 using Content.Client.UserInterface.Systems.Chat.Widgets;
 using Content.Client.UserInterface.Systems.Gameplay;
+using Content.Shared._Starlight.CollectiveMind; // Goobstation - Starlight collective mind port
 using Content.Shared.Administration;
 using Content.Shared.CCVar;
 using Content.Shared.Chat;
@@ -61,6 +92,7 @@ public sealed partial class ChatUIController : UIController
 
     [UISystemDependency] private readonly ExamineSystem? _examine = default;
     [UISystemDependency] private readonly GhostSystem? _ghost = default;
+    [UISystemDependency] private readonly CollectiveMindSystem? _collectiveMind = default!;
     [UISystemDependency] private readonly TypingIndicatorSystem? _typingIndicator = default;
     [UISystemDependency] private readonly ChatSystem? _chatSys = default;
     [UISystemDependency] private readonly TransformSystem? _transform = default;
@@ -84,7 +116,8 @@ public sealed partial class ChatUIController : UIController
         {SharedChatSystem.EmotesAltPrefix, ChatSelectChannel.Emotes},
         {SharedChatSystem.AdminPrefix, ChatSelectChannel.Admin},
         {SharedChatSystem.RadioCommonPrefix, ChatSelectChannel.Radio},
-        {SharedChatSystem.DeadPrefix, ChatSelectChannel.Dead}
+        {SharedChatSystem.DeadPrefix, ChatSelectChannel.Dead},
+        {SharedChatSystem.CollectiveMindPrefix, ChatSelectChannel.CollectiveMind}
     };
 
     public static readonly Dictionary<ChatSelectChannel, char> ChannelPrefixes = new()
@@ -97,7 +130,8 @@ public sealed partial class ChatUIController : UIController
         {ChatSelectChannel.Emotes, SharedChatSystem.EmotesPrefix},
         {ChatSelectChannel.Admin, SharedChatSystem.AdminPrefix},
         {ChatSelectChannel.Radio, SharedChatSystem.RadioCommonPrefix},
-        {ChatSelectChannel.Dead, SharedChatSystem.DeadPrefix}
+        {ChatSelectChannel.Dead, SharedChatSystem.DeadPrefix},
+        {ChatSelectChannel.CollectiveMind, SharedChatSystem.CollectiveMindPrefix} // Goobstation - Starlight collective mind port
     };
 
     /// <summary>
@@ -226,6 +260,10 @@ public sealed partial class ChatUIController : UIController
 
         _input.SetInputCommand(ContentKeyFunctions.CycleChatChannelBackward,
             InputCmdHandler.FromDelegate(_ => CycleChatChannel(false)));
+
+        // Goobstation - Starlight collective mind port
+        _input.SetInputCommand(ContentKeyFunctions.FocusCollectiveMindChat,
+            InputCmdHandler.FromDelegate(_ => FocusChannel(ChatSelectChannel.CollectiveMind)));
 
         var gameplayStateLoad = UIManager.GetUIController<GameplayStateLoadController>();
         gameplayStateLoad.OnScreenLoad += OnScreenLoad;
@@ -560,7 +598,15 @@ public sealed partial class ChatUIController : UIController
             FilterableChannels |= ChatChannel.Admin;
             FilterableChannels |= ChatChannel.AdminAlert;
             FilterableChannels |= ChatChannel.AdminChat;
+            FilterableChannels |= ChatChannel.CollectiveMind; // Goobstation - Starlight collective mind port
             CanSendChannels |= ChatSelectChannel.Admin;
+        }
+
+        // collective mind
+        if (_collectiveMind != null && _collectiveMind.IsCollectiveMind)
+        {
+            FilterableChannels |= ChatChannel.CollectiveMind;
+            CanSendChannels |= ChatSelectChannel.CollectiveMind;
         }
 
         SelectableChannels = CanSendChannels;
@@ -692,21 +738,41 @@ public sealed partial class ChatUIController : UIController
            && _chatSys.TryProcessRadioMessage(uid, text, out _, out radioChannel, quiet: true);
     }
 
-    public void UpdateSelectedChannel(ChatBox box)
+    // Goobstation - Starlight collective mind port
+    private bool TryGetCollectiveMind(string text, out CollectiveMindPrototype? collectiveMind)
     {
-        var (prefixChannel, _, radioChannel) = SplitInputContents(box.ChatInput.Input.Text.ToLower());
-
-        if (prefixChannel == ChatSelectChannel.None)
-            box.ChatInput.ChannelSelector.UpdateChannelSelectButton(box.SelectedChannel, null);
-        else
-            box.ChatInput.ChannelSelector.UpdateChannelSelectButton(prefixChannel, radioChannel);
+        collectiveMind = null;
+        return _player.LocalEntity is { Valid: true } uid
+               && _chatSys != null
+               && _chatSys.TryProccessCollectiveMindMessage(uid, text, out _, out collectiveMind, quiet: true);
     }
 
-    public (ChatSelectChannel chatChannel, string text, RadioChannelPrototype? radioChannel) SplitInputContents(string text)
+    public void UpdateSelectedChannel(ChatBox box)
+    {
+        // <Goobstation> - Starlight collective mind port
+        var (prefixChannel, _, radioChannel, collectiveMind) = SplitInputContents(box.ChatInput.Input.Text.ToLower());
+
+        switch (prefixChannel)
+        {
+            case ChatSelectChannel.None:
+                box.ChatInput.ChannelSelector.UpdateChannelSelectButton(box.SelectedChannel, null, null);
+                break;
+            case ChatSelectChannel.CollectiveMind:
+                box.ChatInput.ChannelSelector.UpdateChannelSelectButton(prefixChannel, null, collectiveMind);
+                break;
+            default:
+                box.ChatInput.ChannelSelector.UpdateChannelSelectButton(prefixChannel, radioChannel, null);
+                break;
+        }
+        // </Goobstation>
+    }
+
+    // Goobstation - Starlight collective mind port
+    public (ChatSelectChannel chatChannel, string text, RadioChannelPrototype? radioChannel, CollectiveMindPrototype? collectiveMind) SplitInputContents(string text)
     {
         text = text.Trim();
         if (text.Length == 0)
-            return (ChatSelectChannel.None, text, null);
+            return (ChatSelectChannel.None, text, null, null); // Goobstation - Starlight collective mind port
 
         // We only cut off prefix only if it is not a radio or local channel, which both map to the same /say command
         // because ????????
@@ -718,20 +784,24 @@ public sealed partial class ChatUIController : UIController
             chatChannel = PrefixToChannel.GetValueOrDefault(text[0]);
 
         if ((CanSendChannels & chatChannel) == 0)
-            return (ChatSelectChannel.None, text, null);
+            return (ChatSelectChannel.None, text, null, null); // Goobstation - Starlight collective mind port
 
         if (chatChannel == ChatSelectChannel.Radio)
-            return (chatChannel, text, radioChannel);
+            return (chatChannel, text, radioChannel, null); // Goobstation - Starlight collective mind port
+
+        // Goobstation - Starlight collective mind port
+        if (TryGetCollectiveMind(text, out var collectiveMind) && chatChannel == ChatSelectChannel.CollectiveMind)
+            return (chatChannel, text, radioChannel, collectiveMind);
 
         if (chatChannel == ChatSelectChannel.Local)
         {
             if (_ghost?.IsGhost != true)
-                return (chatChannel, text, null);
+                return (chatChannel, text, null, null); // Goobstation - Starlight collective mind port
             else
                 chatChannel = ChatSelectChannel.Dead;
         }
 
-        return (chatChannel, text[1..].TrimStart(), null);
+        return (chatChannel, text[1..].TrimStart(), null, null); // Goobstation - Starlight collective mind port
     }
 
     public void SendMessage(ChatBox box, ChatSelectChannel channel)
@@ -746,7 +816,7 @@ public sealed partial class ChatUIController : UIController
         if (string.IsNullOrWhiteSpace(text))
             return;
 
-        (var prefixChannel, text, var _) = SplitInputContents(text);
+        (var prefixChannel, text, var _, var _) = SplitInputContents(text); // Goobstation - Starlight collective mind port
 
         // Check if message is longer than the character limit
         if (text.Length > MaxMessageLength)

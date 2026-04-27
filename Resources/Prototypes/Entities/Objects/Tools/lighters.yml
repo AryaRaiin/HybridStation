@@ -1,6 +1,6 @@
 - type: entity
   name: basic lighter
-  parent: BaseItem
+  parent: [BaseItem, RecyclableItemDeviceTiny] # Frontier: added RecyclableItemDeviceTiny
   id: Lighter
   description: "A simple plastic cigarette lighter."
   components:
@@ -89,6 +89,12 @@
     color: orange
   - type: ItemTogglePointLight
   - type: PhysicalComposition
+  - type: StaticPrice # Frontier
+    price: 15 # Frontier
+  - type: NFLighter # Frontier
+  - type: Cautery # Shitmed
+    speed: 0.45
+  - type: SurgeryTool # Shitmed
 
 - type: entity
   name: cheap lighter

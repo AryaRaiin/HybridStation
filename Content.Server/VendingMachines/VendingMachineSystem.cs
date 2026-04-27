@@ -1,3 +1,40 @@
+// SPDX-FileCopyrightText: 2022 Alex Evgrashin
+// SPDX-FileCopyrightText: 2022 Andreas Kämper
+// SPDX-FileCopyrightText: 2022 EmoGarbage404
+// SPDX-FileCopyrightText: 2022 Fishfish458
+// SPDX-FileCopyrightText: 2022 Flipp Syder
+// SPDX-FileCopyrightText: 2022 Rane
+// SPDX-FileCopyrightText: 2022 Visne
+// SPDX-FileCopyrightText: 2022 fishfish458 <fishfish458>
+// SPDX-FileCopyrightText: 2023 Cheackraze
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Nemanja
+// SPDX-FileCopyrightText: 2023 Slava0135
+// SPDX-FileCopyrightText: 2023 Vordenburg
+// SPDX-FileCopyrightText: 2023 deltanedas
+// SPDX-FileCopyrightText: 2023 keronshb
+// SPDX-FileCopyrightText: 2024 Checkraze
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Ed
+// SPDX-FileCopyrightText: 2024 GreaseMonk
+// SPDX-FileCopyrightText: 2024 LordCarve
+// SPDX-FileCopyrightText: 2024 Niels Huylebroeck
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 Repo
+// SPDX-FileCopyrightText: 2024 Robert V
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 checkraze
+// SPDX-FileCopyrightText: 2024 goet
+// SPDX-FileCopyrightText: 2024 lzk
+// SPDX-FileCopyrightText: 2024 metalgearsloth
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 ScarKy0
+// SPDX-FileCopyrightText: 2025 Whatstone
+// SPDX-FileCopyrightText: 2025 ark1368
+//
+// SPDX-License-Identifier: MPL-2.0
+
 using System.Linq;
 using System.Numerics;
 using Content.Server.Cargo.Systems;
@@ -15,6 +52,19 @@ using Content.Shared.VendingMachines;
 using Content.Shared.Wall;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
+using Content.Server._NF.Bank; // Frontier
+using Content.Shared._NF.Bank.Components; // Frontier
+using Robust.Shared.Timing; // Frontier?
+using Robust.Shared.Audio.Systems; // Frontier?
+using Content.Server.Administration.Logs; // Frontier
+using Content.Shared.Database; // Frontier
+using Content.Shared._NF.Bank.BUI; // Frontier
+using Content.Server._NF.Contraband.Systems; // Frontier
+using Content.Shared.Stacks; // Frontier
+using Content.Server.Stack; // Frontier?
+using Content.Server._Mono.VendingMachine; // Mono
+using Content.Shared._Mono.Traits.Physical; // Mono
+using Robust.Shared.Containers; // Frontier
 
 namespace Content.Server.VendingMachines
 {
@@ -23,6 +73,15 @@ namespace Content.Server.VendingMachines
         [Dependency] private readonly IRobustRandom _random = default!;
         [Dependency] private readonly PricingSystem _pricing = default!;
         [Dependency] private readonly ThrowingSystem _throwingSystem = default!;
+
+        [Dependency] private readonly IPrototypeManager _prototypeManager = default!; // Frontier
+        [Dependency] private readonly SharedAudioSystem _audioSystem = default!; // Frontier
+        [Dependency] private readonly BankSystem _bankSystem = default!; // Frontier
+        [Dependency] private readonly PopupSystem _popupSystem = default!; // Frontier
+        [Dependency] private readonly IAdminLogManager _adminLogger = default!; // Frontier
+        [Dependency] private readonly ContrabandTurnInSystem _contraband = default!; // Frontier
+        [Dependency] private readonly StackSystem _stack = default!; // Frontier
+        [Dependency] private readonly VendingMachinePurchaseSystem _vendingPurchase = default!; // Mono
 
         private const float WallVendEjectDistanceFromWall = 1f;
 
@@ -40,6 +99,9 @@ namespace Content.Server.VendingMachines
             SubscribeLocalEvent<VendingMachineComponent, VendingMachineSelfDispenseEvent>(OnSelfDispense);
 
             SubscribeLocalEvent<VendingMachineRestockComponent, PriceCalculationEvent>(OnPriceCalculation);
+
+            SubscribeLocalEvent<VendingMachineComponent, EntInsertedIntoContainerMessage>(OnEntityInserted); // Frontier
+            SubscribeLocalEvent<VendingMachineComponent, EntRemovedFromContainerMessage>(OnEntityRemoved); // Frontier
         }
 
         private void OnVendingPrice(EntityUid uid, VendingMachineComponent component, ref PriceCalculationEvent args)
@@ -54,10 +116,11 @@ namespace Content.Server.VendingMachines
                     continue;
                 }
 
-                price += entry.Amount * _pricing.GetEstimatedPrice(proto);
+                //price += entry.Amount * _pricing.GetEstimatedPrice(proto);
+                price += entry.Amount; // Frontier - This is used to price the worth of a vending machine with the inventory it has.
             }
 
-            args.Price += price;
+            //args.Price += price; // Frontier Disabled Upstream - This is used to price the worth of a vending machine with the inventory it has.
         }
 
         protected override void OnMapInit(EntityUid uid, VendingMachineComponent component, MapInitEvent args)
@@ -207,6 +270,17 @@ namespace Content.Server.VendingMachines
 
             var ent = Spawn(vendComponent.NextItemToEject, spawnCoordinates);
 
+            _contraband.ClearContrabandValue(ent); // Frontier
+
+            // MONO START: Track vending machine purchases for pricing modifications
+            // Only track if this was a paid purchase (not a random eject or force eject)
+            if (!forceEject && vendComponent.LastPurchasePrice.HasValue)
+            {
+                _vendingPurchase.MarkAsPurchased(ent, uid, vendComponent.LastPurchasePrice.Value);
+                vendComponent.LastPurchasePrice = null; // Clear after use
+            }
+            // MONO END
+
             if (vendComponent.ThrowNextItem)
             {
                 var range = vendComponent.NonLimitedEjectRange;
@@ -235,6 +309,10 @@ namespace Content.Server.VendingMachines
 
         private void OnPriceCalculation(EntityUid uid, VendingMachineRestockComponent component, ref PriceCalculationEvent args)
         {
+            // FRONTIER? START
+            args.Price = 0; // This area of the code make it so the cargoblacklist gets ignored, this change was to resolve it.
+            return;
+            // FRONTIER? END
             List<double> priceSets = new();
 
             // Find the most expensive inventory and use that as the highest price.
@@ -261,5 +339,29 @@ namespace Content.Server.VendingMachines
         {
             args.Cancelled |= ent.Comp.Broken;
         }
+        // FRONTIER START: cash slot logic
+        private void OnEntityInserted(Entity<VendingMachineComponent> ent, ref EntInsertedIntoContainerMessage args)
+        {
+            if (ent.Comp.CashSlotName != null
+            && ent.Comp.CurrencyStackType != null
+            && ItemSlots.TryGetSlot(ent, ent.Comp.CashSlotName, out var slot)
+            && TryComp<StackComponent>(slot?.ContainerSlot?.ContainedEntity, out var stack)
+            && stack.StackTypeId == ent.Comp.CurrencyStackType)
+            {
+                ent.Comp.CashSlotBalance = stack.Count;
+            }
+            else
+            {
+                ent.Comp.CashSlotBalance = 0;
+            }
+            Dirty(ent, ent.Comp);
+        }
+
+        private void OnEntityRemoved(Entity<VendingMachineComponent> ent, ref EntRemovedFromContainerMessage args)
+        {
+            ent.Comp.CashSlotBalance = 0;
+            Dirty(ent, ent.Comp);
+        }
+        // FRONTIER END: cash slot logic
     }
 }

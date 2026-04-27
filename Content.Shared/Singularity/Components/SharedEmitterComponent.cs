@@ -35,7 +35,8 @@ public sealed partial class EmitterComponent : Component
     /// The current amount of power being used.
     /// </summary>
     [DataField]
-    public int PowerUseActive = 600;
+    //public int PowerUseActive = 600;
+    public int PowerUseActive = 1500; // Frontier 600<1500
 
     /// <summary>
     /// The amount of shots that are fired in a single "burst"
@@ -96,6 +97,41 @@ public sealed partial class EmitterComponent : Component
     /// </summary>
     [DataField]
     public Dictionary<ProtoId<SinkPortPrototype>, EntProtoId> SetTypePorts = new();
+
+    // UNKNOWN START
+    /// <summary>
+    /// The base amount of time between each shot during a burst.
+    /// </summary>
+    [DataField, ViewVariables(VVAccess.ReadWrite)]
+    public TimeSpan BaseFireInterval = TimeSpan.FromSeconds(2);
+    /// <summary>
+
+    /// The base minimum delay between shot bursts.
+    /// Used for machine part rating calculations.
+    /// </summary>
+    [DataField]
+    public TimeSpan BaseFireBurstDelayMin = TimeSpan.FromSeconds(4);
+
+    /// <summary>
+    /// The base maximum delay between shot bursts.
+    /// Used for machine part rating calculations.
+    /// </summary>
+    [DataField]
+    public TimeSpan BaseFireBurstDelayMax = TimeSpan.FromSeconds(10);
+
+    /// <summary>
+    /// The multiplier for the base delay between shot bursts as well as
+    /// the fire interval
+    /// </summary>
+    [DataField, ViewVariables(VVAccess.ReadWrite)]
+    public float FireRateMultiplier = 0.8f;
+
+    /// <summary>
+    /// The machine part that affects burst delay.
+    /// </summary>
+    [DataField]
+    public ProtoId<MachinePartPrototype> MachinePartFireRate = "Capacitor";
+    // UNKNOWN END
 }
 
 [NetSerializable, Serializable]

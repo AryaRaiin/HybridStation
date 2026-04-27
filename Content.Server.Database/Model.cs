@@ -403,6 +403,7 @@ namespace Content.Server.Database
         [Column("char_name")] public string CharacterName { get; set; } = null!;
         public string FlavorText { get; set; } = null!;
         public int Age { get; set; }
+        public int BankBalance { get; set; } //PULSARSEDGE
         public string Sex { get; set; } = null!;
         public string Gender { get; set; } = null!;
         public string Species { get; set; } = null!;
@@ -413,6 +414,8 @@ namespace Content.Server.Database
         public string FacialHairColor { get; set; } = null!;
         public string EyeColor { get; set; } = null!;
         public string SkinColor { get; set; } = null!;
+        public float Height { get; set; } = 1.0f; //PULSARSEDGE
+        public float Width { get; set; } = 1.0f; //PULSARSEDGE
         public int SpawnPriority { get; set; } = 0;
         public List<Job> Jobs { get; } = new();
         public List<Antag> Antags { get; } = new();
@@ -989,7 +992,8 @@ namespace Content.Server.Database
         /// Results from rejected connections with external API checking tools
         IPChecks = 5,
         /// Results from rejected connections who are authenticated but have no modern hwid associated with them.
-        NoHwid = 6
+        NoHwid = 6,
+        Connected = 255 // PULSARSEDGE
     }
 
     public class ServerBanHit

@@ -1,3 +1,11 @@
+# SPDX-FileCopyrightText: 2025 Ghagliiarghii
+# SPDX-FileCopyrightText: 2025 Hyenh
+# SPDX-FileCopyrightText: 2025 Whatstone
+# SPDX-FileCopyrightText: 2025 deltanedas
+# SPDX-FileCopyrightText: 2025 Джексон Миссиссиппи
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 ## Static
 
 - type: latheRecipePack
@@ -89,32 +97,34 @@
   recipes:
   - ClothingUniformJumpsuitDetective
   - ClothingUniformJumpskirtDetective
-  - ClothingHeadHatBeretHoS
-  - ClothingHeadHatHoshat
-  - ClothingUniformJumpsuitHoS
-  - ClothingUniformJumpskirtHoS
-  - ClothingUniformJumpsuitHosFormal
-  - ClothingUniformJumpskirtHosFormal
-  - ClothingUniformJumpsuitHoSAlt
-  - ClothingUniformJumpskirtHoSAlt
-  - ClothingUniformJumpsuitHoSBlue
-  - ClothingUniformJumpsuitHoSGrey
-  - ClothingUniformJumpsuitHoSParadeMale
-  - ClothingUniformJumpskirtHoSParadeMale
+  # - ClothingHeadHatBeretHoS # Frontier
+  # - ClothingHeadHatHoshat # Frontier
+  # - ClothingUniformJumpsuitHoS # Frontier
+  # - ClothingUniformJumpskirtHoS # Frontier
+  # - ClothingUniformJumpsuitHosFormal # Frontier
+  # - ClothingUniformJumpskirtHosFormal # Frontier
+  # - ClothingUniformJumpsuitHoSAlt # Frontier
+  # - ClothingUniformJumpskirtHoSAlt # Frontier
+  # - ClothingUniformJumpsuitHoSBlue # Frontier
+  # - ClothingUniformJumpsuitHoSGrey # Frontier
+  # - ClothingUniformJumpsuitHoSParadeMale # Frontier
+  # - ClothingUniformJumpskirtHoSParadeMale # Frontier
   - ClothingUniformJumpsuitSeniorOfficer
   - ClothingUniformJumpskirtSeniorOfficer
   - ClothingUniformJumpsuitPrisoner
   - ClothingUniformJumpskirtPrisoner
-  - ClothingHeadHatBeretSecurity
-  - ClothingUniformJumpsuitSec
-  - ClothingUniformJumpskirtSec
-  - ClothingHeadHatBeretBrigmedic
-  - ClothingUniformJumpsuitBrigmedic
-  - ClothingUniformJumpskirtBrigmedic
-  - ClothingHeadHatBeretWarden
-  - ClothingHeadHatWarden
-  - ClothingUniformJumpsuitWarden
-  - ClothingUniformJumpskirtWarden
+  # - ClothingHeadHatBeretSecurity # Frontier
+  # - ClothingUniformJumpsuitSec # Frontier
+  # - ClothingUniformJumpskirtSec # Frontier
+  # - ClothingHeadHatBeretBrigmedic # Frontier
+  # - ClothingUniformJumpsuitBrigmedic # Frontier
+  # - ClothingUniformJumpskirtBrigmedic # Frontier
+  # - ClothingHeadHatBeretWarden # Frontier
+  # - ClothingHeadHatWarden # Frontier
+  # - ClothingUniformJumpsuitWarden # Frontier
+  # - ClothingUniformJumpskirtWarden # Frontier
+  - ClothingUniformJumpsuitPrivateSec # Frontier
+  - ClothingUniformJumpskirtPrivateSec # Frontier
 
 - type: latheRecipePack
   id: ClothingService
@@ -144,8 +154,8 @@
   - ClothingOuterWinterCE
   - ClothingOuterWinterCMO
   - ClothingOuterWinterHoP
-  - ClothingOuterWinterHoSUnarmored
-  - ClothingOuterWinterWardenUnarmored
+  # - ClothingOuterWinterHoSUnarmored # Frontier
+  # - ClothingOuterWinterWardenUnarmored # Frontier
   - ClothingOuterWinterQM
   - ClothingOuterWinterRD
   - ClothingOuterWinterMusician
@@ -167,7 +177,8 @@
   - ClothingOuterWinterViro
   - ClothingOuterWinterSci
   - ClothingOuterWinterRobo
-  - ClothingOuterWinterSec
+  # - ClothingOuterWinterSec # Frontier
+  - ClothingOuterWinterCoatMail # Frontier
 
 - type: latheRecipePack
   id: Ties
@@ -189,6 +200,18 @@
   - ClothingNeckScarfStripedPurple
 
 - type: latheRecipePack
+  id: Ponchos
+  recipes:
+  - ClothingNeckPonchoBlack
+  - ClothingNeckPonchoArctic
+  - ClothingNeckPonchoSmallPurple
+  - ClothingNeckPonchoSmallRed
+  - ClothingNeckPonchoSmallPink
+  - ClothingNeckPonchoSmallOrange
+  - ClothingNeckPonchoSmallWhite
+  - ClothingNeckPonchoSmallBlack
+
+- type: latheRecipePack
   id: Carpets
   recipes:
   - Carpet
@@ -198,6 +221,7 @@
   - CarpetGreen
   - CarpetOrange
   - CarpetPurple
+  - FloorCarpetItemSkyBlue # Frontier
   - CarpetCyan
   - CarpetWhite
   - CarpetSkyBlue
@@ -228,7 +252,7 @@
   - ClothingUniformJumpsuitPyjamaSyndicatePink
   - ClothingHeadPyjamaSyndicateRed
   - ClothingUniformJumpsuitPyjamaSyndicateRed
-  - ClothingOuterWinterCentcom
+  # - ClothingOuterWinterCentcom # Frontier
   - ClothingOuterWinterSyndie
   - ClothingOuterWinterSyndieCap
   - BedsheetSyndie

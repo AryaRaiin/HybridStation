@@ -1,3 +1,37 @@
+# SPDX-FileCopyrightText: 2022 Pieter-Jan Briers
+# SPDX-FileCopyrightText: 2022 Visne
+# SPDX-FileCopyrightText: 2022 keronshb
+# SPDX-FileCopyrightText: 2023 Darkie
+# SPDX-FileCopyrightText: 2023 DrSmugleaf
+# SPDX-FileCopyrightText: 2023 Leon Friedrich
+# SPDX-FileCopyrightText: 2023 Michael Cu
+# SPDX-FileCopyrightText: 2023 Nim
+# SPDX-FileCopyrightText: 2023 PixelTK
+# SPDX-FileCopyrightText: 2023 Slava0135
+# SPDX-FileCopyrightText: 2023 lzk
+# SPDX-FileCopyrightText: 2023 sTiKyt
+# SPDX-FileCopyrightText: 2024 Aviu00
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 Elysium206
+# SPDX-FileCopyrightText: 2024 Hannah Giovanna Dawson
+# SPDX-FileCopyrightText: 2024 Kara
+# SPDX-FileCopyrightText: 2024 Nairod
+# SPDX-FileCopyrightText: 2024 Nemanja
+# SPDX-FileCopyrightText: 2024 Plykiya
+# SPDX-FileCopyrightText: 2024 Whatstone
+# SPDX-FileCopyrightText: 2024 degradka
+# SPDX-FileCopyrightText: 2024 deltanedas
+# SPDX-FileCopyrightText: 2024 liltenhead
+# SPDX-FileCopyrightText: 2024 metalgearsloth
+# SPDX-FileCopyrightText: 2024 slarticodefast
+# SPDX-FileCopyrightText: 2025 BramvanZijp
+# SPDX-FileCopyrightText: 2025 DieselMohawk
+# SPDX-FileCopyrightText: 2025 Nox
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 the-hivequeen
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 - type: entity
   name: base shield
   parent: BaseItem
@@ -58,13 +92,13 @@
                   min: 2
                   max: 2
     - type: StaticPrice
-      price: 100
+      price: 50 # Frontier: 100<50 - TODO: material value rework
 
 #Security Shields
 
 - type: entity
   name: riot shield
-  parent: [ BaseShield, BaseSecurityContraband ]
+  parent: [ BaseShield, BaseC1Contraband ] # Frontier: BaseSecurityContraband<BaseC1Contraband
   id: RiotShield
   description: A large tower shield. Good for controlling crowds.
   components:
@@ -85,7 +119,7 @@
 
 - type: entity
   name: laser shield
-  parent: [ BaseShield, BaseSecurityContraband ]
+  parent: [ BaseShield, BaseC2ContrabandUnredeemable ] # Frontier: BaseSecurityContraband<BaseC2ContrabandUnredeemable
   id: RiotLaserShield
   description: A shield built for withstanding lasers, but not much else.
   components:
@@ -105,7 +139,7 @@
 
 - type: entity
   name: ballistic shield
-  parent: [ BaseShield, BaseSecurityContraband ]
+  parent: [ BaseShield, BaseC2ContrabandUnredeemable ] # Frontier: BaseSecurityContraband<BaseC2ContrabandUnredeemable
   id: RiotBulletShield
   description: A shield built for protecting against ballistics, but not much else.
   components:
@@ -420,15 +454,22 @@
 
 - type: entity
   name: energy shield
-  parent: [BaseItem, BaseSyndicateContraband]
+  parent: [BaseItem, BaseC3SyndicateContraband] # Frontier: BaseSyndicateContraband<BaseC3SyndicateContraband
   id: EnergyShield
   description: Exotic energy shield, when folded, can even fit in your pocket.
   components:
     - type: ItemToggle
+      predictable: false # WD EDIT
       soundActivate:
         path: /Audio/Weapons/ebladeon.ogg
       soundDeactivate:
         path: /Audio/Weapons/ebladeoff.ogg
+      # WD EDIT START
+      soundFailToActivate:
+        path: /Audio/Machines/button.ogg
+        params:
+          variation: 0.250
+      # WD EDIT END
     - type: ItemToggleActiveSound
       activeSound:
         path: /Audio/Weapons/ebladehum.ogg
@@ -466,11 +507,12 @@
       netsync: false
       enabled: false
       radius: 1.5
-      energy: 2
-      color: blue
+      energy: 0.7 # WD EDIT
+      color: "#678AD9" # WD EDIT
     - type: ItemTogglePointLight
     - type: Reflect
-      reflectProb: 0.95
+      reflectProb: 1 # WD EDIT
+      damageOnReflectModifier: 1 # Goob edit
       reflects:
         - Energy
     - type: Blocking
@@ -479,7 +521,7 @@
           Blunt: 1.0
           Slash: 0.9
           Piercing: 0.85
-          Heat: 0.6
+          Heat: 0.5 # WD EDIT
       activeBlockModifier:
         coefficients:
           Blunt: 1.2
@@ -492,30 +534,17 @@
     - type: Appearance
     - type: Damageable
       damageContainer: Shield
-    - type: Destructible
-      thresholds:
-        - trigger:
-            !type:DamageTrigger
-            damage: 180
-          behaviors:
-            - !type:DoActsBehavior
-              acts: [ "Destruction" ]
-        - trigger:
-            !type:DamageTrigger
-            damage: 100
-          behaviors:
-            - !type:DoActsBehavior
-              acts: [ "Destruction" ]
-            - !type:PlaySoundBehavior
-              sound:
-                collection: GlassBreak
-            - !type:SpawnEntitiesBehavior
-              spawn:
-                BrokenEnergyShield:
-                  min: 1
-                  max: 1
     - type: StaticPrice
       price: 350
+      # WD EDIT START
+    - type: Battery
+      maxCharge: 60
+      startingCharge: 60
+    - type: BatterySelfRecharger
+      autoRecharge: true
+      autoRechargeRate: 5
+    - type: RechargeableBlocking
+      # WD EDIT END
 
 - type: entity
   name: broken energy shield
@@ -530,10 +559,12 @@
       sprite: Objects/Weapons/Melee/e_shield.rsi
       size: Small
       heldPrefix: eshield
+    - type: StaticPrice
+      price: 15
 
 - type: entity
   name: telescopic shield
-  parent: BaseShield
+  parent: [BaseShield, BaseC2ContrabandUnredeemable] # Frontier: BaseC2ContrabandUnredeemable
   id: TelescopicShield
   description: An advanced riot shield made of lightweight materials that collapses for easy storage.
   components:

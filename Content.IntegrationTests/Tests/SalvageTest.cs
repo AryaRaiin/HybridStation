@@ -1,4 +1,4 @@
-﻿using Content.Shared.CCVar;
+using Content.Shared.CCVar;
 using Content.Shared.Salvage;
 using Robust.Shared.Configuration;
 using Robust.Shared.EntitySerialization.Systems;
@@ -14,6 +14,7 @@ public sealed class SalvageTest
     /// Asserts that all salvage maps have been saved as grids and are loadable.
     /// </summary>
     [Test]
+    [Ignore("Not currently used by Frontier.")] // Frontier
     public async Task AllSalvageMapsLoadableTest()
     {
         await using var pair = await PoolManager.GetServerClient();

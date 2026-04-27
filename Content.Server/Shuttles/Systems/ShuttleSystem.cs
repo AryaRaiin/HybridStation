@@ -1,3 +1,33 @@
+// SPDX-FileCopyrightText: 2021 DrSmugleaf
+// SPDX-FileCopyrightText: 2021 Wrexbe
+// SPDX-FileCopyrightText: 2022 Moony
+// SPDX-FileCopyrightText: 2022 Paul Ritter
+// SPDX-FileCopyrightText: 2022 Radrark
+// SPDX-FileCopyrightText: 2022 Vera Aguilera Puerto
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2022 wrexbe
+// SPDX-FileCopyrightText: 2023 Kevin Zheng
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2023 Tom Leys
+// SPDX-FileCopyrightText: 2023 Varen
+// SPDX-FileCopyrightText: 2024 ElectroJr
+// SPDX-FileCopyrightText: 2024 Mervill
+// SPDX-FileCopyrightText: 2024 MilenVolf
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Simon
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 checkraze
+// SPDX-FileCopyrightText: 2024 neuPanda
+// SPDX-FileCopyrightText: 2024 no
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 Ilya246
+// SPDX-FileCopyrightText: 2025 Princess Cheeseballs
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 Whatstone
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Server.Administration.Logs;
 using Content.Server.Body.Systems;
 using Content.Server.Buckle.Systems;
@@ -29,6 +59,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Content.Shared.Maps;
+using Content.Server._NF.Shuttles.Components; // Frontier
 
 namespace Content.Server.Shuttles.Systems;
 
@@ -63,6 +94,7 @@ public sealed partial class ShuttleSystem : SharedShuttleSystem
     [Dependency] private readonly ThrusterSystem _thruster = default!;
     [Dependency] private readonly UserInterfaceSystem _uiSystem = default!;
     [Dependency] private readonly TurfSystem _turf = default!;
+    [Dependency] private readonly GameTicker _ticker = default!; //frontier edit to get the main map in FTL
 
     private EntityQuery<BuckleComponent> _buckleQuery;
     private EntityQuery<MapGridComponent> _gridQuery;
@@ -90,6 +122,8 @@ public sealed partial class ShuttleSystem : SharedShuttleSystem
         SubscribeLocalEvent<ShuttleComponent, FTLCompletedEvent>(OnFTLCompleted);
 
         SubscribeLocalEvent<GridInitializeEvent>(OnGridInit);
+        NfInitialize(); // Frontier Initialization for the ShuttleSystem
+
     }
 
     public override void Update(float frameTime)
@@ -137,6 +171,9 @@ public sealed partial class ShuttleSystem : SharedShuttleSystem
         if (!TryComp(uid, out PhysicsComponent? physicsComponent))
             return;
 
+        if (HasComp<PreventGridAnchorChangesComponent>(uid)) // Frontier
+            return; // Frontier
+
         component.Enabled = !component.Enabled;
 
         if (component.Enabled)
@@ -154,6 +191,9 @@ public sealed partial class ShuttleSystem : SharedShuttleSystem
         if (!Resolve(uid, ref manager, ref component, ref shuttle, false))
             return;
 
+        if (HasComp<PreventGridAnchorChangesComponent>(uid)) // Frontier
+            return; // Frontier
+
         _physics.SetBodyType(uid, BodyType.Dynamic, manager: manager, body: component);
         _physics.SetBodyStatus(uid, component, BodyStatus.InAir);
         _physics.SetFixedRotation(uid, false, manager: manager, body: component);
@@ -163,6 +203,9 @@ public sealed partial class ShuttleSystem : SharedShuttleSystem
     {
         if (!Resolve(uid, ref manager, ref component, false))
             return;
+
+        if (HasComp<PreventGridAnchorChangesComponent>(uid)) // Frontier
+            return; // Frontier
 
         _physics.SetBodyType(uid, BodyType.Static, manager: manager, body: component);
         _physics.SetBodyStatus(uid, component, BodyStatus.OnGround);
@@ -186,10 +229,41 @@ public sealed partial class ShuttleSystem : SharedShuttleSystem
     private void OnFTLStarted(Entity<ShuttleComponent> ent, ref FTLStartedEvent args)
     {
         ent.Comp.DampingModifier = 0f;
+        // UNKNOWN START
+        var gridUid = args.Entity;
+        var dockedShuttles = new HashSet<EntityUid>();
+        GetAllDockedShuttles(gridUid, dockedShuttles);
+        // Process each docked ship (excluding the main ship which we already processed)
+        foreach (var dockedUid in dockedShuttles)
+        {
+            if (dockedUid == gridUid)
+                continue;
+            if (EntityManager.TryGetComponent<ShuttleComponent>(dockedUid, out var dockedComp))
+            {
+                dockedComp.DampingModifier = 0f;
+            }
+        }
+        // UNKNOWN END
     }
 
     private void OnFTLCompleted(Entity<ShuttleComponent> ent, ref FTLCompletedEvent args)
     {
         ent.Comp.DampingModifier = ent.Comp.BodyModifier;
+        // UNKNOWN START
+        var gridUid = args.Entity;
+        // Todo: Account for scenarios where shuttles undock mid-FTL
+        var dockedShuttles = new HashSet<EntityUid>();
+        GetAllDockedShuttles(gridUid, dockedShuttles);
+        // Process each docked ship (excluding the main ship which we already processed)
+        foreach (var dockedUid in dockedShuttles)
+        {
+            if (dockedUid == gridUid)
+                continue;
+            if (EntityManager.TryGetComponent<ShuttleComponent>(dockedUid, out var dockedComp))
+            {
+                dockedComp.DampingModifier = dockedComp.BodyModifier;
+            }
+        }
+        // UNKNOWN END
     }
 }

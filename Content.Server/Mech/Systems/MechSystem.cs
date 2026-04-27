@@ -1,3 +1,31 @@
+// SPDX-FileCopyrightText: 2022 Nemanja
+// SPDX-FileCopyrightText: 2023 Checkraze
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Slava0135
+// SPDX-FileCopyrightText: 2023 TemporalOroboros
+// SPDX-FileCopyrightText: 2023 Zoldorf
+// SPDX-FileCopyrightText: 2023 brainfood1183
+// SPDX-FileCopyrightText: 2023 deltanedas
+// SPDX-FileCopyrightText: 2023 deltanedas <@deltanedas:kde.org>
+// SPDX-FileCopyrightText: 2023 keronshb
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Errant
+// SPDX-FileCopyrightText: 2024 Gorox221
+// SPDX-FileCopyrightText: 2024 Jake Huxell
+// SPDX-FileCopyrightText: 2024 Leon Friedrich
+// SPDX-FileCopyrightText: 2024 LordCarve
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 Verm
+// SPDX-FileCopyrightText: 2024 metalgearsloth
+// SPDX-FileCopyrightText: 2024 nikthechampiongr
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 BeeRobynn
+// SPDX-FileCopyrightText: 2025 Blu
+// SPDX-FileCopyrightText: 2025 ScyronX
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Linq;
 using Content.Server.Atmos.EntitySystems;
 using Content.Server.Body.Systems;
@@ -25,6 +53,13 @@ using Robust.Server.GameObjects;
 using Robust.Shared.Containers;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
+using Content.Shared.Mobs.Components; // Frontier
+using Content.Shared.NPC.Components; // Frontier
+using Content.Shared.Mobs; // Frontier
+using Content.Shared.Mech.Equipment.Components; // Monolith
+using Content.Server.Emp; // Monolith
+using Content.Shared.Shuttles.BUIStates; // Mono
+
 
 namespace Content.Server.Mech.Systems;
 
@@ -63,6 +98,9 @@ public sealed partial class MechSystem : SharedMechSystem
 
         SubscribeLocalEvent<MechComponent, UpdateCanMoveEvent>(OnMechCanMoveEvent);
 
+        SubscribeLocalEvent<MechComponent, MechOpenRadarEvent>(OnOpenRadar); // Mono
+        SubscribeLocalEvent<MechComponent, EmpAttemptEvent>(OnEmpAttempt); // Mono
+
 
         SubscribeLocalEvent<MechPilotComponent, ToolUserAttemptUseEvent>(OnToolUseAttempt);
         SubscribeLocalEvent<MechPilotComponent, InhaleLocationEvent>(OnInhale);
@@ -100,7 +138,8 @@ public sealed partial class MechSystem : SharedMechSystem
             var doAfterEventArgs = new DoAfterArgs(EntityManager, args.User, component.BatteryRemovalDelay,
                 new RemoveBatteryEvent(), uid, target: uid, used: args.Target)
             {
-                BreakOnMove = true
+                BreakOnMove = true,
+                MultiplyDelay = false, // Goobstation
             };
 
             _doAfter.TryStartDoAfter(doAfterEventArgs);
@@ -166,6 +205,17 @@ public sealed partial class MechSystem : SharedMechSystem
         args.Handled = true;
         ToggleMechUi(uid, component);
     }
+
+    // Mono START
+    private void OnOpenRadar(EntityUid uid, MechComponent component, MechOpenRadarEvent args)
+    {
+        var pilot = GetEntity(args.Pilot);
+        if (!TryComp<ActorComponent>(pilot, out var actor))
+            return;
+
+        _ui.TryToggleUi(uid, RadarConsoleUiKey.Key, actor.PlayerSession);
+    }
+    // Mono END
 
     private void OnToolUseAttempt(EntityUid uid, MechPilotComponent component, ref ToolUserAttemptUseEvent args)
     {
@@ -239,6 +289,17 @@ public sealed partial class MechSystem : SharedMechSystem
             return;
         }
 
+        // Frontier START - Make AI Attack mechs based on user.
+        if (TryComp<MobStateComponent>(args.User, out var _))
+            EnsureComp<MobStateComponent>(uid);
+        if (TryComp<NpcFactionMemberComponent>(args.User, out var faction))
+        {
+            var factionMech = EnsureComp<NpcFactionMemberComponent>(uid);
+            if (faction.Factions != null)
+                factionMech.Factions = faction.Factions;
+        }
+        // Frontier END
+
         TryInsert(uid, args.Args.User, component);
         _actionBlocker.UpdateCanMove(uid);
 
@@ -267,7 +328,30 @@ public sealed partial class MechSystem : SharedMechSystem
             var damage = args.DamageDelta * component.MechToPilotDamageMultiplier;
             _damageable.ChangeDamage(component.PilotSlot.ContainedEntity.Value, damage);
         }
+        // Frontier - Eject players from mechs when they go crit
+        if (TryComp<MobStateComponent>(component.PilotSlot.ContainedEntity.Value, out var state) && state.CurrentState != MobState.Alive)
+            TryEject(uid, component);
     }
+
+    // Mono START
+    private void OnEmpAttempt(EntityUid uid, MechComponent comp, EmpAttemptEvent args) // Monolith
+    {
+        if (comp.Broken != true)
+            _damageable.TryChangeDamage(uid, comp.EMPdamage);
+
+        if (TryComp<BatteryComponent>(comp.BatterySlot.ContainedEntity, out var battery))
+        {
+            var maxCharge = battery.MaxCharge;
+            var currentCharge = battery.CurrentCharge;
+            var chargeDelta = maxCharge / 2;
+
+            if (chargeDelta > currentCharge)
+                chargeDelta = currentCharge;
+
+            TryChangeEnergy(uid, -chargeDelta, comp);
+        }
+    }
+    // Mono END
 
     private void ToggleMechUi(EntityUid uid, MechComponent? component = null, EntityUid? user = null)
     {

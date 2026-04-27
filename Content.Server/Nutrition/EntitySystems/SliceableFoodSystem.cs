@@ -125,6 +125,11 @@ public sealed class SliceableFoodSystem : EntitySystem
                 _physics.SetLinearVelocity(sliceUid, randVect, body: physics);
         }
 
+        // DeltaV - Begin deep frier related code
+        var slicedEv = new FoodSlicedEvent(user, uid, sliceUid);
+        RaiseLocalEvent(uid, ref slicedEv);
+        // DeltaV - End deep frier related code
+
         return sliceUid;
     }
 

@@ -94,13 +94,13 @@
       entity_storage: !type:Container
       paper_label: !type:ContainerSlot
   - type: StaticPrice
-    price: 50
+    price: 35
 
 - type: entity
   id: BodyBagFolded
   name: body bag
   description: A plastic bag designed for the storage and transportation of cadavers to stop body decomposition.
-  parent: BodyBag
+  parent: [BodyBag, RecyclableItemPlasticMedium] # Frontier: added RecyclableItemPlasticMedium
   suffix: folded
   components:
   - type: Foldable
@@ -125,6 +125,7 @@
     tags:
     - Burnt
     - Trash
+    - Ash # Frontier
   - type: SolutionContainerManager
     solutions:
       food:
@@ -162,6 +163,6 @@
               Quantity: 25
             - ReagentId: Necrosol
               Quantity: 25
-    - type: GuideHelp
-      guides:
-      - MinorAntagonists
+    # - type: GuideHelp # Frontier: removed from guidebook
+    #   guides: # Frontier: removed from guidebook
+    #   - MinorAntagonists # Frontier: removed from guidebook

@@ -1,4 +1,20 @@
 using System.Diagnostics.CodeAnalysis;
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Nemanja
+// SPDX-FileCopyrightText: 2023 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 Ed
+// SPDX-FileCopyrightText: 2024 LordCarve
+// SPDX-FileCopyrightText: 2024 MilenVolf
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 metalgearsloth
+// SPDX-FileCopyrightText: 2024 nikthechampiongr
+// SPDX-FileCopyrightText: 2025 ScarKy0
+// SPDX-FileCopyrightText: 2025 keronshb
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Shared.Administration.Logs;
 using Content.Shared.Anomaly.Components;
 using Content.Shared.Anomaly.Prototypes;
@@ -37,6 +53,7 @@ public abstract class SharedAnomalySystem : EntitySystem
     [Dependency] private readonly IPrototypeManager _prototype = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly SharedMapSystem _map = default!;
+    [Dependency] private readonly SharedAnomalyCoreSystem _anomalyCore = default!; // Frontier
 
     public override void Initialize()
     {
@@ -50,6 +67,8 @@ public abstract class SharedAnomalySystem : EntitySystem
     {
         if (!TryComp<CorePoweredThrowerComponent>(args.Weapon, out var corePowered) || !TryComp<PhysicsComponent>(ent, out var body))
             return;
+        if (HasComp<InnerBodyAnomalyComponent>(ent.Owner)) // Frontier
+            return; // Frontier
 
         // anomalies are static by default, so we have set them to dynamic to be throwable
         // only regular anomalies are static, so the check is meant to filter out things such as infection anomalies, which affect players
@@ -212,6 +231,13 @@ public abstract class SharedAnomalySystem : EntitySystem
         {
             var core = Spawn(supercritical ? component.CorePrototype : component.CoreInertPrototype, Transform(uid).Coordinates);
             _transform.PlaceNextTo(core, uid);
+
+            // Frontier: set value to points retrieved
+            if (TryComp<AnomalyCoreComponent>(core, out var coreComp))
+            {
+                _anomalyCore.SetValueFromPointsEarned(core, coreComp, component.PointsEarned);
+            }
+            // End Frontier
         }
 
         if (component.DeleteEntity)

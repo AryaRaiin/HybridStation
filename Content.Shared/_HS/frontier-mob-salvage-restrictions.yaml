@@ -1,0 +1,18 @@
+--- ### SPACE ###
+file: Resources/Prototypes/Entities/Mobs/NPCs/space.yml
+# Frontier: SalvageMobRestrictions<NFSalvageMobRestrictions
+- match: &MobSpaceSalvage
+    - id: MobBearSpaceSalvage
+    - id: MobKangarooSpaceSalvage
+    - id: MobSpiderSpaceSalvage
+    - id: MobCobraSpaceSalvage
+  action: merge
+  data:
+    components:
+    - type: NFSalvageMobRestrictions
+- match:
+    <<: *MobSpaceSalvage
+  action: remove
+  data:
+    components:
+    - type: SalvageMobRestrictions 

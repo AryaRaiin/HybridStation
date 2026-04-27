@@ -3,6 +3,7 @@
   parent: Pen
   id: PenExploding
   components:
+  - type: WeaponCaseInsertable # Frontier
   - type: TimerTrigger
     delay: 4
     examinable: false

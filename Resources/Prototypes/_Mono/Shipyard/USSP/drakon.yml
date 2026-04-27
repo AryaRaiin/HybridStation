@@ -1,0 +1,46 @@
+# SPDX-FileCopyrightText: 2025 Avalon
+# SPDX-FileCopyrightText: 2025 BoskiYourk
+# SPDX-FileCopyrightText: 2025 HungryCuban
+# SPDX-FileCopyrightText: 2025 Ilya246
+# SPDX-FileCopyrightText: 2025 Onezero0
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 significant harassment
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: vessel
+  id: Drakon
+  parent: BaseVesselAntag
+  name: NCS Drakon
+  description: A fast brawler with heavy armor and ballistic armaments.
+  price: 85290
+  category: Medium
+  group: Ussp
+  access: Mercenary
+  shuttlePath: /Maps/_Mono/Shuttles/USSP/drakon.yml
+  guidebookPage: Null
+  class:
+  - Pursuit
+  - Corvette
+  engine:
+  - AME
+
+- type: gameMap
+  id: Drakon
+  mapName: 'Drakon'
+  mapPath: /Maps/_Mono/Shuttles/USSP/drakon.yml
+  minPlayers: 0
+  stations:
+    Drakon:
+      stationProto: StandardFrontierVessel
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: 'Drakon MIL{1}'
+          nameGenerator:
+            !type:NanotrasenNameGenerator
+            prefixCreator: '14'
+        - type: StationJobs
+          availableJobs:
+            Mercenary: [ 0, 0 ]
+            Pilot: [ 0, 0 ]

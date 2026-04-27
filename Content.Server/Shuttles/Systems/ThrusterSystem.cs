@@ -1,3 +1,34 @@
+// SPDX-FileCopyrightText: 2021 Javier Guardia Fernández
+// SPDX-FileCopyrightText: 2021 JustinTime
+// SPDX-FileCopyrightText: 2021 metalgearsloth
+// SPDX-FileCopyrightText: 2021 shaeone
+// SPDX-FileCopyrightText: 2022 Acruid
+// SPDX-FileCopyrightText: 2022 Jacob Tong
+// SPDX-FileCopyrightText: 2022 Leon Friedrich
+// SPDX-FileCopyrightText: 2022 Morb
+// SPDX-FileCopyrightText: 2022 Radrark
+// SPDX-FileCopyrightText: 2022 Vera Aguilera Puerto
+// SPDX-FileCopyrightText: 2022 wrexbe
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Visne
+// SPDX-FileCopyrightText: 2023 router
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 GreaseMonk
+// SPDX-FileCopyrightText: 2024 Jake Huxell
+// SPDX-FileCopyrightText: 2024 Kara
+// SPDX-FileCopyrightText: 2024 Mervill
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 chavonadelal
+// SPDX-FileCopyrightText: 2024 checkraze
+// SPDX-FileCopyrightText: 2024 lzk
+// SPDX-FileCopyrightText: 2024 spacedwarf14
+// SPDX-FileCopyrightText: 2025 Tayrtahn
+// SPDX-FileCopyrightText: 2025 Whatstone
+// SPDX-FileCopyrightText: 2025 Winkarst
+// SPDX-FileCopyrightText: 2025 slarticodefast
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Numerics;
 using Content.Server.Audio;
 using Content.Server.Power.EntitySystems;
@@ -18,6 +49,8 @@ using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 using Content.Shared.Localizations;
 using Content.Shared.Power;
+using Content.Server.Construction; // Frontier
+using Content.Shared.DeviceLinking.Events; // Frontier
 
 namespace Content.Server.Shuttles.Systems;
 
@@ -54,6 +87,36 @@ public sealed class ThrusterSystem : EntitySystem
         SubscribeLocalEvent<ThrusterComponent, ExaminedEvent>(OnThrusterExamine);
 
         SubscribeLocalEvent<ShuttleComponent, TileChangedEvent>(OnShuttleTileChange);
+
+        SubscribeLocalEvent<ThrusterComponent, RefreshPartsEvent>(OnRefreshParts); // Frontier?
+        SubscribeLocalEvent<ThrusterComponent, UpgradeExamineEvent>(OnUpgradeExamine); // Frontier?
+        SubscribeLocalEvent<ThrusterComponent, SignalReceivedEvent>(OnSignalReceived); // Frontier
+    }
+
+    // Frontier: signal handler
+    private void OnSignalReceived(EntityUid uid, ThrusterComponent component, ref SignalReceivedEvent args)
+    {
+        if (args.Port == component.OffPort)
+            component.Enabled = false;
+        else if (args.Port == component.OnPort)
+            component.Enabled = true;
+        else if (args.Port == component.TogglePort)
+            component.Enabled ^= true;
+        else
+            return; // Invalid port, don't change the thruster.
+
+        if (!component.Enabled)
+        {
+            if (TryComp<ApcPowerReceiverComponent>(uid, out var apcPower) && component.OriginalLoad != 0 && apcPower.Load != 1)
+                apcPower.Load = 1;
+            DisableThruster(uid, component);
+        }
+        else if (CanEnable(uid, component))
+        {
+            if (TryComp<ApcPowerReceiverComponent>(uid, out var apcPower) && component.OriginalLoad != apcPower.Load)
+                apcPower.Load = component.OriginalLoad;
+            EnableThruster(uid, component);
+        }
     }
 
     private void OnThrusterExamine(EntityUid uid, ThrusterComponent component, ExaminedEvent args)
@@ -142,11 +205,15 @@ public sealed class ThrusterSystem : EntitySystem
 
         if (!component.Enabled)
         {
+            if (TryComp<ApcPowerReceiverComponent>(uid, out var apcPower) && component.OriginalLoad != 0 && apcPower.Load != 1) // Frontier
+                apcPower.Load = 1;  // Frontier
             DisableThruster(uid, component);
             args.Handled = true;
         }
         else if (CanEnable(uid, component))
         {
+            if (TryComp<ApcPowerReceiverComponent>(uid, out var apcPower) && component.OriginalLoad != apcPower.Load) // Frontier
+                apcPower.Load = component.OriginalLoad; // Frontier
             EnableThruster(uid, component);
             args.Handled = true;
         }
@@ -212,10 +279,12 @@ public sealed class ThrusterSystem : EntitySystem
         if (component.Type == ThrusterType.Linear)
         {
             oldShuttleComponent.LinearThrust[oldDirection] -= component.Thrust;
+            oldShuttleComponent.BaseLinearThrust[oldDirection] -= component.BaseThrust; // UNKNOWN
             DebugTools.Assert(oldShuttleComponent.LinearThrusters[oldDirection].Contains(uid));
             oldShuttleComponent.LinearThrusters[oldDirection].Remove(uid);
 
             shuttleComponent.LinearThrust[direction] += component.Thrust;
+            shuttleComponent.BaseLinearThrust[direction] += component.BaseThrust; // UNKNOWN
             DebugTools.Assert(!shuttleComponent.LinearThrusters[direction].Contains(uid));
             shuttleComponent.LinearThrusters[direction].Add(uid);
         }
@@ -235,6 +304,13 @@ public sealed class ThrusterSystem : EntitySystem
 
     private void OnThrusterInit(EntityUid uid, ThrusterComponent component, ComponentInit args)
     {
+        // Frontier: togglable thrusters
+        if (TryComp<ApcPowerReceiverComponent>(uid, out var apcPower) && component.OriginalLoad == 0)
+        {
+            component.OriginalLoad = apcPower.Load;
+        }
+        // End Frontier: togglable thrusters
+
         _ambient.SetAmbience(uid, false);
 
         if (!component.Enabled)
@@ -294,6 +370,7 @@ public sealed class ThrusterSystem : EntitySystem
                 var direction = (int)xform.LocalRotation.GetCardinalDir() / 2;
 
                 shuttleComponent.LinearThrust[direction] += component.Thrust;
+                shuttleComponent.BaseLinearThrust[direction] += component.BaseThrust; // UNKNOWN
                 DebugTools.Assert(!shuttleComponent.LinearThrusters[direction].Contains(uid));
                 shuttleComponent.LinearThrusters[direction].Add(uid);
 
@@ -392,6 +469,7 @@ public sealed class ThrusterSystem : EntitySystem
                 var direction = (int)angle.Value.GetCardinalDir() / 2;
 
                 shuttleComponent.LinearThrust[direction] -= component.Thrust;
+                shuttleComponent.BaseLinearThrust[direction] -= component.BaseThrust; // UNKNOWN
                 DebugTools.Assert(shuttleComponent.LinearThrusters[direction].Contains(uid));
                 shuttleComponent.LinearThrusters[direction].Remove(uid);
                 break;
@@ -591,6 +669,25 @@ public sealed class ThrusterSystem : EntitySystem
         }
     }
 
+    // UNKNOWN START
+    private void OnRefreshParts(EntityUid uid, ThrusterComponent component, RefreshPartsEvent args)
+    {
+        if (component.IsOn) // safely disable thruster to prevent negative thrust
+            DisableThruster(uid, component);
+
+        var thrustRating = args.PartRatings[component.MachinePartThrust];
+
+        component.Thrust = component.BaseThrust * MathF.Pow(component.PartRatingThrustMultiplier, thrustRating - 1);
+
+        if (component.Enabled && CanEnable(uid, component))
+            EnableThruster(uid, component);
+    }
+    private void OnUpgradeExamine(EntityUid uid, ThrusterComponent component, UpgradeExamineEvent args)
+    {
+        args.AddPercentageUpgrade("thruster-comp-upgrade-thrust", component.Thrust / component.BaseThrust);
+    }
+    // UNKNOWN END
+    
     #endregion
 
     private int GetFlagIndex(DirectionFlag flag)

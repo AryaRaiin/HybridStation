@@ -1,0 +1,44 @@
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 Shroomerian
+# SPDX-FileCopyrightText: 2024 Whatstone
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: gamePreset
+  id: NFAdventure
+  alias:
+    - nfadventure
+    - adventure
+  name: nf-adventure-title
+  description: nf-adventure-description
+  showInVote: false # Mono
+  rules:
+    - NFAdventure
+    - BasicStationEventScheduler
+    - BluespaceEventScheduler
+    - BluespaceDungeonEventScheduler
+    - BluespaceSalvageEventScheduler
+    - SmugglingEventScheduler
+    - FrontierRoundstartVariation
+    - MonoAISTCShuttleSpawnerScheduler # Mono
+    - MonoAsakimSTCShuttleSpawnerScheduler # Mono
+
+- type: gamePreset
+  id: NFPirate
+  alias:
+    - nfpirate
+    - pirate
+  name: nf-pirate-title
+  description: nf-pirate-description
+  showInVote: false # Mono
+  rules:
+    - NFAdventure
+    - BasicStationEventScheduler
+    - BluespaceEventScheduler
+    - BluespaceDungeonEventScheduler
+    - BluespaceSalvageEventScheduler
+    - SmugglingEventScheduler
+    - FrontierRoundstartVariation
+    - MonoAISTCShuttleSpawnerScheduler # Mono
+    - MonoAsakimSTCShuttleSpawnerScheduler # Mono

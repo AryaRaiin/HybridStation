@@ -25,11 +25,10 @@
     - gc
     - gc_mode
     - cvar
-    - fuckrules
     - midipanic
-    - replay_recording_start
-    - replay_recording_stop
-    - replay_recording_stats
+#    - replay_recording_start # Frontier
+#    - replay_recording_stop # Frontier
+#    - replay_recording_stats # Frontier
     - replay_play
     - replay_pause
     - replay_toggle
@@ -66,6 +65,7 @@
     - showemergencyshuttle
     - zoom
     - showsubfloor
+    - showsubfloorforever
     - showmarkers
     - nodevis
     - nodevisfilter
@@ -74,6 +74,7 @@
     - fullstatereset
     - dumpentities
     - showaccessreaders
+    - fuckrules # Frontier
 
 - Flags: MAPPING
   Commands:

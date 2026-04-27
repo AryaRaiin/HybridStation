@@ -22,6 +22,10 @@ using Robust.Server.GameObjects;
 using Robust.Shared.Containers;
 using Robust.Shared.Player;
 using Robust.Shared.Utility;
+using Content.Shared._NF.Bank.Components; // Frontier
+using Content.Shared._NF.Shipyard.Components; // Frontier
+using Content.Server._NF.Shipyard.Systems; // Frontier
+using Content.Server._NF.SectorServices; // Frontier
 
 namespace Content.Server.PDA
 {
@@ -37,6 +41,8 @@ namespace Content.Server.PDA
         [Dependency] private readonly UnpoweredFlashlightSystem _unpoweredFlashlight = default!;
         [Dependency] private readonly ContainerSystem _containerSystem = default!;
         [Dependency] private readonly IdCardSystem _idCard = default!;
+        [Dependency] private readonly SectorServiceSystem _sectorService = default!;
+        [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
 
         public override void Initialize()
         {
@@ -177,7 +183,9 @@ namespace Content.Server.PDA
         /// <summary>
         /// Send new UI state to clients, call if you modify something like uplink.
         /// </summary>
-        public override void UpdatePdaUi(EntityUid uid, PdaComponent? pda = null)
+        //public override void UpdatePdaUi(EntityUid uid, PdaComponent? pda = null)
+        public override void UpdatePdaUi(EntityUid uid, PdaComponent? pda = null,
+            EntityUid? actor_uid = null) // Frontier
         {
             if (!Resolve(uid, ref pda, false))
                 return;
@@ -200,6 +208,15 @@ namespace Content.Server.PDA
 
             var programs = _cartridgeLoader.GetAvailablePrograms(uid, loader);
             var id = CompOrNull<IdCardComponent>(pda.ContainedId);
+            // Frontier START
+            var balance = 0;
+            if (actor_uid != null && TryComp<BankAccountComponent>(actor_uid, out var account))
+                balance = account.Balance;
+            var ownedShipName = "";
+            if (TryComp<ShuttleDeedComponent>(pda.ContainedId, out var shuttleDeedComp))
+                ownedShipName = ShipyardSystem.GetFullName(shuttleDeedComp);
+            // Frontier END
+
             var state = new PdaUpdateState(
                 programs,
                 GetNetEntity(loader.ActiveProgram),
@@ -214,6 +231,8 @@ namespace Content.Server.PDA
                     StationAlertLevel = pda.StationAlertLevel,
                     StationAlertColor = pda.StationAlertColor
                 },
+                balance, // Frontier
+                ownedShipName, // Frontier
                 pda.StationName,
                 showUplink,
                 hasInstrument,
@@ -227,7 +246,8 @@ namespace Content.Server.PDA
             if (!PdaUiKey.Key.Equals(args.UiKey))
                 return;
 
-            UpdatePdaUi(ent.Owner, ent.Comp);
+            UpdatePdaUi(ent.Owner, ent.Comp, 
+                args.Actor); // Frontier
         }
 
         private void OnUiMessage(EntityUid uid, PdaComponent pda, PdaRequestUpdateInterfaceMessage msg)
@@ -301,7 +321,8 @@ namespace Content.Server.PDA
 
         private void UpdateAlertLevel(EntityUid uid, PdaComponent pda)
         {
-            var station = _station.GetOwningStation(uid);
+            //var station = _station.GetOwningStation(uid); // Frontier
+            var station = _sectorService.GetServiceEntity(); // Frontier
             if (!TryComp(station, out AlertLevelComponent? alertComp) ||
                 alertComp.AlertLevels == null)
                 return;

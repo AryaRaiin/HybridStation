@@ -1,0 +1,8 @@
+--- ### silicon ###
+file: Resources/Prototypes/Entities/Mobs/Player/silicon.yml
+- match:
+    - id: AiHeld
+  action: merge
+  data:
+    components:
+    - type: AdvancedPilot

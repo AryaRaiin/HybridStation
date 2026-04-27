@@ -1,3 +1,9 @@
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2025 ScyronX
+//
+// SPDX-License-Identifier: MPL-2.0
+
 using Content.Shared.Chemistry.Reagent;
 using Content.Shared.FixedPoint;
 using Content.Shared.Tools.Systems;
@@ -73,4 +79,12 @@ public sealed partial class WelderComponent : Component
     /// </summary>
     [DataField]
     public bool TankSafe;
+
+    // MONO START
+    /// <summary>
+    ///     Monolith: This variable gets rid of the status display.
+    /// </summary>
+    [DataField]
+    public bool OnlyDisplayFuel = false;
+    // MONO END
 }

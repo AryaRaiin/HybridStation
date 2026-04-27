@@ -1,8 +1,27 @@
-﻿using System.Linq;
+﻿// SPDX-FileCopyrightText: 2022 Chief-Engineer
+// SPDX-FileCopyrightText: 2022 Kevin Zheng
+// SPDX-FileCopyrightText: 2023 Hannah Giovanna Dawson
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2023 Rane
+// SPDX-FileCopyrightText: 2023 Vasilis
+// SPDX-FileCopyrightText: 2023 metalgearsloth
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2025 Alkheemist
+// SPDX-FileCopyrightText: 2025 Dvir
+// SPDX-FileCopyrightText: 2025 Whatstone
+// SPDX-FileCopyrightText: 2025 Winkarst
+// SPDX-FileCopyrightText: 2025 cheetah1984
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using System.Linq;
 using Content.Server.Administration.Logs;
 using Content.Shared.Materials;
 using Content.Shared.Popups;
 using Content.Shared.Stacks;
+using Content.Server.Storage.Components; // Frontier
+using Content.Server.Cargo.Systems; // Frontier
 using Content.Server.Power.Components;
 using Content.Server.Stack;
 using Content.Shared.ActionBlocker;
@@ -31,6 +50,7 @@ public sealed class MaterialStorageSystem : SharedMaterialStorageSystem
     {
         base.Initialize();
         SubscribeLocalEvent<MaterialStorageComponent, MachineDeconstructedEvent>(OnDeconstructed);
+        SubscribeLocalEvent<MaterialStorageComponent, PriceCalculationEvent>(OnPriceCalculation); // Frontier
 
         SubscribeAllEvent<EjectMaterialMessage>(OnEjectMessage);
     }
@@ -45,6 +65,21 @@ public sealed class MaterialStorageSystem : SharedMaterialStorageSystem
             SpawnMultipleFromMaterial(amount, material, Transform(uid).Coordinates);
         }
     }
+
+    // Start Frontier: add value of contents to appraisal price
+    private void OnPriceCalculation(EntityUid uid, MaterialStorageComponent component, ref PriceCalculationEvent ev)
+    {
+        foreach (var (materialProto, amount) in component.Storage)
+        {
+            if (!_prototypeManager.TryIndex<MaterialPrototype>(materialProto, out var material))
+            {
+                Log.Error("Failed to index material prototype " + materialProto);
+                continue;
+            }
+            ev.Price += material.Price * amount;
+        }
+    }
+    // End Frontier: add value of contents to appraisal price
 
     private void OnEjectMessage(EjectMaterialMessage msg, EntitySessionEventArgs args)
     {
@@ -81,6 +116,14 @@ public sealed class MaterialStorageSystem : SharedMaterialStorageSystem
         if (volume <= 0 || !TryChangeMaterialAmount(uid, msg.Material, -volume))
             return;
 
+        // Frontier
+        // If we made it this far, turn off the magnet before spawning materials
+        if (TryComp<MaterialStorageMagnetPickupComponent>(uid, out var magnet))
+        {
+            magnet.MagnetEnabled = false;
+        }
+        // end Frontier
+
         var mats = SpawnMultipleFromMaterial(volume, material, Transform(uid).Coordinates, out _);
         foreach (var mat in mats.Where(mat => !TerminatingOrDeleted(mat)))
         {
@@ -107,7 +150,10 @@ public sealed class MaterialStorageSystem : SharedMaterialStorageSystem
                 ("machine", receiver),
                 ("item", toInsert)),
             receiver);
-        QueueDel(toInsert);
+        if (user != receiver) // Goobstation - for automation to not spam popups
+            _popup.PopupEntity(Loc.GetString("machine-insert-item", ("user", user), ("machine", receiver),
+                ("item", toInsert)), receiver);
+        //QueueDel(toInsert); // Frontier
 
         // Logging
         TryComp<StackComponent>(toInsert, out var stack);
@@ -115,6 +161,38 @@ public sealed class MaterialStorageSystem : SharedMaterialStorageSystem
         _adminLogger.Add(LogType.Action,
             LogImpact.Low,
             $"{ToPrettyString(user):player} inserted {count} {ToPrettyString(toInsert):inserted} into {ToPrettyString(receiver):receiver}");
+        Del(toInsert); // Frontier: delete immediately, don't queue
+        return true;
+    }
+
+    // Frontier: partial stack insertion
+    public override bool TryInsertMaxPossibleMaterialEntity(EntityUid user,
+        EntityUid toInsert,
+        EntityUid receiver,
+        out bool empty,
+        MaterialStorageComponent? storage = null,
+        MaterialComponent? material = null,
+        PhysicalCompositionComponent? composition = null)
+    {
+        empty = false;
+        if (!Resolve(receiver, ref storage) || !Resolve(toInsert, ref material, ref composition, false))
+            return false;
+        if (TryComp<ApcPowerReceiverComponent>(receiver, out var power) && !power.Powered)
+            return false;
+        // Cache old count
+        var initialCount = TryComp<StackComponent>(toInsert, out var stack) ? stack.Count : 1;
+        if (!base.TryInsertMaxPossibleMaterialEntity(user, toInsert, receiver, out empty, storage, material, composition))
+            return false;
+        _audio.PlayPvs(storage.InsertingSound, receiver);
+        _popup.PopupEntity(Loc.GetString("machine-insert-item", ("user", user), ("machine", receiver),
+            ("item", toInsert)), receiver);
+
+        // Logging
+        var newCount = stack?.Count ?? 0;
+        _adminLogger.Add(LogType.Action, LogImpact.Low,
+            $"{ToPrettyString(user):player} inserted {initialCount - newCount} item(s) from {ToPrettyString(toInsert):inserted} into {ToPrettyString(receiver):receiver}");
+        if (empty)
+            Del(toInsert);
         return true;
     }
 

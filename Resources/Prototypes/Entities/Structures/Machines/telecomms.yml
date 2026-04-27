@@ -189,6 +189,7 @@
   parent: TelecomServer
   id: TelecomServerFilled
   suffix: Filled All
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: ContainerFill
     containers:
@@ -206,6 +207,7 @@
   parent: TelecomServer
   id: TelecomServerFilledCommon
   suffix: Common
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: ContainerFill
     containers:
@@ -216,6 +218,7 @@
   parent: TelecomServer
   id: TelecomServerFilledCargo
   suffix: Cargo
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: ContainerFill
     containers:
@@ -226,6 +229,7 @@
   parent: TelecomServer
   id: TelecomServerFilledEngineering
   suffix: Engineering
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: ContainerFill
     containers:
@@ -236,6 +240,7 @@
   parent: TelecomServer
   id: TelecomServerFilledMedical
   suffix: Medical
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: ContainerFill
     containers:
@@ -246,6 +251,7 @@
   parent: TelecomServer
   id: TelecomServerFilledScience
   suffix: Science
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: ContainerFill
     containers:
@@ -256,6 +262,7 @@
   parent: TelecomServer
   id: TelecomServerFilledSecurity
   suffix: Security
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: ContainerFill
     containers:
@@ -266,6 +273,7 @@
   parent: TelecomServer
   id: TelecomServerFilledService
   suffix: Service
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: ContainerFill
     containers:
@@ -276,6 +284,7 @@
   parent: TelecomServer
   id: TelecomServerFilledCommand
   suffix: Command
+  categories: [ HideSpawnMenu ] # Frontier
   components:
   - type: ContainerFill
     containers:

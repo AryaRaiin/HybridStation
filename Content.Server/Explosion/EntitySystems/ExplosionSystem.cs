@@ -29,6 +29,9 @@ using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
+using Content.Shared.Maps;
+using Robust.Shared.Map.Components;
+using Content.Shared.Tiles; // Frontier: safe zone
 
 namespace Content.Server.Explosion.EntitySystems;
 
@@ -340,6 +343,23 @@ public sealed partial class ExplosionSystem : SharedExplosionSystem
             return null;
 
         var (area, iterationIntensity, spaceData, gridData, spaceMatrix) = results.Value;
+
+        // Frontier - Block explosions on safe zone
+        var location = EntityCoordinates.FromMap(_mapManager.GetMapEntityId(pos.MapId), pos, _transformSystem, EntityManager);
+        var gridId = location.GetGridUid(EntityManager);
+        if (!HasComp<MapGridComponent>(gridId))
+        {
+            location = location.AlignWithClosestGridTile();
+            gridId = location.GetGridUid(EntityManager);
+            // Check if fixing it failed / get final grid ID
+            if (EntityManager.TryGetComponent<MapGridComponent>(gridId, out var mapGrid))
+            {
+                var ev = new FloorTileAttemptEvent();
+                if ((TryComp<ProtectedGridComponent>(gridId, out var prot) && prot.PreventExplosions) || ev.Cancelled)
+                    return null;
+            }
+        }
+        // Frontier - Block explosions on safe zone
 
         var visualEnt = CreateExplosionVisualEntity(pos, queued.Proto.ID, spaceMatrix, spaceData, gridData.Values, iterationIntensity);
 

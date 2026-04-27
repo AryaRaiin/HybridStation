@@ -1,3 +1,36 @@
+// SPDX-FileCopyrightText: 2021 Acruid
+// SPDX-FileCopyrightText: 2021 Javier Guardia Fernández
+// SPDX-FileCopyrightText: 2021 Paul
+// SPDX-FileCopyrightText: 2021 Paul Ritter
+// SPDX-FileCopyrightText: 2021 Vera Aguilera Puerto
+// SPDX-FileCopyrightText: 2021 metalgearsloth
+// SPDX-FileCopyrightText: 2022 Kara
+// SPDX-FileCopyrightText: 2022 Moony
+// SPDX-FileCopyrightText: 2022 mirrorcult
+// SPDX-FileCopyrightText: 2022 wrexbe
+// SPDX-FileCopyrightText: 2023 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 Arendian
+// SPDX-FileCopyrightText: 2024 Checkraze
+// SPDX-FileCopyrightText: 2024 Chief-Engineer
+// SPDX-FileCopyrightText: 2024 DrSmugleaf
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Hannah Giovanna Dawson
+// SPDX-FileCopyrightText: 2024 Leon Friedrich
+// SPDX-FileCopyrightText: 2024 LordCarve
+// SPDX-FileCopyrightText: 2024 ShadowCommander
+// SPDX-FileCopyrightText: 2024 Simon
+// SPDX-FileCopyrightText: 2024 Vasilis
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 deltanedas
+// SPDX-FileCopyrightText: 2024 nikthechampiongr
+// SPDX-FileCopyrightText: 2024 slarticodefast
+// SPDX-FileCopyrightText: 2025 BlueHNT
+// SPDX-FileCopyrightText: 2025 Errant
+// SPDX-FileCopyrightText: 2025 Myra
+// SPDX-FileCopyrightText: 2025 Zachary Higgs
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Linq;
 using Content.Server.Administration.Managers;
 using Content.Server.Chat.Managers;
@@ -33,6 +66,8 @@ using Robust.Shared.Enums;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
+using Content.Shared._NF.Bank.Events; // Frontier
+using Content.Server._NF.Bank; // Frontier
 
 namespace Content.Server.Administration.Systems;
 
@@ -55,6 +90,7 @@ public sealed class AdminSystem : EntitySystem
     [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly StationRecordsSystem _stationRecords = default!;
     [Dependency] private readonly TransformSystem _transform = default!;
+    [Dependency] private readonly BankSystem _bank = default!; // Frontier
 
     private readonly Dictionary<NetUserId, PlayerInfo> _playerList = new();
 
@@ -91,6 +127,7 @@ public sealed class AdminSystem : EntitySystem
 
         SubscribeLocalEvent<ActorComponent, EntityRenamedEvent>(OnPlayerRenamed);
         SubscribeLocalEvent<ActorComponent, IdentityChangedEvent>(OnIdentityChanged);
+        SubscribeLocalEvent<BalanceChangedEvent>(OnBalanceChanged); // Frontier
     }
 
     private void OnRoundRestartCleanup(RoundRestartCleanupEvent ev)
@@ -191,6 +228,13 @@ public sealed class AdminSystem : EntitySystem
         UpdatePlayerList(ev.Player);
     }
 
+    // Frontier START: add balance
+    private void OnBalanceChanged(BalanceChangedEvent ev)
+    {
+        UpdatePlayerList(ev.Session);
+    }
+    // Frontier END
+
     public override void Shutdown()
     {
         base.Shutdown();
@@ -220,12 +264,18 @@ public sealed class AdminSystem : EntitySystem
         var entityName = string.Empty;
         var identityName = string.Empty;
         var sortWeight = 0;
+        int balance = int.MinValue; // Frontier
 
         // Visible (identity) name can be different from real name
         if (session?.AttachedEntity != null)
         {
             entityName = Comp<MetaDataComponent>(session.AttachedEntity.Value).EntityName;
             identityName = Identity.Name(session.AttachedEntity.Value, EntityManager);
+
+            // Frontier START
+            if (!_bank.TryGetBalance(session.AttachedEntity.Value, out balance))
+                balance = int.MinValue; // Reset value to "no balance" flag value.
+            // Frontier END
         }
 
         var antag = false;
@@ -277,7 +327,8 @@ public sealed class AdminSystem : EntitySystem
             data.UserId,
             connected,
             _roundActivePlayers.Contains(data.UserId),
-            overallPlaytime);
+            overallPlaytime, 
+            balance); // Frontier: added balance
     }
 
     private void OnPanicBunkerChanged(bool enabled)
@@ -400,7 +451,8 @@ public sealed class AdminSystem : EntitySystem
                 _popup.PopupCoordinates(Loc.GetString("admin-erase-popup", ("user", name)), coordinates, PopupType.LargeCaution);
                 var filter = Filter.Pvs(coordinates, 1, EntityManager, _playerManager);
                 var audioParams = new AudioParams().WithVolume(3);
-                _audio.PlayStatic("/Audio/Effects/pop_high.ogg", filter, coordinates, true, audioParams);
+                //_audio.PlayStatic("/Audio/Effects/pop_high.ogg", filter, coordinates, true, audioParams);
+                _audio.PlayStatic("/Audio/_EinsteinEngines/Misc/reducedtoatmos.ogg", filter, coordinates, true, audioParams); // Mono sound edit
             }
 
             foreach (var item in _inventory.GetHandOrInventoryEntities(entity))

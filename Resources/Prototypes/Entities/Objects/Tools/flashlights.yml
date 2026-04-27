@@ -1,6 +1,6 @@
 ﻿- type: entity
   name: flashlight
-  parent: BaseItem
+  parent: [BaseItem, RecyclableItemDeviceSmall] # Frontier: added RecyclableItemDeviceSmall
   id: FlashlightLantern
   description: It lights the way to freedom.
   components:
@@ -66,7 +66,7 @@
     netsync: false
   - type: Appearance
   - type: StaticPrice
-    price: 40
+    price: 15.5 # Frontier: 40<15.5
   - type: StealTarget
     stealGroup: LAMP
   - type: Clothing
@@ -77,7 +77,7 @@
 
 - type: entity
   name: seclite
-  parent: [FlashlightLantern, BaseSecurityContraband]
+  parent: [FlashlightLantern, BaseC2ContrabandUnredeemable] # Frontier: BaseSecurityContraband<BaseC2ContrabandUnredeemable
   id: FlashlightSeclite
   description: A robust flashlight used by security.
   components:

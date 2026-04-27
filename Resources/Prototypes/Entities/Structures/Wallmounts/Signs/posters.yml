@@ -34,6 +34,8 @@
             min: 1
             max: 1
         offset: 0
+  - type: StaticPrice
+    price: 30
 
 - type: entity
   parent: BaseSign
@@ -56,6 +58,8 @@
           path: /Audio/Effects/poster_broken.ogg
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
+  - type: StaticPrice
+    price: 1
 
 # Contraband
 - type: entity
@@ -143,7 +147,7 @@
   parent: PosterBase
   id: PosterContrabandHackingGuide
   name: "Hacking Guide"
-  description: "This poster details the internal workings of the common Nanotrasen airlock. Sadly, it appears out of date."
+  description: "This poster details the internal workings of the common airlock. Sadly, inventions outpaced it."
   components:
   - type: Sprite
     state: poster10_contraband
@@ -197,7 +201,7 @@
   parent: PosterBase
   id: PosterContrabandPower
   name: "Power"
-  description: "A poster that positions the seat of power outside Nanotrasen."
+  description: "A poster that positions the seat of power inside the Trans-Solar Federation's central government. Pfft! As if!"
   components:
   - type: Sprite
     state: poster16_contraband
@@ -260,7 +264,7 @@
   parent: PosterBase
   id: PosterContrabandRebelsUnite
   name: "Rebels Unite"
-  description: "A poster urging the viewer to rebel against Nanotrasen."
+  description: "A poster urging the viewer to rebel against the TSF on the side of the Rogue Sector."
   components:
   - type: Sprite
     state: poster23_contraband
@@ -908,7 +912,7 @@
 
 - type: entity
   parent: PosterBase
-  id: PosterLegit12Gauge
+  id: PosterLegit12_gauge
   name: "12 gauge"
   description: "A poster boasting about the superiority of 12 gauge shotgun shells."
   components:
@@ -964,7 +968,7 @@
   parent: PosterBase
   id: PosterLegitThereIsNoGasGiant
   name: "There Is No Gas Giant"
-  description: "Nanotrasen has issued posters, like this one, to all stations reminding them that rumours of a gas giant are false."
+  description: "To remind colonial civilians that rumours of gas giants existing in the rogue are false. Is this... TSF approved?"
   components:
   - type: Sprite
     state: poster37_legit
@@ -1090,7 +1094,7 @@
   parent: PosterBase
   id: PosterLegitNTTGC
   name: "Nanotrasen Tactical Game Cards"
-  description: "An advertisement for Nanotrasen's TCG cards: BUY MORE CARDS."
+  description: "An advertisement for Nanotrasen's TCG cards: WE'LL SEND THE PINKERTONS."
   components:
     - type: Sprite
       state: poster51_legit

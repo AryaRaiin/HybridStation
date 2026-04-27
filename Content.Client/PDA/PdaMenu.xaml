@@ -19,6 +19,7 @@
 
         <pda:PdaNavigationButton Name="FlashLightToggleButton" Access="Public" ToggleMode="True" ActiveFgColor="#EAEFBB" SetWidth="32"/>
         <pda:PdaNavigationButton Name="EjectPenButton" Access="Public" SetWidth="32"/>
+        <pda:PdaNavigationButton Name="EjectBookButton" Access="Public" SetWidth="32"/>
         <pda:PdaNavigationButton Name="EjectIdButton" Access="Public" SetWidth="32"/>
         <pda:PdaNavigationButton Name="EjectPaiButton" Access="Public" SetWidth="32"/>
     </BoxContainer>
@@ -46,6 +47,14 @@
             <ContainerButton Name="StationAlertLevelInstructionsButton">
                 <RichTextLabel Name="StationAlertLevelInstructions" Access="Public"/>
             </ContainerButton>
+            <!-- Frontier -->
+            <ContainerButton Name="BalanceButton">
+                <RichTextLabel Name="BalanceLabel" Access="Public"/>
+            </ContainerButton>
+            <ContainerButton Name="ShuttleDeedButton">
+                <RichTextLabel Name="ShuttleDeedLabel" Access="Public"/>
+            </ContainerButton>
+            <!-- End Frontier -->
         </BoxContainer>
         <ScrollContainer HorizontalExpand="True" VerticalExpand="True" HScrollEnabled="True">
             <BoxContainer Orientation="Vertical"

@@ -83,5 +83,8 @@ namespace Content.Shared.Light.Components
         /// </summary>
         [DataField]
         public TimeSpan UnarmedHitStun = TimeSpan.FromSeconds(5);
+
+        [DataField("lightBreakChance")]
+        public float LightBreakChance = 0.1f;
     }
 }

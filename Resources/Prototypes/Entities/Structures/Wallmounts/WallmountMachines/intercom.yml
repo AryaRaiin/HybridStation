@@ -1,3 +1,26 @@
+# SPDX-FileCopyrightText: 2023 DrSmugleaf
+# SPDX-FileCopyrightText: 2023 Leon Friedrich
+# SPDX-FileCopyrightText: 2023 Morb
+# SPDX-FileCopyrightText: 2023 qwerltaz
+# SPDX-FileCopyrightText: 2024 AndresE55
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 Emisse
+# SPDX-FileCopyrightText: 2024 Ilya246
+# SPDX-FileCopyrightText: 2024 Kara
+# SPDX-FileCopyrightText: 2024 Nemanja
+# SPDX-FileCopyrightText: 2024 Salvantrix
+# SPDX-FileCopyrightText: 2024 Tayrtahn
+# SPDX-FileCopyrightText: 2024 TsjipTsjip
+# SPDX-FileCopyrightText: 2024 Whatstone
+# SPDX-FileCopyrightText: 2024 beck-thompson
+# SPDX-FileCopyrightText: 2024 lzk
+# SPDX-FileCopyrightText: 2024 metalgearsloth
+# SPDX-FileCopyrightText: 2025 Booblesnoot42
+# SPDX-FileCopyrightText: 2025 Coenx-flex
+# SPDX-FileCopyrightText: 2025 Minemoder5000
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 - type: entity
   parent: BaseWallmountMachine
   id: BaseIntercom
@@ -166,7 +189,7 @@
 
 - type: entity
   id: Intercom
-  parent: IntercomConstructed
+  parent: [BaseStructureDisableToolUse, IntercomConstructed] # Frontier: add BaseStructureDisableToolUse
   suffix: ""
   components:
   - type: Sprite
@@ -187,6 +210,8 @@
       map: ["enum.WiresVisualLayers.MaintenancePanel"]
   - type: WiresPanel
     open: false
+  - type: Physics # Frontier
+    canCollide: false # Frontier
 
 - type: entity
   id: BaseIntercomSecure
@@ -212,10 +237,11 @@
       - IntercomElectronics
       key_slots:
       - EncryptionKeyCommon
+      - EncryptionKeyTraffic # Frontier
 
 - type: entity
   id: IntercomCommand
-  parent: BaseIntercomSecure
+  parent: [BaseStructureIndestructible, BaseIntercomSecure] # Frontier - added BaseStructureIndestructible
   suffix: Command
   description: An intercom. It's been reinforced with metal.
   components:
@@ -226,6 +252,7 @@
       key_slots:
       - EncryptionKeyCommon
       - EncryptionKeyCommand
+      - EncryptionKeyTraffic # Frontier
 
 - type: entity
   id: IntercomEngineering
@@ -239,6 +266,7 @@
       key_slots:
       - EncryptionKeyCommon
       - EncryptionKeyEngineering
+      - EncryptionKeyTraffic # Frontier
 
 - type: entity
   id: IntercomMedical
@@ -252,6 +280,7 @@
       key_slots:
       - EncryptionKeyCommon
       - EncryptionKeyMedical
+      - EncryptionKeyTraffic # Frontier
 
 - type: entity
   id: IntercomScience
@@ -265,10 +294,11 @@
       key_slots:
       - EncryptionKeyCommon
       - EncryptionKeyScience
+      - EncryptionKeyTraffic # Frontier
 
 - type: entity
   id: IntercomSecurity
-  parent: BaseIntercomSecure
+  parent: [BaseStructureIndestructible, BaseIntercomSecure] # Frontier - added BaseStructureIndestructible
   suffix: Security
   description: An intercom. It's been reinforced with metal from security helmets, making it a bitch-and-a-half to open.
   components:
@@ -279,6 +309,7 @@
       key_slots:
       - EncryptionKeyCommon
       - EncryptionKeySecurity
+      - EncryptionKeyTraffic # Frontier
 
 - type: entity
   id: IntercomService
@@ -292,6 +323,7 @@
       key_slots:
       - EncryptionKeyCommon
       - EncryptionKeyService
+      - EncryptionKeyTraffic # Frontier
 
 - type: entity
   id: IntercomSupply
@@ -305,10 +337,11 @@
       key_slots:
       - EncryptionKeyCommon
       - EncryptionKeyCargo
+      - EncryptionKeyTraffic # Frontier
 
 - type: entity
   id: IntercomAll
-  parent: Intercom
+  parent: [BaseStructureIndestructible, Intercom] # Frontier - added BaseStructureIndestructible
   suffix: All
   components:
   - type: ContainerFill

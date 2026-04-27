@@ -1,3 +1,11 @@
+// SPDX-FileCopyrightText: 2022 Leon Friedrich
+// SPDX-FileCopyrightText: 2022 keronshb
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2024 Krunklehorn
+// SPDX-FileCopyrightText: 2025 ark1368
+//
+// SPDX-License-Identifier: MPL-2.0
+
 using Content.Shared.Alert;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
@@ -35,6 +43,24 @@ public sealed partial class ThievingComponent : Component
     /// Get mogged.
     /// </summary>
     public override bool SendOnlyToOwner => true;
+
+    // MONO START
+    /// <summary>
+    /// Mono: Multiplies the strip time.
+    /// </summary>
+    [ViewVariables(VVAccess.ReadWrite)]
+    [DataField("timeMultiplier")]
+    [AutoNetworkedField]
+    public float TimeMultiplier = 1f;
+
+    /// <summary>
+    /// Mono: If true, this entity can identify hidden strip slots.
+    /// </summary>
+    [ViewVariables(VVAccess.ReadWrite)]
+    [DataField("identifyHidden")]
+    [AutoNetworkedField]
+    public bool IdentifyHidden;
+    // MONO END
 }
 
 /// <summary>

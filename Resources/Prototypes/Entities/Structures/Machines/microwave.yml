@@ -1,3 +1,47 @@
+# SPDX-FileCopyrightText: 2019 DamianX
+# SPDX-FileCopyrightText: 2019 L.E.D
+# SPDX-FileCopyrightText: 2020 AJCM-git
+# SPDX-FileCopyrightText: 2020 DrSmugleaf
+# SPDX-FileCopyrightText: 2020 FL-OZ
+# SPDX-FileCopyrightText: 2020 Hugo Laloge
+# SPDX-FileCopyrightText: 2020 JiimBob
+# SPDX-FileCopyrightText: 2020 Paul Ritter
+# SPDX-FileCopyrightText: 2020 Víctor Aguilera Puerto
+# SPDX-FileCopyrightText: 2020 nuke
+# SPDX-FileCopyrightText: 2020 py01
+# SPDX-FileCopyrightText: 2021 20kdc
+# SPDX-FileCopyrightText: 2021 Acruid
+# SPDX-FileCopyrightText: 2021 Leon Friedrich
+# SPDX-FileCopyrightText: 2021 Pieter-Jan Briers
+# SPDX-FileCopyrightText: 2021 Swept
+# SPDX-FileCopyrightText: 2021 SweptWasTaken
+# SPDX-FileCopyrightText: 2021 Vera Aguilera Puerto
+# SPDX-FileCopyrightText: 2021 Ygg01
+# SPDX-FileCopyrightText: 2021 metalgearsloth
+# SPDX-FileCopyrightText: 2022 Jacob Tong
+# SPDX-FileCopyrightText: 2022 Peptide90
+# SPDX-FileCopyrightText: 2022 Rane
+# SPDX-FileCopyrightText: 2022 mirrorcult
+# SPDX-FileCopyrightText: 2023 Nemanja
+# SPDX-FileCopyrightText: 2023 Sir Winters
+# SPDX-FileCopyrightText: 2023 Vasilis
+# SPDX-FileCopyrightText: 2023 deltanedas
+# SPDX-FileCopyrightText: 2024 Cojoke
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 Ian
+# SPDX-FileCopyrightText: 2024 ShadowCommander
+# SPDX-FileCopyrightText: 2024 SpeltIncorrectyl
+# SPDX-FileCopyrightText: 2024 TinManTim
+# SPDX-FileCopyrightText: 2024 Verm
+# SPDX-FileCopyrightText: 2024 Whatstone
+# SPDX-FileCopyrightText: 2024 lzk
+# SPDX-FileCopyrightText: 2024 themias
+# SPDX-FileCopyrightText: 2025 Ilya246
+# SPDX-FileCopyrightText: 2025 starch
+# SPDX-FileCopyrightText: 2025 tonotom
+#
+# SPDX-License-Identifier: MPL-2.0
+
 - type: entity
   id: KitchenMicrowave
   parent: [ BaseMachinePowered, SmallConstructibleMachine ]
@@ -6,6 +50,8 @@
   components:
   - type: Microwave
     capacity: 10
+    canMicrowaveIdsSafely: false # Frontier: true<false
+    explosionChance: 1 # Frontier: 0.3<1
   - type: Appearance
   - type: GenericVisualizer
     visuals:
@@ -90,6 +136,17 @@
       behaviors:
       - !type:DoActsBehavior
         acts: ["Breakage"]
+    - trigger: # Mono - why the fuck was this indestructible?
+        !type:DamageTrigger
+        damage: 300
+      behaviors:
+      - !type:ChangeConstructionNodeBehavior
+        node: machineFrame
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
   - type: Explosive
     explosionType: Default
     maxIntensity: 10
@@ -106,6 +163,13 @@
       microwave_entity_container: !type:Container
       machine_board: !type:Container
       machine_parts: !type:Container
+  - type: AutomationSlots # Goobstation
+    slots:
+    - !type:AutomatedContainer
+      input: AutomationSlotInput
+      output: AutomationSlotInput
+      containerId: microwave_entity_container
+      maxItems: 10 # have to manually keep it in sync with capacity on Microwave at the top
   - type: EmptyOnMachineDeconstruct
     containers:
     - microwave_entity_container
@@ -157,7 +221,7 @@
     baseHeatMultiplier: 200
     capacity: 10
     canMicrowaveIdsSafely: false
-    explosionChance: 0.3
+    explosionChance: 1 # Frontier 0.3<1
   - type: Sprite
     sprite: Structures/Machines/microwave_syndie.rsi
     drawdepth: SmallObjects

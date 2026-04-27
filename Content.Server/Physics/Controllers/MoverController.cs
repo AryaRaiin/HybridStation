@@ -1,3 +1,52 @@
+// SPDX-FileCopyrightText: 2019 DamianX
+// SPDX-FileCopyrightText: 2019 Injazz
+// SPDX-FileCopyrightText: 2019 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2019 Silver
+// SPDX-FileCopyrightText: 2019 ZelteHonor
+// SPDX-FileCopyrightText: 2019 moneyl
+// SPDX-FileCopyrightText: 2020 4dplanner
+// SPDX-FileCopyrightText: 2020 ColdAutumnRain
+// SPDX-FileCopyrightText: 2020 FL-OZ
+// SPDX-FileCopyrightText: 2020 Jackson Lewis
+// SPDX-FileCopyrightText: 2020 Memory
+// SPDX-FileCopyrightText: 2020 Metal Gear Sloth
+// SPDX-FileCopyrightText: 2020 Tyler Young
+// SPDX-FileCopyrightText: 2020 Vince
+// SPDX-FileCopyrightText: 2020 Víctor Aguilera Puerto
+// SPDX-FileCopyrightText: 2020 Ygg01
+// SPDX-FileCopyrightText: 2020 chairbender
+// SPDX-FileCopyrightText: 2020 zumorica
+// SPDX-FileCopyrightText: 2021 DrSmugleaf
+// SPDX-FileCopyrightText: 2021 Galactic Chimp
+// SPDX-FileCopyrightText: 2021 Paul Ritter
+// SPDX-FileCopyrightText: 2021 ShadowCommander
+// SPDX-FileCopyrightText: 2021 Swept
+// SPDX-FileCopyrightText: 2021 Vera Aguilera Puerto
+// SPDX-FileCopyrightText: 2021 Visne
+// SPDX-FileCopyrightText: 2021 tmtmtl30
+// SPDX-FileCopyrightText: 2022 Acruid
+// SPDX-FileCopyrightText: 2022 Radrark
+// SPDX-FileCopyrightText: 2022 Rane
+// SPDX-FileCopyrightText: 2022 keronshb
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2022 mirrorcult
+// SPDX-FileCopyrightText: 2023 Doru991
+// SPDX-FileCopyrightText: 2023 TemporalOroboros
+// SPDX-FileCopyrightText: 2023 router
+// SPDX-FileCopyrightText: 2024 Errant
+// SPDX-FileCopyrightText: 2024 Leon Friedrich
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 checkraze
+// SPDX-FileCopyrightText: 2024 {Koks}
+// SPDX-FileCopyrightText: 2025 Alkheemist
+// SPDX-FileCopyrightText: 2025 Ilya246
+// SPDX-FileCopyrightText: 2025 Princess Cheeseballs
+// SPDX-FileCopyrightText: 2025 Redrover1760
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using Content.Server.Shuttles.Components;
@@ -13,6 +62,7 @@ using Robust.Shared.Player;
 using DroneConsoleComponent = Content.Server.Shuttles.DroneConsoleComponent;
 using DependencyAttribute = Robust.Shared.IoC.DependencyAttribute;
 using Robust.Shared.Map.Components;
+using Content.Shared.Ghost; // Frontier
 
 namespace Content.Server.Physics.Controllers;
 
@@ -94,6 +144,9 @@ public sealed class MoverController : SharedMoverController
         // Need to order mob movement so that movers don't run before their relays.
         while (inputQueryEnumerator.MoveNext(out var uid, out var mover))
         {
+            if (IsPaused(uid) && !HasComp<GhostComponent>(uid)) // Frontier: Skip processing paused entities. Ghosts are excepted for mapping reasons
+                continue; // Frontier
+
             InsertMover((uid, mover));
         }
 
@@ -237,10 +290,14 @@ public sealed class MoverController : SharedMoverController
     /// <summary>
     /// Helper function to extrapolate max velocity for a given Vector2 (really, its angle) and shuttle.
     /// </summary>
-    private Vector2 ObtainMaxVel(Vector2 vel, ShuttleComponent shuttle)
+    //private Vector2 ObtainMaxVel(Vector2 vel, ShuttleComponent shuttle)
+    private Vector2 ObtainMaxVel(Vector2 vel, ShuttleComponent shuttle, 
+        PhysicsComponent body) // mono
     {
         if (vel.Length() == 0f)
             return Vector2.Zero;
+
+        vel.Normalize(); // Mono
 
         // this math could PROBABLY be simplified for performance
         // probably
@@ -251,10 +308,31 @@ public sealed class MoverController : SharedMoverController
 
         var horizIndex = vel.X > 0 ? 1 : 3; // east else west
         var vertIndex = vel.Y > 0 ? 2 : 0; // north else south
+
+        /* MONO remove upstream calculation
         var horizComp = vel.X != 0 ? MathF.Pow(Vector2.Dot(vel, new (shuttle.LinearThrust[horizIndex] / shuttle.LinearThrust[horizIndex], 0f)), 2) : 0;
         var vertComp = vel.Y != 0 ? MathF.Pow(Vector2.Dot(vel, new (0f, shuttle.LinearThrust[vertIndex] / shuttle.LinearThrust[vertIndex])), 2) : 0;
 
         return shuttle.BaseMaxLinearVelocity * vel * MathF.ReciprocalSqrtEstimate(horizComp + vertComp);
+        */
+
+        // MONO Start
+        // Mono
+        var horizThrust = vel.X * shuttle.LinearThrust[horizIndex];
+        var vertThrust = vel.Y * shuttle.LinearThrust[vertIndex];
+
+        // Mono - scale max velocity depending on TWR
+        var thrust = MathF.Sqrt(horizThrust * horizThrust + vertThrust * vertThrust);
+        var twr = thrust / body.Mass;
+        var twrMult = MathF.Pow(twr / shuttle.BaseMaxVelocityTWR, shuttle.MaxVelocityScalingExponent);
+
+        // Mono - minor optimisation
+        var horizComp = vel.X == 0 ? 0 : vel.X * shuttle.BaseLinearThrust[horizIndex] / horizThrust; // Frontier: LinearThrust<BaseLinearThrust
+        var vertComp = vel.Y == 0 ? 0 : vel.Y * shuttle.BaseLinearThrust[vertIndex] / vertThrust; // Frontier: LinearThrust<BaseLinearThrust
+
+        // Mono
+        return vel * MathF.Min(shuttle.BaseMaxLinearVelocity * twrMult / MathF.Sqrt(horizComp * horizComp + vertComp * vertComp), MathF.Min(shuttle.UpperMaxVelocity, shuttle.SetMaxVelocity));
+        // MONO END
     }
 
     private void HandleShuttleMovement(float frameTime)
@@ -512,8 +590,11 @@ public sealed class MoverController : SharedMoverController
                 var forceMul = frameTime * body.InvMass;
 
                 var localVel = (-shuttleNorthAngle).RotateVec(body.LinearVelocity);
-                var maxVelocity = ObtainMaxVel(localVel, shuttle); // max for current travel dir
-                var maxWishVelocity = ObtainMaxVel(totalForce, shuttle);
+                // Mono - ObtainMaxVel takes body
+                var maxVelocity = ObtainMaxVel(localVel, shuttle, // max for current travel dir
+                    body); // mono
+                var maxWishVelocity = ObtainMaxVel(totalForce, shuttle,
+                    body); // mono
                 var properAccel = (maxWishVelocity - localVel) / forceMul;
 
                 var finalForce = Vector2Dot(totalForce, properAccel.Normalized()) * properAccel.Normalized();

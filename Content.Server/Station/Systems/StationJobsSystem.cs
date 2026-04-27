@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Content.Server._NF.Station.Components;
 using Content.Server.GameTicking;
 using Content.Server.Station.Components;
 using Content.Shared.CCVar;
@@ -14,6 +15,7 @@ using Robust.Shared.Network;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
+using Robust.Shared.Utility;
 
 namespace Content.Server.Station.Systems;
 
@@ -27,6 +29,12 @@ public sealed partial class StationJobsSystem : EntitySystem
     [Dependency] private readonly IPlayerManager _player = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly GameTicker _gameTicker = default!;
+    [Dependency] private readonly IEntityManager _entityManager = default!;
+
+    /// <summary>
+    /// The maximum number of slots allowed for any job.
+    /// </summary>
+    private const int MaxJobSlots = 10;
 
     /// <inheritdoc/>
     public override void Initialize()
@@ -168,8 +176,10 @@ public sealed partial class StationJobsSystem : EntitySystem
             case false:
                 if (!createSlot)
                     return false;
-                stationJobs.TotalJobs += amount;
-                jobList[jobPrototypeId] = amount;
+                // Limit to MaxJobSlots
+                var newAmount = Math.Min(amount, MaxJobSlots);
+                stationJobs.TotalJobs += newAmount;
+                jobList[jobPrototypeId] = newAmount;
                 UpdateJobsAvailable();
                 return true;
             case true:
@@ -181,7 +191,8 @@ public sealed partial class StationJobsSystem : EntitySystem
                 if (available + amount < 0 && !clamp)
                     return false;
 
-                jobList[jobPrototypeId] = Math.Max(avail + amount, 0);
+                // Clamp to both minimum 0 and maximum MaxJobSlots
+                jobList[jobPrototypeId] = Math.Min(Math.Max(avail + amount, 0), MaxJobSlots);
                 stationJobs.TotalJobs = jobList.Values.Select(x => x ?? 0).Sum();
                 UpdateJobsAvailable();
                 return true;
@@ -244,6 +255,9 @@ public sealed partial class StationJobsSystem : EntitySystem
         if (amount < 0)
             throw new ArgumentException("Tried to set a job to have a negative number of slots!", nameof(amount));
 
+        // Enforce the MaxJobSlots limit
+        var clampedAmount = Math.Min(amount, MaxJobSlots);
+        
         var jobList = stationJobs.JobList;
 
         switch (jobList.ContainsKey(jobPrototypeId))
@@ -251,14 +265,14 @@ public sealed partial class StationJobsSystem : EntitySystem
             case false:
                 if (!createSlot)
                     return false;
-                stationJobs.TotalJobs += amount;
-                jobList[jobPrototypeId] = amount;
+                stationJobs.TotalJobs += clampedAmount;
+                jobList[jobPrototypeId] = clampedAmount;
                 UpdateJobsAvailable();
                 return true;
             case true:
-                stationJobs.TotalJobs += amount - (jobList[jobPrototypeId] ?? 0);
+                stationJobs.TotalJobs += clampedAmount - (jobList[jobPrototypeId] ?? 0);
 
-                jobList[jobPrototypeId] = amount;
+                jobList[jobPrototypeId] = clampedAmount;
                 UpdateJobsAvailable();
                 return true;
         }
@@ -477,7 +491,7 @@ public sealed partial class StationJobsSystem : EntitySystem
 
     private bool _availableJobsDirty;
 
-    private TickerJobsAvailableEvent _cachedAvailableJobs = new(new(), new());
+    private TickerJobsAvailableEvent _cachedAvailableJobs = new(new()); // Frontier: use one dictionary of composite objects instead of two
 
     /// <summary>
     /// Assembles an event from the current available-to-play jobs.
@@ -488,27 +502,63 @@ public sealed partial class StationJobsSystem : EntitySystem
     {
         // If late join is disallowed, return no available jobs.
         if (_gameTicker.DisallowLateJoin)
-            return new TickerJobsAvailableEvent(new(), new());
-
-        var jobs = new Dictionary<NetEntity, Dictionary<ProtoId<JobPrototype>, int?>>();
-        var stationNames = new Dictionary<NetEntity, string>();
+            return new TickerJobsAvailableEvent(new()); // Frontier: changed param type
 
         var query = EntityQueryEnumerator<StationJobsComponent>();
 
+        // Frontier: the dictionary inside a dictionary replaced with <NetEntity, StationJobInformation> which is much cleaner.
+        var stationJobInformationList = new Dictionary<NetEntity, StationJobInformation>();
+
         while (query.MoveNext(out var station, out var comp))
         {
-            var netStation = GetNetEntity(station);
+            var stationNetEntity = GetNetEntity(station);
             var list = comp.JobList.ToDictionary(x => x.Key, x => x.Value);
-            jobs.Add(netStation, list);
-            stationNames.Add(netStation, Name(station));
+
+            // Frontier: overwrite station/vessel information generation
+            var isLateJoinStation = false;
+            VesselDisplayInformation? vesselDisplay = null;
+            StationDisplayInformation? stationDisplay = null;
+            if (TryComp<ExtraShuttleInformationComponent>(station, out var extraVesselInfo))
+            {
+                if (extraVesselInfo.HiddenWithoutOpenJobs && !list.Any(x => x.Value != 0))
+                    continue;
+
+                vesselDisplay = new VesselDisplayInformation(
+                    vesselAdvertisement: extraVesselInfo.Advertisement,
+                    vessel: extraVesselInfo.Vessel,
+                    hiddenIfNoJobs: extraVesselInfo.HiddenWithoutOpenJobs
+                );
+            }
+            else
+            {
+                isLateJoinStation = true;
+                if (TryComp<ExtraStationInformationComponent>(station, out var extraStationInformation))
+                {
+                    stationDisplay = new StationDisplayInformation(
+                        stationSubtext: extraStationInformation.StationSubtext,
+                        stationDescription: extraStationInformation.StationDescription,
+                        stationIcon: extraStationInformation.IconPath,
+                        lobbySortOrder: extraStationInformation.LobbySortOrder
+                    );
+                }
+            }
+            var stationJobInformation = new StationJobInformation(
+                stationName: Name(station),
+                jobsAvailable: list,
+                isLateJoinStation: isLateJoinStation,
+                stationDisplayInfo: stationDisplay,
+                vesselDisplayInfo: vesselDisplay
+            );
+            stationJobInformationList.Add(stationNetEntity, stationJobInformation);
+            // End Frontier: overwrite station/vessel information generation
         }
-        return new TickerJobsAvailableEvent(stationNames, jobs);
+        return new TickerJobsAvailableEvent(stationJobInformationList); // Frontier: changed param type
     }
 
     /// <summary>
     /// Updates the cached available jobs. Moderately expensive.
     /// </summary>
-    private void UpdateJobsAvailable()
+    public void UpdateJobsAvailable() // Frontier: private<public
     {
         _availableJobsDirty = true;
     }

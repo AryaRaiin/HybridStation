@@ -1,11 +1,12 @@
 - type: guideEntry
   id: NewPlayer
   name: guide-entry-newplayer
-  priority: 0
+  priority: -3 # Frontier: 0<-3
   text: "/ServerInfo/Guidebook/NewPlayer/NewPlayer.xml"
   children:
   - Controls
   - CharacterCreation
+  - StartingGear # Frontier
 
 - type: guideEntry
   id: Controls

@@ -1,0 +1,50 @@
+# SPDX-FileCopyrightText: 2025 Avalon
+# SPDX-FileCopyrightText: 2025 BoskiYourk
+# SPDX-FileCopyrightText: 2025 HungryCuban
+# SPDX-FileCopyrightText: 2025 Ilya246
+# SPDX-FileCopyrightText: 2025 Onezero0
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 significant harassment
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: vessel
+  id: Ledokol
+  parent: BaseVesselAntag
+  name: BYP Ledokol
+  description: A massive shuttle originally made for ramming through compact debris fields. Trades off fire-power for thrust-power.
+  limit: 1
+  price: 425000
+  purchasable: false # voucher only
+  category: Large
+  group: Ussp
+  access: Mercenary
+  shuttlePath: /Maps/_Mono/Shuttles/USSP/Ledokol/ledokol.yml
+  guidebookPage: Null
+  class:
+  - Capital
+  - Frigate
+  - Medical
+  - Chemistry
+  engine:
+  - AME
+
+- type: gameMap
+  id: Ledokol
+  mapName: 'Ledokol'
+  mapPath: /Maps/_Mono/Shuttles/USSP/Ledokol/ledokol.yml
+  minPlayers: 0
+  stations:
+    Ledokol:
+      stationProto: StandardFrontierVessel
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: 'Ledokol MIL{1}'
+          nameGenerator:
+            !type:NanotrasenNameGenerator
+            prefixCreator: '14'
+        - type: StationJobs
+          availableJobs:
+            Mercenary: [ 0, 0 ]
+            Pilot: [ 0, 0 ]

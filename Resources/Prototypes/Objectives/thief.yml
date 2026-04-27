@@ -377,6 +377,7 @@
     difficulty: 2
 
 - type: entity
+  categories: [ HideSpawnMenu ]
   parent: BaseThiefStealStructureObjective
   id: ChemDispenserStealObjective
   components:

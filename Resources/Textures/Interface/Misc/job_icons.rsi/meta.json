@@ -176,6 +176,9 @@
             "name": "SecurityOfficer"
         },
         {
+            "name": "MailCarrier"
+        },
+        {
             "name": "SeniorEngineer"
         },
         {
@@ -194,7 +197,7 @@
             "name": "ShaftMiner"
         },
         {
-            "name": "StationAi"
+
         },
         {
             "name": "StationEngineer"
@@ -235,5 +238,8 @@
         {
             "name": "Zookeeper"
         }
+        {
+            "name": "MailCarrier"
+        },
     ]
 }

@@ -1,4 +1,15 @@
-﻿- type: entity
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 Leon Friedrich
+# SPDX-FileCopyrightText: 2024 Nemanja
+# SPDX-FileCopyrightText: 2024 SpeltIncorrectyl
+# SPDX-FileCopyrightText: 2024 Tayrtahn
+# SPDX-FileCopyrightText: 2024 metalgearsloth
+# SPDX-FileCopyrightText: 2025 Havaren
+# SPDX-FileCopyrightText: 2025 cheetah1984
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: entity
   id: MachineFlatpacker
   parent: [ BaseMachinePowered, ConstructibleMachine ]
   name: Flatpacker 1001
@@ -33,9 +44,13 @@
   - type: FlatpackCreator
     baseMachineCost:
       Steel: 750
+      Silver: 100
+      Gold: 50
     baseComputerCost:
       Steel: 500
       Glass: 250
+      Silver: 100
+      Gold: 50
   - type: Machine
     board: FlatpackerMachineCircuitboard
   - type: MaterialStorage
@@ -69,6 +84,18 @@
           components:
           - MachineBoard
           - ComputerBoard
+  - type: AutomationSlots # Goobstation
+    slots:
+    - !type:AutomatedItemSlot
+      input: AutomationSlotBoard
+      output: AutomationSlotBoard
+      slotId: board_slot
+    - !type:AutomatedMaterialStorage
+      input: AutomationSlotMaterials
+      output: null # no automatic silo stealer...
+    - !type:AutomatedPorts
+      sinks:
+      - On
   - type: ContainerContainer
     containers:
       machine_board: !type:Container
@@ -79,8 +106,10 @@
     - machine_parts
     - machine_board
     - board_slot
-  - type: StaticPrice
-    price: 2000
+  - type: MaterialStorageMagnetPickup # Frontier
+    range: 0.30 # Frontier
+#  - type: StaticPrice # Frontier
+#    price: 2000
 
 - type: entity
   id: FlatpackerNoBoardEffect

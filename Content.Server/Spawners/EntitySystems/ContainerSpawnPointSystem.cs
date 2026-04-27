@@ -29,6 +29,10 @@ public sealed class ContainerSpawnPointSystem : EntitySystem
         if (args.SpawnResult != null)
             return;
 
+        // DeltaV - Ignore these two desired spawn types
+        if (args.DesiredSpawnPointType is SpawnPointType.Observer or SpawnPointType.LateJoin)
+            return;
+
         // If it's just a spawn pref check if it's for cryo (silly).
         if (args.HumanoidCharacterProfile?.SpawnPriority != SpawnPriorityPreference.Cryosleep &&
             (!_proto.Resolve(args.Job, out var jobProto) || jobProto.JobEntity == null))
@@ -75,7 +79,8 @@ public sealed class ContainerSpawnPointSystem : EntitySystem
             baseCoords,
             args.Job,
             args.HumanoidCharacterProfile,
-            args.Station);
+            args.Station,
+            session: args.Session); // Frontier
 
         _random.Shuffle(possibleContainers);
         foreach (var (uid, spawnPoint, manager, xform) in possibleContainers)

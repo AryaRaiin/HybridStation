@@ -78,7 +78,7 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 500
+        damage: 750 # Mono 500->750
       behaviors:
       - !type:DoActsBehavior
         acts: ["Destruction"]

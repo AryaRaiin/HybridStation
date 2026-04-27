@@ -1,0 +1,47 @@
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 Whatstone
+# SPDX-FileCopyrightText: 2025 dustylens
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: latheRecipePack
+  id: NFBlueprints
+  recipes:
+  # Engineering
+#  - NFBlueprintPowerDrill
+#  - NFBlueprintJawsOfLife
+#  - NFBlueprintWelderExperimental
+  - NFBlueprintRCDAmmo
+  - NFBlueprintPowerCellMicroreactor
+  - NFBlueprintSignallerAdvanced
+#  - NFBlueprintClothingBackpackHolding
+#  - NFBlueprintClothingBackpackSatchelHolding
+#  - NFBlueprintClothingBackpackMessengerHolding
+#  - NFBlueprintClothingBackpackDuffelHolding
+  - NFBlueprintConstructionBagOfHolding
+  - NFBlueprintPortableRecharger
+  - NFBlueprintPortableGeneratorDKJr
+  # Medical
+  - NFBlueprintBluespaceBeaker
+  - NFBlueprintSyringeBluespace
+  - NFBlueprintJugBluespace
+  - NFBlueprintVialBluespace
+  # Salvage
+#  - NFBlueprintOreBagOfHolding
+  - NFBlueprintMiningDrillDiamond
+  - NFBlueprintAdvancedMineralScannerEmpty
+  - NFBlueprintClothingOuterHardsuitMaximPrototype
+  # Science
+  - NFBlueprintRped
+  - NFBlueprintSuperCapacitorStockPart
+  - NFBlueprintPicoManipulatorStockPart
+  - NFBlueprintSuperMatterBinStockPart
+  - NFBlueprintClothingShoesBootsMagAdv
+  # Service
+  - NFBlueprintAdvMopItem
+  - NFBlueprintPlantAnalyzerEmpty
+#  - NFBlueprintPlantBagOfHolding
+  # Armory
+  - NFBlueprintWeaponLaserSvalinn
+  - NFBlueprintPortableRecharger
+  - BlueprintClothingOuterHardsuitScaf

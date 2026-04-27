@@ -1,3 +1,10 @@
+# SPDX-FileCopyrightText: 2024 IProduceWidgets
+# SPDX-FileCopyrightText: 2024 Whatstone
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 - type: entity
   name: Perma Escape Crate Spawner
   id: CratePermaEscapeSpawner
@@ -68,7 +75,7 @@
         prob: 0.80
       - id: ClothingOuterHardsuitEVAPrisoner
         prob: 0.80
-      - id: ClothingOuterHardsuitVoidParamed
+      - id: UndeterminedVoidsuitParamedic
         prob: 0.10
       - id: ClothingOuterRedRacoon
         prob: 0.10
@@ -246,7 +253,7 @@
         # prob: 0.05
       # - id: Telecrystal
         # prob: 0.01
-      # - id: Telecrystal5
+      # - id: Telecrystal25 # Mono
         # prob: 0.01
       - id: CyberPen
         prob: 0.10
@@ -289,27 +296,27 @@
   - type: StorageFill
     contents:
       - id: ClothingUniformJumpsuitMercenary
-      - id: ClothingHeadBandMerc
+      - id: ClothingHeadBandMercenary # Frontier: Merc<Mercenary
         prob: 0.50
-      - id: ClothingHeadHatBeretMerc
+      - id: ClothingHeadHatBeretMercenary # Frontier: Merc<Mercenary
         prob: 0.20
-      - id: ClothingHeadHelmetMerc
+      - id: ClothingHeadHelmetMercenary # Frontier: Merc<Mercenary
         prob: 0.05
       - id: ClothingEyesGlassesMercenary
         prob: 0.20
-      - id: ClothingMaskGasMerc
+      - id: ClothingMaskGasMercenary # Frontier: Merc<Mercenary
         prob: 0.10
       - id: ClothingHandsGlovesMercFingerless
         prob: 0.20
-      - id: ClothingHandsMercGlovesCombat
+      - id: ClothingHandsMercenaryGlovesCombat # Frontier: Merc<Mercenary
         prob: 0.05
-      - id: ClothingBackpackMerc
+      - id: ClothingBackpackMercenary # Frontier: Merc<Mercenary
         prob: 0.50
-      - id: ClothingShoesBootsMerc
+      - id: ClothingShoesBootsMercenary # Frontier: Merc<Mercenary
         prob: 0.50
-      - id: ClothingOuterVestWebMerc
+      - id: ClothingOuterVestWebMercenary # Frontier: Merc<Mercenary
         prob: 0.25
-      - id: ClothingBeltMercWebbing
+      - id: ClothingBeltMercenaryWebbing # Frontier: Merc<Mercenary
         prob: 0.05
 
 - type: entity

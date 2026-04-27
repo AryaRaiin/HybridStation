@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 Whatstone
+# SPDX-FileCopyrightText: 2025 Redrover1760
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+#T1
+- type: loadout
+  id: NfsdBoxSurvivalNfsdOxygen
+  name: extended-oxygen survival box
+  hideEffects:
+  - !type:GroupLoadoutEffect
+    proto: OxygenBreatherNF
+  storage:
+    back:
+    - BoxSurvivalMonoOxygenExtended
+
+- type: loadout
+  id: NfsdBoxSurvivalNfsdNitrogen
+  name: extended-nitrogen survival box
+  hideEffects:
+  - !type:GroupLoadoutEffect
+    proto: NitrogenBreatherNF
+  storage:
+    back:
+    - BoxSurvivalMonoNitrogenExtended

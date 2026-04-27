@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 bitcrushing
+//
+// SPDX-License-Identifier: MIT
+
 using Content.Shared.Access.Systems;
 using Content.Shared.Construction.EntitySystems;
 using Content.Shared.Hands.EntitySystems;

@@ -4,6 +4,7 @@
   categories:
   - Bedsheets
   completetime: 2
+  applyMaterialDiscount: false # Frontier
   materials:
     Cloth: 150
 

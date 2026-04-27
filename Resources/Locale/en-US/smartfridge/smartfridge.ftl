@@ -6,3 +6,7 @@ smart-fridge-component-title = SmartFridge
 smart-fridge-list-item = {$item} [{$amount}]
 smart-fridge-request-generic = All sales final
 smart-fridge-request-chemistry = Request refills from chemistry
+# MONO START
+smart-fridge-request-generic = Freshness not guaranteed
+smart-fridge-request-chemistry = Request refills from your chemist
+# MONO END

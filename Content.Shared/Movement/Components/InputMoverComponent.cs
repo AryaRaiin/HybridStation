@@ -1,3 +1,11 @@
+// SPDX-FileCopyrightText: 2022 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2025 Princess Cheeseballs
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 metalgearsloth
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Numerics;
 using Content.Shared.Movement.Systems;
 using Robust.Shared.GameStates;
@@ -36,6 +44,12 @@ namespace Content.Shared.Movement.Components
         public Vector2 CurTickSprintMovement;
 
         public MoveButtons HeldMoveButtons = MoveButtons.None;
+
+        // I don't know if we even need this networked? It's mostly so conveyors can calculate properly.
+        /// <summary>
+        /// Direction to move this tick.
+        /// </summary>
+        public Vector2 WishDir;
 
         /// <summary>
         /// Does our input indicate actual movement, and not just modifiers?

@@ -1,5 +1,6 @@
 using Content.Server.Ghost.Roles.Raffles;
 using Content.Server.Mind.Commands;
+using Content.Shared.Ghost.Roles;
 using Content.Shared.Roles;
 using Robust.Shared.Prototypes;
 
@@ -104,5 +105,14 @@ public sealed partial class GhostRoleComponent : Component
     [DataField("job")]
     [Access(typeof(GhostRoleSystem), Other = AccessPermissions.ReadWriteExecute)] // also FIXME Friends
     public ProtoId<JobPrototype>? JobProto = null;
+
+    // Frontier: per-role ghost role whitelisting
+    /// <summary>
+    /// If set, this ghost role associates with a particular prototype.
+    /// Whitelisted status, name and description are stored in the prototype.
+    /// </summary>
+    [DataField]
+    public ProtoId<GhostRolePrototype>? Prototype { get; set; }
+    // End Frontier
 }
 

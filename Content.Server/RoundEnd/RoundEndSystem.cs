@@ -21,6 +21,7 @@ using Robust.Shared.Timing;
 using Content.Shared.DeviceNetwork.Components;
 using Content.Shared.Station.Components;
 using Timer = Robust.Shared.Timing.Timer;
+using Content.Server._NF.SectorServices; // Frontier
 
 namespace Content.Server.RoundEnd
 {
@@ -41,6 +42,7 @@ namespace Content.Server.RoundEnd
         [Dependency] private readonly EmergencyShuttleSystem _shuttle = default!;
         [Dependency] private readonly SharedAudioSystem _audio = default!;
         [Dependency] private readonly StationSystem _stationSystem = default!;
+        [Dependency] private readonly SectorServiceSystem _sectorService = default!; // Frontier: sector-wide alerts
 
         public TimeSpan DefaultCooldownDuration { get; set; } = TimeSpan.FromSeconds(30);
 
@@ -130,7 +132,8 @@ namespace Content.Server.RoundEnd
 
             if (requester != null)
             {
-                var stationUid = _stationSystem.GetOwningStation(requester.Value);
+                // var stationUid = _stationSystem.GetOwningStation(requester.Value); // Frontier: sector-wide alerts
+                var stationUid = _sectorService.GetServiceEntity(); // Frontier: sector-wide alerts
                 if (TryComp<AlertLevelComponent>(stationUid, out var alertLevel))
                 {
                     duration = _protoManager

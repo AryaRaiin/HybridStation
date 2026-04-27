@@ -63,8 +63,22 @@ public sealed partial class ResearchSystem
 
     private void OnClientMapInit(EntityUid uid, ResearchClientComponent component, MapInitEvent args)
     {
+        /* Frontier? START: override
         if (GetServers(uid).FirstOrNull() is { } server)
             RegisterClient(uid, server, component, server);
+        */
+        var maybeGrid = Transform(uid).GridUid;
+        if (maybeGrid is { } grid)
+        {
+            var servers = new HashSet<Entity<ResearchServerComponent>>();
+            _lookup.GetChildEntities(grid, servers);
+
+            foreach (var server in servers)
+            {
+                RegisterClient(uid, server, component);
+            }
+        }
+        // Frontier? END
     }
 
     private void OnClientShutdown(EntityUid uid, ResearchClientComponent component, ComponentShutdown args)
@@ -100,11 +114,13 @@ public sealed partial class ResearchSystem
 
         TryGetClientServer(uid, out _, out var serverComponent, component);
 
-        var names = GetServerNames(uid);
+        //var names = GetServerNames(uid);
+        var names = GetNFServerNames(uid); // Frontier
         var state = new ResearchClientBoundInterfaceState(
             names.Length,
             names,
-            GetServerIds(uid),
+            //GetServerIds(uid),
+            GetNFServerIds(uid), // Frontier
             serverComponent?.Id ?? -1);
 
         _uiSystem.SetUiState(uid, ResearchClientUiKey.Key, state);

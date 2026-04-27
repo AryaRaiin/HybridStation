@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2025 beck-thompson
+// SPDX-FileCopyrightText: 2025 bitcrushing
+//
+// SPDX-License-Identifier: MIT
+
 using Content.Shared.Weapons.Hitscan.Components;
 using Content.Shared.Weapons.Hitscan.Events;
 using Content.Shared.Weapons.Ranged.Events;
@@ -25,7 +30,8 @@ public sealed class HitscanReflectSystem : EntitySystem
         if (hitscan.Comp.CurrentReflections >= hitscan.Comp.MaxReflections)
             return;
 
-        var ev = new HitScanReflectAttemptEvent(data.Shooter ?? data.Gun, data.Gun, hitscan.Comp.ReflectiveType, data.ShotDirection, false);
+        var ev = new HitScanReflectAttemptEvent(data.Shooter ?? data.Gun, data.Gun, hitscan.Comp.ReflectiveType, data.ShotDirection, false,
+            null); // Mono - Added null as default DamageSpecifier? Damage parameter
         RaiseLocalEvent(data.HitEntity.Value, ref ev);
 
         if (!ev.Reflected)

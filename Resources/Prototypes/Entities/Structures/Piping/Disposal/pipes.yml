@@ -61,7 +61,7 @@
     containers:
       DisposalTube: !type:Container
   - type: StaticPrice
-    price: 30
+    price: 22 # Frontier: 30<22 - TODO: material value rework
 
 - type: entity
   id: DisposalHolder
@@ -88,6 +88,8 @@
   - type: Construction
     graph: DisposalPipe
     node: broken
+  - type: StaticPrice
+    price: 6 # Frontier 1<6
 
 - type: entity
   id: DisposalPipe

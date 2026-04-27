@@ -1,3 +1,17 @@
+// SPDX-FileCopyrightText: 2023 Checkraze
+// SPDX-FileCopyrightText: 2023 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2023 ike709
+// SPDX-FileCopyrightText: 2023 metalgearsloth
+// SPDX-FileCopyrightText: 2024 DrSmugleaf
+// SPDX-FileCopyrightText: 2024 MilenVolf
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 ShadowCommander
+// SPDX-FileCopyrightText: 2024 nikthechampiongr
+// SPDX-FileCopyrightText: 2025 Avalon
+// SPDX-FileCopyrightText: 2025 mikusssssss
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Diagnostics.CodeAnalysis;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Database;
@@ -10,6 +24,7 @@ using Content.Shared.Verbs;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Serialization;
 using PryUnpoweredComponent = Content.Shared.Prying.Components.PryUnpoweredComponent;
+using Content.Shared.Timing; // Goobstation
 
 namespace Content.Shared.Prying.Systems;
 
@@ -22,6 +37,7 @@ public sealed class PryingSystem : EntitySystem
     [Dependency] private readonly SharedDoAfterSystem _doAfterSystem = default!;
     [Dependency] private readonly SharedAudioSystem _audioSystem = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
+    [Dependency] private readonly UseDelaySystem _delay = default!; // Goobstation
 
     public override void Initialize()
     {
@@ -64,6 +80,7 @@ public sealed class PryingSystem : EntitySystem
     {
         id = null;
 
+        if (TryComp(tool, out UseDelayComponent? delay) && _delay.IsDelayed((tool, delay))) {return false;} // Goobstation
         PryingComponent? comp = null;
         if (!Resolve(tool, ref comp, false))
             return false;
@@ -92,6 +109,7 @@ public sealed class PryingSystem : EntitySystem
     {
         id = null;
 
+        if (TryComp(user, out UseDelayComponent? delay) && _delay.IsDelayed((user, delay))) { return false; } // Goobstation
         // We don't care about displaying a message if no tool was used.
         if (!TryComp<PryUnpoweredComponent>(target, out var unpoweredComp) || !CanPry(target, user, out _, unpoweredComp: unpoweredComp))
             // If we have reached this point we want the event that caused this
@@ -100,7 +118,8 @@ public sealed class PryingSystem : EntitySystem
 
         // hand-prying is much slower
         var modifier = CompOrNull<PryingComponent>(user)?.SpeedModifier ?? unpoweredComp.PryModifier;
-        return StartPry(target, user, null, modifier, out id);
+        //return StartPry(target, user, null, modifier, out id);
+        return StartPry(target, user, user, modifier, out id); // Goob edit
     }
 
     private bool CanPry(EntityUid target, EntityUid user, out string? message, PryingComponent? comp = null, PryUnpoweredComponent? unpoweredComp = null)
@@ -131,9 +150,12 @@ public sealed class PryingSystem : EntitySystem
 
     private bool StartPry(EntityUid target, EntityUid user, EntityUid? tool, float toolModifier, [NotNullWhen(true)] out DoAfterId? id)
     {
-        var modEv = new GetPryTimeModifierEvent(user);
+        var instaPry = TryComp(tool, out PryingComponent? prying) && prying.InstaPry; // Goobstation
+        var modEv = new GetPryTimeModifierEvent(user, 
+            instaPry); // Goobstation
 
         RaiseLocalEvent(target, ref modEv);
+        RaiseLocalEvent(user, ref modEv); // DeltaV - Also raise an event for users to modifiy the time to pry
         var doAfterArgs = new DoAfterArgs(EntityManager, user, modEv.BaseTime * modEv.PryTimeModifier / toolModifier, new DoorPryDoAfterEvent(), target, target, tool)
         {
             BreakOnDamage = true,
@@ -175,6 +197,9 @@ public sealed class PryingSystem : EntitySystem
 
         var ev = new PriedEvent(args.User);
         RaiseLocalEvent(uid, ref ev);
+
+        if (TryComp(args.Used, out UseDelayComponent? delay)) // Goobstation
+            _delay.TryResetDelay((args.Used.Value, delay)); // Goobstation
     }
 }
 

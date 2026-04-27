@@ -17,6 +17,7 @@ using JetBrains.Annotations;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Serialization;
 using Robust.Shared.Utility;
+using Content.Shared.Emag.Components; // Frontier
 
 namespace Content.Shared.Lock;
 
@@ -61,6 +62,8 @@ public sealed class LockSystem : EntitySystem
         SubscribeLocalEvent<UIRequiresLockComponent, LockToggledEvent>(LockToggled);
 
         SubscribeLocalEvent<ItemToggleRequiresLockComponent, ItemToggleActivateAttemptEvent>(OnActivateAttempt);
+        
+        SubscribeLocalEvent<LockComponent, GotUnEmaggedEvent>(OnUnEmagged); // Frontier - demag
     }
 
     private void OnStartup(EntityUid uid, LockComponent lockComp, ComponentStartup args)
@@ -397,6 +400,28 @@ public sealed class LockSystem : EntitySystem
         args.Repeatable = true;
         args.Handled = true;
     }
+
+    // Frontier START: demag ("let me lock this without access?")
+    private void OnUnEmagged(EntityUid uid, LockComponent component, ref GotUnEmaggedEvent args)
+    {
+        if (!_emag.CompareFlag(args.Type, EmagType.Access))
+            return;
+
+        if (component.Locked)
+            return;
+
+        _audio.PlayPredicted(component.LockSound, uid, args.UserUid);
+
+        component.Locked = true;
+        _appearanceSystem.SetData(uid, LockVisuals.Locked, true);
+        Dirty(uid, component);
+
+        var ev = new LockToggledEvent(true);
+        RaiseLocalEvent(uid, ref ev, true);
+
+        args.Handled = true;
+    }
+    // Frontier END: demag
 
     private void OnDoAfterLock(EntityUid uid, LockComponent component, LockDoAfter args)
     {

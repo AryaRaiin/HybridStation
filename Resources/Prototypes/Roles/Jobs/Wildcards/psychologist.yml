@@ -3,14 +3,15 @@
   name: job-name-psychologist
   description: job-description-psychologist
   playTimeTracker: JobPsychologist
+  setPreference: false # Frontier
+  requirements:
+    - !type:OverallPlaytimeRequirement
+      time: 10800
   startingGear: PsychologistGear
   icon: "JobIconPsychologist"
-  supervisors: job-supervisors-cmo
-  access:
-  - Medical
-  - Maintenance
-  extendedAccess:
-  - Chemistry
+  supervisors: job-supervisors-hire # Frontier
+  accessGroups: # Frontier
+  - GeneralAccess # Frontier
 
 - type: startingGear
   id: PsychologistGear

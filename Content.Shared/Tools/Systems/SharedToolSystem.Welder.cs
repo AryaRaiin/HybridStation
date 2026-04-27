@@ -1,3 +1,11 @@
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 Verm
+// SPDX-FileCopyrightText: 2024 nikthechampiongr
+// SPDX-FileCopyrightText: 2025 ScyronX
+//
+// SPDX-License-Identifier: MPL-2.0
+
 using Content.Shared.ActionBlocker;
 using Content.Shared.Chemistry.Components;
 using Content.Shared.Chemistry.Components.SolutionManager;
@@ -84,6 +92,18 @@ public abstract partial class SharedToolSystem
     {
         using (args.PushGroup(nameof(WelderComponent)))
         {
+            // MONO START: if OnlyDisplayFuel, use custom logic over upstream
+            if (args.IsInDetailsRange && entity.Comp.OnlyDisplayFuel) // Monolith edit - Nanite applicator
+            {
+                var (fuel, capacity) = GetWelderFuelAndCapacity(entity.Owner, entity.Comp);
+                args.PushMarkup(Loc.GetString("welder-component-on-examine-less-detailed-message",
+                    ("colorName", fuel < capacity / FixedPoint2.New(4f) ? "darkorange" : "orange"),
+                    ("fuelLeft", fuel),
+                    ("fuelCapacity", capacity)));
+                return;
+            }
+            // MONO END
+
             if (ItemToggle.IsActivated(entity.Owner))
             {
                 args.PushMarkup(Loc.GetString("welder-component-on-examine-welder-lit-message"));

@@ -1,3 +1,4 @@
+using Content.Server.Construction;
 using Content.Server.Administration.Logs;
 using Content.Server.Fluids.EntitySystems;
 using Content.Server.Ghost;
@@ -50,6 +51,8 @@ public sealed class MaterialReclaimerSystem : SharedMaterialReclaimerSystem
     {
         base.Initialize();
 
+        SubscribeLocalEvent<MaterialReclaimerComponent, RefreshPartsEvent>(OnRefreshParts); // Frontier: machine components
+        SubscribeLocalEvent<MaterialReclaimerComponent, UpgradeExamineEvent>(OnUpgradeExamine); // Frontier: machine components
         SubscribeLocalEvent<MaterialReclaimerComponent, PowerChangedEvent>(OnPowerChanged);
         SubscribeLocalEvent<MaterialReclaimerComponent, InteractUsingEvent>(OnInteractUsing,
             before: [typeof(WiresSystem), typeof(SolutionTransferSystem)]);
@@ -58,6 +61,18 @@ public sealed class MaterialReclaimerSystem : SharedMaterialReclaimerSystem
 
         SubscribeLocalEvent<MaterialReclaimerComponent, BreakageEventArgs>(OnBreakage);
         SubscribeLocalEvent<MaterialReclaimerComponent, RepairedEvent>(OnRepaired);
+    }
+
+    private void OnUpgradeExamine(Entity<MaterialReclaimerComponent> entity, ref UpgradeExamineEvent args)
+    {
+        args.AddPercentageUpgrade(Loc.GetString("material-reclaimer-upgrade-process-rate"), entity.Comp.MaterialProcessRate / entity.Comp.BaseMaterialProcessRate);
+    }
+
+    private void OnRefreshParts(Entity<MaterialReclaimerComponent> entity, ref RefreshPartsEvent args)
+    {
+        var rating = args.PartRatings[entity.Comp.MachinePartProcessRate] - 1;
+        entity.Comp.MaterialProcessRate = entity.Comp.BaseMaterialProcessRate * MathF.Pow(entity.Comp.PartRatingProcessRateMultiplier, rating);
+        Dirty(entity);
     }
 
     private void OnPowerChanged(Entity<MaterialReclaimerComponent> entity, ref PowerChangedEvent args)
@@ -73,7 +88,8 @@ public sealed class MaterialReclaimerSystem : SharedMaterialReclaimerSystem
             return;
 
         // if we're trying to get a solution out of the reclaimer, don't destroy it
-        if (_solutionContainer.TryGetSolution(entity.Owner, entity.Comp.SolutionContainerId, out _, out var outputSolution) && outputSolution.Contents.Any())
+        // if (_solutionContainer.TryGetSolution(entity.Owner, entity.Comp.SolutionContainerId, out _, out var outputSolution) && outputSolution.Contents.Any()) // Frontier: previous implementation
+        if (_solutionContainer.TryGetSolution(entity.Owner, entity.Comp.SolutionContainerId, out _, out var outputSolution)) // Frontier: do not trash solution containers if the reclaimer is empty
         {
             if (TryComp<SolutionContainerManagerComponent>(args.Used, out var managerComponent) &&
                 _solutionContainer.EnumerateSolutions((args.Used, managerComponent)).Any(s => s.Solution.Comp.Solution.AvailableVolume > 0))
@@ -87,7 +103,7 @@ public sealed class MaterialReclaimerSystem : SharedMaterialReclaimerSystem
             }
         }
 
-        args.Handled = TryStartProcessItem(entity.Owner, args.Used, entity.Comp, args.User);
+        args.Handled = TryStartProcessItem(entity.Owner, args.Used, entity.Comp, args.User, predictSound: false); // Frontier: add predictSound: false
     }
 
     private void OnSuicideByEnvironment(Entity<MaterialReclaimerComponent> entity, ref SuicideByEnvironmentEvent args)
@@ -268,7 +284,21 @@ public sealed class MaterialReclaimerSystem : SharedMaterialReclaimerSystem
 
         // if the item we inserted has reagents, add it in.
 
-        if (reclaimerComponent.OnlyReclaimDrainable)
+        // Frontier: use old material reclaimer code
+        if (reclaimerComponent.UseOldSolutionLogic &&
+            TryComp<SolutionContainerManagerComponent>(item, out var solutionContainer))
+        {
+            foreach (var (_, soln) in _solutionContainer.EnumerateSolutions((item, solutionContainer)))
+            {
+                var solution = soln.Comp.Solution;
+                foreach (var quantity in solution.Contents)
+                {
+                    totalChemicals.AddReagent(quantity.Reagent.Prototype, quantity.Quantity * efficiency, false);
+                }
+            }
+        }
+        // End Frontier: use old material reclaimer code
+        else if (reclaimerComponent.OnlyReclaimDrainable) // Frontier: add else
         {
             // Are we a recycler? Only use drainable solution.
             if (_solutionContainer.TryGetDrainableSolution(item, out _, out var drainableSolution))

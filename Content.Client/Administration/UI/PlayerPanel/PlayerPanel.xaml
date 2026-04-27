@@ -33,6 +33,7 @@
             <controls:ConfirmButton Name="RejuvenateButton" Text="{Loc player-panel-rejuvenate}" Disabled="True"/>
             <Button Name="CameraButton" Text="{Loc player-panel-camera}" Disabled="True"/>
            </GridContainer>
+           <Button Name="JobWhitelistsButton" Text="{Loc player-panel-job-whitelists}" SetWidth="136" SetHeight="27" Disabled="True"/> <!-- DeltaV: Job whitelists -->
        </BoxContainer>
     </BoxContainer>
 </ui:FancyWindow>

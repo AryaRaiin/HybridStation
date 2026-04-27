@@ -6,6 +6,7 @@ using Content.Shared.Interaction;
 using Content.Shared.Item.ItemToggle;
 using Content.Shared.Maps;
 using Content.Shared.Popups;
+using Content.Shared.Timing;
 using Content.Shared.Tools.Components;
 using JetBrains.Annotations;
 using Robust.Shared.Audio.Systems;
@@ -34,6 +35,7 @@ public abstract partial class SharedToolSystem : EntitySystem
     [Dependency] private   readonly SharedTransformSystem _transformSystem = default!;
     [Dependency] private   readonly TileSystem _tiles = default!;
     [Dependency] private   readonly TurfSystem _turfs = default!;
+    [Dependency] private   readonly UseDelaySystem _delay = default!; // Goobstation
 
     public const string CutQuality = "Cutting";
     public const string PulseQuality = "Pulsing";
@@ -59,10 +61,18 @@ public abstract partial class SharedToolSystem : EntitySystem
             RaiseLocalEvent(GetEntity(args.OriginalTarget.Value), (object) ev);
         else
             RaiseLocalEvent((object) ev);
+            
+        if (TryComp(uid, out UseDelayComponent? delay)) // Goobstation
+            _delay.TryResetDelay((uid, delay));
     }
 
     private void OnExamine(Entity<ToolComponent> ent, ref ExaminedEvent args)
     {
+        // Frontier: hide tool qualities
+        if (ent.Comp.HideQualities)
+            return;
+        // End Frontier
+
         // If the tool has no qualities, exit early
         if (ent.Comp.Qualities.Count == 0)
             return;
@@ -251,7 +261,7 @@ public abstract partial class SharedToolSystem : EntitySystem
             return false;
 
         // check if the tool allows being used
-        var beforeAttempt = new ToolUseAttemptEvent(user, fuel);
+        var beforeAttempt = new ToolUseAttemptEvent(user, fuel, tool, toolQualitiesNeeded); // Frontier: added tool, toolQualitiesNeeded
         RaiseLocalEvent(tool, beforeAttempt);
         if (beforeAttempt.Cancelled)
             return false;

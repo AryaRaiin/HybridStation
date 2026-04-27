@@ -1,3 +1,26 @@
+// SPDX-FileCopyrightText: 2022 Kevin Zheng
+// SPDX-FileCopyrightText: 2022 Leon Friedrich
+// SPDX-FileCopyrightText: 2022 Morb
+// SPDX-FileCopyrightText: 2022 Paul Ritter
+// SPDX-FileCopyrightText: 2022 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2022 Vera Aguilera Puerto
+// SPDX-FileCopyrightText: 2022 mirrorcult
+// SPDX-FileCopyrightText: 2023 Doru991
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Duke
+// SPDX-FileCopyrightText: 2023 Ygg01
+// SPDX-FileCopyrightText: 2023 drteaspoon420
+// SPDX-FileCopyrightText: 2023 metalgearsloth
+// SPDX-FileCopyrightText: 2024 RichardRahl123
+// SPDX-FileCopyrightText: 2024 SlamBamActionman
+// SPDX-FileCopyrightText: 2024 Token
+// SPDX-FileCopyrightText: 2024 drakewill-CRL
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 Tayrtahn
+// SPDX-FileCopyrightText: 2025 Whatstone
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Server.Botany.Components;
 using Content.Server.Botany.Systems;
 using Content.Server.EntityEffects.Effects.Botany;
@@ -103,6 +126,12 @@ public partial class SeedData
     /// </summary>
     [DataField("noun")]
     public string Noun { get; private set; } = "";
+
+    /// <summary>
+    ///     Frontier: The localized string used for a set of seeds (or equivalent)
+    /// </summary>
+    [DataField("packetName")]
+    public string PacketName { get; private set; } = "botany-seed-packet-name";
 
     /// <summary>
     ///     Name displayed when examining the hydroponics tray. Describes the actual plant, not the seed itself.
@@ -215,6 +244,23 @@ public partial class SeedData
 
     #endregion
 
+    // Frontier: no fun fields
+    #region Frontier
+    /// <summary>
+    ///     If true, the plant cannot be swabbed.
+    /// </summary>
+    [DataField] public bool PreventSwabbing;
+    /// <summary>
+    ///     If true, the plant cannot be clipped.
+    /// </summary>
+    [DataField] public bool PreventClipping;
+    /// <summary>
+    ///     If true, the plant will always be seedless.
+    /// </summary>
+    [DataField] public bool PermanentlySeedless;
+    #endregion
+    // End Frontier
+
     #region Cosmetics
 
     [DataField(required: true)]
@@ -303,6 +349,10 @@ public partial class SeedData
             Viable = Viable,
             Ligneous = Ligneous,
 
+            PreventSwabbing = PreventSwabbing, // Frontier
+            PreventClipping = PreventClipping, // Frontier
+            PermanentlySeedless = PermanentlySeedless, // Frontier
+
             PlantRsi = PlantRsi,
             PlantIconState = PlantIconState,
             CanScream = CanScream,
@@ -365,6 +415,10 @@ public partial class SeedData
             Seedless = Seedless,
             Viable = Viable,
             Ligneous = Ligneous,
+
+            PreventSwabbing = PreventSwabbing, // Frontier
+            PreventClipping = PreventClipping, // Frontier
+            PermanentlySeedless = PermanentlySeedless, // Frontier
 
             PlantRsi = other.PlantRsi,
             PlantIconState = other.PlantIconState,

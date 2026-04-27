@@ -1,3 +1,50 @@
+// SPDX-FileCopyrightText: 2020 20kdc
+// SPDX-FileCopyrightText: 2020 DamianX
+// SPDX-FileCopyrightText: 2020 Víctor Aguilera Puerto
+// SPDX-FileCopyrightText: 2021 Acruid
+// SPDX-FileCopyrightText: 2021 Metal Gear Sloth
+// SPDX-FileCopyrightText: 2021 Remie Richards
+// SPDX-FileCopyrightText: 2021 ShadowCommander
+// SPDX-FileCopyrightText: 2021 Swept
+// SPDX-FileCopyrightText: 2021 ike709
+// SPDX-FileCopyrightText: 2022 AJCM-git
+// SPDX-FileCopyrightText: 2022 Moony
+// SPDX-FileCopyrightText: 2022 Rane
+// SPDX-FileCopyrightText: 2022 T-Stalker
+// SPDX-FileCopyrightText: 2022 Veritius
+// SPDX-FileCopyrightText: 2022 Visne
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2022 mirrorcult
+// SPDX-FileCopyrightText: 2022 wrexbe
+// SPDX-FileCopyrightText: 2023 Cheackraze
+// SPDX-FileCopyrightText: 2023 Checkraze
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Flipp Syder
+// SPDX-FileCopyrightText: 2023 Morb
+// SPDX-FileCopyrightText: 2023 OCO_Omega
+// SPDX-FileCopyrightText: 2024 Ciac32
+// SPDX-FileCopyrightText: 2024 Debug
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Ed
+// SPDX-FileCopyrightText: 2024 ErhardSteinhauer
+// SPDX-FileCopyrightText: 2024 GreaseMonk
+// SPDX-FileCopyrightText: 2024 Krunklehorn
+// SPDX-FileCopyrightText: 2024 Leon Friedrich
+// SPDX-FileCopyrightText: 2024 Mr. 27
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 Whisper
+// SPDX-FileCopyrightText: 2024 Winkarst
+// SPDX-FileCopyrightText: 2024 dffdff2423
+// SPDX-FileCopyrightText: 2024 lizelive
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 Hyper B
+// SPDX-FileCopyrightText: 2025 LukeZurg22
+// SPDX-FileCopyrightText: 2025 ark1368
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: MPL-2.0
+
 using System.Linq;
 using System.Text.RegularExpressions;
 using Content.Shared.CCVar;
@@ -15,6 +62,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Serialization;
 using Robust.Shared.Utility;
+using Content.Shared._NF.Bank; // Frontier
 
 namespace Content.Shared.Preferences
 {
@@ -27,6 +75,7 @@ namespace Content.Shared.Preferences
     {
         private static readonly Regex RestrictedNameRegex = new(@"[^A-Za-z0-9 '\-]");
         private static readonly Regex ICNameCaseRegex = new(@"^(?<word>\w)|\b(?<word>\w)(?=\w*$)");
+        public const int DefaultBalance = 75000; // Frontier
 
         /// <summary>
         /// Job preferences for initial spawn.
@@ -83,6 +132,9 @@ namespace Content.Shared.Preferences
         [DataField]
         public Gender Gender { get; private set; } = Gender.Male;
 
+        [DataField] // Frontier: Bank balance
+        public int BankBalance { get; private set; } = DefaultBalance; // Frontier: Bank balance
+
         /// <summary>
         /// <see cref="Appearance"/>
         /// </summary>
@@ -135,7 +187,8 @@ namespace Content.Shared.Preferences
             PreferenceUnavailableMode preferenceUnavailable,
             HashSet<ProtoId<AntagPrototype>> antagPreferences,
             HashSet<ProtoId<TraitPrototype>> traitPreferences,
-            Dictionary<string, RoleLoadout> loadouts)
+            Dictionary<string, RoleLoadout> loadouts,
+            int bankBalance) // Frontier
         {
             Name = name;
             FlavorText = flavortext;
@@ -150,6 +203,7 @@ namespace Content.Shared.Preferences
             _antagPreferences = antagPreferences;
             _traitPreferences = traitPreferences;
             _loadouts = loadouts;
+            BankBalance = bankBalance; // Frontier
 
             var hasHighPrority = false;
             foreach (var (key, value) in _jobPriorities)
@@ -180,7 +234,8 @@ namespace Content.Shared.Preferences
                 other.PreferenceUnavailable,
                 new HashSet<ProtoId<AntagPrototype>>(other.AntagPreferences),
                 new HashSet<ProtoId<TraitPrototype>>(other.TraitPreferences),
-                new Dictionary<string, RoleLoadout>(other.Loadouts))
+                new Dictionary<string, RoleLoadout>(other.Loadouts),
+                other.bankBalance) // Frontier
         {
         }
 
@@ -210,7 +265,8 @@ namespace Content.Shared.Preferences
         }
 
         // TODO: This should eventually not be a visual change only.
-        public static HumanoidCharacterProfile Random(HashSet<string>? ignoredSpecies = null)
+        public static HumanoidCharacterProfile Random(HashSet<string>? ignoredSpecies = null,
+            int balance = DefaultBalance) // Frontier
         {
             var prototypeManager = IoCManager.Resolve<IPrototypeManager>();
             var random = IoCManager.Resolve<IRobustRandom>();
@@ -221,10 +277,12 @@ namespace Content.Shared.Preferences
                 .ToArray()
             ).ID;
 
-            return RandomWithSpecies(species);
+            //return RandomWithSpecies(species);
+            return RandomWithSpecies(species: species, balance: balance); // Frontier
         }
 
-        public static HumanoidCharacterProfile RandomWithSpecies(string? species = null)
+        public static HumanoidCharacterProfile RandomWithSpecies(string? species = null,
+            int balance = DefaultBalance) // Frontier
         {
             species ??= SharedHumanoidAppearanceSystem.DefaultSpecies;
 
@@ -288,6 +346,13 @@ namespace Content.Shared.Preferences
         {
             return new(this) { Gender = gender };
         }
+
+        // FRONTIER START: this is probably an issue and should be removed.
+        public HumanoidCharacterProfile WithBankBalance(int bankBalance)
+        {
+            return new(this) { BankBalance = bankBalance };
+        }
+        // FRONTIER END
 
         public HumanoidCharacterProfile WithSpecies(string species)
         {
@@ -456,6 +521,8 @@ namespace Content.Shared.Preferences
                 ("age", Age)
             );
 
+        public string BankBalanceText => BankSystemExtensions.ToSpesoString(BankBalance); // Frontier
+
         public bool MemberwiseEquals(ICharacterProfile maybeOther)
         {
             if (maybeOther is not HumanoidCharacterProfile other) return false;
@@ -471,6 +538,9 @@ namespace Content.Shared.Preferences
             if (!_traitPreferences.SequenceEqual(other._traitPreferences)) return false;
             if (!Loadouts.SequenceEqual(other.Loadouts)) return false;
             if (FlavorText != other.FlavorText) return false;
+
+            if (BankBalance != other.BankBalance) return false; // Frontier
+
             return Appearance.MemberwiseEquals(other.Appearance);
         }
 
@@ -552,6 +622,15 @@ namespace Content.Shared.Preferences
                 flavortext = FormattedMessage.RemoveMarkupOrThrow(FlavorText);
             }
 
+            // FRONTIER START
+            //make sure theres no funny bank stuff going on
+            var bankBalance = BankBalance;
+            if (BankBalance <= 0)
+            {
+                bankBalance = 0;
+            }
+            // FRONTIER END
+
             var appearance = HumanoidCharacterAppearance.EnsureValid(Appearance, Species, Sex);
 
             var prefsUnavailableMode = PreferenceUnavailable switch
@@ -605,6 +684,7 @@ namespace Content.Shared.Preferences
             Gender = gender;
             Appearance = appearance;
             SpawnPriority = spawnPriority;
+            BankBalance = bankBalance;
 
             _jobPriorities.Clear();
 
@@ -726,6 +806,7 @@ namespace Content.Shared.Preferences
             hashCode.Add(Appearance);
             hashCode.Add((int)SpawnPriority);
             hashCode.Add((int)PreferenceUnavailable);
+            hashCode.Add(BankBalance); // Frontier
             return hashCode.ToHashCode();
         }
 

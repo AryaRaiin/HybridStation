@@ -1,3 +1,19 @@
+// SPDX-FileCopyrightText: 2023 Ben
+// SPDX-FileCopyrightText: 2023 BenOwnby
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Vordenburg
+// SPDX-FileCopyrightText: 2023 Ygg01
+// SPDX-FileCopyrightText: 2024 Cojoke
+// SPDX-FileCopyrightText: 2024 ElectroJr
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Tornado Tech
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 checkraze
+// SPDX-FileCopyrightText: 2024 metalgearsloth
+// SPDX-FileCopyrightText: 2025 Redrover1760
+//
+// SPDX-License-Identifier: MIT
+
 using System.Threading;
 using System.Threading.Tasks;
 using Content.Server.Construction;
@@ -46,7 +62,7 @@ public sealed partial class DungeonSystem : SharedDungeonSystem
     private EntityQuery<MetaDataComponent> _metaQuery;
     private EntityQuery<TransformComponent> _xformQuery;
 
-    private const double DungeonJobTime = 0.005;
+    private const double DungeonJobTime = 0.002;
 
     public const int CollisionMask = (int) CollisionGroup.Impassable;
     public const int CollisionLayer = (int) CollisionGroup.Impassable;
@@ -194,6 +210,7 @@ public sealed partial class DungeonSystem : SharedDungeonSystem
     /// </summary>
     /// <param name="coordinates">Coordinates to move the dungeon to afterwards. Will delete the original map</param>
     public void GenerateDungeon(DungeonConfig gen,
+        string genID, // Frontier
         EntityUid gridUid,
         MapGridComponent grid,
         Vector2i position,
@@ -219,6 +236,7 @@ public sealed partial class DungeonSystem : SharedDungeonSystem
             gridUid,
             seed,
             position,
+            genID, // Frontier
             coordinates,
             cancelToken.Token);
 
@@ -228,6 +246,7 @@ public sealed partial class DungeonSystem : SharedDungeonSystem
 
     public async Task<List<Dungeon>> GenerateDungeonAsync(
         DungeonConfig gen,
+        string genID, // Frontier
         EntityUid gridUid,
         MapGridComponent grid,
         Vector2i position,
@@ -252,6 +271,7 @@ public sealed partial class DungeonSystem : SharedDungeonSystem
             gridUid,
             seed,
             position,
+            genID, // Frontier
             null,
             cancelToken.Token);
 

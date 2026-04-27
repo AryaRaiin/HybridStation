@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 bitcrushing
+//
+// SPDX-License-Identifier: MPL-2.0
+
 using Robust.Shared.GameStates;
 
 namespace Content.Shared.CombatMode;

@@ -4,6 +4,18 @@
   id: BaseCrowbar
   abstract: true
   components:
+  # Goobstation edit start
+  - type: EmitSoundOnPickup
+    sound:
+      path: /Audio/_Goobstation/Items/handling/crowbar_pickup.ogg
+      params:
+        volume: -2
+  - type: EmitSoundOnDrop
+    sound:
+      path: /Audio/Items/crowbar_drop.ogg
+      params:
+        volume: -2
+  # Goobstation edit end
   - type: EmitSoundOnLand
     sound:
       path: /Audio/Items/crowbar_drop.ogg
@@ -14,12 +26,12 @@
     wideAnimationRotation: -135
     damage:
       types:
-        Blunt: 8
+        Blunt: 16
     soundHit:
       collection: MetalThud
   - type: Tool
     qualities:
-      - Prying
+    - Prying
     useSound:
       path: /Audio/Items/crowbar.ogg
   - type: ToolTileCompatible
@@ -29,18 +41,24 @@
   - type: StaticPrice
     price: 22
   - type: Prying
+  - type: UseDelay # Goobstation - For insta prying
+    delay: 1
   - type: Sprite
-    sprite: Objects/Tools/crowbar.rsi
+    sprite: _NF/Objects/Tools/crowbar.rsi # Frontier: _NF prefix
   - type: Clothing
-    sprite: Objects/Tools/crowbar.rsi
+    sprite: _NF/Objects/Tools/crowbar.rsi # Frontier: _NF prefix
     quickEquip: false
     slots:
     - Belt
   - type: Item
-    sprite: Objects/Tools/crowbar.rsi
+    sprite: _NF/Objects/Tools/crowbar.rsi # Frontier: _NF prefix
     size: Normal
     shape:
     - 0,0,0,1
+  - type: Tweezers # Shitmed
+    speed: 0.55
+  - type: SurgeryTool # Shitmed
+    startSound: /Audio/Items/crowbar.ogg
 
 # Standard (grey) Crowbar
 - type: entity
@@ -52,7 +70,7 @@
     state: icon
   - type: Item
     storedSprite:
-      sprite: Objects/Tools/crowbar.rsi
+      sprite: _NF/Objects/Tools/crowbar.rsi # Frontier: _NF prefix
       state: storage
 
 # Emergency (red) Crowbar
@@ -74,7 +92,7 @@
   - type: Item
     storedSprite:
       state: red-storage
-      sprite: Objects/Tools/crowbar.rsi
+      sprite: _NF/Objects/Tools/crowbar.rsi # Frontier: _NF prefix
     inhandVisuals:
       left:
       - state: inhand-left
@@ -105,7 +123,7 @@
   - type: Item
     storedSprite:
       state: green-storage
-      sprite: Objects/Tools/crowbar.rsi
+      sprite: _NF/Objects/Tools/crowbar.rsi # Frontier: _NF prefix
     inhandVisuals:
       left:
       - state: inhand-left
@@ -136,7 +154,7 @@
   - type: Item
     storedSprite:
       state: orange-storage
-      sprite: Objects/Tools/crowbar.rsi
+      sprite: _NF/Objects/Tools/crowbar.rsi # Frontier: _NF prefix
     inhandVisuals:
       left:
       - state: inhand-left
@@ -167,7 +185,7 @@
   - type: Item
     storedSprite:
       state: yellow-storage
-      sprite: Objects/Tools/crowbar.rsi
+      sprite: _NF/Objects/Tools/crowbar.rsi # Frontier: _NF prefix
     inhandVisuals:
       left:
       - state: inhand-left

@@ -35,3 +35,9 @@ lathe-menu-move-up-tooltip = Move this batch ahead in the queue.
 lathe-menu-move-down-tooltip = Move this batch back in the queue.
 lathe-menu-item-single = {$index}. {$name}
 lathe-menu-item-batch = {$index}. {$name} ({$printed}/{$total})
+
+# UNKNOWN START
+lathe-menu-loop = Loop
+lathe-menu-skip = Skip If Insufficient
+lathe-menu-silo-linked-message = Silo Linked
+# UNKNOWN END

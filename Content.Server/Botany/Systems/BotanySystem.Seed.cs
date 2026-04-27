@@ -16,6 +16,7 @@ using System.Linq;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Database;
 using Content.Shared.Kitchen.Components;
+using Content.Server._NF.Contraband.Systems; // Frontier
 
 namespace Content.Server.Botany.Systems;
 
@@ -30,6 +31,7 @@ public sealed partial class BotanySystem : EntitySystem
     [Dependency] private readonly MetaDataSystem _metaData = default!;
     [Dependency] private readonly RandomHelperSystem _randomHelper = default!;
     [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
+    [Dependency] private readonly ContrabandTurnInSystem _contraband = default!; // Frontier
 
     public override void Initialize()
     {
@@ -101,14 +103,15 @@ public sealed partial class BotanySystem : EntitySystem
     /// </summary>
     public EntityUid SpawnSeedPacket(SeedData proto, EntityCoordinates coords, EntityUid user, float? healthOverride = null)
     {
-        var seed = Spawn(proto.PacketPrototype, coords);
+        var seed = SpawnAtPosition(proto.PacketPrototype, coords); // Frontier: Spawn<SpawnAtPosition
+        _contraband.ClearContrabandValue(seed); // Frontier
         var seedComp = EnsureComp<SeedComponent>(seed);
         seedComp.Seed = proto;
         seedComp.HealthOverride = healthOverride;
 
         var name = Loc.GetString(proto.Name);
         var noun = Loc.GetString(proto.Noun);
-        var val = Loc.GetString("botany-seed-packet-name", ("seedName", name), ("seedNoun", noun));
+        var val = Loc.GetString(proto.PacketName, ("seedName", name), ("seedNoun", noun)); // Frontier: "botany-seed-packet-name"<proto.PacketName
         _metaData.SetEntityName(seed, val);
 
         // try to automatically place in user's other hand
@@ -169,7 +172,8 @@ public sealed partial class BotanySystem : EntitySystem
         {
             var product = _robustRandom.Pick(proto.ProductPrototypes);
 
-            var entity = Spawn(product, position);
+            var entity = SpawnAtPosition(product, position); // Frontier: Spawn<SpawnAtPosition
+            _contraband.ClearContrabandValue(entity); // Frontier
             _randomHelper.RandomOffset(entity, 0.25f);
             products.Add(entity);
 

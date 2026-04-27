@@ -126,6 +126,17 @@
       - id: SheetPaper
         amount: 3
 
+- type: entity
+  id: CrateMaterialUranium
+  parent: CrateUranium
+  name: uranium crate
+  description: 90 sheets of uranium.
+  components:
+  - type: StorageFill
+    contents:
+      - id: SheetUranium
+        amount: 3
+
 - type: entityTable
   id: RandomMaterialCrateTable
   table: !type:GroupSelector

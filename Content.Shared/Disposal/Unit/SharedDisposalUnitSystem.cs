@@ -1,3 +1,53 @@
+// SPDX-FileCopyrightText: 2021 Fiftyllama
+// SPDX-FileCopyrightText: 2021 Javier Guardia Fernández
+// SPDX-FileCopyrightText: 2021 Paul Ritter
+// SPDX-FileCopyrightText: 2022 Acruid
+// SPDX-FileCopyrightText: 2022 Alex Evgrashin
+// SPDX-FileCopyrightText: 2022 Julian Giebel
+// SPDX-FileCopyrightText: 2022 Lucas
+// SPDX-FileCopyrightText: 2022 Morb
+// SPDX-FileCopyrightText: 2022 Profane McBane
+// SPDX-FileCopyrightText: 2022 Vera Aguilera Puerto
+// SPDX-FileCopyrightText: 2022 Visne
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2022 mirrorcult
+// SPDX-FileCopyrightText: 2022 themias
+// SPDX-FileCopyrightText: 2022 wrexbe
+// SPDX-FileCopyrightText: 2023 Checkraze
+// SPDX-FileCopyrightText: 2023 Chief-Engineer
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 I.K
+// SPDX-FileCopyrightText: 2023 Rane
+// SPDX-FileCopyrightText: 2023 Slava0135
+// SPDX-FileCopyrightText: 2023 TemporalOroboros
+// SPDX-FileCopyrightText: 2023 Ygg01
+// SPDX-FileCopyrightText: 2023 deltanedas
+// SPDX-FileCopyrightText: 2023 deltanedas <@deltanedas:kde.org>
+// SPDX-FileCopyrightText: 2023 faint
+// SPDX-FileCopyrightText: 2023 keronshb
+// SPDX-FileCopyrightText: 2023 zero
+// SPDX-FileCopyrightText: 2024 Cojoke
+// SPDX-FileCopyrightText: 2024 Doomsdrayk
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Ed
+// SPDX-FileCopyrightText: 2024 Kara
+// SPDX-FileCopyrightText: 2024 Leon Friedrich
+// SPDX-FileCopyrightText: 2024 Mervill
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 beck-thompson
+// SPDX-FileCopyrightText: 2024 brainfood1183
+// SPDX-FileCopyrightText: 2024 eoineoineoin
+// SPDX-FileCopyrightText: 2024 nikthechampiongr
+// SPDX-FileCopyrightText: 2025 Ilya246
+// SPDX-FileCopyrightText: 2025 SlamBamActionman
+// SPDX-FileCopyrightText: 2025 Whatstone
+// SPDX-FileCopyrightText: 2025 bitcrushing
+//
+// SPDX-License-Identifier: MIT
+
 using System.Linq;
 using Content.Shared.ActionBlocker;
 using Content.Shared.Administration.Logs;
@@ -32,6 +82,8 @@ using Robust.Shared.Physics.Systems;
 using Robust.Shared.Serialization;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
+using Robust.Shared.Prototypes; // Goobstation
+using Content.Shared.DeviceLinking; // Goobstation
 
 namespace Content.Shared.Disposal.Unit;
 
@@ -60,6 +112,8 @@ public abstract class SharedDisposalUnitSystem : EntitySystem
     [Dependency] protected readonly SharedTransformSystem TransformSystem = default!;
     [Dependency] private   readonly SharedUserInterfaceSystem _ui = default!;
     [Dependency] private   readonly SharedMapSystem _map = default!;
+    [Dependency] private readonly SharedDeviceLinkSystem _device = default!; // Goobstation
+    public static readonly ProtoId<SourcePortPrototype> ReadyPort = "DisposalReady"; // Goobstation
 
     protected static TimeSpan ExitAttemptDelay = TimeSpan.FromSeconds(0.5);
 
@@ -268,6 +322,7 @@ public abstract class SharedDisposalUnitSystem : EntitySystem
 
     private void OnDragDropOn(EntityUid uid, DisposalUnitComponent component, ref DragDropTargetEvent args)
     {
+        if (args.Handled){ return; } // Frontier: check handled
         args.Handled = TryInsert(uid, args.Dragged, args.User);
     }
 
@@ -552,6 +607,7 @@ public abstract class SharedDisposalUnitSystem : EntitySystem
         if (state == DisposalsPressureState.Ready)
         {
             component.NextPressurized = TimeSpan.Zero;
+            _device.InvokePort(uid, ReadyPort); // Goobstation
 
             // Manually engaged
             if (component.Engaged)

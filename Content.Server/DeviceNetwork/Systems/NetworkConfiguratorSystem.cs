@@ -21,6 +21,7 @@ using Robust.Shared.Map.Events;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
+using Content.Server.Shuttles.Components; // UNKOWN
 
 namespace Content.Server.DeviceNetwork.Systems;
 
@@ -52,6 +53,8 @@ public sealed class NetworkConfiguratorSystem : SharedNetworkConfiguratorSystem
         //Verbs
         SubscribeLocalEvent<NetworkConfiguratorComponent, GetVerbsEvent<UtilityVerb>>(OnAddInteractVerb);
         SubscribeLocalEvent<DeviceNetworkComponent, GetVerbsEvent<AlternativeVerb>>(OnAddAlternativeSaveDeviceVerb);
+        SubscribeLocalEvent<DeviceLinkSinkComponent, GetVerbsEvent<AlternativeVerb>>(OnAddAlternativeSinkVerb);     // Frontier
+        SubscribeLocalEvent<DeviceLinkSourceComponent, GetVerbsEvent<AlternativeVerb>>(OnAddAlternativeSourceVerb); // Frontier
         SubscribeLocalEvent<NetworkConfiguratorComponent, GetVerbsEvent<AlternativeVerb>>(OnAddSwitchModeVerb);
 
         //UI
@@ -429,6 +432,7 @@ public sealed class NetworkConfiguratorSystem : SharedNetworkConfiguratorSystem
             return;
         }
 
+        /* Frontier: removed check for DeviceSource/DeviceSink into separate verb functions.
         if (configurator is { LinkModeActive: true, ActiveDeviceLink: { } }
         && (HasComp<DeviceLinkSinkComponent>(args.Target) || HasComp<DeviceLinkSourceComponent>(args.Target)))
         {
@@ -441,7 +445,56 @@ public sealed class NetworkConfiguratorSystem : SharedNetworkConfiguratorSystem
             };
             args.Verbs.Add(verb);
         }
+        */
     }
+
+    // Frontier START: DeviceSource/DeviceSink verbs
+    /// <summary>
+    /// Adds link default alt verb to devices with LinkSource components.
+    /// </summary>
+    private void OnAddAlternativeSourceVerb(EntityUid uid, DeviceLinkSourceComponent component, GetVerbsEvent<AlternativeVerb> args)
+    {
+        if (!args.CanAccess || !args.CanInteract || !args.Using.HasValue
+            || !TryComp<NetworkConfiguratorComponent>(args.Using.Value, out var configurator))
+            return;
+
+        if (configurator is { LinkModeActive: true, ActiveDeviceLink: { } } && HasComp<DeviceLinkSourceComponent>(args.Target))
+        {
+            AlternativeVerb verb = new()
+            {
+                Text = Loc.GetString("network-configurator-link-defaults"),
+                Icon = new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/VerbIcons/in.svg.192dpi.png")),
+                Act = () => TryLinkDefaults(args.Using.Value, configurator, args.Target, args.User),
+                Impact = LogImpact.Low
+            };
+            args.Verbs.Add(verb);
+        }
+    }
+    /// <summary>
+    /// Adds link default alt verb to devices with LinkSink components if they aren't a LinkSource (to prevent duplicates).
+    /// </summary>
+    private void OnAddAlternativeSinkVerb(EntityUid uid, DeviceLinkSinkComponent component, GetVerbsEvent<AlternativeVerb> args)
+    {
+        if (!args.CanAccess || !args.CanInteract || !args.Using.HasValue
+            || !TryComp<NetworkConfiguratorComponent>(args.Using.Value, out var configurator))
+            return;
+
+        if (configurator is { LinkModeActive: true, ActiveDeviceLink: { } }
+        && HasComp<DeviceLinkSinkComponent>(args.Target) && !HasComp<DeviceLinkSourceComponent>(args.Target))
+        {
+            AlternativeVerb verb = new()
+            {
+                Text = Loc.GetString("network-configurator-link-defaults"),
+                Icon = new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/VerbIcons/in.svg.192dpi.png")),
+                Act = () => TryLinkDefaults(args.Using.Value, configurator, args.Target, args.User),
+                Impact = LogImpact.Low
+            };
+            args.Verbs.Add(verb);
+        }
+    }
+    // Frontier END: DeviceSource/DeviceSink verbs
+
+
 
     private void OnAddSwitchModeVerb(EntityUid uid, NetworkConfiguratorComponent configurator, GetVerbsEvent<AlternativeVerb> args)
     {
@@ -494,6 +547,21 @@ public sealed class NetworkConfiguratorSystem : SharedNetworkConfiguratorSystem
             return;
 
         var sources = _deviceLinkSystem.GetSourcePorts(sourceUid, sourceComponent);
+        //UNKNOWN START
+        // Check if the source entity has a ShuttleConsoleComponent with custom port names
+        if (TryComp<ShuttleConsoleComponent>(sourceUid, out var shuttleConsole) && shuttleConsole.PortNames.Count > 0)
+        {
+            // Apply custom port names to the source ports
+            foreach (var sourcePort in sources)
+            {
+                if (shuttleConsole.PortNames.TryGetValue(sourcePort.ID, out var customName))
+                {
+                    // We can't modify the prototype directly, so we create a new one with the custom name
+                    sourcePort.Name = customName;
+                }
+            }
+        }
+        //UNKNOWN END
         var sinks = _deviceLinkSystem.GetSinkPortIds((sinkUid, sinkComponent));
         var links = _deviceLinkSystem.GetLinks(sourceUid, sinkUid, sourceComponent);
         var defaults = _deviceLinkSystem.GetDefaults(sources);

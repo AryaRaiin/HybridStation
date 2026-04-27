@@ -5,6 +5,7 @@ using Robust.Server.Player;
 using Robust.Shared.Configuration;
 using Robust.Shared.Console;
 using Robust.Shared.Enums;
+using Robust.Shared.Input;
 using Robust.Shared.Player;
 using Robust.Shared.Timing;
 
@@ -90,6 +91,11 @@ namespace Content.Server.Afk
         {
             if (shell.Player is { } player)
                 PlayerDidAction(player);
+        }
+
+        private void HandleInputCmd(FullInputCmdMessage msg, EntitySessionEventArgs args)
+        {
+            PlayerDidAction(args.SenderSession);
         }
     }
 }

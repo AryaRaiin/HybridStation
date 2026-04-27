@@ -1,3 +1,27 @@
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Rane
+// SPDX-FileCopyrightText: 2023 TemporalOroboros
+// SPDX-FileCopyrightText: 2023 brainfood1183
+// SPDX-FileCopyrightText: 2023 deltanedas
+// SPDX-FileCopyrightText: 2023 deltanedas <@deltanedas:kde.org>
+// SPDX-FileCopyrightText: 2023 metalgearsloth
+// SPDX-FileCopyrightText: 2023 themias
+// SPDX-FileCopyrightText: 2024 Arendian
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 Plykiya
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 nikthechampiongr
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 BeeRobynn
+// SPDX-FileCopyrightText: 2025 Blu
+// SPDX-FileCopyrightText: 2025 ScyronX
+// SPDX-FileCopyrightText: 2025 starch
+// SPDX-FileCopyrightText: 2025 wewman222
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Linq;
 using Content.Shared.Access.Components;
 using Content.Shared.ActionBlocker;
@@ -22,6 +46,16 @@ using Robust.Shared.Network;
 using Robust.Shared.Serialization;
 using Robust.Shared.Timing;
 
+using Content.Shared.CCVar; // GOOBSTATION
+using Content.Shared._Goobstation.CCVars; // GOOBSTATION
+using Content.Shared.Emag.Systems; // GOOBSTATION
+using Content.Shared.Weapons.Ranged.Events; // GOOBSTATION
+using Content.Shared.Hands.Components; // GOOBSTATION
+using Content.Shared.Hands.EntitySystems; // GOOBSTATION
+using Content.Shared.Inventory.VirtualItem; // GOOBSTATION
+using Robust.Shared.Configuration; // GOOBSTATION
+using Content.Shared.Implants.Components; // GOOBSTATION
+
 namespace Content.Shared.Mech.EntitySystems;
 
 /// <summary>
@@ -40,6 +74,11 @@ public abstract partial class SharedMechSystem : EntitySystem
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
     [Dependency] private readonly EntityWhitelistSystem _whitelistSystem = default!;
+    [Dependency] private readonly SharedHandsSystem _hands = default!; // Goobstation Change
+    [Dependency] private readonly SharedVirtualItemSystem _virtualItem = default!; // Goobstation Change
+    [Dependency] private readonly IConfigurationManager _config = default!; // Goobstation Change
+
+    private bool _canUseMechGunOutside; // Goobstation: Local variable for checking if mech guns can be used out of them.
 
     /// <inheritdoc/>
     public override void Initialize()
@@ -53,10 +92,16 @@ public abstract partial class SharedMechSystem : EntitySystem
         SubscribeLocalEvent<MechComponent, GetAdditionalAccessEvent>(OnGetAdditionalAccess);
         SubscribeLocalEvent<MechComponent, DragDropTargetEvent>(OnDragDrop);
         SubscribeLocalEvent<MechComponent, CanDropTargetEvent>(OnCanDragDrop);
+        SubscribeLocalEvent<MechComponent, MechRadarUiEvent>(OnOpenRadarUiEvent); // UNKNOWN
 
         SubscribeLocalEvent<MechPilotComponent, GetMeleeWeaponEvent>(OnGetMeleeWeapon);
         SubscribeLocalEvent<MechPilotComponent, CanAttackFromContainerEvent>(OnCanAttackFromContainer);
         SubscribeLocalEvent<MechPilotComponent, AttackAttemptEvent>(OnAttackAttempt);
+        SubscribeLocalEvent<MechPilotComponent, EntGotRemovedFromContainerMessage>(OnEntGotRemovedFromContainer); // GOOBSTATION
+
+        SubscribeLocalEvent<MechEquipmentComponent, ShotAttemptedEvent>(OnShotAttempted); // Goobstation
+        Subs.CVar(_config, GoobCVars.MechGunOutsideMech, value => _canUseMechGunOutside = value, false); // Goobstation
+
 
         InitializeRelay();
     }
@@ -76,6 +121,26 @@ public abstract partial class SharedMechSystem : EntitySystem
         args.Handled = true;
         TryEject(uid, component);
     }
+
+    // UNKNOWN START
+    private void OnOpenRadarUiEvent(EntityUid uid, MechComponent component, MechRadarUiEvent args)
+    {
+        if (args.Handled)
+            return;
+        args.Handled = true;
+
+        // Mass scanner logic - open radar console UI
+        var pilot = component.PilotSlot.ContainedEntity;
+        if (pilot == null)
+            return;
+
+        // Raise server event to open radar UI
+        if (_net.IsServer)
+        {
+            RaiseLocalEvent(uid, new MechOpenRadarEvent(EntityManager.GetNetEntity(pilot.Value)));
+        }
+    }
+    // UNKNOWN END
 
     private void RelayInteractionEvent(EntityUid uid, MechComponent component, UserActivateInWorldEvent args)
     {
@@ -142,6 +207,8 @@ public abstract partial class SharedMechSystem : EntitySystem
         _actions.AddAction(pilot, ref component.MechCycleActionEntity, component.MechCycleAction, mech);
         _actions.AddAction(pilot, ref component.MechUiActionEntity, component.MechUiAction, mech);
         _actions.AddAction(pilot, ref component.MechEjectActionEntity, component.MechEjectAction, mech);
+        _actions.AddAction(pilot, ref component.ToggleActionEntity, component.ToggleAction, mech); //Goobstation Mech Lights toggle action
+        _actions.AddAction(pilot, ref component.MechRadarUiActionEntity, component.MechRadarUiAction, mech); // UNKNOWN
     }
 
     private void RemoveUser(EntityUid mech, EntityUid pilot)
@@ -385,6 +452,7 @@ public abstract partial class SharedMechSystem : EntitySystem
         SetupUser(uid, toInsert.Value);
         _container.Insert(toInsert.Value, component.PilotSlot);
         UpdateAppearance(uid, component);
+        UpdateHands(toInsert.Value, uid, true); // Goobstation
         return true;
     }
 
@@ -410,6 +478,74 @@ public abstract partial class SharedMechSystem : EntitySystem
         return true;
     }
 
+    // GOOBSTATION START
+    private void UpdateHands(EntityUid uid, EntityUid mech, bool active)
+    {
+        if (!TryComp<HandsComponent>(uid, out var handsComponent))
+            return;
+        if (active)
+            BlockHands(uid, mech, handsComponent);
+        else
+            FreeHands(uid, mech);
+    }
+
+    private void BlockHands(EntityUid uid, EntityUid mech, HandsComponent handsComponent)
+    {
+        var freeHands = 0;
+        foreach (var hand in _hands.EnumerateHands(uid, handsComponent))
+        {
+            if (hand.HeldEntity == null)
+            {
+                freeHands++;
+                continue;
+            }
+            // Is this entity removable? (they might have handcuffs on)
+            if (HasComp<UnremoveableComponent>(hand.HeldEntity) && hand.HeldEntity != mech)
+                continue;
+            _hands.DoDrop(uid, hand, true, handsComponent);
+            freeHands++;
+            if (freeHands == 2)
+                break;
+        }
+        if (_virtualItem.TrySpawnVirtualItemInHand(mech, uid, out var virtItem1))
+            EnsureComp<UnremoveableComponent>(virtItem1.Value);
+        if (_virtualItem.TrySpawnVirtualItemInHand(mech, uid, out var virtItem2))
+            EnsureComp<UnremoveableComponent>(virtItem2.Value);
+    }
+
+    private void FreeHands(EntityUid uid, EntityUid mech)
+    {
+        _virtualItem.DeleteInHandsMatching(uid, mech);
+    }
+
+    // GoobStation: Fixes scram implants or teleports locking the pilot out of being able to move.
+    private void OnEntGotRemovedFromContainer(EntityUid uid, MechPilotComponent component, EntGotRemovedFromContainerMessage args)
+    {
+        TryEject(component.Mech, pilot: uid);
+    }
+    // Goobstation: Prevent guns being used out of mechs if CCVAR is set.
+    private void OnShotAttempted(EntityUid uid, MechEquipmentComponent component, ref ShotAttemptedEvent args)
+    {
+        if (!component.EquipmentOwner.HasValue
+            || !HasComp<MechComponent>(component.EquipmentOwner.Value))
+        {
+            if (!_canUseMechGunOutside)
+                args.Cancel();
+            return;
+        }
+
+        if (TryComp<TransformComponent>(uid, out var xform) && xform.GridUid != null && component.PreventFireOnGrid)
+        {
+            _popup.PopupEntity(Loc.GetString("gun-no-fire-station"), uid);
+
+            args.Cancel();
+            return;
+        }
+
+        var ev = new HandleMechEquipmentBatteryEvent();
+        RaiseLocalEvent(uid, ev);
+    }
+    // GOOBSTATION END
     private void OnGetMeleeWeapon(EntityUid uid, MechPilotComponent component, GetMeleeWeaponEvent args)
     {
         if (args.Handled)
@@ -454,6 +590,7 @@ public abstract partial class SharedMechSystem : EntitySystem
         var doAfterEventArgs = new DoAfterArgs(EntityManager, args.Dragged, component.EntryDelay, new MechEntryEvent(), uid, target: uid)
         {
             BreakOnMove = true,
+            MultiplyDelay = false, // Goobstation
         };
 
         _doAfter.TryStartDoAfter(doAfterEventArgs);
@@ -493,3 +630,25 @@ public sealed partial class MechExitEvent : SimpleDoAfterEvent
 public sealed partial class MechEntryEvent : SimpleDoAfterEvent
 {
 }
+
+// UNKNOWN START
+/// <summary>
+///     Event raised when an user attempts to fire a mech weapon to check if its battery is drained
+/// </summary>
+
+[Serializable, NetSerializable]
+public sealed partial class HandleMechEquipmentBatteryEvent : EntityEventArgs
+{
+}
+
+[Serializable, NetSerializable]
+public sealed partial class MechOpenRadarEvent : EntityEventArgs
+{
+    public NetEntity Pilot { get; }
+
+    public MechOpenRadarEvent(NetEntity pilot)
+    {
+        Pilot = pilot;
+    }
+}
+// UNKNOWN END

@@ -59,6 +59,8 @@
     - Honking
     useSound:
       collection: BikeHorn
+  - type: StaticPrice # Frontier
+    price: 15 # Frontier
 
 - type: entity
   parent: BaseItem
@@ -115,6 +117,8 @@
     damage:
       types:
         Blunt: 5
+  - type: StaticPrice # Frontier
+    price: 2 # Frontier
 
 
 - type: entity
@@ -232,3 +236,5 @@
   - type: SpawnOnTrigger
     proto: EffectGravityPulse
     predicted: true
+  - type: StaticPrice # Frontier
+    price: 20 # Frontier

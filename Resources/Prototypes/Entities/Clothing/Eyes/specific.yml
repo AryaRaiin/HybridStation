@@ -1,4 +1,4 @@
-- type: entity
+﻿- type: entity
   parent: [ClothingEyesBase, BaseChameleon]
   id: ClothingEyesChameleon # no flash immunity, sorry
   name: sun glasses

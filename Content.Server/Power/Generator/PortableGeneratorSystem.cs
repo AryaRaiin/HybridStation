@@ -42,7 +42,17 @@ public sealed class PortableGeneratorSystem : SharedPortableGeneratorSystem
         SubscribeLocalEvent<PortableGeneratorComponent, PortableGeneratorStartMessage>(GeneratorStartMessage);
         SubscribeLocalEvent<PortableGeneratorComponent, PortableGeneratorStopMessage>(GeneratorStopMessage);
         SubscribeLocalEvent<PortableGeneratorComponent, PortableGeneratorSwitchOutputMessage>(GeneratorSwitchOutputMessage);
+
+        SubscribeLocalEvent<PortableGeneratorComponent, MapInitEvent>(GeneratorMapInit); // Frontier
     }
+
+    // Frontier START - Init on map generator
+    private void GeneratorMapInit(EntityUid uid, PortableGeneratorComponent component, MapInitEvent args)
+    {
+        if (component.StartOnMapInit)
+            _generator.SetFuelGeneratorOn(uid, true);
+    }
+    // // Frontier END
 
     private void GeneratorSwitchOutputMessage(EntityUid uid, PortableGeneratorComponent component, PortableGeneratorSwitchOutputMessage args)
     {

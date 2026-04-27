@@ -8,6 +8,7 @@ using Content.Shared.CCVar;
 using Content.Shared.Ghost;
 using Content.Shared.Mind;
 using Content.Shared.Roles;
+using Content.Shared._NF.Bank;//PULSARSEDGE
 using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;
 using Robust.Client.UserInterface;
@@ -55,6 +56,8 @@ internal sealed class AdminNameOverlay : Overlay
         SharedRoleSystem roles,
         IPrototypeManager prototypeManager)
     {
+        IoCManager.InjectDependencies(this);//PULSARSEDGE
+
         _system = system;
         _entityManager = entityManager;
         _eyeManager = eyeManager;
@@ -123,7 +126,29 @@ internal sealed class AdminNameOverlay : Overlay
             // Get on-screen coordinates of player
             var screenCoordinates = _eyeManager.WorldToScreen(aabb.Center).Rounded();
 
+            //PULSARSEDGE_START
             sortable.Add((info, aabb, entity.Value, screenCoordinates));
+            var uiScale = _userInterfaceManager.RootControl.UIScale;
+            var lineoffset = new Vector2(0f, 11f) * uiScale;
+            var screenCoordinates = _eyeManager.WorldToScreen(aabb.Center +
+                                                              new Angle(-_eyeManager.CurrentEye.Rotation).RotateVec(
+                                                                  aabb.TopRight - aabb.Center)) + new Vector2(1f, 7f);
+            var balance = playerInfo.Balance == int.MinValue ? "NO BALANCE" : BankSystemExtensions.ToCurrencyString(playerInfo.Balance); // Frontier
+            if (classic && playerInfo.Antag)
+            {
+                args.ScreenHandle.DrawString(_font, screenCoordinates + (lineoffset * 3), _antagLabelClassic, uiScale, _antagColorClassic); // Frontier: 2<3
+            }
+            else if (!classic && _filter.Contains(playerInfo.RoleProto))
+            {
+                var label = Loc.GetString(playerInfo.RoleProto.Name).ToUpper();
+                var color = playerInfo.RoleProto.Color;
+
+                args.ScreenHandle.DrawString(_font, screenCoordinates + (lineoffset * 3), label, uiScale, color); // Frontier: 2<3
+            }
+            args.ScreenHandle.DrawString(_font, screenCoordinates+lineoffset, playerInfo.Username, uiScale, playerInfo.Connected ? Color.Yellow : Color.White);
+            args.ScreenHandle.DrawString(_font, screenCoordinates, playerInfo.CharacterName, uiScale, playerInfo.Connected ? Color.Aquamarine : Color.White);
+            args.ScreenHandle.DrawString(_font, screenCoordinates + lineoffset * 2, $"Balance: {balance}", uiScale, playerInfo.Connected ? Color.Aquamarine : Color.White); // Frontier
+            //PULSARSEDGE_END
         }
 
         // Draw overlays for visible players, starting from the top of the screen

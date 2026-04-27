@@ -3,12 +3,15 @@
   name: job-name-boxer
   description: job-description-boxer
   playTimeTracker: JobBoxer
+  setPreference: false # Frontier
+  requirements:
+    - !type:OverallPlaytimeRequirement
+      time: 10800
   startingGear: BoxerGear
   icon: "JobIconBoxer"
-  supervisors: job-supervisors-hop
-  access:
-  - Service
-  - Maintenance
+  supervisors: job-supervisors-hire # Frontier
+  accessGroups: # Frontier
+  - GeneralAccess # Frontier
   special:
   - !type:GiveItemOnHolidaySpecial
     holiday: BoxingDay

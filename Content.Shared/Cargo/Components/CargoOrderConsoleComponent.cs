@@ -7,6 +7,7 @@ using Content.Shared.Stacks;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
+using Content.Shared._NF.Bank.Components; // Frontier
 
 namespace Content.Shared.Cargo.Components;
 
@@ -144,6 +145,12 @@ public sealed partial class CargoOrderConsoleComponent : Component
     /// </summary>
     [DataField]
     public TimeSpan DenySoundDelay = TimeSpan.FromSeconds(2);
+
+    // Frontier START: station taxes
+    // Accounts to receive tax value (each currently receives the entirety of the taxed value)
+    [DataField, ViewVariables(VVAccess.ReadWrite)]
+    public Dictionary<SectorBankAccount, float> TaxAccounts = new();
+    // Frontier END
 }
 
 /// <summary>

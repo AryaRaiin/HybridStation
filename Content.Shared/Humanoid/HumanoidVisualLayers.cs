@@ -8,6 +8,7 @@ namespace Content.Shared.Humanoid
     {
         Special, // for the cat ears
         Tail,
+        Wings, // For IPC wings porting from SimpleStation
         Hair,
         FacialHair,
         UndergarmentTop,
@@ -31,6 +32,8 @@ namespace Content.Shared.Humanoid
         StencilMask,
         Ensnare,
         Fire,
+        LArmExtension, // Frontier: a species-specific extension layer, e.g. for harpy wings
+        RArmExtension, // Frontier: a species-specific extension layer, e.g. for harpy wings
 
     }
 }

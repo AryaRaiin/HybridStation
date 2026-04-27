@@ -21,6 +21,8 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using System.Numerics;
 using Content.Shared.Damage.Components;
+using Content.Server._NF.Shuttles.Components; // Frontier
+using Content.Shared._Mono; // Mono
 
 namespace Content.Server.Shuttles.Systems;
 
@@ -150,6 +152,18 @@ public sealed partial class ShuttleSystem
             // if we're not enabled, stop after playing sound
             if (!_enabled)
                 continue;
+
+            // UNKNOWN START
+            // Check if either grid has GridGodMode or ForceAnchor protection
+            var ourProtected = HasComp<GridGodModeComponent>(args.OurEntity) || HasComp<ForceAnchorComponent>(args.OurEntity);
+            var otherProtected = HasComp<GridGodModeComponent>(args.OtherEntity) || HasComp<ForceAnchorComponent>(args.OtherEntity);
+
+            // Check if the grids are docked together to prevent impact
+            var areGridsDocked = _dockSystem.AreGridsDocked(args.OurEntity, args.OtherEntity);
+
+            if (ourProtected || otherProtected || areGridsDocked)
+                continue;
+            // UNKNOWN END
 
             // Convert the collision point directly to tile indices
             var ourTile = new Vector2i((int)Math.Floor(ourPoint.X / ourGrid.TileSize), (int)Math.Floor(ourPoint.Y / ourGrid.TileSize));

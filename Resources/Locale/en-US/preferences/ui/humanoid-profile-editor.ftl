@@ -23,10 +23,16 @@ humanoid-profile-editor-open-image-button = Open images
 humanoid-profile-editor-save-button = Save
 humanoid-profile-editor-reset-button = Reset
 humanoid-profile-editor-spawn-priority-label = Spawn priority:
+# Mono Start
+humanoid-profile-editor-height-label = Height:
+humanoid-profile-editor-width-label = Width:
+# Mono End
 humanoid-profile-editor-eyes-label = Eye color:
 humanoid-profile-editor-jobs-tab = Jobs
 humanoid-profile-editor-preference-unavailable-stay-in-lobby-button = Stay in lobby if preference unavailable.
-humanoid-profile-editor-preference-unavailable-spawn-as-overflow-button = Be {INDEFINITE($overflowJob)} {$overflowJob} if preference unavailable.
+# Frontier: we have multiple overflow job types, so we change this message.
+# humanoid-profile-editor-preference-unavailable-spawn-as-overflow-button = Be {INDEFINITE($overflowJob)} {$overflowJob} if preference unavailable.
+humanoid-profile-editor-preference-unavailable-spawn-as-overflow-button = Start in an available job if preference unavailable.
 humanoid-profile-editor-preference-jumpsuit = Jumpsuit
 humanoid-profile-editor-preference-jumpskirt = Jumpskirt
 humanoid-profile-editor-preference-backpack = Backpack
@@ -40,7 +46,7 @@ humanoid-profile-editor-preference-spawn-priority-arrivals = Arrivals
 humanoid-profile-editor-preference-spawn-priority-cryosleep = Cryosleep
 
 humanoid-profile-editor-jobs-amount-in-department-tooltip = Jobs in the {$departmentName} department
-humanoid-profile-editor-department-jobs-label = {$departmentName} jobs
+humanoid-profile-editor-department-jobs-label = {$departmentName}
 humanoid-profile-editor-antags-tab = Antags
 humanoid-profile-editor-antag-preference-yes-button = Yes
 humanoid-profile-editor-antag-preference-no-button = No
@@ -53,12 +59,23 @@ humanoid-profile-editor-naming-rules-warning = Warning: Offensive or LRP IC name
 humanoid-profile-editor-markings-tab = Markings
 humanoid-profile-editor-flavortext-tab = Description
 
+# Company
+humanoid-profile-editor-company-tab = Company
+humanoid-profile-editor-company-label = Company:
+
 # Traits
 humanoid-profile-editor-traits-tab = Traits
 humanoid-profile-editor-no-traits = No traits available
+humanoid-profile-editor-traits-default-category = Uncategorized
 
-humanoid-profile-editor-trait-count-hint = Points available: [{$current}/{$max}]
+humanoid-profile-editor-trait-count-hint = Points Available: [{$current}/{$max}]
+
+# Mono
+humanoid-profile-editor-clear-all-traits-button = Clear All Traits
+humanoid-profile-editor-clear-all-traits-confirm = Confirm Clear
 
 trait-category-disabilities = Disabilities
-trait-category-speech = Speech traits
+trait-category-speech = Accents
 trait-category-quirks = Quirks
+# Mono
+trait-category-physical = Physical

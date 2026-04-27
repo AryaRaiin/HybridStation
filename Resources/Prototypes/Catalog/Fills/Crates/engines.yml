@@ -30,7 +30,7 @@
   components:
   - type: StorageFill
     contents:
-      - id: AmeControllerUnanchored
+      - id: AmeControllerUnanchoredFlatpack # Frontier - AmeControllerUnanchored to AmeControllerUnanchoredFlatpack
 
 # Singularity
 
@@ -138,7 +138,7 @@
   - type: StorageFill
     contents:
       - id: WallmountSubstationElectronics
-      - id: WallmountGeneratorAPUElectronics
+#      - id: WallmountGeneratorAPUElectronics # Frontier
       - id: HandheldGPSBasic
       - id: InflatableDoorStack1
 

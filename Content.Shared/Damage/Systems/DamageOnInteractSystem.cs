@@ -13,6 +13,8 @@ using Content.Shared.Random;
 using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Effects;
 using Content.Shared.Stunnable;
+using Content.Shared._Shitmed.Targeting; // Shitmed
+using Content.Shared.Hands.Components; // Shitmed
 
 namespace Content.Shared.Damage.Systems;
 
@@ -75,7 +77,21 @@ public sealed class DamageOnInteractSystem : EntitySystem
             }
         }
 
-        totalDamage = _damageableSystem.ChangeDamage(args.User, totalDamage, origin: args.Target);
+        // SHITMED START
+        TargetBodyPart? targetPart = null;
+        var hands = CompOrNull<HandsComponent>(args.User);
+        if (hands is { ActiveHand: not null })
+        {
+            targetPart = hands.ActiveHand.Location switch
+            {
+                HandLocation.Left => TargetBodyPart.LeftHand,
+                HandLocation.Right => TargetBodyPart.RightHand,
+                _ => null
+            };
+        }
+        //totalDamage = _damageableSystem.ChangeDamage(args.User, totalDamage, origin: args.Target); // Disable upstream
+        totalDamage = _damageableSystem.TryChangeDamage(args.User, totalDamage, origin: args.Target, targetPart: targetPart);
+        // SHITMED END
 
         if (totalDamage.AnyPositive())
         {

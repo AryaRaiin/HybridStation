@@ -5,6 +5,8 @@ using Robust.Shared.Containers;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Utility;
+using Content.Shared._NF.LoggingExtensions; // Frontier
+using Content.Shared._NF.Item; // Frontier
 
 namespace Content.Shared.Hands.EntitySystems;
 
@@ -284,11 +286,16 @@ public abstract partial class SharedHandsSystem
             Log.Error($"Failed to insert {ToPrettyString(entity)} into users hand container when picking up. User: {ToPrettyString(uid)}. Hand: {hand}.");
             return;
         }
+        RaiseLocalEvent(entity, new PickedUpEvent(uid, entity), false); // Frontier
 
         _interactionSystem.DoContactInteraction(uid, entity); //Possibly fires twice if manually picked up via interacting with the object
 
         if (log)
-            _adminLogger.Add(LogType.Pickup, LogImpact.Low, $"{ToPrettyString(uid):user} picked up {ToPrettyString(entity):entity}");
+        {
+            var extraLogs = LoggingExtensions.GetExtraLogs(EntityManager, entity); // Frontier: adds extra things to the log
+            //_adminLogger.Add(LogType.Pickup, LogImpact.Low, $"{ToPrettyString(uid):user} picked up {ToPrettyString(entity):entity}");
+            _adminLogger.Add(LogType.Pickup, LogImpact.Low, $"{ToPrettyString(uid):user} picked up {ToPrettyString(entity):entity}{extraLogs}"); // Frontier: adds extra things to the log
+        }
 
         Dirty(uid, hands);
 

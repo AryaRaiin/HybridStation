@@ -1,3 +1,16 @@
+// SPDX-FileCopyrightText: 2022 Flipp Syder
+// SPDX-FileCopyrightText: 2023 Checkraze
+// SPDX-FileCopyrightText: 2023 Dvir
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Slava0135
+// SPDX-FileCopyrightText: 2023 TemporalOroboros
+// SPDX-FileCopyrightText: 2023 Visne
+// SPDX-FileCopyrightText: 2024 godisdeadLOL
+// SPDX-FileCopyrightText: 2024 metalgearsloth
+// SPDX-FileCopyrightText: 2025 ark1368
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Server.Administration.Logs;
 using Content.Server.DeviceNetwork.Systems;
 using Content.Shared.Database;
@@ -10,6 +23,8 @@ using Robust.Server.GameObjects;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Content.Shared.DeviceNetwork.Components;
+using Content.Shared.Silicons.StationAi; // UNKNOWN
+using Content.Shared.StationAi; // UNKNOWN
 
 namespace Content.Server.SurveillanceCamera;
 
@@ -22,6 +37,7 @@ public sealed class SurveillanceCameraSystem : SharedSurveillanceCameraSystem
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
     [Dependency] private readonly IAdminLogManager _adminLogger = default!;
 
+    [Dependency] private readonly SharedStationAiSystem _stationAi = default!; // UNKNOWN
 
     // Pings a surveillance camera subnet. All cameras will always respond
     // with a data message if they are on the same subnet.
@@ -234,6 +250,14 @@ public sealed class SurveillanceCameraSystem : SharedSurveillanceCameraSystem
         RemoveActiveViewers(camera, new(component.ActiveViewers), null, component);
         component.Active = false;
 
+        // UNKNOWN START
+        // Disable AI vision when camera is deactivated
+        if (TryComp<StationAiVisionComponent>(camera, out var visionComp))
+        {
+            _stationAi.SetVisionEnabled((camera, visionComp), false);
+        }
+        // UNKNOWN END
+
         // Send a targetted event to all monitors.
         foreach (var monitor in component.ActiveMonitors)
         {
@@ -262,6 +286,14 @@ public sealed class SurveillanceCameraSystem : SharedSurveillanceCameraSystem
             if (attemptEv.Cancelled)
                 return;
             component.Active = setting;
+
+            // UNKNOWN START
+            // Enable AI vision when camera is activated
+            if (TryComp<StationAiVisionComponent>(camera, out var visionComp))
+            {
+                _stationAi.SetVisionEnabled((camera, visionComp), true);
+            }
+            // UNKNOWN END
         }
         else
         {

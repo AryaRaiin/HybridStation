@@ -1,0 +1,49 @@
+# SPDX-FileCopyrightText: 2025 BoskiYourk
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: entity
+  id: SpawnMobWeaponTurretLaserTSFMC
+  parent: MarkerBase
+  name: TSFMC laser turret spawner
+  suffix: TSFMC, Frontier
+  components:
+  - type: Sprite
+    layers:
+    - state: red
+    - sprite: _NF/Objects/Weapons/Guns/Turrets/laser.rsi
+      state: base
+  - type: ConditionalSpawner
+    prototypes:
+    - WeaponTurretLaserTSFMC
+
+- type: entity
+  id: SpawnMobWeaponTurretTFSMC
+  parent: MarkerBase
+  name: TSFMC ballistic turret spawner
+  suffix: TSFMC, Frontier
+  components:
+  - type: Sprite
+    layers:
+    - state: red
+    - sprite: Objects/Weapons/Guns/Turrets/turrets.rsi
+      state: syndie_lethal
+  - type: ConditionalSpawner
+    prototypes:
+    - WeaponTurretTSFMC
+
+- type: entity
+  id: SpawnMobWeaponTurretUSSP
+  parent: MarkerBase
+  name: USSP ballistic turret spawner
+  suffix: USSP
+  components:
+  - type: Sprite
+    layers:
+    - state: red
+    - sprite: Objects/Weapons/Guns/Turrets/turrets.rsi
+      state: syndie_lethal
+  - type: ConditionalSpawner
+    prototypes:
+    - WeaponTurretUSSP

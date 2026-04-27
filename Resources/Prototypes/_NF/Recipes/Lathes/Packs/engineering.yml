@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: 2025 Honestly101
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 Whatstone
+# SPDX-FileCopyrightText: 2025 dustylens
+#
+# SPDX-License-Identifier: MPL-2.0
+
+- type: latheRecipePack
+  id: NFEngineeringBoards
+  recipes:
+  - SmallThrusterMachineCircuitboard
+  - SmallGyroscopeMachineCircuitboard
+  - MiniStationAnchorCircuitboard
+  - PortableGeneratorDKJrMachineCircuitboard
+
+- type: latheRecipePack
+  id: NFEngineering
+  recipes:
+#  - ShipyardRCD
+#  - ShipyardRCDAmmo
+  - RCD
+  - RCDAmmo
+  - ConstructionBagOfHolding
+  - UtilityBeltChiefEngineer
+  # - FireExtinguisherBluespace # Delta-V
+  - RPED
+  - AdvancedCapacitorStockPart
+  - AdvancedMatterBinStockPart
+  - NanoManipulatorStockPart
+  - SuperCapacitorStockPart
+  - SuperMatterBinStockPart
+  - PicoManipulatorStockPart
+  - SolarAssemblyFlatpack # Mono

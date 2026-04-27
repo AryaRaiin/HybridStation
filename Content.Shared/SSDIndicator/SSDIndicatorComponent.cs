@@ -24,6 +24,7 @@ public sealed partial class SSDIndicatorComponent : Component
     /// The icon displayed next to the associated entity when it is SSD.
     /// </summary>
     [DataField]
+    [AutoNetworkedField] // Frontier: update client when icon changes
     public ProtoId<SsdIconPrototype> Icon = "SSDIcon";
 
     /// <summary>

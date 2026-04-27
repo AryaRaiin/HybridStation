@@ -169,3 +169,10 @@
   name: signal-port-name-item-detected
   description: signal-port-description-item-detected
   defaultLinks: [ Toggle, Trigger, Timer ]
+
+# SHITMED START
+- type: sourcePort
+  id: OperatingTable
+  name: signal-port-name-operating-table
+  description: signal-port-description-operating-table
+# SHITMED END

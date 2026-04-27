@@ -24,6 +24,7 @@ using Content.Shared.Wieldable.Components;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Collections;
 using Robust.Shared.Timing;
+using Content.Shared._Goobstation.Weapons.Ranged; // GoobStation - NoWieldNeeded
 
 namespace Content.Shared.Wieldable;
 
@@ -67,6 +68,7 @@ public abstract class SharedWieldableSystem : EntitySystem
         SubscribeLocalEvent<SpeedModifiedOnWieldComponent, ItemWieldedEvent>(OnSpeedModifierWielded);
         SubscribeLocalEvent<SpeedModifiedOnWieldComponent, ItemUnwieldedEvent>(OnSpeedModifierUnwielded);
         SubscribeLocalEvent<SpeedModifiedOnWieldComponent, HeldRelayedEvent<RefreshMovementSpeedModifiersEvent>>(OnRefreshSpeedWielded);
+        SubscribeLocalEvent<GunWieldBonusComponent, GotEquippedHandEvent>(OnItemInHand); // GoobStation change - OnItemInHand for NoWieldNeeded
 
         SubscribeLocalEvent<IncreaseDamageOnWieldComponent, GetMeleeDamageEvent>(OnGetMeleeDamage);
     }
@@ -83,8 +85,13 @@ public abstract class SharedWieldableSystem : EntitySystem
 
     private void OnShootAttempt(EntityUid uid, GunRequiresWieldComponent component, ref ShotAttemptedEvent args)
     {
+        // GOOBSTATION START - check for NoWieldNeeded
+        if (TryComp<NoWieldNeededComponent>(args.User, out var noWieldNeeded) && noWieldNeeded.GetBonus)
+            _gun.RefreshModifiers(uid, args.User);
+        // GOOBSTATION END
         if (TryComp<WieldableComponent>(uid, out var wieldable) &&
-            !wieldable.Wielded)
+            !wieldable.Wielded &&
+            noWieldNeeded is null) // Goobstation
         {
             args.Cancel();
 
@@ -99,6 +106,13 @@ public abstract class SharedWieldableSystem : EntitySystem
             }
         }
     }
+
+    // GOOBSTATION START - OnItemInHand for NoWieldNeeded
+    private void OnItemInHand(EntityUid uid, GunWieldBonusComponent component, GotEquippedHandEvent args)
+    {
+        _gun.RefreshModifiers(uid, args.User);
+    }
+    // GOOBSTATION END
 
     private void OnGunUnwielded(EntityUid uid, GunWieldBonusComponent component, ItemUnwieldedEvent args)
     {
@@ -121,7 +135,15 @@ public abstract class SharedWieldableSystem : EntitySystem
     private void OnGunRefreshModifiers(Entity<GunWieldBonusComponent> bonus, ref GunRefreshModifiersEvent args)
     {
         if (TryComp(bonus, out WieldableComponent? wield) &&
-            wield.Wielded)
+            wield.Wielded ||
+            // GOOBSTATION START - Check for NoWieldNeeded and GetBonus
+                (
+                    args.User != null && 
+                    TryComp<NoWieldNeededComponent>(args.User.Value, out var noWieldNeeded) && 
+                    noWieldNeeded.GetBonus
+                )
+            )
+            // GOOBSTATION END
         {
             args.MinAngle += bonus.Comp.MinAngle;
             args.MaxAngle += bonus.Comp.MaxAngle;

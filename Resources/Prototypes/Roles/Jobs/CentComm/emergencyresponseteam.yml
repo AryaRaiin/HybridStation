@@ -1,3 +1,37 @@
+# SPDX-FileCopyrightText: 2022 DrSmugleaf
+# SPDX-FileCopyrightText: 2022 EmoGarbage404
+# SPDX-FileCopyrightText: 2022 Kara
+# SPDX-FileCopyrightText: 2022 Morber
+# SPDX-FileCopyrightText: 2022 Paul Ritter
+# SPDX-FileCopyrightText: 2022 Peptide90
+# SPDX-FileCopyrightText: 2022 Pieter-Jan Briers
+# SPDX-FileCopyrightText: 2022 Sissel
+# SPDX-FileCopyrightText: 2022 Veritius
+# SPDX-FileCopyrightText: 2023 Checkraze
+# SPDX-FileCopyrightText: 2023 Flareguy
+# SPDX-FileCopyrightText: 2023 JoeHammad1844
+# SPDX-FileCopyrightText: 2023 Kit0vras
+# SPDX-FileCopyrightText: 2023 Nairod
+# SPDX-FileCopyrightText: 2023 Nim
+# SPDX-FileCopyrightText: 2023 PrPleGoo
+# SPDX-FileCopyrightText: 2023 Whisper
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 Errant
+# SPDX-FileCopyrightText: 2024 Hanz
+# SPDX-FileCopyrightText: 2024 IProduceWidgets
+# SPDX-FileCopyrightText: 2024 Mr. 27
+# SPDX-FileCopyrightText: 2024 Nemanja
+# SPDX-FileCopyrightText: 2024 Unkn0wn_Gh0st
+# SPDX-FileCopyrightText: 2024 Whatstone
+# SPDX-FileCopyrightText: 2024 Winkarst
+# SPDX-FileCopyrightText: 2025 Alpha-Two
+# SPDX-FileCopyrightText: 2025 Daniel Lenrd
+# SPDX-FileCopyrightText: 2025 EctoplasmIsGood
+# SPDX-FileCopyrightText: 2025 Your Name
+# SPDX-FileCopyrightText: 2025 core-mene
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # Leader
 - type: job
   id: ERTLeader
@@ -39,7 +73,7 @@
     - RegenerativeMesh
     - BoxZiptie
     - CrowbarRed
-    - MagazineMagnum
+    - Magazine45_magnumPistolFMJ
 
 - type: startingGear
   id: ERTLeaderGearEVA
@@ -63,7 +97,7 @@
     - RegenerativeMesh
     - BoxZiptie
     - CrowbarRed
-    - MagazineMagnum
+    - Magazine45_magnumPistolFMJ
 
 - type: startingGear
   id: ERTLeaderGearEVALecter
@@ -78,8 +112,8 @@
     id: ERTLeaderPDA
     ears: ClothingHeadsetAltCentCom
     belt: ClothingBeltSecurityFilled
-    pocket1: MagazineRifle
-    pocket2: MagazineRifle
+    pocket1: Magazine556x45mmFMJ
+    pocket2: Magazine556x45mmFMJ
   inhand:
   - WeaponRifleLecterXL8
   storage:
@@ -89,7 +123,7 @@
     - RegenerativeMesh
     - BoxZiptie
     - CrowbarRed
-    - MagazineMagnum
+    - Magazine45_magnumPistolFMJ
 
 - type: chameleonOutfit
   id: ERTLeaderChameleonOutfit
@@ -317,7 +351,7 @@
     - RegenerativeMesh
     - BoxZiptie
     - CrowbarRed
-    - MagazinePistol
+    - Magazine45_ACPPistolFMJ
 
 - type: startingGear
   id: ERTSecurityGearEVA
@@ -341,7 +375,7 @@
     - RegenerativeMesh
     - BoxZiptie
     - CrowbarRed
-    - MagazinePistol
+    - Magazine45_ACPPistolFMJ
 
 - type: startingGear
   id: ERTSecurityGearEVALecter
@@ -356,8 +390,8 @@
     id: ERTSecurityPDA
     ears: ClothingHeadsetAltCentCom
     belt: ClothingBeltSecurityFilled
-    pocket1: MagazineRifle
-    pocket2: MagazineRifle
+    pocket1: Magazine556x45mmFMJ
+    pocket2: Magazine556x45mmFMJ
   inhand:
     - WeaponRifleLecter
   storage:
@@ -367,7 +401,6 @@
     - RegenerativeMesh
     - BoxZiptie
     - CrowbarRed
-    - MagazinePistol
 
 - type: chameleonOutfit
   id: ERTSecurityChameleonOutfit
@@ -498,7 +531,7 @@
   equipment:
     jumpsuit: ClothingUniformJumpsuitERTJanitor
     back: ClothingBackpackERTJanitor
-    shoes: ClothingShoesBootsMag
+    shoes: ClothingShoesBootsMagGaloshes # Frontier
     mask: ClothingMaskGasERT
     gloves: ClothingHandsGlovesColorPurple
     outerClothing: ClothingOuterHardsuitERTJanitor

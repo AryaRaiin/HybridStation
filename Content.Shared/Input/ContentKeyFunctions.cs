@@ -1,3 +1,43 @@
+// SPDX-FileCopyrightText: 2018 Acruid
+// SPDX-FileCopyrightText: 2019 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2019 Silver
+// SPDX-FileCopyrightText: 2020 Exp
+// SPDX-FileCopyrightText: 2020 Hugal31
+// SPDX-FileCopyrightText: 2020 Paul Ritter
+// SPDX-FileCopyrightText: 2020 Vera Aguilera Puerto
+// SPDX-FileCopyrightText: 2020 chairbender
+// SPDX-FileCopyrightText: 2020 derek
+// SPDX-FileCopyrightText: 2020 moneyl
+// SPDX-FileCopyrightText: 2021 Swept
+// SPDX-FileCopyrightText: 2021 Visne
+// SPDX-FileCopyrightText: 2021 ike709
+// SPDX-FileCopyrightText: 2022 DrSmugleaf
+// SPDX-FileCopyrightText: 2022 Jezithyr
+// SPDX-FileCopyrightText: 2022 Kara
+// SPDX-FileCopyrightText: 2022 Michael Phillips
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2022 mirrorcult
+// SPDX-FileCopyrightText: 2022 wrexbe
+// SPDX-FileCopyrightText: 2023 08A
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Miro Kavaliou
+// SPDX-FileCopyrightText: 2023 Nemanja
+// SPDX-FileCopyrightText: 2023 ShadowCommander
+// SPDX-FileCopyrightText: 2023 Vasilis The Pikachu
+// SPDX-FileCopyrightText: 2024 Morb
+// SPDX-FileCopyrightText: 2024 deltanedas
+// SPDX-FileCopyrightText: 2024 slarticodefast
+// SPDX-FileCopyrightText: 2024 wafehling
+// SPDX-FileCopyrightText: 2025 Ark
+// SPDX-FileCopyrightText: 2025 Daniel Lenrd
+// SPDX-FileCopyrightText: 2025 ErhardSteinhauer
+// SPDX-FileCopyrightText: 2025 Ilya246
+// SPDX-FileCopyrightText: 2025 ScyronX
+// SPDX-FileCopyrightText: 2025 Whatstone
+// SPDX-FileCopyrightText: 2025 ark1368
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Robust.Shared.Input;
 
 namespace Content.Shared.Input
@@ -103,6 +143,41 @@ namespace Content.Shared.Input
         public static readonly BoundKeyFunction HotbarShift8 = "HotbarShift8";
         public static readonly BoundKeyFunction HotbarShift9 = "HotbarShift9";
 
+        public static readonly BoundKeyFunction FocusCollectiveMindChat = "FocusCollectiveMindChatWindow"; // Goobstation - Starlight collective mind port
+        public static readonly BoundKeyFunction OpenLanguageMenu = "OpenLanguageMenu"; // Einstein Engines - Language
+        // Mono START
+        public static readonly BoundKeyFunction SmartEquipID = "SmartEquipID"; // Mono - Smart equip to PDA slot
+        public static readonly BoundKeyFunction SmartEquipShoes = "SmartEquipShoes";
+        public static readonly BoundKeyFunction SmartEquipOuterClothing = "SmartEquipOuterClothing";
+        public static readonly BoundKeyFunction EquipBackpack = "EquipBackpack";
+        public static readonly BoundKeyFunction EquipBelt = "EquipBelt";
+        public static readonly BoundKeyFunction EquipPocket1 = "EquipPocket1";
+        public static readonly BoundKeyFunction EquipPocket2 = "EquipPocket2";
+        public static readonly BoundKeyFunction EquipSuitStorage = "EquipSuitStorage";
+        public static readonly BoundKeyFunction EquipWallet = "EquipWallet";
+        public static readonly BoundKeyFunction EquipID = "EquipID";
+        public static readonly BoundKeyFunction OpenPocket1 = "OpenPocket1";
+        public static readonly BoundKeyFunction OpenPocket2 = "OpenPocket2";
+        public static readonly BoundKeyFunction OpenSuitStorage = "OpenSuitStorage";
+        public static readonly BoundKeyFunction OpenOuterClothing = "OpenOuterClothing";
+        public static readonly BoundKeyFunction ToggleFocus = "ToggleFocus"; // Mono
+        // Mono END
+        public static readonly BoundKeyFunction SmartEquipWallet = "SmartEquipWallet"; // Frontier
+        public static readonly BoundKeyFunction OpenWallet = "OpenWallet"; // Frontier
+        public static readonly BoundKeyFunction ToggleStanding = "ToggleStanding"; // WD EDIT
+        // Shitmed Change Start
+        public static readonly BoundKeyFunction TargetHead = "TargetHead";
+        public static readonly BoundKeyFunction TargetTorso = "TargetTorso";
+        public static readonly BoundKeyFunction TargetLeftArm = "TargetLeftArm";
+        public static readonly BoundKeyFunction TargetLeftHand = "TargetLeftHand";
+        public static readonly BoundKeyFunction TargetRightArm = "TargetRightArm";
+        public static readonly BoundKeyFunction TargetRightHand = "TargetRightHand";
+        public static readonly BoundKeyFunction TargetLeftLeg = "TargetLeftLeg";
+        public static readonly BoundKeyFunction TargetLeftFoot = "TargetLeftFoot";
+        public static readonly BoundKeyFunction TargetRightLeg = "TargetRightLeg";
+        public static readonly BoundKeyFunction TargetRightFoot = "TargetRightFoot";
+        // Shitmed Change End
+
         public static BoundKeyFunction[] GetHotbarBoundKeys() =>
             new[]
             {
@@ -132,5 +207,7 @@ namespace Content.Shared.Input
         public static readonly BoundKeyFunction MappingRemoveDecal = "MappingRemoveDecal";
         public static readonly BoundKeyFunction MappingCancelEraseDecal = "MappingCancelEraseDecal";
         public static readonly BoundKeyFunction MappingOpenContextMenu = "MappingOpenContextMenu";
+
+
     }
 }

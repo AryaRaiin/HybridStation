@@ -1,0 +1,8 @@
+--- ### admin_ghost ###
+file: Resources/Prototypes/Entities/Mobs/Player/admin_ghost.yml
+- match:
+    - id: AdminObserver
+  action: merge
+  data:
+    components:
+    - type: BankAccount

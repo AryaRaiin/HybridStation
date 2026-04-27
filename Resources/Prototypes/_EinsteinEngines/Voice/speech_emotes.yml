@@ -1,0 +1,41 @@
+# SPDX-FileCopyrightText: 2025 Ark
+# SPDX-FileCopyrightText: 2025 Ilya246
+# SPDX-FileCopyrightText: 2025 mikusssssss
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: emote
+  id: SiliconDeathgasp
+  name: chat-emote-name-deathgasp
+  icon: Interface/Emotes/deathgasp.png
+  chatMessages: ["chat-emote-msg-deathgasp-silicon"]
+  whitelist: # Mono - IPC's, borgs, protogens
+    components:
+    - Silicon
+    - BorgChassis
+  chatTriggers:
+  - sdeathgasp
+
+- type: emote
+  id: Whirr # uncategorized as it is generic - Mono, youre an idiot.
+  name: chat-emote-name-whirr
+  category: Vocal
+  chatMessages: [ whirrs ]
+  whitelist: # Mono - IPC's, borgs, protogens
+    components:
+    - Silicon
+    - BorgChassis
+  chatTriggers:
+    - whirrs
+
+- type: emote
+  id: Boop
+  name: chat-emote-name-boop
+  category: Vocal
+  chatMessages: [ boops. ]
+  whitelist:
+    components:
+    - Silicon
+    - BorgChassis
+  chatTriggers:
+  - boops

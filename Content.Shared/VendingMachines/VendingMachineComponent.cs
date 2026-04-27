@@ -4,6 +4,8 @@ using Robust.Shared.GameStates;
 using Robust.Shared.Serialization;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
+using Content.Shared._NF.Bank.Components; // Frontier
+using Content.Shared.Containers.ItemSlots; // Frontier
 
 namespace Content.Shared.VendingMachines
 {
@@ -198,6 +200,42 @@ namespace Content.Shared.VendingMachines
         [DataField("loopDeny")]
         public bool LoopDenyAnimation = true;
         #endregion
+
+        // FRONTIER START: taxes, cash slot
+        // Accounts to receive some proportion of each sale via taxation.
+        [DataField(serverOnly: true), ViewVariables(VVAccess.ReadWrite)]
+        public Dictionary<SectorBankAccount, float> TaxAccounts = new();
+
+        // Optional item slot for cash
+        [DataField]
+        public ItemSlot? CashSlot = null;
+
+        /// <summary>
+        /// Name of the cash slot, if there is one.  Null if there isn't.
+        /// </summary>
+        [DataField]
+        public string? CashSlotName;
+
+        /// <summary>
+        /// The type of currency to accept in the item slot.
+        /// </summary>
+        [DataField]
+        public string? CurrencyStackType;
+
+        /// <summary>
+        /// The current balance in the cash slot.
+        /// Kept for
+        /// </summary>
+        [DataField, AutoNetworkedField]
+        public int CashSlotBalance;
+
+        /// <summary>
+        /// Mono: Tracks the last purchase price for vending machine purchase tracking.
+        /// Used to mark spawned entities with purchase information.
+        /// </summary>
+        [DataField]
+        public double? LastPurchasePrice;
+        // FRONTIER END: taxes, cash slot
     }
 
     [Serializable, NetSerializable, DataDefinition]

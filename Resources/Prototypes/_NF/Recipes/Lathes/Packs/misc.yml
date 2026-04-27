@@ -1,0 +1,73 @@
+# SPDX-FileCopyrightText: 2025 Ark
+# SPDX-FileCopyrightText: 2025 Aviu00
+# SPDX-FileCopyrightText: 2025 ErhardSteinhauer
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 Whatstone
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: latheRecipePack
+  id: NFLights
+  recipes:
+  - SodiumLightBulb # Frontier
+  - ExteriorLightBulb #Frontier
+
+- type: latheRecipePack
+  id: NFHardsuits
+  recipes:
+  - ClothingOuterHardsuitAtmos
+  - ClothingOuterHardsuitEngineering
+  - ClothingOuterHardsuitSpatio
+  - ClothingOuterHardsuitSalvage
+  - ClothingOuterHardsuitClown
+  - ClothingOuterHardsuitMime
+  - ClothingOuterHardsuitCap
+  - ClothingOuterHardsuitEngineeringWhite
+  - ClothingOuterHardsuitMedical
+  - ClothingOuterHardsuitRd
+  - ClothingOuterHardsuitLuxury
+  - ClothingOuterHardsuitMercenary
+  - ClothingOuterHardsuitPrivateSecurity
+  - ClothingOuterHardsuitScaf
+  - ClothingOuterHardsuitPilot
+  - ClothingOuterHardsuitMaximPrototype
+
+- type: latheRecipePack
+  id: NFPouches
+  recipes:
+  - NFPouchUtility
+  - NFPouchEngineering
+  - NFPouchFirstAid
+  - NFPouchScience
+  - NFPouchSalvage
+  - NFPouchFirstAidAlt
+  - NFPouchAtmospherics
+  - NFPouchHydroponics
+  - NFPouchChaplain
+  - NFPouchPunk
+  - NFPouchMercenary
+  - NFPouchPrivateSecurity
+  - NFPouchContractor
+  - NFPouchJanitor
+  - NFPouchClown
+  - NFPouchMime
+  - NFPouchCaptain
+  - NFPouchCargo
+
+# Shitmed Change
+- type: latheRecipePack
+  id: SMSurgery
+  recipes:
+  - EnergyScalpel
+  - EnergyCautery
+  - AdvancedRetractor
+  - DefibrillatorCompact
+  - ShitmedOmnimedTool
+
+# Smartgun Change
+- type: latheRecipePack
+  id: SmartGun
+  recipes:
+  - WeaponSubMachineSmart # Goobstation
+  - MagazineSmart # Goobstation

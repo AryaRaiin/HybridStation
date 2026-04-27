@@ -41,6 +41,9 @@ ui-options-admin-sounds = Play Admin Sounds
 ui-options-bwoink-sound = Play AHelp Notification Sound
 ui-options-volume-label = Volume
 
+# MONO: Audio menu
+ui-options-combat-music = Combat Music
+
 ## Graphics menu
 
 ui-options-display-label = Display
@@ -57,6 +60,8 @@ ui-options-show-combat-mode-indicators = Show combat mode indicators with cursor
 ui-options-opaque-storage-window = Opaque storage window
 ui-options-show-ooc-patron-color = Show OOC Patreon color
 ui-options-show-looc-on-head = Show LOOC chat above characters head
+# UNKNOWN
+ui-options-radio-noise = Play radio static sounds
 ui-options-fancy-speech = Show names in speech bubbles
 ui-options-fancy-name-background = Add background to speech bubble names
 ui-options-vsync = VSync
@@ -147,6 +152,8 @@ ui-options-function-camera-reset = Reset
 ui-options-function-zoom-in = Zoom in
 ui-options-function-zoom-out = Zoom out
 ui-options-function-reset-zoom = Reset zoom
+# MONO
+ui-options-function-toggle-focus = Toggle focus
 
 ui-options-function-use = Use
 ui-options-function-use-secondary = Use secondary
@@ -405,3 +412,14 @@ ui-options-admin-enable-overlay-starting-job = Show starting job
 ui-options-admin-overlay-merge-distance = Stack merge distance
 ui-options-admin-overlay-ghost-fade-distance = Ghost overlay fade range from mouse
 ui-options-admin-overlay-ghost-hide-distance = Ghost overlay hide range from mouse
+ui-options-enable-classic-overlay = Revert antag overlay to classic mode
+
+# SHITMED START
+ui-options-header-targeting = Targeting
+ui-options-function-target-head = Target head
+ui-options-function-target-torso = Target torso
+ui-options-function-target-left-arm = Target left arm
+ui-options-function-target-right-arm = Target right arm
+ui-options-function-target-left-leg = Target left leg
+ui-options-function-target-right-leg = Target right leg
+# SHITMED END

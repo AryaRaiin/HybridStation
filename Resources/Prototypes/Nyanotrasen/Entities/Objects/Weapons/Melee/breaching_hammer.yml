@@ -1,0 +1,50 @@
+# SPDX-FileCopyrightText: 2023 Checkraze
+# SPDX-FileCopyrightText: 2024 Dvir
+# SPDX-FileCopyrightText: 2024 Whatstone
+# SPDX-FileCopyrightText: 2024 checkraze
+# SPDX-FileCopyrightText: 2025 Blu
+# SPDX-FileCopyrightText: 2025 Coenx-flex
+# SPDX-FileCopyrightText: 2025 Ghost581
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# mono edit
+- type: entity
+  name: breaching hammer
+  parent: [BaseItem, BaseC2ContrabandUnredeemable]
+  id: SecBreachingHammer
+  description: A large, heavy hammer with a long handle, used for breaking stones or other heavy material such as the skulls of violent criminals, also perfect for forcing your way trough airlocks.
+  components:
+  - type: Sprite
+    sprite: Nyanotrasen/Objects/Weapons/Melee/breaching_hammer.rsi
+    state: icon
+  - type: Item
+    size: Huge
+  - type: MeleeWeapon
+    attackRate: 0.5
+    range: 1.70
+    damage:
+      types:
+        Blunt: 15
+        Structural: 50
+    bluntStaminaDamageFactor: 1.50 # 15 stamina damage
+  - type: Wieldable
+  - type: IncreaseDamageOnWield
+    damage:
+      types:
+        Blunt: 50
+        Structural: 250 # takes about 1 minute to breach a plastitanium wall
+  - type: Tool
+    qualities:
+      - Prying
+    useSound:
+      path: /Audio/Items/crowbar.ogg
+  - type: Prying
+  - type: ToolTileCompatible
+  - type: Clothing
+    sprite: Nyanotrasen/Objects/Weapons/Melee/breaching_hammer.rsi
+    quickEquip: false
+    slots:
+    - back
+    - suitStorage # Frontier - Same as axe
+#mono edit end

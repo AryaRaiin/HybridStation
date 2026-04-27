@@ -1,10 +1,24 @@
+// SPDX-FileCopyrightText: 2019 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2019 Silver
+// SPDX-FileCopyrightText: 2019 ZelteHonor
+// SPDX-FileCopyrightText: 2020 Víctor Aguilera Puerto
+// SPDX-FileCopyrightText: 2021 Acruid
+// SPDX-FileCopyrightText: 2021 DrSmugleaf
+// SPDX-FileCopyrightText: 2021 Vera Aguilera Puerto
+// SPDX-FileCopyrightText: 2023 08A
+// SPDX-FileCopyrightText: 2023 metalgearsloth
+// SPDX-FileCopyrightText: 2025 ArtisticRoomba
+// SPDX-FileCopyrightText: 2025 ScyronX
+// SPDX-FileCopyrightText: 2025 chromiumboy
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Linq;
 using Content.Shared.Construction.Prototypes;
-using Robust.Client.GameObjects;
 using Robust.Client.Placement;
-using Robust.Client.ResourceManagement;
+using Robust.Client.Utility;
 using Robust.Shared.Map;
-using Robust.Shared.Prototypes;
 
 namespace Content.Client.Construction
 {
@@ -50,14 +64,7 @@ namespace Content.Client.Construction
         public override void StartHijack(PlacementManager manager)
         {
             base.StartHijack(manager);
-
-            if (_prototype is null || !_constructionSystem.TryGetRecipePrototype(_prototype.ID, out var targetProtoId))
-                return;
-
-            if (!IoCManager.Resolve<IPrototypeManager>().TryIndex(targetProtoId, out EntityPrototype? proto))
-                return;
-
-            manager.CurrentTextures = SpriteComponent.GetPrototypeTextures(proto, IoCManager.Resolve<IResourceCache>()).ToList();
+            manager.CurrentTextures = _prototype?.Layers.Select(sprite => sprite.DirFrame0()).ToList();
         }
     }
 }

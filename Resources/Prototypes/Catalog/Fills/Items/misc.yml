@@ -48,8 +48,8 @@
   - ClothingShoesBootsSecFilled
 
 - type: entity
-  parent: ClothingShoesBootsMerc
-  id: ClothingShoesBootsMercFilled
+  parent: ClothingShoesBootsMercenary # Frontier - Merc to Mercenary
+  id: ClothingShoesBootsMercenaryFilled # Frontier - Merc to Mercenary
   suffix: Filled
   components:
   - type: ContainerFill

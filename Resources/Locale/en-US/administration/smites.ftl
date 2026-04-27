@@ -63,6 +63,7 @@ admin-smite-crawler-name = Crawler
 admin-smite-homing-rod-name = Homing Rod
 admin-smite-homing-rod-slow-name = Slowming Rod
 admin-smite-silicon-laws-bound-name = Become Silicon
+admin-smite-blunt-gib-name = Gib
 
 ## Smite descriptions
 
@@ -112,6 +113,7 @@ admin-smite-crawler-description = Makes the target fall down and be unable to st
 admin-smite-homing-rod-description = Launches a homing immovable rod straight at them.
 admin-smite-homing-rod-slow-description = Launches a slow moving homing immovable rod straight at them.
 admin-smite-silicon-laws-bound-description = Makes the target bound to silicon laws. Law 2, jump out of the window.
+admin-smite-blunt-gib-description = Crushes them into a bloody pulp.
 
 ## Tricks descriptions
 

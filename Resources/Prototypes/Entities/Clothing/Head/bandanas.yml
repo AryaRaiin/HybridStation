@@ -73,7 +73,7 @@
 
 - type: entity
   parent: [ClothingHeadBandBase, ClothingMaskBandMerc]
-  id: ClothingHeadBandMerc
+  id: ClothingHeadBandMercenary # Frontier - Name fix
   name: mercenary bandana
 
 - type: entity

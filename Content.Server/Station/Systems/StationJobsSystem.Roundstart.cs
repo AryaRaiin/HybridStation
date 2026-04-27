@@ -11,6 +11,8 @@ using Robust.Shared.Network;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
+using Robust.Server.Player; // Frontier
+using Content.Shared.Players.PlayTimeTracking; // Frontier
 
 namespace Content.Server.Station.Systems;
 
@@ -20,6 +22,8 @@ public sealed partial class StationJobsSystem
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
     [Dependency] private readonly IBanManager _banManager = default!;
     [Dependency] private readonly AntagSelectionSystem _antag = default!;
+    [Dependency] private readonly IPlayerManager _playerManager = default!; // Frontier
+    [Dependency] private readonly PlayTimeTrackingSystem _playTime = default!; // Frontier
 
     private Dictionary<int, HashSet<string>> _jobsByWeight = default!;
     private List<int> _orderedWeights = default!;
@@ -301,11 +305,17 @@ public sealed partial class StationJobsSystem
 
             _random.Shuffle(givenStations);
 
+            // Frontier: get player session
+            _playerManager.TryGetSessionById(player, out var nfSession);
+            // End Frontier
+
             foreach (var station in givenStations)
             {
                 // Pick a random overflow job from that station
                 var overflows = GetOverflowJobs(station).ToList();
                 _random.Shuffle(overflows);
+
+                /* Frontier START: check job requirements on overflow jobs
 
                 // Stations with no overflow slots should simply get skipped over.
                 if (overflows.Count == 0)
@@ -314,6 +324,24 @@ public sealed partial class StationJobsSystem
                 // If the overflow exists, put them in as it.
                 assignedJobs.Add(player, (overflows[0], givenStations[0]));
                 break;
+                */
+                // Frontier: commented out the implementation above
+                bool nfJobAssigned = false;
+                foreach (var overflowJob in overflows)
+                {
+                    if (nfSession != null && _playTime.IsAllowed(nfSession, overflowJob))
+                    {
+                        assignedJobs.Add(player, (overflowJob, station));
+                        nfJobAssigned = true;
+                        break;
+                    }
+                }
+                // No need to look at other stations, we have a job.
+                if (nfJobAssigned)
+                {
+                    break;
+                }
+                // Frontier END: check job requirements on overflow jobs
             }
         }
     }

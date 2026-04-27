@@ -64,7 +64,7 @@
         sound:
           collection: MetalGlassBreak
   - type: StaticPrice
-    price: 75
+    price: 30 # Frontier: 75<30
   - type: RequireProjectileTarget
 
 - type: entity

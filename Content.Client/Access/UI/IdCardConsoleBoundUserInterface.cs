@@ -1,3 +1,4 @@
+using System.Linq;
 using Content.Shared.Access;
 using Content.Shared.Access.Components;
 using Content.Shared.Access.Systems;
@@ -83,11 +84,16 @@ namespace Content.Client.Access.UI
             if (newJobTitle.Length > _maxIdJobLength)
                 newJobTitle = newJobTitle[.._maxIdJobLength];
 
-            SendMessage(new WriteToTargetIdMessage(
+            SendMessage(new SharedIdCardSystem.WriteToTargetIdMessage(
                 newFullName,
                 newJobTitle,
                 newAccessList,
                 newJobPrototype));
+        }
+
+        public void SubmitShipData(string newShuttleName, string newShuttleSuffix)
+        {
+            SendMessage(new SharedIdCardSystem.WriteToShuttleDeedMessage(newShuttleName, newShuttleSuffix));
         }
     }
 }

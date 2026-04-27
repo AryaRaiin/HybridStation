@@ -1,3 +1,37 @@
+// SPDX-FileCopyrightText: 2022 20kdc
+// SPDX-FileCopyrightText: 2022 Alex Evgrashin
+// SPDX-FileCopyrightText: 2022 Chris V
+// SPDX-FileCopyrightText: 2022 Errant
+// SPDX-FileCopyrightText: 2022 Jackson
+// SPDX-FileCopyrightText: 2022 Justin Trotter
+// SPDX-FileCopyrightText: 2022 Júlio César Ueti
+// SPDX-FileCopyrightText: 2022 Moony
+// SPDX-FileCopyrightText: 2022 Morbo
+// SPDX-FileCopyrightText: 2022 Paul Ritter
+// SPDX-FileCopyrightText: 2022 Rane
+// SPDX-FileCopyrightText: 2022 SpaceManiac
+// SPDX-FileCopyrightText: 2022 Veritius
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2022 mirrorcult
+// SPDX-FileCopyrightText: 2022 wrexbe
+// SPDX-FileCopyrightText: 2023 Checkraze
+// SPDX-FileCopyrightText: 2023 Nemanja
+// SPDX-FileCopyrightText: 2023 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2023 Slava0135
+// SPDX-FileCopyrightText: 2023 Visne
+// SPDX-FileCopyrightText: 2023 Vordenburg
+// SPDX-FileCopyrightText: 2023 deltanedas
+// SPDX-FileCopyrightText: 2023 deltanedas <@deltanedas:kde.org>
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 ElectroJr
+// SPDX-FileCopyrightText: 2024 Leon Friedrich
+// SPDX-FileCopyrightText: 2024 SlamBamActionman
+// SPDX-FileCopyrightText: 2024 Vasilis
+// SPDX-FileCopyrightText: 2025 Whatstone
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Server.Radio.EntitySystems;
 using Content.Shared.Radio;
 using Content.Shared.Salvage;
@@ -18,6 +52,8 @@ using Robust.Shared.Map.Components;
 using Robust.Shared.Timing;
 using Content.Shared.Labels.EntitySystems;
 using Robust.Shared.EntitySerialization.Systems;
+using Content.Server.Weather; // UNKNOWN
+using Content.Shared.Weather; // UNKNOWN
 
 namespace Content.Server.Salvage
 {
@@ -32,6 +68,7 @@ namespace Content.Server.Salvage
         [Dependency] private readonly IRobustRandom _random = default!;
         [Dependency] private readonly AnchorableSystem _anchorable = default!;
         [Dependency] private readonly BiomeSystem _biome = default!;
+        [Dependency] private readonly WeatherSystem _weather = default!; // UNKNOWN
         [Dependency] private readonly DungeonSystem _dungeon = default!;
         [Dependency] private readonly GravitySystem _gravity = default!;
         [Dependency] private readonly LabelSystem _labelSystem = default!;
@@ -60,6 +97,14 @@ namespace Content.Server.Salvage
             InitializeMagnet();
             InitializeRunner();
         }
+
+        // Frontier
+        public override void Shutdown()
+        {
+            ShutdownExpeditions();
+            base.Shutdown();
+        }
+        // End Frontier
 
         private void Report(EntityUid source, string channelName, string messageKey, params (string, object)[] args)
         {

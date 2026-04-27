@@ -104,6 +104,9 @@
     - id: Medicine
     - id: Poison
     - id: Narcotic
+  - type: Organ #Shitmed
+    slotId: heart #Shitmed
+  - type: Heart #Shitmed
 
 - type: entity
   id: OrganArachnidLiver
@@ -123,6 +126,9 @@
     metabolizerTypes: [Animal]
     groups:
     - id: Alcohol
+  - type: Organ #Shitmed
+    slotId: liver #Shitmed
+  - type: Liver #Shitmed
 
 - type: entity
   id: OrganArachnidKidneys
@@ -131,6 +137,8 @@
   description: "Filters toxins from the bloodstream."
   categories: [ HideSpawnMenu ]
   components:
+  - type: Organ # Shitmed
+    slotId: kidneys #Shitmed
   - type: Sprite
     layers:
       - state: kidney-l
@@ -153,8 +161,11 @@
   components:
   - type: Sprite
     layers:
-      - state: eyeball-l
-      - state: eyeball-r
+    - state: eyeball-l
+    - state: eyeball-r
+    - type: Organ #Shitmed
+      slotId: eyes #Shitmed
+    - type: Eyes #Shitmed
   - type: Item
     size: Small
     heldPrefix: eyeballs

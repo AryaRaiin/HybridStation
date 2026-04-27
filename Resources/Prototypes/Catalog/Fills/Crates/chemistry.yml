@@ -45,6 +45,10 @@
           amount: 1
         - id: JugRadium
           amount: 1
+        - id: JugSugar
+          amount: 1
+        - id: JugEthanol
+          amount: 1
 
 - type: entity
   id: CrateChemistryD

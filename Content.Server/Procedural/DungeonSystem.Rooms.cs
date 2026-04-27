@@ -19,7 +19,7 @@ public sealed partial class DungeonSystem
     /// <summary>
     /// Gets a random dungeon room matching the specified area, whitelist and size.
     /// </summary>
-    public DungeonRoomPrototype? GetRoomPrototype(Vector2i size, Random random, EntityWhitelist? whitelist = null)
+    public DungeonRoomPrototype? GetRoomPrototype(Random random, EntityWhitelist? whitelist = null, Vector2i? size = null)
     {
         return GetRoomPrototype(random, whitelist, minSize: size, maxSize: size);
     }
@@ -113,6 +113,20 @@ public sealed partial class DungeonSystem
         return roomRotation;
     }
 
+    private static Box2 GetRotatedBox(Vector2 point1, Vector2 point2, double angle)
+    {
+        if (angle == 0)
+            return new Box2(point1, point2);
+        if (Math.Abs(angle - Math.PI / 2) < 1E-5)
+            return new Box2(point2.X, point1.Y, point1.X, point2.Y);
+        if (Math.Abs(angle - Math.PI) < 1E-5)
+            return new Box2(point2, point1);
+        if (Math.Abs(angle + Math.PI / 2) < 1E-5)
+            return new Box2(point1.X, point2.Y, point2.X, point1.Y);
+
+        throw new NotImplementedException();
+    }
+
     public void SpawnRoom(
         EntityUid gridUid,
         MapGridComponent grid,
@@ -126,6 +140,8 @@ public sealed partial class DungeonSystem
         var templateMapUid = _maps.GetMapOrInvalid(roomMap);
         var templateGrid = Comp<MapGridComponent>(templateMapUid);
         var roomDimensions = room.Size;
+
+        var entitySet = new HashSet<EntityUid>();
 
         var finalRoomRotation = roomTransform.Rotation();
 

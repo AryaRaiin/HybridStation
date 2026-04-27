@@ -8,6 +8,7 @@
   - Atmospherics
   - ShuttleCraft
   - Networking
+  - Automation
 
 - type: guideEntry
   id: Construction
@@ -50,6 +51,7 @@
   - AtmosphericUpsets
   - AtmosTools
   - Gasses
+  - GasMining # Frontier
 
 - type: guideEntry
   id: GasManipulation

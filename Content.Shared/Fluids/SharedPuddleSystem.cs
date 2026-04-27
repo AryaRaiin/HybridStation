@@ -1,3 +1,15 @@
+// SPDX-FileCopyrightText: 2023 Emisse
+// SPDX-FileCopyrightText: 2023 TNE
+// SPDX-FileCopyrightText: 2023 TemporalOroboros
+// SPDX-FileCopyrightText: 2023 metalgearsloth
+// SPDX-FileCopyrightText: 2024 Tayrtahn
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 themias
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using System.Linq;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Chemistry;
@@ -73,6 +85,8 @@ public abstract partial class SharedPuddleSystem : EntitySystem
 
         SubscribeLocalEvent<PrototypesReloadedEventArgs>(OnPrototypesReloaded);
 
+        SubscribeLocalEvent<PuddleComponent, TileFireEvent>(OnPuddleBurn); // UNKNOWN
+
         _stepTriggerQuery = GetEntityQuery<StepTriggerComponent>();
         _reactiveQuery = GetEntityQuery<ReactiveComponent>();
         _evaporationQuery = GetEntityQuery<EvaporationComponent>();
@@ -116,6 +130,8 @@ public abstract partial class SharedPuddleSystem : EntitySystem
     {
         if (args.SolutionId != entity.Comp.SolutionName)
             return;
+        if (entity.Comp.PreventTransferOut) // Frontier
+            return; // Frontier
 
         if (args.Solution.Volume <= 0)
         {
@@ -352,6 +368,19 @@ public abstract partial class SharedPuddleSystem : EntitySystem
             solution.RemoveReagent(reagent, removed);
         }
     }
+
+    // UNKNOWN START
+    public void OnPuddleBurn(Entity<PuddleComponent> ent, ref TileFireEvent args)
+    {
+        if (!_solutionContainerSystem.ResolveSolution(ent.Owner,
+                ent.Comp.SolutionName,
+                ref ent.Comp.Solution,
+                out var solution))
+            return;
+        _solutionContainerSystem.BurnFlammableReagents(ent.Comp.Solution.Value, 0.05f);
+
+    }
+    // UNKNOWN END
 
     #region Spill
     // These methods are in Shared to make it easier to interact with PuddleSystem in Shared code.

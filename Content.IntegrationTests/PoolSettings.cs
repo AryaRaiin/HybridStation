@@ -45,6 +45,13 @@ public sealed class PoolSettings : PairSettings
     /// Set this to the path of a map to have the given server/client pair load the map.
     /// </summary>
     public string Map { get; init; } = PoolManager.TestMap;
+    
+    /// <summary>
+    /// Frontier: the preset to run the game in.
+    /// Set to secret for upstream tests to mimic upstream behaviour.
+    /// If you need to check adventure game rule things, set this to nfadventure or nfpirate.
+    /// </summary>
+    public string GameLobbyDefaultPreset { get; set; } = "secret";
 
     public override bool CanFastRecycle(PairSettings nextSettings)
     {
@@ -57,6 +64,7 @@ public sealed class PoolSettings : PairSettings
         // Check that certain settings match.
         return DummyTicker == next.DummyTicker
                && Map == next.Map
-               && InLobby == next.InLobby;
+               && InLobby == next.InLobby
+               && GameLobbyDefaultPreset == nextSettings.GameLobbyDefaultPreset; // Frontier: swappable presets
     }
 }

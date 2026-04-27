@@ -12,3 +12,5 @@
   - type: Tag
     tags:
       - StationMapElectronics
+  - type: StaticPrice
+    price: 15 # Frontier: 30<15 - TODO: material value rework

@@ -33,4 +33,10 @@ public sealed partial class EmagComponent : Component
     [DataField]
     [AutoNetworkedField]
     public SoundSpecifier EmagSound = new SoundCollectionSpecifier("sparks");
+
+    /// <summary>
+    /// Frontier - Reverse emags: TODO - extend EmagType
+    /// </summary>
+    [DataField("demag")]
+    public bool Demag = false;
 }

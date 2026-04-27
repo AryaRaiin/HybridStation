@@ -1,16 +1,18 @@
-- type: entity
-  id: CrateFoodPizza
-  parent: CratePlastic
-  name: emergency pizza delivery
-  description: Help do your part to end station hunger by distributing pizza to underfunded departments! Includes 4 pizzas.
-  components:
-  - type: StorageFill
-    contents:
-    - id: FoodBoxPizzaFilled
-      amount: 3
-    - id: FoodBoxPizzaCotton
-    - id: LidSalami
-      prob: 0.01
+# HYBRIDSTATION START
+#- type: entity
+#  id: CrateFoodPizza
+#  parent: CratePlastic
+#  name: emergency pizza delivery
+#  description: Help do your part to end station hunger by distributing pizza to underfunded departments! Includes 4 pizzas.
+#  components:
+#  - type: StorageFill
+#    contents:
+#    - id: FoodBoxPizzaFilled
+#      amount: 3
+#    - id: FoodBoxPizzaCotton
+#    - id: LidSalami
+#      prob: 0.01
+# HYBRIDSTATION END
 
 - type: entity
   id: CrateFoodMRE
@@ -31,6 +33,12 @@
   components:
   - type: StorageFill
     contents:
+    - id: OilJarCorn # Nyano - Nyano oils
+      amount: 1 # Nyano - Nyano oils
+    - id: OilJarGhee # Nyano - Nyano oils
+      amount: 1 # Nyano - Nyano oils
+    - id: OilJarOlive # Nyano - Nyano oils
+      amount: 1 # Nyano - Nyano oils
     - id: ReagentContainerFlour
       amount: 3
     - id: ReagentContainerRice

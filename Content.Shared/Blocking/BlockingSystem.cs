@@ -1,4 +1,23 @@
-﻿using System.Linq;
+﻿// SPDX-FileCopyrightText: 2022 Kara
+// SPDX-FileCopyrightText: 2022 keronshb
+// SPDX-FileCopyrightText: 2022 metalgearsloth
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Jezithyr
+// SPDX-FileCopyrightText: 2023 LankLTE
+// SPDX-FileCopyrightText: 2023 Leon Friedrich
+// SPDX-FileCopyrightText: 2023 Slava0135
+// SPDX-FileCopyrightText: 2023 themias
+// SPDX-FileCopyrightText: 2024 Aviu00
+// SPDX-FileCopyrightText: 2024 Dvir
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 beck-thompson
+// SPDX-FileCopyrightText: 2025 Redrover1760
+// SPDX-FileCopyrightText: 2025 TemporalOroboros
+// SPDX-FileCopyrightText: 2025 starch
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using System.Linq;
 using Content.Shared.Actions;
 using Content.Shared.Damage;
 using Content.Shared.Examine;
@@ -17,10 +36,14 @@ using Robust.Shared.Physics;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Utility;
+using Content.Client._Mono.Blocking.Components; // Mono
+using Content.Shared._Mono.Blocking; // Mono
+using Content.Shared.Blocking.Components; // Mono
 
 namespace Content.Shared.Blocking;
 
-public sealed partial class BlockingSystem : EntitySystem
+//public sealed partial class BlockingSystem : EntitySystem
+public sealed partial class BlockingSystem : SharedBlockingSystem // Mono
 {
     [Dependency] private readonly SharedActionsSystem _actionsSystem = default!;
     [Dependency] private readonly ActionContainerSystem _actionContainer = default!;
@@ -32,6 +55,7 @@ public sealed partial class BlockingSystem : EntitySystem
     [Dependency] private readonly SharedPhysicsSystem _physics = default!;
     [Dependency] private readonly ExamineSystemShared _examine = default!;
     [Dependency] private readonly TurfSystem _turf = default!;
+    [Dependency] private readonly ItemToggleSystem _toggle = default!; // Goobstation
 
     public override void Initialize()
     {
@@ -44,6 +68,7 @@ public sealed partial class BlockingSystem : EntitySystem
 
         SubscribeLocalEvent<BlockingComponent, GetItemActionsEvent>(OnGetActions);
         SubscribeLocalEvent<BlockingComponent, ToggleActionEvent>(OnToggleAction);
+        SubscribeLocalEvent<BlockingComponent, ItemToggledEvent>(OnItemToggleAction); // Mono
 
         SubscribeLocalEvent<BlockingComponent, ComponentShutdown>(OnShutdown);
 
@@ -83,8 +108,22 @@ public sealed partial class BlockingSystem : EntitySystem
 
     private void OnGetActions(EntityUid uid, BlockingComponent component, GetItemActionsEvent args)
     {
+        if (!component.BlockAction){return;} // Mono
         args.AddAction(ref component.BlockingToggleActionEntity, component.BlockingToggleAction);
     }
+
+    // MONO START
+    private void OnItemToggleAction(EntityUid uid, BlockingComponent component, ItemToggledEvent args)
+    {
+        if (TryComp<ItemToggleComponent>(uid, out var itemToggleComponent))
+        {
+            if (component.IsClothing && itemToggleComponent.Activated && component.User != null)
+                AddComp<BlockingVisualsComponent>(component.User.Value);
+            else if (component.User != null && !itemToggleComponent.Activated)
+                RemCompDeferred<BlockingVisualsComponent>(component.User.Value);
+        }
+    }
+    // MONO END
 
     private void OnToggleAction(EntityUid uid, BlockingComponent component, ToggleActionEvent args)
     {
@@ -126,6 +165,10 @@ public sealed partial class BlockingSystem : EntitySystem
         {
             _actionsSystem.RemoveProvidedActions(component.User.Value, uid);
             StopBlockingHelper(uid, component, component.User.Value);
+            // Mono start
+            if (HasComp<BlockingVisualsComponent>(component.User.Value))
+                RemCompDeferred<BlockingVisualsComponent>(component.User.Value);
+            // Mono end
         }
     }
 
@@ -196,7 +239,8 @@ public sealed partial class BlockingSystem : EntitySystem
             _fixtureSystem.TryCreateFixture(user,
                 component.Shape,
                 BlockingComponent.BlockFixtureID,
-                hard: true,
+                //hard: true,
+                hard: false, // Frontier - True to false, mobs AI abuse.
                 collisionLayer: (int)CollisionGroup.WallLayer,
                 body: physicsComponent);
         }
@@ -298,6 +342,7 @@ public sealed partial class BlockingSystem : EntitySystem
             return;
 
         var fraction = component.IsBlocking ? component.ActiveBlockFraction : component.PassiveBlockFraction;
+        if (!_toggle.IsActivated(uid)) {fraction = 0f;} // Goobstation
         var modifier = component.IsBlocking ? component.ActiveBlockDamageModifier : component.PassiveBlockDamageModifer;
 
         var msg = new FormattedMessage();

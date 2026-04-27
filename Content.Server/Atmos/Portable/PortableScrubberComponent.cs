@@ -1,5 +1,18 @@
+// SPDX-FileCopyrightText: 2022 Rane
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Kara
+// SPDX-FileCopyrightText: 2024 Nemanja
+// SPDX-FileCopyrightText: 2024 checkraze
+// SPDX-FileCopyrightText: 2025 ArtisticRoomba
+// SPDX-FileCopyrightText: 2025 tonotom
+// SPDX-FileCopyrightText: 2025 tonotom1
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Shared.Atmos;
 using Content.Shared.Guidebook;
+using Content.Shared.Construction.Prototypes; // Frontier
+using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype; // Frontier
 
 namespace Content.Server.Atmos.Portable
 {
@@ -29,7 +42,10 @@ namespace Content.Server.Atmos.Portable
             Gas.WaterVapor,
             Gas.Ammonia,
             Gas.NitrousOxide,
-            Gas.Frezon
+            Gas.Frezon,
+            Gas.BZ, //Funky/Goob
+            Gas.Healium, //Funky/Goob
+			Gas.Nitrium, //Funky/Goob
         };
 
         [ViewVariables(VVAccess.ReadWrite)]
@@ -38,13 +54,32 @@ namespace Content.Server.Atmos.Portable
         /// <summary>
         /// Maximum internal pressure before it refuses to take more.
         /// </summary>
-        [DataField, ViewVariables(VVAccess.ReadWrite)]
+        [ViewVariables(VVAccess.ReadWrite)]
         public float MaxPressure = 2500;
+
+        /// <summary>
+        /// The base amount of maximum internal pressure
+        /// </summary>
+        [DataField("baseMaxPressure")]
+        public float BaseMaxPressure = 2500;
+
+        /// <summary>
+        /// The machine part that modifies the maximum internal pressure
+        /// </summary>
+        [DataField("machinePartMaxPressure", customTypeSerializer: typeof(PrototypeIdSerializer<MachinePartPrototype>))]
+        public string MachinePartMaxPressure = "MatterBin";
+
+        /// <summary>
+        /// How much the <see cref="MachinePartMaxPressure"/> will affect the pressure.
+        /// The value will be multiplied by this amount for each increasing part tier.
+        /// </summary>
+        [DataField("partRatingMaxPressureModifier")]
+        public float PartRatingMaxPressureModifier = 1.5f;
 
         /// <summary>
         /// The speed at which gas is scrubbed from the environment.
         /// </summary>
-        [DataField, ViewVariables(VVAccess.ReadWrite)]
+        [ViewVariables(VVAccess.ReadWrite)]
         public float TransferRate = 800;
 
         #region GuidebookData
@@ -53,5 +88,26 @@ namespace Content.Server.Atmos.Portable
         public float Volume => Air.Volume;
 
         #endregion
+
+        // Frontier: upgradeable parts
+        /// <summary>
+        /// The base speed at which gas is scrubbed from the environment.
+        /// </summary>
+        [DataField("baseTransferRate")]
+        public float BaseTransferRate = 800;
+
+        /// <summary>
+        /// The machine part which modifies the speed of <see cref="TransferRate"/>
+        /// </summary>
+        [DataField("machinePartTransferRate", customTypeSerializer: typeof(PrototypeIdSerializer<MachinePartPrototype>))]
+        public string MachinePartTransferRate = "Manipulator";
+
+        /// <summary>
+        /// How much the <see cref="MachinePartTransferRate"/> will modify the rate.
+        /// The value will be multiplied by this amount for each increasing part tier.
+        /// </summary>
+        [DataField("partRatingTransferRateModifier")]
+        public float PartRatingTransferRateModifier = 1.4f;
+        // End Frontier
     }
 }

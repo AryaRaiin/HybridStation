@@ -1,5 +1,13 @@
+# SPDX-FileCopyrightText: 2025 ScyronX
+# SPDX-FileCopyrightText: 2025 Whatstone
+# SPDX-FileCopyrightText: 2025 chromiumboy
+# SPDX-FileCopyrightText: 2025 core-mene
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: MPL-2.0
+
 - type: entity
-  parent: [BaseWeaponBallisticTurret, BaseSyndicateContraband]
+  parent: [BaseWeaponBallisticTurret, BaseC3SyndicateContraband] # Frontier: BaseSyndicateContraband<BaseC3SyndicateContraband
   id: WeaponTurretSyndicate
   suffix: Syndicate
   components:
@@ -38,14 +46,15 @@
     - FullAuto
     soundGunshot: /Audio/Weapons/Guns/Gunshots/gun_sentry.ogg
   - type: BallisticAmmoProvider
-    proto: CartridgePistol
+    proto: Cartridge9x19mmFMJ
     capacity: 50
   - type: Construction
     deconstructionTarget: null
     graph: WeaponTurretSyndicateDisposable
     node: disposableTurret
   - type: Repairable
-    qualityNeeded: "Anchoring"
+    qualities:
+    - Anchoring
     doAfterDelay: 3
   - type: TriggerOnEmptyGunshot
   - type: ExplodeOnTrigger
@@ -81,7 +90,7 @@
   components:
   - type: NpcFactionMember
     factions:
-    - AllHostile
+    - HostileUniversally # Mono
 
 - type: entity
   parent: BaseWeaponBallisticTurret

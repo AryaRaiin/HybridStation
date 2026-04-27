@@ -15,6 +15,9 @@ using Robust.Shared.Audio.Systems;
 using Robust.Shared.Configuration;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
+using Content.Server._NF.SectorServices; // Frontier
+using Content.Shared._NF.Trade; // Frontier
+using Content.Shared.Whitelist; // Frontier
 
 namespace Content.Server.Cargo.Systems;
 
@@ -38,6 +41,8 @@ public sealed partial class CargoSystem : SharedCargoSystem
     [Dependency] private readonly UserInterfaceSystem _uiSystem = default!;
     [Dependency] private readonly MetaDataSystem _metaSystem = default!;
     [Dependency] private readonly RadioSystem _radio = default!;
+    [Dependency] private readonly SectorServiceSystem _sectorService = default!; // Frontier
+    [Dependency] private readonly EntityWhitelistSystem _whitelistSystem = default!; // Frontier
 
     private EntityQuery<TransformComponent> _xformQuery;
     private EntityQuery<CargoSellBlacklistComponent> _blacklistQuery;
@@ -62,6 +67,10 @@ public sealed partial class CargoSystem : SharedCargoSystem
         InitializeTelepad();
         InitializeBounty();
         InitializeFunds();
+        // Frontier: add specific initialization calls here.
+        InitializePirateBounty();
+        InitializeTradeCrates();
+        // End Frontier
     }
 
     public override void Update(float frameTime)

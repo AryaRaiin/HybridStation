@@ -1,4 +1,37 @@
-﻿- type: entity
+# SPDX-FileCopyrightText: 2020 DrSmugleaf
+# SPDX-FileCopyrightText: 2020 Víctor Aguilera Puerto
+# SPDX-FileCopyrightText: 2021 Swept
+# SPDX-FileCopyrightText: 2022 Emisse
+# SPDX-FileCopyrightText: 2022 Morb
+# SPDX-FileCopyrightText: 2022 Nairod
+# SPDX-FileCopyrightText: 2022 Vera Aguilera Puerto
+# SPDX-FileCopyrightText: 2022 metalgearsloth
+# SPDX-FileCopyrightText: 2022 ninruB
+# SPDX-FileCopyrightText: 2023 AlexMorgan3817
+# SPDX-FileCopyrightText: 2023 Banshee
+# SPDX-FileCopyrightText: 2023 Ed
+# SPDX-FileCopyrightText: 2023 GoodWheatley
+# SPDX-FileCopyrightText: 2023 Kupie
+# SPDX-FileCopyrightText: 2023 Leon Friedrich
+# SPDX-FileCopyrightText: 2023 LordEclipse
+# SPDX-FileCopyrightText: 2023 Slava0135
+# SPDX-FileCopyrightText: 2023 Whisper
+# SPDX-FileCopyrightText: 2023 crazybrain23
+# SPDX-FileCopyrightText: 2023 dontbetank
+# SPDX-FileCopyrightText: 2024 ErhardSteinhauer
+# SPDX-FileCopyrightText: 2024 Kara
+# SPDX-FileCopyrightText: 2024 Salvantrix
+# SPDX-FileCopyrightText: 2024 Whatstone
+# SPDX-FileCopyrightText: 2024 lzk
+# SPDX-FileCopyrightText: 2024 strO0pwafel
+# SPDX-FileCopyrightText: 2025 BramvanZijp
+# SPDX-FileCopyrightText: 2025 Dvir
+# SPDX-FileCopyrightText: 2025 Redrover1760
+# SPDX-FileCopyrightText: 2025 starch
+#
+# SPDX-License-Identifier: MPL-2.0
+
+- type: entity
   abstract: true
   parent: ClothingHeadset
   id: ClothingHeadsetAlt
@@ -19,7 +52,7 @@
     containers:
       key_slots:
       - EncryptionKeyCargo
-      - EncryptionKeyCommand
+#      - EncryptionKeyCommand # Frontier
       - EncryptionKeyCommon
   - type: Sprite
     sprite: Clothing/Ears/Headsets/cargo.rsi
@@ -27,7 +60,7 @@
     sprite: Clothing/Ears/Headsets/cargo.rsi
 
 - type: entity
-  parent: ClothingHeadsetAlt
+  parent: [ClothingHeadsetAlt, BaseCentcommCommandContraband] # Frontier: Added BaseCentcommCommandContraband, removed BaseCommandContraband.
   id: ClothingHeadsetAltCentCom
   name: CentComm over-ear headset
   components:
@@ -40,6 +73,20 @@
     sprite: Clothing/Ears/Headsets/centcom.rsi
   - type: Clothing
     sprite: Clothing/Ears/Headsets/centcom.rsi
+
+# Mono Start
+
+- type: entity
+  parent: ClothingHeadsetAltCentCom
+  id: ClothingHeadsetAltCentComSR
+  components:
+  - type: ContainerFill
+    containers:
+      key_slots:
+      - EncryptionKeyCentCom
+      - EncryptionKeyStationMasterSR
+
+# Mono End
 
 - type: entity
   parent: [ClothingHeadsetAlt, BaseCommandContraband]
@@ -56,7 +103,7 @@
     sprite: Clothing/Ears/Headsets/command.rsi
 
 - type: entity
-  parent: [ClothingHeadsetAlt, BaseCommandContraband]
+  parent: ClothingHeadsetAlt # Frontier: remove BaseCommandContraband
   id: ClothingHeadsetAltEngineering
   name: chief engineer's over-ear headset
   components:
@@ -64,7 +111,7 @@
     containers:
       key_slots:
       - EncryptionKeyEngineering
-      - EncryptionKeyCommand
+#      - EncryptionKeyCommand # Frontier
       - EncryptionKeyCommon
   - type: Sprite
     sprite: Clothing/Ears/Headsets/engineering.rsi
@@ -72,7 +119,7 @@
     sprite: Clothing/Ears/Headsets/engineering.rsi
 
 - type: entity
-  parent: [ClothingHeadsetAlt, BaseCommandContraband]
+  parent: ClothingHeadsetAlt # Frontier: remove BaseCommandContraband
   id: ClothingHeadsetAltMedical
   name: chief medical officer's over-ear headset
   components:
@@ -80,7 +127,7 @@
     containers:
       key_slots:
       - EncryptionKeyMedical
-      - EncryptionKeyCommand
+#      - EncryptionKeyCommand # Frontier
       - EncryptionKeyCommon
   - type: Sprite
     sprite: Clothing/Ears/Headsets/medical.rsi
@@ -90,7 +137,7 @@
     stealGroup: ClothingHeadsetAltMedical
 
 - type: entity
-  parent: [ClothingHeadsetAlt, BaseCommandContraband]
+  parent: [ClothingHeadsetAlt, BaseC2ContrabandUnredeemable] # Frontier: BaseCommandContraband<BaseC2ContrabandUnredeemable
   id: ClothingHeadsetAltSecurity
   name: head of security's over-ear headset
   components:
@@ -106,7 +153,7 @@
     sprite: Clothing/Ears/Headsets/security.rsi
 
 - type: entity
-  parent: [ClothingHeadsetAlt, BaseCommandContraband]
+  parent: ClothingHeadsetAlt # Frontier: remove BaseCommandContraband
   id: ClothingHeadsetAltScience
   name: research director's over-ear headset
   components:
@@ -114,7 +161,7 @@
     containers:
       key_slots:
       - EncryptionKeyScience
-      - EncryptionKeyCommand
+#      - EncryptionKeyCommand # Frontier
       - EncryptionKeyCommon
   - type: Sprite
     sprite: Clothing/Ears/Headsets/science.rsi
@@ -122,14 +169,14 @@
     sprite: Clothing/Ears/Headsets/science.rsi
 
 - type: entity
-  parent: [ClothingHeadsetAlt, BaseSyndicateContraband]
+  parent: [ClothingHeadsetAlt, BaseC3SyndicateContraband, ContrabandClothing] # Frontier: BaseSyndicateContraband<BaseC3SyndicateContraband, added ContrabandClothing as parent
   id: ClothingHeadsetAltSyndicate
   name: blood-red over-ear headset
   description: An updated, modular syndicate intercom that fits over the head and takes encryption keys (there are 5 key slots.).
   components:
-  - type: Headset
-  - type: EncryptionKeyHolder
-    keySlots: 5
+#  - type: Headset # Frontier: Use 10 from base
+#  - type: EncryptionKeyHolder # Frontier: Use 10 from base
+#    keySlots: 5 # Frontier: Use 10 from base
   - type: ContainerFill
     containers:
       key_slots:
@@ -140,7 +187,7 @@
     sprite: Clothing/Ears/Headsets/syndicate.rsi
 
 - type: entity
-  parent: ClothingHeadsetAlt
+  parent: [ClothingHeadsetAlt, BaseC3PirateContraband, ContrabandClothing] # Frontier: add BaseC3PirateContraband, added ContrabandClothing as parent
   id: ClothingHeadsetAltFreelancer
   name: freelancer's over-ear headset
   components:
@@ -151,6 +198,7 @@
       containers:
         key_slots:
           - EncryptionKeyFreelance
+          - EncryptionKeyCommon # Mono
     - type: Sprite
       sprite: Clothing/Ears/Headsets/freelance.rsi
     - type: Clothing

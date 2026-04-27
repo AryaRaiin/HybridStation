@@ -1,3 +1,23 @@
+// SPDX-FileCopyrightText: 2021 Alex Evgrashin
+// SPDX-FileCopyrightText: 2021 Paul Ritter
+// SPDX-FileCopyrightText: 2022 Leon Friedrich
+// SPDX-FileCopyrightText: 2022 Vera Aguilera Puerto
+// SPDX-FileCopyrightText: 2022 keronshb
+// SPDX-FileCopyrightText: 2022 wrexbe
+// SPDX-FileCopyrightText: 2023 DrSmugleaf
+// SPDX-FileCopyrightText: 2023 Julian Giebel
+// SPDX-FileCopyrightText: 2023 chromiumboy
+// SPDX-FileCopyrightText: 2023 metalgearsloth
+// SPDX-FileCopyrightText: 2024 BombasterDS
+// SPDX-FileCopyrightText: 2024 Pieter-Jan Briers
+// SPDX-FileCopyrightText: 2024 Qulibly
+// SPDX-FileCopyrightText: 2024 Whatstone
+// SPDX-FileCopyrightText: 2024 nikthechampiongr
+// SPDX-FileCopyrightText: 2024 themias
+// SPDX-FileCopyrightText: 2025 ScyronX
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Shared.Medical.SuitSensor;
 using Robust.Shared.GameStates;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
@@ -71,8 +91,8 @@ public sealed partial class SuitSensorComponent : Component
     /// <summary>
     ///     The station this suit sensor belongs to. If it's null the suit didn't spawn on a station and the sensor doesn't work.
     /// </summary>
-    [DataField("station"), AutoNetworkedField]
-    public EntityUid? StationId = null;
+    //[DataField("station"), AutoNetworkedField] // Frontier: comment out field
+    //public EntityUid? StationId = null; // Frontier: comment out field
 
     /// <summary>
     ///     The server the suit sensor sends it state to.
@@ -94,4 +114,20 @@ public sealed partial class SuitSensorComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField, ViewVariables]
     public bool PreviousControlsLocked = false;
+
+    // Frontier START
+    /// <summary>
+    ///     Frontier: whether or not the suit sensor is "jammed" - jammed sensors should not show up on crew monitoring consoles.
+    /// </summary>
+    [DataField]
+    public bool Jammed; 
+    // Frontier END
+
+    // Mono START
+    /// <summary>
+    ///     Monolith: variable checking if the suits IFF signature is enabled.
+    /// </summary>
+    [DataField]
+    public bool IFFSignatureEnabled = false;
+    // Mono END
 }
