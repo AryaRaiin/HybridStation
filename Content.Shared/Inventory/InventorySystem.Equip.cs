@@ -340,7 +340,7 @@ public abstract partial class InventorySystem
         bool triggerHandContact = false,
         bool child = false) // Frontier: raise DroppedEvent on all children
     {
-        return TryUnequip(actor, target, slot, out _, silent, force, predicted, inventory, clothing, reparent, checkDoafter, triggerHandContact
+        return TryUnequip(actor, target, slot, out _, silent, force, predicted, inventory, clothing, reparent, checkDoafter, triggerHandContact,
             child); // Frontier: add child
     }
 

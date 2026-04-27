@@ -85,7 +85,7 @@ public sealed class ClothingSpeedModifierSystem : EntitySystem
             var ev = new ModifyClothingSlowdownEvent(component.WalkModifier, component.SprintModifier);
             RaiseLocalEvent(container.Owner, ref ev);
             args.Args.ModifySpeed(ev.WalkModifier, ev.RunModifier);
-            return
+            return;
         }
         // DeltaV End
 

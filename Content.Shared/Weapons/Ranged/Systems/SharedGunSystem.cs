@@ -196,7 +196,7 @@ public abstract partial class SharedGunSystem : EntitySystem
             return;
 
         gun.ShootCoordinates = GetCoordinates(msg.Coordinates);
-        
+
         /* GOOBSTATION START
         gun.Target = GetEntity(msg.Target);
         */
@@ -537,7 +537,7 @@ public abstract partial class SharedGunSystem : EntitySystem
         var targetMapVelocity = gunVelocity + direction.Normalized() * speed;
         var currentMapVelocity = Physics.GetMapLinearVelocity(uid, physics);
         //var finalLinear = physics.LinearVelocity + targetMapVelocity - currentMapVelocity;
-        var finalLinear = physics.LinearVelocity + targetMapVelocity - currentMapVelocity * 2 // MONO
+        var finalLinear = physics.LinearVelocity + targetMapVelocity - currentMapVelocity * 2; // MONO
         Physics.SetLinearVelocity(uid, finalLinear, body: physics);
         Physics.SetAngularDamping(uid, physics, 0); // HULLROT, do not let these slow down
         Physics.SetLinearDamping(uid, physics, 0); // HULLROT, do not let these slow down

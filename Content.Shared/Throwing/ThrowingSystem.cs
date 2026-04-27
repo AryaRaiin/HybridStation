@@ -256,8 +256,8 @@ public sealed class ThrowingSystem : EntitySystem
         if (TryComp<BuckleComponent>(user, out var buckle) && buckle.BuckledTo is not null
             && TryComp<PhysicsComponent>(buckle.BuckledTo, out var buckledPhys))
         {
-            _physics.ApplyLinearImpulse(buckle.BuckledTo.Value, -impulseVector / buckledPhys.Mass * pushbackRatio * MathF.Min(massLimit, physics.Mass), body: buckledPhys)
-            return
+            _physics.ApplyLinearImpulse(buckle.BuckledTo.Value, -impulseVector / buckledPhys.Mass * pushbackRatio * MathF.Min(massLimit, physics.Mass), body: buckledPhys);
+            return;
         }
         // Frontier END
 
