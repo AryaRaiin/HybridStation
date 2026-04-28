@@ -36,6 +36,8 @@ using Robust.Shared.Physics;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Utility;
+using Content.Shared.Item.ItemToggle;
+using Content.Shared.Item.ItemToggle.Components;
 using Content.Client._Mono.Blocking.Components; // Mono
 using Content.Shared._Mono.Blocking; // Mono
 using Content.Shared.Blocking.Components; // Mono

@@ -2,6 +2,7 @@ using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Prototypes;
 using Content.Shared.FixedPoint;
 using Robust.Shared.Prototypes;
+using Content.Shared._Shitmed.Targeting; // SHITMED
 
 namespace Content.Shared.Damage.Systems;
 

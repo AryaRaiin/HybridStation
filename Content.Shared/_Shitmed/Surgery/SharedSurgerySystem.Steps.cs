@@ -36,6 +36,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Toolshed.TypeParsers;
 using System.Linq;
 using Content.Shared._Mono.CorticalBorer;
+using Content.Shared.Damage.Components;
 
 namespace Content.Shared._Shitmed.Medical.Surgery;
 

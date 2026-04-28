@@ -200,6 +200,8 @@ namespace Content.Shared.Lathe
     [Serializable]
     public sealed partial class LatheRecipeBatch
     {
+        private static int NextIndex = 0; // Mono
+        public int Index; // Mono - for de-queuing recipes to work properly
         public ProtoId<LatheRecipePrototype> Recipe;
         public int ItemsPrinted;
         public int ItemsRequested;
@@ -209,28 +211,9 @@ namespace Content.Shared.Lathe
             Recipe = recipe;
             ItemsPrinted = itemsPrinted;
             ItemsRequested = itemsRequested;
-        }
-    }
-
-    // Frontier START: batch lathe recipes
-    [Serializable]
-    public sealed partial class LatheRecipeBatch
-    {
-        private static int NextIndex = 0; // Mono
-        public int Index; // Mono - for de-queuing recipes to work properly
-        public LatheRecipePrototype Recipe;
-        public int ItemsPrinted;
-        public int ItemsRequested;
-
-        public LatheRecipeBatch(LatheRecipePrototype recipe, int itemsPrinted, int itemsRequested)
-        {
-            Recipe = recipe;
-            ItemsPrinted = itemsPrinted;
-            ItemsRequested = itemsRequested;
             Index = NextIndex++; // Mono
         }
     }
-    // Frontier END
 
     /// <summary>
     /// Event raised on a lathe when it starts producing a recipe.

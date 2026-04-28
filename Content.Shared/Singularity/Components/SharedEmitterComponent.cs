@@ -3,6 +3,7 @@ using Content.Shared.DeviceLinking;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
+using Content.Shared.Construction.Prototypes;
 
 namespace Content.Shared.Singularity.Components;
 

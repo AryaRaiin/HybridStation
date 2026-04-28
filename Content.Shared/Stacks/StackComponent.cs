@@ -110,14 +110,6 @@ public sealed partial class StackComponent : Component
     /// </summary>
     [DataField]
     public StackLayerFunction LayerFunction = StackLayerFunction.None;
-
-    // Frontier START: transforming Amount, MaxCount in speso stacks
-    /// <summary>
-    /// An optional function to adjust the layers used for a stack's appearance.
-    /// </summary>
-    [DataField]
-    public StackLayerFunction LayerFunction = StackLayerFunction.None;
-    // Frontier END
 }
 
 [Serializable, NetSerializable]

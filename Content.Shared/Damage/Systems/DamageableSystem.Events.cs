@@ -6,6 +6,7 @@ using Content.Shared.Inventory;
 using Content.Shared.Radiation.Events;
 using Content.Shared.Rejuvenate;
 using Robust.Shared.GameStates;
+using Content.Shared._Shitmed.Targeting; //SHITMED
 
 namespace Content.Shared.Damage.Systems;
 

@@ -12,6 +12,7 @@ using Content.Shared.StatusIcon;
 using Robust.Shared.Configuration;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
+using Robust.Shared.Serialization; // Frontier
 
 namespace Content.Shared.Access.Systems;
 
