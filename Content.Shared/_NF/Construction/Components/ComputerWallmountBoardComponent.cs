@@ -1,7 +1,7 @@
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 
-namespace Content.Server._NF.Construction.Components
+namespace Content.Shared._NF.Construction.Components
 {
     /// <summary>
     /// Used for construction graphs in building wallmount computers.
