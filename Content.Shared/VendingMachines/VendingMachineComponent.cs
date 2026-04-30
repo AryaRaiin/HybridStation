@@ -9,7 +9,7 @@ using Content.Shared.Containers.ItemSlots; // Frontier
 
 namespace Content.Shared.VendingMachines
 {
-    [RegisterComponent, NetworkedComponent, AutoGenerateComponentPause]
+    [RegisterComponent, NetworkedComponent, AutoGenerateComponentPause, AutoGenerateComponentState]
     public sealed partial class VendingMachineComponent : Component
     {
         /// <summary>
