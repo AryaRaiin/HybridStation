@@ -163,10 +163,10 @@ public sealed partial class ShuttleDockControl : BaseShuttleControl
 
             // Mono START - hide color if needed
             if(iffComp != null &&
-                (iffComp.Flags & IFFFlags.HideLabel) != 0x0 && 
+                (iffComp.Flags & IFFFlags.HideLabel) != 0x0 &&
                 (iffComp.Flags & IFFFlags.AlwaysShowColor) == 0x0)
             {
-                color = Color.White
+                color = Color.White;
             }
             // MONO END
 
