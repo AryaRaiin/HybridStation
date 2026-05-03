@@ -145,19 +145,20 @@ public sealed record SalvageMissionParams : IComparable<SalvageMissionParams>
 /// </summary>
 public sealed record SalvageMission(
     int Seed,
-    DifficultyRating Difficulty,
+    DifficultyRating Difficulty, // FRONTIER
     string Dungeon,
     string Faction,
-    SalvageMissionType Mission,
+    SalvageMissionType Mission, // FRONTIER
     string Biome,
     string Weather,
     string Air,
     float Temperature,
     Color? Color,
     TimeSpan Duration,
-    List<string> Rewards,
+    List<string> Rewards, // FRONTIER
     List<string> Modifiers)
 {
+
     /// <summary>
     /// Seed used for the mission.
     /// </summary>
