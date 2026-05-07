@@ -1,36 +1,39 @@
 <div class="header" align="center">  
-<img alt="Space Station 14" width="880" height="300" src="https://raw.githubusercontent.com/space-wizards/asset-dump/de329a7898bb716b9d5ba9a0cd07f38e61f1ed05/github-logo.svg">  
+<img alt="HybridStation, logo drawn by RCOI" width="400 height="400" src="https://github.com/AryaRaiin/HybridStation/blob/main/Resources/Textures/_HS/Logo/Logo.png">  
 </div>
 
-Space Station 14 is a remake of SS13 that runs on [Robust Toolbox](https://github.com/space-wizards/RobustToolbox), our homegrown engine written in C#.
+HybridStation is a ready-to-use base for all hybrid Space Station 14 gameplay and hosting. It is based on Space Wizards Federation’s [Space Station 14](https://github.com/space-wizards/space-station-14) and includes additional ship content primarily from Frontier Station and Monolith.
 
-This is the primary repo for Space Station 14. To prevent people forking RobustToolbox, a "content" pack is loaded by the client and server. This content pack contains everything needed to play the game on one specific server.
 
-If you want to host or create content for SS14, this is the repo you need. It contains both RobustToolbox and the content pack for development of new content packs.
+Contributions to HybridStation will be accepted. Large contributions should first contact Project Leads AryaRaiin or RonanRaven. Some desired contributions are documented in the [design doc](https://docs.google.com/document/d/1H5vFMqrHhynw3KEuoP0isqNrjeIuirAj30-FZDNEONc/edit?usp=sharing).
 
 ## Links
 
 <div class="header" align="center">  
 
-[Website](https://spacestation14.com/) | [Discord](https://discord.ss14.io/) | [Forum](https://forum.spacestation14.com/) | [Mastodon](https://mastodon.gamedev.place/@spacestation14) | [Lemmy](https://lemmy.spacestation14.com/) | [Patreon](https://www.patreon.com/spacestation14) | [Steam](https://store.steampowered.com/app/1255460/Space_Station_14/) | [Standalone Download](https://spacestation14.com/about/nightlies/)  
+[Upstream](https://spacestation14.com/) | [Steam](https://store.steampowered.com/app/1255460/Space_Station_14/) | [Design Document](https://docs.google.com/document/d/1H5vFMqrHhynw3KEuoP0isqNrjeIuirAj30-FZDNEONc/edit?usp=sharing)
 
 </div>
 
-## Documentation/Wiki
+## Current Status
+The merge of Monolith into upstream is complete. Please keep in mind that it is not in a buildable state. This just means that we've moved on to the next step.
 
-Our [docs site](https://docs.spacestation14.com/) has documentation on SS14's content, engine, game design, and more.  
+Once it builds and doesn't crash immediately, we will ship a version that's ready for local host play testing.
+
+We are currently fixing errors blocking compilation.
+
+## Documentation
+
+Our [design doc](https://docs.google.com/document/d/1H5vFMqrHhynw3KEuoP0isqNrjeIuirAj30-FZDNEONc/edit?usp=sharing) has information on planned HybridStation features. Space Station 14 documentation can be found at [docs site](https://docs.spacestation14.com/), which contains information on upstream content, engine, game design, and more.  
+
 Additionally, see these resources for license and attribution information:  
 - [Robust Generic Attribution](https://docs.spacestation14.com/en/specifications/robust-generic-attribution.html)  
 - [Robust Station Image](https://docs.spacestation14.com/en/specifications/robust-station-image.html)
 
-We also have lots of resources for new contributors to the project.
 
 ## Contributing
 
-We are happy to accept contributions from anybody. Get in Discord if you want to help. We've got a [list of issues](https://github.com/space-wizards/space-station-14-content/issues) that need to be done and anybody can pick them up. Don't be afraid to ask for help either!  
-Just make sure your changes and pull requests are in accordance with the [contribution guidelines](https://docs.spacestation14.com/en/general-development/codebase-info/pull-request-guidelines.html).
-
-We are not currently accepting translations of the game on our main repository. If you would like to translate the game into another language, consider creating a fork or contributing to a fork.
+We are happy to accept contributions from anybody. Please keep in mind that the fork needs to be in a stable, buildable state before we can merge pull requests.
 
 ## AI-generated contributions disclaimer
 This project does not accept low-effort or wholesale AI-generated contributions. Examples include, but are not limited to:
@@ -60,9 +63,38 @@ Build the server using `dotnet build`.
 
 ## License
 
-All code for the content repository is licensed under the [MIT license](https://github.com/space-wizards/space-station-14/blob/master/LICENSE.TXT).  
+Code in this repository belongs to several different licenses. Content licensing depends on the repo subfolder.
 
-Most assets are licensed under [CC-BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) unless stated otherwise. Assets have their license and copyright specified in the metadata file. For example, see the [metadata for a crowbar](https://github.com/space-wizards/space-station-14/blob/master/Resources/Textures/Objects/Tools/crowbar.rsi/meta.json).  
+See the REUSE headers for detailed licensing information for each file for the specific licenses under which contributions are made. 
 
-> [!NOTE]
-> Some assets are licensed under the non-commercial [CC-BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) or similar non-commercial licenses and will need to be removed if you wish to use this project commercially.
+HybridStation code is licensed under GNU [Affero General Public License version 3.0](https://www.gnu.org/licenses/agpl-3.0.en.html). Some content may be provided under MIT license upon request.
+
+Space Wizards Federation’s Space Station 14 is licensed under [MIT](https://mit-license.org/).
+
+Most assets are licensed under [CC-BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) unless stated otherwise. Assets have their license and the copyright in the metadata file. [Example](https://github.com/space-wizards/space-station-14/blob/master/Resources/Textures/Objects/Tools/crowbar.rsi/meta.json).
+
+Note that some assets are licensed under the non-commercial [CC-BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) or similar non-commercial licenses and will need to be removed if you wish to use this project commercially.
+
+
+| Subdirectory | Fork Name | Fork Repository | License |
+|--------------|-----------|-----------------|---------|
+| `_NF` | Frontier Station | https://github.com/new-frontiers-14/frontier-station-14 | AGPL 3.0 |
+| `_Mono` | Monolith | https://github.com/Monolith-Station/Monolith | MIT + AGPL 3.0 |
+| `_CD` | Cosmatic Drift | https://github.com/cosmatic-drift-14/cosmatic-drift | MIT |
+| `_Corvax` | Corvax | https://github.com/space-syndicate/space-station-14 | MIT |
+| `_Corvax` | Corvax Frontier | https://github.com/Corvax-Frontier/Frontier | AGPL 3.0 |
+| `_DV` | Delta-V | https://github.com/DeltaV-Station/Delta-v | AGPL 3.0 |
+| `_EE` | Einstein Engines | https://github.com/Simple-Station/Einstein-Engines | AGPL 3.0 |
+| `_Emberfall` | Emberfall | https://github.com/emberfall-14/emberfall | MPL 2.0 |
+| `_EstacaoPirata` | Estacao Pirata | https://github.com/Day-OS/estacao-pirata-14 | AGPL 3.0 |
+| `_Goobstation` | Goob Station | https://github.com/Goob-Station/Goob-Station | AGPL 3.0 |
+| `_Shitmed` | Goob Station | https://github.com/Goob-Station/Goob-Station | AGPL 3.0 |
+| `_Impstation` | Impstation | https://github.com/impstation/imp-station-14 | AGPL 3.0 |
+| `_NC14` | Nuclear 14 | https://github.com/Vault-Overseers/nuclear-14 | AGPL 3.0 |
+| `Nyanotrasen` | Nyanotrasen | https://github.com/Nyanotrasen/Nyanotrasen | MIT |
+| `_StarLight` | StarLight | https://github.com/ss14Starlight/space-station-14 | MIT |
+| `_RMC14` | RMC-14 | https://github.com/RMC-14/RMC-14 | MIT |
+| `_FarHorizons` | Far-Horizons | https://github.com/Far-Horizons-SS14/Far-Horizons-SS14.git | MIT |
+| `_Crescent` | Hullrot | https://github.com/Sector-Crescent/Hullrot.git | AGPL 3.0|
+| `_CS` | Coyote Station | https://github.com/ARF-SS13/coyote-frontier/ | AGPL 3.0|
+| `_Funkystation` | Funky Station | https://github.com/funky-station/funky-station | AGPL 3.0|
