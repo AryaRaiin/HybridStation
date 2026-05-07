@@ -10,7 +10,9 @@ public sealed partial class SalvageFactionPrototype : IPrototype
     [DataField("desc")] public LocId Description { get; private set; } = string.Empty;
 
     [ViewVariables(VVAccess.ReadWrite), DataField("entries", required: true)]
-    public List<SalvageMobEntry> MobGroups = new();
+/* FRONTIER: upstream override
+    public List<SalvageMobEntry> MobGroups = new();*/
+    public List<SalvageMobGroup> MobGroups = default!; // FRONTIER
 
     /// <summary>
     /// Miscellaneous data for factions.
