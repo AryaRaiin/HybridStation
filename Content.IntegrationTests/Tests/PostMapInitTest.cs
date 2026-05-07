@@ -158,9 +158,10 @@ namespace Content.IntegrationTests.Tests
             "Relic",
             "dm01-entryway",
             "Exo",
+            "Geode", // Hybridstation map
         };
         */
-        private static readonly string[] GameMaps = FrontierConstants.GameMapPrototypes; 
+        private static readonly string[] GameMaps = FrontierConstants.GameMapPrototypes;
         // Frontier END
 
         private static readonly ProtoId<EntityCategoryPrototype> DoNotMapCategory = "DoNotMap";
