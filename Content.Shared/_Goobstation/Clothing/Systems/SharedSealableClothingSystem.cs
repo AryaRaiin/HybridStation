@@ -7,6 +7,7 @@ using Content.Shared.DoAfter;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Interaction;
 using Content.Shared.Item.ItemToggle;
+using Content.Shared.Item.ItemToggle.Components;
 using Content.Shared.Popups;
 using Content.Shared.PowerCell;
 using Content.Shared.Verbs;
@@ -52,7 +53,7 @@ public abstract class SharedSealableClothingSystem : EntitySystem
         SubscribeLocalEvent<SealableClothingControlComponent, SealClothingDoAfterEvent>(OnSealClothingDoAfter);
         SubscribeLocalEvent<SealableClothingControlComponent, SealClothingEvent>(OnControlSealEvent);
         //SubscribeLocalEvent<SealableClothingControlComponent, StartSealingProcessDoAfterEvent>(OnStartSealingDoAfter);
-        SubscribeLocalEvent<SealableClothingControlComponent, ToggleClothingAttemptEvent>(OnToggleClothingAttempt);
+        SubscribeLocalEvent<SealableClothingControlComponent, ToggleClothingEvent>(OnToggleClothingAttempt);
     }
 
     #region Events
@@ -64,7 +65,13 @@ public abstract class SharedSealableClothingSystem : EntitySystem
     /// <param name="args"></param>
     private void OnPartSealingComplete(Entity<SealableClothingComponent> part, ref ClothingPartSealCompleteEvent args)
     {
-        _componentTogglerSystem.ToggleComponent(part, args.IsSealed);
+        if (!TryComp(part.Owner, out ItemToggleComponent? toggle))
+        {
+            if (toggle!=null)
+            {
+                toggle.Activated = args.IsSealed;
+            }
+        }
     }
 
     /// <summary>
@@ -72,7 +79,13 @@ public abstract class SharedSealableClothingSystem : EntitySystem
     /// </summary>
     private void OnControlSealingComplete(Entity<SealableClothingControlComponent> control, ref ClothingControlSealCompleteEvent args)
     {
-        _componentTogglerSystem.ToggleComponent(control, args.IsSealed);
+        if (!TryComp(control.Owner, out ItemToggleComponent? toggle))
+        {
+            if (toggle!=null)
+            {
+                toggle.Activated = args.IsSealed;
+            }
+        }
     }
 
     /// <summary>
@@ -247,27 +260,23 @@ public abstract class SharedSealableClothingSystem : EntitySystem
     /// <summary>
     /// Prevents clothing from toggling if it's sealed or in sealing process
     /// </summary>
-    private void OnToggleClothingAttempt(Entity<SealableClothingControlComponent> control, ref ToggleClothingAttemptEvent args)
+    private void OnToggleClothingAttempt(Entity<SealableClothingControlComponent> control, ref ToggleClothingEvent args)
     {
         var (uid, comp) = control;
 
         // Popup if currently sealing
         if (comp.IsInProcess)
         {
-            _popupSystem.PopupClient(Loc.GetString(comp.UnsealedInProcessToggleFailPopup), uid, args.User);
-            _audioSystem.PlayPredicted(comp.FailSound, uid, args.User);
-            args.Cancel();
-
+            _popupSystem.PopupClient(Loc.GetString(comp.UnsealedInProcessToggleFailPopup), uid, args.Performer);
+            _audioSystem.PlayPredicted(comp.FailSound, uid, args.Performer);
             return;
         }
 
         // Popup if sealed, but not in process
         if (comp.IsCurrentlySealed)
         {
-            _popupSystem.PopupClient(Loc.GetString(comp.CurrentlySealedToggleFailPopup), uid, args.User);
-            _audioSystem.PlayPredicted(comp.FailSound, uid, args.User);
-            args.Cancel();
-
+            _popupSystem.PopupClient(Loc.GetString(comp.CurrentlySealedToggleFailPopup), uid, args.Performer);
+            _audioSystem.PlayPredicted(comp.FailSound, uid, args.Performer);
             return;
         }
 
