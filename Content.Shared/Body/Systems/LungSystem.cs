@@ -72,8 +72,6 @@ public sealed class LungSystem : EntitySystem
     {
         var comp = ent.Comp;
 
-        comp.IsFunctional = true;
-
         if (!_inventory.TryGetContainingEntity(ent.Owner, out var parent) || !_inventory.TryGetContainingSlot(ent.Owner, out var slot))
             return;
 
@@ -87,7 +85,6 @@ public sealed class LungSystem : EntitySystem
         }
     }
     // Goobstation END
-
 
     /* This should really be moved to somewhere in the atmos system and modernized,
      so that other systems, like CondenserSystem, can use it.
