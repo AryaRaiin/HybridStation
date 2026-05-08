@@ -256,9 +256,9 @@ public sealed partial class SleepingSystem : EntitySystem
             return;
 
         // Wake up if either damage or healing exceeds the threshold
-        if ((totalChange > 0 || -totalChange > 0) && 
+        if ((totalChange > 0 || -totalChange > 0) &&
             (totalChange >= ent.Comp.WakeThreshold || -totalChange >= ent.Comp.WakeThreshold)
-            && !HasComp<ForcedSleepingComponent>(ent))
+            && !HasComp<ForcedSleepingStatusEffectComponent>(ent))
             TryWaking((ent, ent.Comp));
     }
 
@@ -374,28 +374,7 @@ public sealed partial class SleepingSystem : EntitySystem
     {
         args.Prefix = ent.Comp.ForceSaySleepDataset;
     }
-
-    // Frontier: auto-wakeup
-    /// <summary>
-    /// Handles auto-wakeup
-    /// </summary>
-    public override void Update(float frameTime)
-    {
-        var query = EntityQueryEnumerator<AutoWakeUpComponent, SleepingComponent>();
-        var curTime = _gameTiming.CurTime;
-        while (query.MoveNext(out var uid, out var wakeUp, out var sleeping))
-        {
-            if (curTime >= wakeUp.NextWakeUp)
-            {
-                Wake((uid, sleeping));
-                _statusEffectsSystem.TryRemoveStatusEffect(uid, "Drowsiness");
-            }
-        }
-    }
-    // End Frontier: auto-wakeup
-
 }
-
 
 public sealed partial class SleepActionEvent : InstantActionEvent;
 
