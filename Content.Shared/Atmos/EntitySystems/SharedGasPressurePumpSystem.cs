@@ -59,7 +59,7 @@ public abstract class SharedGasPressurePumpSystem : EntitySystem
         {
             pump.Enabled = true;
         }
-        UpdateAppearance(uid, pump);
+        UpdateAppearance((uid, pump));
     }
     // Frontier END - Init on map
 
@@ -81,7 +81,7 @@ public abstract class SharedGasPressurePumpSystem : EntitySystem
 
         var pumpOn = ent.Comp1.Enabled && _receiver.IsPowered(ent.Owner);
         _appearance.SetData(ent, PumpVisuals.Enabled, pumpOn, ent.Comp2);
-        _appearance.SetData(ent, PumpVisuals.PumpingInwards, ent.Comp1.PumpingInwards, appearance); // Frontier
+        _appearance.SetData(ent, PumpVisuals.PumpingInwards, ent.Comp1.PumpingInwards, ent.Comp2);
     }
 
     private void OnToggleStatusMessage(Entity<GasPressurePumpComponent> ent, ref GasPressurePumpToggleStatusMessage args)
@@ -132,7 +132,7 @@ public abstract class SharedGasPressurePumpSystem : EntitySystem
         _adminLogger.Add(LogType.AtmosDirectionChanged, LogImpact.Medium,
             $"{ToPrettyString(args.Actor):player} set the direction on {ToPrettyString(uid):device} to {(args.Inwards ? "in" : "out")}");
         Dirty(uid, pump);
-        UpdateAppearance(uid, pump);
+        UpdateAppearance((uid, pump));
     }
     // Frontier END
 }
