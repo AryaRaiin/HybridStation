@@ -8,6 +8,7 @@ using Robust.Shared.GameStates;
 using Robust.Shared.Network;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
+using Content.Shared.Body.Systems;
 
 namespace Content.Shared.Damage.Systems;
 
@@ -20,6 +21,7 @@ public sealed partial class DamageableSystem : EntitySystem
     [Dependency] private readonly IConfigurationManager _config = default!;
     [Dependency] private readonly SharedChemistryGuideDataSystem _chemistryGuideData = default!;
     [Dependency] private readonly SharedExplosionSystem _explosion = default!;
+    [Dependency] private readonly SharedBodySystem _bodySystem = default!; // SHITMED
 
     private EntityQuery<AppearanceComponent> _appearanceQuery;
     private EntityQuery<DamageableComponent> _damageableQuery;

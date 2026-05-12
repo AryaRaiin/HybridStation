@@ -120,18 +120,26 @@ public sealed partial class DamageableSystem
         if (damage.Empty)
             return damageDone;
 
-        var before = new BeforeDamageChangedEvent(damage, origin,
-            targetPart); // SHITMED
+        var before = new BeforeDamageChangedEvent(damage, origin, Cancelled: false, TargetPart: targetPart); // SHITMED
         RaiseLocalEvent(ent, ref before);
 
         if (before.Cancelled)
             return damageDone;
 
         // SHITMED START
-        var partDamage = new TryChangePartDamageEvent(damage, origin, targetPart, ignoreResistances, canSever ?? true, canEvade ?? false, partMultiplier ?? 1.00f);
-        RaiseLocalEvent(uid.Value, ref partDamage);
+        var partDamage = new TryChangePartDamageEvent(
+            damage,
+            origin,
+            Cancelled: false,
+            TargetPart: targetPart,
+            IgnoreResistances: ignoreResistances,
+            CanSever: canSever ?? true,
+            CanEvade: canEvade ?? false,
+            PartMultiplier: partMultiplier ?? 1.00f
+        );
+        RaiseLocalEvent(ent, ref partDamage);
         if (partDamage.Evaded || partDamage.Cancelled)
-            return null;
+            return new DamageSpecifier();
         // SHITMED END
 
         // Apply resistances
@@ -180,8 +188,7 @@ public sealed partial class DamageableSystem
         }
 
         if (!damageDone.Empty)
-            OnEntityDamageChanged((ent, ent.Comp), damageDone, interruptsDoAfters, origin,
-                canSever); // SHITMED
+            OnEntityDamageChanged((ent, ent.Comp), damageDone, interruptsDoAfters, origin); // SHITMED
 
         return damageDone;
     }
@@ -248,14 +255,13 @@ public sealed partial class DamageableSystem
         OnEntityDamageChanged((ent, ent.Comp), new DamageSpecifier());
 
         // SHITMED START
-        if (HasComp<TargetingComponent>(uid))
+        if (HasComp<TargetingComponent>(ent))
         {
-            foreach (var (part, _) in _body.GetBodyChildren(uid))
+            foreach (var (part, _) in _bodySystem.GetBodyChildren(ent))
             {
-                if (!TryComp(part, out DamageableComponent? damageComp))
+                if (!TryComp<DamageableComponent>((EntityUid)part, out var damageComp))
                     continue;
-
-                SetAllDamage(part, damageComp, newValue);
+                SetAllDamage((part, damageComp), newValue);
             }
         }
         // SHITMED END
