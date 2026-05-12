@@ -114,7 +114,7 @@ public sealed class EmagSystem : EntitySystem
             return false;
 
         TryComp<LimitedChargesComponent>(ent, out var charges);
-        if (_charges.IsEmpty(ent, charges))
+        if (_sharedCharges.IsEmpty((ent.Owner, charges)))
         {
             _popup.PopupClient(Loc.GetString("emag-no-charges"), user, user);
             return false;
@@ -133,7 +133,7 @@ public sealed class EmagSystem : EntitySystem
         _adminLogger.Add(LogType.Emag, LogImpact.Medium, $"{ToPrettyString(user):player} demagged {ToPrettyString(target):target} with flag(s): {ent.Comp.EmagType}");
 
         if (charges != null && emaggedEvent.Handled)
-            _charges.UseCharge(ent, charges);
+            _sharedCharges.TryUseCharge((ent.Owner, charges));
 
         if (!emaggedEvent.Repeatable)
         {
