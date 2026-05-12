@@ -20,7 +20,8 @@ using Content.Shared.Damage.Systems;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
 using Content.Shared.Blocking.Components; // Mono
-using Content.Shared._Mono.Blocking; // Mono
+using Content.Shared._Mono.Blocking;
+using Content.Shared.Item.ItemToggle.Components; // Mono
 
 namespace Content.Shared.Blocking;
 
@@ -61,9 +62,16 @@ public sealed partial class BlockingSystem : SharedBlockingSystem // Mono
 
     private void OnUserDamageModified(EntityUid uid, BlockingUserComponent component, DamageModifyEvent args)
     {
-        //if (component.BlockingItem is not { } item || !TryComp<BlockingComponent>(item, out var blocking))
-        if (TryComp<ItemToggleComponent>(component.BlockingItem, out var toggleComponent) && TryComp<BlockingComponent>(component.BlockingItem, out var blocking)) // Mono
+        //MONO OVERRIDE START if (component.BlockingItem is not { } item || !TryComp<BlockingComponent>(item, out var blocking))
+        if (component.BlockingItem is not { } item)
             return;
+
+        if (!TryComp<ItemToggleComponent>(item, out var toggleComponent))
+            return;
+
+        if (!TryComp<BlockingComponent>(item, out var blocking))
+            return;
+        // MONO OVERRIDE END
 
         if (args.Damage.GetTotal() <= 0)
             return;
