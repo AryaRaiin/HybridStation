@@ -2,9 +2,17 @@ using System.Linq;
 using Content.Shared.Examine;
 using Content.Shared.Toggleable; // Ignore, touching for REUSE Headers.
 using Content.Shared._EinsteinEngines.Language.Components.Translators;
+using Robust.Shared.Serialization; // HS
 
 namespace Content.Shared._EinsteinEngines.Language.Systems;
 
+// HS START
+[Serializable, NetSerializable]
+public enum ToggleVisuals : byte
+{
+    Toggled,
+}
+// HS END
 public abstract class SharedTranslatorSystem : EntitySystem
 {
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
