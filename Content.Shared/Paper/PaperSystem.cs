@@ -13,7 +13,8 @@ using static Content.Shared.Paper.PaperComponent;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Content.Shared.Timing; // Frontier
-using Content.Shared.Access.Systems; // Frontier
+using Content.Shared.Access.Systems;
+using Content.Shared.Ghost; // Frontier
 using Content.Shared.Verbs; // Frontier
 using Content.Shared.Mobs; // Frontier
 
