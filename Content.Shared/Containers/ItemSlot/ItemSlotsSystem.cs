@@ -291,7 +291,8 @@ namespace Content.Shared.Containers.ItemSlots
 
             // Drop the held item onto the floor. Return if the user cannot drop.
             //if (!_handsSystem.TryDrop(args.User, args.Used))
-            if (_handsSystem.IsHolding(args.User, args.Used) && !_handsSystem.TryDrop(args.User, args.Used, handsComp: hands)) // Goobstation - don't try to drop if not holding
+            if (_handsSystem.IsHolding(args.User, args.Used) &&
+                !_handsSystem.TryDrop(args.User, args.Used)) // Goobstation - don't try to drop if not holding
                 return;
 
             slots.Sort(SortEmpty);
