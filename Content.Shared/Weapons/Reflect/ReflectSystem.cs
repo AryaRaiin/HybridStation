@@ -91,8 +91,17 @@ public sealed class ReflectSystem : EntitySystem
 
         if (!ent.Comp.InRightPlace)
             return; // only reflect when equipped correctly
-
-        if (TryReflectHitscan(ent, ent.Owner, args.Shooter, args.SourceItem, args.Direction, args.Reflective, out var dir))
+        // HS START, UPDATE OF MONO REFLECTION HITSCAN
+        if (TryReflectHitscan(
+                ent,
+                ent.Owner,
+                args.Shooter,
+                args.SourceItem,
+                args.Direction,
+                null,
+                ReflectType.Energy,
+                out var dir))
+            // HS END
         {
             args.Direction = dir.Value;
             args.Reflected = true;
@@ -112,8 +121,17 @@ public sealed class ReflectSystem : EntitySystem
     {
         if (args.Reflected)
             return;
-
-        if (TryReflectHitscan(ent, ent.Owner, args.Shooter, args.SourceItem, args.Direction, args.Reflective, out var dir))
+        // HS START, UPDATE OF MONO REFLECTION HITSCAN
+        if (TryReflectHitscan(
+                ent,
+                ent.Owner,
+                args.Shooter,
+                args.SourceItem,
+                args.Direction,
+                null,
+                ReflectType.Energy,
+                out var dir))
+            // HS END
         {
             args.Direction = dir.Value;
             args.Reflected = true;
@@ -149,13 +167,16 @@ public sealed class ReflectSystem : EntitySystem
 
         if (Resolve(projectile, ref projectile.Comp, false))
         {
-            // WD EDIT START
-            if (reflect.DamageOnReflectModifier != 0)
+            // HS START, UPDATE OF WD EDIT
+            if (reflector.Comp.DamageOnReflectModifier != 0)
             {
-                _damageable.TryChangeDamage(reflector, projectileComp.Damage * reflect.DamageOnReflectModifier,
-                    projectileComp.IgnoreResistances, origin: projectileComp.Shooter);
+                _damageable.TryChangeDamage(
+                    reflector.Owner,
+                    projectile.Comp.Damage * reflector.Comp.DamageOnReflectModifier,
+                    projectile.Comp.IgnoreResistances,
+                    origin: projectile.Comp.Shooter);
             }
-            // WD EDIT END
+            // HS END
             _adminLogger.Add(LogType.BulletHit, LogImpact.Medium, $"{ToPrettyString(user)} reflected {ToPrettyString(projectile)} from {ToPrettyString(projectile.Comp.Weapon)} shot by {projectile.Comp.Shooter}");
 
             projectile.Comp.Shooter = user;
@@ -189,10 +210,15 @@ public sealed class ReflectSystem : EntitySystem
 
         PlayAudioAndPopup(reflector.Comp, user);
 
-        // WD EDIT START
-        if (reflect.DamageOnReflectModifier != 0 && damage != null)
-            _damageable.TryChangeDamage(reflector, damage * reflect.DamageOnReflectModifier, origin: shooter);
-        // WD EDIT END
+        // HS START, UPDATE OF WD EDIT
+        if (reflector.Comp.DamageOnReflectModifier != 0 && damage != null)
+        {
+            _damageable.TryChangeDamage(
+                reflector.Owner,
+                damage * reflector.Comp.DamageOnReflectModifier,
+                origin: shooter);
+        }
+        // HS END
 
         var spread = _random.NextAngle(-reflector.Comp.Spread / 2, reflector.Comp.Spread / 2);
         newDirection = -spread.RotateVec(direction);
