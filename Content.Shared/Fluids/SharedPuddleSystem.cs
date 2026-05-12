@@ -131,8 +131,6 @@ public abstract partial class SharedPuddleSystem : EntitySystem
     {
         if (args.SolutionId != entity.Comp.SolutionName)
             return;
-        if (entity.Comp.PreventTransferOut) // Frontier
-            return; // Frontier
 
         if (args.Solution.Volume <= 0)
         {
