@@ -90,7 +90,7 @@ public abstract partial class SharedHandsSystem
 
         ent.Comp.Hands.Add(handName, hand);
         ent.Comp.SortedHands.Add(handName);
-        AddToSortedHands(handsComp, handName, handLocation); // Shitmed Change
+        AddToSortedHands(ent.Comp, handName, hand.Location); // Shitmed Change
         Dirty(ent);
 
         OnPlayerAddHand?.Invoke((ent, ent.Comp), handName, hand.Location);

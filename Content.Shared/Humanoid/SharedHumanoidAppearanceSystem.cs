@@ -39,7 +39,8 @@ using Robust.Shared.Serialization.Manager;
 using Robust.Shared.Serialization.Markdown;
 using Robust.Shared.Utility;
 using YamlDotNet.RepresentationModel;
-using Content.Shared._Shitmed.Humanoid.Events; // SHITMED
+using Content.Shared._Shitmed.Humanoid.Events;
+using Content.Shared.Sprite; // SHITMED
 
 namespace Content.Shared.Humanoid;
 

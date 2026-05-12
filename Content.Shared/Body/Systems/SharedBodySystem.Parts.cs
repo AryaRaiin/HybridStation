@@ -228,7 +228,7 @@ public partial class SharedBodySystem
         if (ent.Comp.Body is null)
             return;
 
-        if (TryComp(insertedUid, out BodyPartComponent? part) 
+        if (TryComp(insertedUid, out BodyPartComponent? part)
                 && slotId.Contains(PartSlotContainerIdPrefix + GetSlotFromBodyPart(part))) // Shitmed Change
         {
             AddPart(ent.Comp.Body.Value, (insertedUid, part), slotId);
@@ -236,8 +236,7 @@ public partial class SharedBodySystem
             CheckBodyPart((insertedUid, part), GetTargetBodyPart(part), false); // Shitmed Change
         }
 
-        if (TryComp(insertedUid, out OrganComponent? organ))
-        if (TryComp(insertedUid, out OrganComponent? organ) 
+        if (TryComp(insertedUid, out OrganComponent? organ)
                 && slotId.Contains(OrganSlotContainerIdPrefix + organ.SlotId)) // Shitmed Change
             AddOrgan((insertedUid, organ), ent.Comp.Body.Value, ent);
     }
@@ -420,14 +419,14 @@ public partial class SharedBodySystem
             && !GetBodyChildrenOfType(bodyEnt, partEnt.Comp.PartType, bodyEnt.Comp).Any()
         )
         {
-            
+
             /* SHITMED START - change upstream method
             // TODO BODY SYSTEM KILL : remove this when wounding and required parts are implemented properly
             var damage = new DamageSpecifier(Prototypes.Index(BloodlossDamageType), 300);
             Damageable.ChangeDamage(bodyEnt.Owner, damage);
             */
             var damage = new DamageSpecifier(Prototypes.Index(BloodlossDamageType), partEnt.Comp.VitalDamage);
-            Damageable.TryChangeDamage(bodyEnt, damage, partMultiplier: 0f);
+            Damageable.TryChangeDamage(bodyEnt.Owner, damage, partMultiplier: 0f);
             // SHITMED END
         }
     }
@@ -508,7 +507,7 @@ public partial class SharedBodySystem
         if (!Resolve(partUid, ref part, logMissing: false))
             return null;
 
-        Containers.EnsureContainer<ContainerSlot>(partUid, GetPartSlotContainerId(slotId));        
+        Containers.EnsureContainer<ContainerSlot>(partUid, GetPartSlotContainerId(slotId));
         if (part.Children.TryGetValue(slotId, out var existing)){ return existing; } // Shitmed Change: Don't throw if the slot already exists
         var partSlot = new BodyPartSlot(slotId, partType);
         part.Children.Add(slotId, partSlot);
@@ -926,7 +925,7 @@ public partial class SharedBodySystem
     {
         foreach (var part in GetBodyChildren(bodyId, body))
         {
-            if (part.Component.PartType == type 
+            if (part.Component.PartType == type
                     && (symmetry == null || part.Component.Symmetry == symmetry)) // Shitmed Change
                 yield return part;
         }
