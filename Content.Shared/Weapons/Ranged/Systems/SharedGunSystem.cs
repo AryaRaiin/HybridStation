@@ -75,7 +75,8 @@ using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 
 using Content.Shared.Mech.Components; // Delta-V: Felinids in duffelbags can't shoot.
-using Content.Shared.Buckle.Components; // Frontier: firing when buckled in space
+using Content.Shared.Buckle.Components;
+using Content.Shared.Item; // Frontier: firing when buckled in space
 
 
 namespace Content.Shared.Weapons.Ranged.Systems;
@@ -332,7 +333,7 @@ public abstract partial class SharedGunSystem : EntitySystem
     private bool AttemptShoot(EntityUid user, EntityUid gunUid, GunComponent gun)
     {
         if (TryComp<AutoShootGunComponent>(gunUid, out var auto) && !auto.CanFire) // Frontier
-            return; // Frontier
+            return true; // Frontier
 
         if (gun.FireRateModified <= 0f ||
             !_actionBlockerSystem.CanAttack(user))
