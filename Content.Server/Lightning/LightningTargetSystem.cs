@@ -1,3 +1,14 @@
+// SPDX-FileCopyrightText: 2024 BuildTools <unconfigured@null.spigotmc.org>
+// SPDX-FileCopyrightText: 2024 Ed <96445749+TheShuEd@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2024 Kara <lunarautomaton6@gmail.com>
+// SPDX-FileCopyrightText: 2024 TemporalOroboros <TemporalOroboros@gmail.com>
+// SPDX-FileCopyrightText: 2024 TsjipTsjip <19798667+TsjipTsjip@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2024 metalgearsloth <31366439+metalgearsloth@users.noreply.github.com>
+// SPDX-FileCopyrightText: 2025 Dark <darkwindleaf@hotmail.co.uk>
+// SPDX-FileCopyrightText: 2025 Lachryphage (GitHub)
+//
+// SPDX-License-Identifier: MIT
+
 using Content.Server.Explosion.EntitySystems;
 using Content.Server.Lightning;
 using Content.Server.Lightning.Components;
@@ -29,7 +40,7 @@ public sealed class LightningTargetSystem : EntitySystem
         damage.DamageDict.Add("Structural", uid.Comp.DamageFromLightning);
         _damageable.ChangeDamage(uid.Owner, damage, true);
 
-        if (uid.Comp.LightningExplode)
+        if (uid.Comp.LightningExplode && args.CanExplode) // imp - added CanExplode
         {
             _explosionSystem.QueueExplosion(
                 _transform.GetMapCoordinates(uid),

@@ -2,8 +2,14 @@
 # SPDX-FileCopyrightText: 2025 Aidenkrz
 # SPDX-FileCopyrightText: 2025 Redrover1760
 # SPDX-FileCopyrightText: 2025 sleepyyapril
+# SPDX-FileCopyrightText: 2025 Aiden <28298836+Aidenkrz@users.noreply.github.com>
+# SPDX-FileCopyrightText: 2025 Aidenkrz <28298836+Aidenkrz@users.noreply.github.com>
+# SPDX-FileCopyrightText: 2025 Lachryphage (GitHub)
+# SPDX-FileCopyrightText: 2025 ReboundQ3 <ReboundQ3@gmail.com>
+# SPDX-FileCopyrightText: 2025 sleepyyapril <123355664+sleepyyapril@users.noreply.github.com>
+# SPDX-FileCopyrightText: 2025 sleepyyapril <flyingkarii@gmail.com>
 #
-# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-License-Identifier: MIT
 
 name: Update REUSE Headers
 
@@ -51,7 +57,7 @@ jobs:
             echo "Error fetching PR files from GitHub API."
             exit 1
           fi
-          
+
           if ! echo "$PR_FILES_JSON" | jq -e . > /dev/null; then
              echo "Warning: Received empty or invalid JSON from GitHub API for PR files."
              PR_FILES="" # Set PR_FILES to empty to avoid errors below
@@ -114,4 +120,3 @@ jobs:
           skip_dirty_check: false
           skip_fetch: true
 
-    

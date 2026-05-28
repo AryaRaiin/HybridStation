@@ -254,6 +254,8 @@
     - CargoBoardsStatic
     - MedicalBoardsStatic
     - EngineeringBoardsStatic
+    - CircuitFloorsStatic
+    - ImpCircuitStatic # Imp | LateStation, added for the port
     dynamicPacks:
     - EngineeringBoards
     - CargoBoards
