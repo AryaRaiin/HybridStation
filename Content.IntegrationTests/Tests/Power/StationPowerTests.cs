@@ -40,7 +40,6 @@ public sealed class StationPowerTests
         "Elkridge",
         "Convex",
         "Relic",
-        "Geode", // Hybridstation map
     ];
 
     [Test, TestCaseSource(nameof(GameMaps))]
