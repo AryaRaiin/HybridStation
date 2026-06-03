@@ -9,7 +9,7 @@ public static class LoggingExtensions
         // Get details from the stack component to track amount of things in the stack.
         if (entityManager.TryGetComponent<StackComponent>(entity, out var stack))
         {
-            return $"(StackCount: {stack.Count.ToString()})";
+            return $"(StackCount: {stack.Count})";
         }
 
         // Add more logging things here when needed.
