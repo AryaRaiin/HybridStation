@@ -30,7 +30,8 @@ using Content.Shared._Shitmed.Body.Events; // Shitmed
 using Content.Shared._Shitmed.Body.Part; // Shitmed
 using Content.Shared._Shitmed.BodyEffects; // Shitmed
 using Content.Shared.Inventory; // Shitmed
-using Content.Shared.Random; // Shitmed
+using Content.Shared.Random; // UNKNOWN
+using Robust.Shared.Timing; // Shitmed
 
 namespace Content.Shared.Body.Systems;
 
@@ -38,7 +39,7 @@ public partial class SharedBodySystem
 {
     private static readonly ProtoId<DamageTypePrototype> BloodlossDamageType = "Bloodloss";
     [Dependency] private readonly RandomHelperSystem _randomHelper = default!; // Shitmed Change
-    [Dependency] private readonly InventorySystem _inventorySystem = default!; // Shitmed Change
+    [Dependency] private readonly IGameTiming _timing = default!;
 
     private void InitializeParts()
     {
@@ -140,7 +141,7 @@ public partial class SharedBodySystem
             && TryGetPartSlotContainerName(partEnt.Comp.PartType, out var containerNames))
         {
             foreach (var containerName in containerNames)
-                _inventorySystem.DropSlotContents(partEnt.Comp.Body.Value, containerName, inventory);
+                _inventory.DropSlotContents(partEnt.Comp.Body.Value, containerName, inventory);
         }
     }
 
@@ -414,7 +415,7 @@ public partial class SharedBodySystem
         if (!Resolve(bodyEnt, ref bodyEnt.Comp, logMissing: false))
             return;
 
-        if (!_timing.ApplyingState
+        if (!_timing.ApplyingState // UNKNOWN
             && partEnt.Comp.IsVital
             && !GetBodyChildrenOfType(bodyEnt, partEnt.Comp.PartType, bodyEnt.Comp).Any()
         )
