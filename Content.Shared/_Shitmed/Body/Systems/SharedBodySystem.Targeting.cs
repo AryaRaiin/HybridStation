@@ -32,7 +32,6 @@ public partial class SharedBodySystem
     [Dependency] private readonly INetManager _net = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly DamageableSystem _damageable = default!;
 
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     private readonly string[] _severingDamageTypes = { "Slash", "Piercing", "Blunt" };
@@ -84,7 +83,7 @@ public partial class SharedBodySystem
             && _queryTargeting.HasComp(body)
             && !_mobState.IsDead(body))
         {
-            _damageable.TryChangeDamage(
+            Damageable.TryChangeDamage(
                 (entity.Owner, damageable),
                 GetHealingSpecifier(entity),
                  canSever: false,
@@ -208,7 +207,7 @@ public partial class SharedBodySystem
             {
                 if (canEvade && TryEvadeDamage(entity, GetEvadeChance(targetType)))
                     continue;
-                if (_damageable.TryChangeDamage(
+                if (Damageable.TryChangeDamage(
                         part.FirstOrDefault().Id,
                         damage * partMultiplier,
                         ignoreResistances,
