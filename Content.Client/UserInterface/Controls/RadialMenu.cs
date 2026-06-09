@@ -9,8 +9,7 @@ using Robust.Shared.Input;
 
 namespace Content.Client.UserInterface.Controls;
 
-[Virtual]
-public class RadialMenu : BaseWindow
+public abstract class RadialMenuTextureButtonBase : BaseButton
 {
     /// <summary>
     /// Contextual button used to traverse through previous layers of the radial menu
