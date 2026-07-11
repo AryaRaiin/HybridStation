@@ -31,7 +31,6 @@ using Content.Shared._Shitmed.Body.Part; // Shitmed
 using Content.Shared._Shitmed.BodyEffects; // Shitmed
 using Content.Shared.Inventory; // Shitmed
 using Content.Shared.Random; // UNKNOWN
-using Robust.Shared.Timing; // Shitmed
 
 namespace Content.Shared.Body.Systems;
 
@@ -39,7 +38,6 @@ public partial class SharedBodySystem
 {
     private static readonly ProtoId<DamageTypePrototype> BloodlossDamageType = "Bloodloss";
     [Dependency] private readonly RandomHelperSystem _randomHelper = default!; // Shitmed Change
-    [Dependency] private readonly IGameTiming _timing = default!;
 
     private void InitializeParts()
     {
@@ -415,7 +413,7 @@ public partial class SharedBodySystem
         if (!Resolve(bodyEnt, ref bodyEnt.Comp, logMissing: false))
             return;
 
-        if (!_timing.ApplyingState // UNKNOWN
+        if (!_gameTiming.ApplyingState // UNKNOWN
             && partEnt.Comp.IsVital
             && !GetBodyChildrenOfType(bodyEnt, partEnt.Comp.PartType, bodyEnt.Comp).Any()
         )
