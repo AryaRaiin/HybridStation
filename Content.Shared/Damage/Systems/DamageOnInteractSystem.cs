@@ -15,6 +15,7 @@ using Content.Shared.Effects;
 using Content.Shared.Stunnable;
 using Content.Shared._Shitmed.Targeting; // Shitmed
 using Content.Shared.Hands.Components; // Shitmed
+using Content.Shared.Hands.EntitySystems; // HS SHITMED  Shitmed
 
 namespace Content.Shared.Damage.Systems;
 
@@ -29,6 +30,7 @@ public sealed class DamageOnInteractSystem : EntitySystem
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly IGameTiming _gameTiming = default!;
     [Dependency] private readonly SharedStunSystem _stun = default!;
+    [Dependency] private readonly SharedHandsSystem _hands = default!; // HS SHITMED UPDATE
 
     public override void Initialize()
     {
@@ -79,18 +81,29 @@ public sealed class DamageOnInteractSystem : EntitySystem
 
         // SHITMED START
         TargetBodyPart? targetPart = null;
-        var hands = CompOrNull<HandsComponent>(args.User);
-        if (hands is { ActiveHand: not null })
+
+        if (TryComp<HandsComponent>(args.User, out var hands))
         {
-            targetPart = hands.ActiveHand.Location switch
+            var activeHandId = _hands.GetActiveHand(args.User);
+
+            if (activeHandId != null &&
+                _hands.TryGetHand(args.User, activeHandId, out var activeHand))
             {
-                HandLocation.Left => TargetBodyPart.LeftHand,
-                HandLocation.Right => TargetBodyPart.RightHand,
-                _ => null
-            };
+                targetPart = activeHand.Value.Location switch
+                {
+                    HandLocation.Left => TargetBodyPart.LeftHand,
+                    HandLocation.Right => TargetBodyPart.RightHand,
+                    _ => null
+                };
+            }
         }
-        //totalDamage = _damageableSystem.ChangeDamage(args.User, totalDamage, origin: args.Target); // Disable upstream
-        totalDamage = _damageableSystem.TryChangeDamage(args.User, totalDamage, origin: args.Target, targetPart: targetPart);
+        // totalDamage = _damageableSystem.ChangeDamage(args.User, totalDamage, origin: args.Target); // SHITMED Disable upstream
+        _damageableSystem.TryChangeDamage(
+            args.User,
+            totalDamage,
+            out totalDamage,
+            origin: args.Target,
+            targetPart: targetPart);
         // SHITMED END
 
         if (totalDamage.AnyPositive())
