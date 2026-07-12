@@ -63,6 +63,7 @@ using Content.Server._NF.Contraband.Systems; // Frontier
 using Content.Shared.Stacks; // Frontier
 using Content.Server.Stack; // Frontier?
 using Content.Server._Mono.VendingMachine; // Mono
+using Content.Server.Popups; // Frontier
 using Content.Shared._Mono.Traits.Physical; // Mono
 using Robust.Shared.Containers; // Frontier
 
@@ -291,6 +292,103 @@ namespace Content.Server.VendingMachines
             vendComponent.NextItemToEject = null;
             vendComponent.ThrowNextItem = false;
         }
+
+        // FRONTIER START - add this function, override shared
+        /// <summary>
+        /// Checks whether the user is authorized to use the vending machine, then ejects the provided item if true
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="sender">Entity that is trying to use the vending machine</param>
+        /// <param name="type">The type of inventory the item is from</param>
+        /// <param name="itemId">The prototype ID of the item</param>
+        /// <param name="component"></param>
+        public void AuthorizedVend(EntityUid uid, EntityUid sender, InventoryType type, string itemId, VendingMachineComponent component)
+        {
+            // FRONTIER START
+            if (!PrototypeManager.TryIndex<EntityPrototype>(itemId, out var proto))
+                return;
+
+            var price = _pricing.GetEstimatedPrice(proto); // TO DO: _pricing is coming from a server file... how do we fix this? It's calling PricingSystem.cs
+            // Somewhere deep in the code of pricing, a hardcoded 20 dollar value exists for anything without
+            // a staticprice component for some god forsaken reason, and I cant find it or think of another way to
+            // get an accurate price from a prototype with no staticprice comp.
+            // this will undoubtably lead to vending machine exploits if I cant find wtf pricing system is doing.
+            // also stacks, food, solutions, are handled poorly too f
+            if (price == 0)
+                price = 20;
+
+
+            if (TryComp<MarketModifierComponent>(sender, out var modifier))
+                price *= modifier.Mod;
+
+            var totalPrice = (int) price;
+
+            // If any price has a vendor price, explicitly use its value - higher OR lower, over others.
+            var priceVend = _pricing.GetEstimatedVendPrice(proto);
+            if (priceVend > 0.0) // if vending price exists, overwrite it.
+                totalPrice = (int) priceVend;
+            // FRONTIER END
+
+            if (IsAuthorized(uid, sender, component))
+            {
+                // FRONTIER START
+                int bankBalance = 0;
+                if (!HasComp<IronmanComponent>(sender) && TryComp<BankAccountComponent>(sender, out var bank))
+                    bankBalance = bank.Balance;
+                int cashSlotBalance = 0;
+                Entity<StackComponent>? cashEntity = null;
+                if (component.CashSlotName != null
+                    && component.CurrencyStackType != null
+                    && ItemSlots.TryGetSlot(uid, component.CashSlotName, out var cashSlot)
+                    && TryComp<StackComponent>(cashSlot?.ContainerSlot?.ContainedEntity, out var stackComp)
+                    && stackComp!.StackTypeId == component.CurrencyStackType)
+                {
+                    cashSlotBalance = stackComp!.Count;
+                    cashEntity = (cashSlot!.ContainerSlot!.ContainedEntity.Value, stackComp!);
+                }
+                if (totalPrice > bankBalance + cashSlotBalance)
+                {
+                    _popupSystem.PopupEntity(Loc.GetString("bank-insufficient-funds"), uid);
+                    Deny( uid, sender );
+                    return;
+                }
+                bool paidFully = false;
+                // Mono: Store the purchase price for tracking
+                component.LastPurchasePrice = totalPrice;
+                //TryEjectVendorItem(uid, type, itemId, component.CanShoot, sender, component); // Upstream method, doesn't have rv
+                bool ejectsuccess=false;
+                TryEjectVendorItem(uid, type, itemId, component.CanShoot, sender, component, ref ejectsuccess);
+                if (ejectsuccess)
+                {
+                    if (cashEntity != null)
+                    {
+                        var newCashSlotBalance = Math.Max(cashSlotBalance - totalPrice, 0);
+                        _stack.SetCount(cashEntity.Value.Owner, newCashSlotBalance, cashEntity.Value.Comp);
+                        component.CashSlotBalance = newCashSlotBalance;
+                        paidFully = true; // Either we paid fully with cash, or we need to withdraw the remainder
+                    }
+                    if (totalPrice > cashSlotBalance && !HasComp<Content.Shared._Mono.Traits.Physical.IronmanComponent>(sender))
+                        paidFully = _bankSystem.TryBankWithdraw(sender, totalPrice - cashSlotBalance);
+                    // If we paid completely, pay our station taxes
+                    if (paidFully)
+                    {
+                        foreach (var (account, taxCoeff) in component.TaxAccounts)
+                        {
+                            if (!float.IsFinite(taxCoeff) || taxCoeff <= 0.0f)
+                                continue;
+                            var tax = (int)Math.Floor(totalPrice * taxCoeff);
+                            _bankSystem.TrySectorDeposit(account, tax, LedgerEntryType.VendorTax);
+                        }
+                    }
+                    // Something was ejected, update the vending component's state
+                    Dirty(uid, component);
+                    _adminLogger.Add(LogType.Action, LogImpact.Low,
+                        $"{ToPrettyString(sender):user} bought from [vendingMachine:{ToPrettyString(uid!)}, product:{proto.Name}, cost:{totalPrice},  with ${cashSlotBalance} in the cash slot and ${bankBalance} in the bank.");
+                }
+                // FRONTIER END
+            }
+        }
+        // FRONTIER END - add this function, override shared
 
         public override void Update(float frameTime)
         {
