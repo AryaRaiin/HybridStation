@@ -19,7 +19,6 @@ public sealed class AutomationFilterSystem : EntitySystem
 {
     [Dependency] private readonly ItemSlotsSystem _slots = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedStackSystem _stack = default!;
 
     private EntityQuery<FilterSlotComponent> _slotQuery;
     private EntityQuery<LabelComponent> _labelQuery;
@@ -370,12 +369,20 @@ public sealed class AutomationFilterSystem : EntitySystem
         // don't need to split if it's already a multiple of the split size
         var stack = Comp<StackComponent>(item);
         var excess = stack.Count % split;
+
         if (excess == 0)
             return item;
 
-        // have to split it, client will return null here
-        var coords = Transform(item).Coordinates;
-        return _stack.Split(item, stack.Count - excess, coords, stack);
+        var ev = new AutomationFilterSplitRequestEvent
+        {
+            Item = item,
+            Amount = stack.Count - excess,
+            Coordinates = Transform(item).Coordinates
+        };
+
+        RaiseLocalEvent(ev);
+
+        return ev.Result;
     }
 
     /// <summary>
