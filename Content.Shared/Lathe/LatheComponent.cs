@@ -22,7 +22,7 @@ using Content.Shared.DeviceLinking; // Mono
 
 namespace Content.Shared.Lathe
 {
-    [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
+    [RegisterComponent, NetworkedComponent, AutoGenerateComponentState(fieldDeltas: true)] // HS: add fieldDeltas: true to AutoGenerateComponentState
     public sealed partial class LatheComponent : Component
     {
         /// <summary>

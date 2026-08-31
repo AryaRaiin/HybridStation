@@ -481,28 +481,31 @@ public abstract partial class SharedMechSystem : EntitySystem
     // GOOBSTATION START
     private void UpdateHands(EntityUid uid, EntityUid mech, bool active)
     {
-        if (!TryComp<HandsComponent>(uid, out var handsComponent))
-            return;
         if (active)
-            BlockHands(uid, mech, handsComponent);
+            BlockHands(uid, mech);
         else
             FreeHands(uid, mech);
     }
 
-    private void BlockHands(EntityUid uid, EntityUid mech, HandsComponent handsComponent)
+    private void BlockHands(EntityUid uid, EntityUid mech)
     {
+        if (!TryComp<HandsComponent>(uid, out var handsComponent))
+            return;
+
         var freeHands = 0;
-        foreach (var hand in _hands.EnumerateHands(uid, handsComponent))
+        foreach (var handId in _hands.EnumerateHands(uid))
         {
-            if (hand.HeldEntity == null)
+            var heldEntity = _hands.GetHeldItem(uid, handId);
+
+            if (heldEntity == null)
             {
                 freeHands++;
                 continue;
             }
             // Is this entity removable? (they might have handcuffs on)
-            if (HasComp<UnremoveableComponent>(hand.HeldEntity) && hand.HeldEntity != mech)
+            if (HasComp<UnremoveableComponent>(heldEntity) && heldEntity != mech)
                 continue;
-            _hands.DoDrop(uid, hand, true, handsComponent);
+            _hands.DoDrop(uid, handId, true);
             freeHands++;
             if (freeHands == 2)
                 break;
@@ -521,7 +524,7 @@ public abstract partial class SharedMechSystem : EntitySystem
     // GoobStation: Fixes scram implants or teleports locking the pilot out of being able to move.
     private void OnEntGotRemovedFromContainer(EntityUid uid, MechPilotComponent component, EntGotRemovedFromContainerMessage args)
     {
-        TryEject(component.Mech, pilot: uid);
+        TryEject(component.Mech);
     }
     // Goobstation: Prevent guns being used out of mechs if CCVAR is set.
     private void OnShotAttempted(EntityUid uid, MechEquipmentComponent component, ref ShotAttemptedEvent args)

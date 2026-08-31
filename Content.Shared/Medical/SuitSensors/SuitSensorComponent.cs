@@ -91,8 +91,8 @@ public sealed partial class SuitSensorComponent : Component
     /// <summary>
     ///     The station this suit sensor belongs to. If it's null the suit didn't spawn on a station and the sensor doesn't work.
     /// </summary>
-    //[DataField("station"), AutoNetworkedField] // Frontier: comment out field
-    //public EntityUid? StationId = null; // Frontier: comment out field
+    [DataField("station"), AutoNetworkedField]
+    public EntityUid? StationId = null;
 
     /// <summary>
     ///     The server the suit sensor sends it state to.
@@ -120,7 +120,7 @@ public sealed partial class SuitSensorComponent : Component
     ///     Frontier: whether or not the suit sensor is "jammed" - jammed sensors should not show up on crew monitoring consoles.
     /// </summary>
     [DataField]
-    public bool Jammed; 
+    public bool Jammed;
     // Frontier END
 
     // Mono START

@@ -108,7 +108,11 @@ public abstract class SharedLatheSystem : EntitySystem
         var currentMaterial = _materialStorage.GetStoredMaterials(ent.Owner);
         foreach (var batch in ent.Comp.Queue)
         {
-            var recipe = batch.Recipe;
+            _proto.TryIndex<LatheRecipePrototype>(batch.Recipe, out var recipe);
+            if (recipe == null)
+            {
+                return new();
+            }
             foreach (var (material, needed) in recipe.Materials)
             {
                 var adjustedAmount = AdjustMaterial(needed, recipe.ApplyMaterialDiscount, ent.Comp.FinalMaterialUseMultiplier);

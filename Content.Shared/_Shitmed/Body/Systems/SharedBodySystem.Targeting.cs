@@ -96,7 +96,7 @@ public partial class SharedBodySystem
         base.Update(frameTime);
         _integrityJobQueue.Process();
 
-        if (!_timing.IsFirstTimePredicted)
+        if (!_gameTiming.IsFirstTimePredicted)
             return;
 
         using var query = EntityQueryEnumerator<BodyPartComponent>();

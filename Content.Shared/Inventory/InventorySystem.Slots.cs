@@ -6,9 +6,8 @@ using Content.Shared.Storage;
 using Robust.Shared.Containers;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
-
-// Shitmed Change
-using Content.Shared.Random;
+using Content.Shared.Random; // Shitmed Change
+using Robust.Shared.Timing; // Shitmed Change
 
 namespace Content.Shared.Inventory;
 
@@ -17,6 +16,7 @@ public partial class InventorySystem : EntitySystem
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
     [Dependency] private readonly IViewVariablesManager _vvm = default!;
     [Dependency] private readonly RandomHelperSystem _randomHelper = default!; // Shitmed Change
+    [Dependency] private readonly IGameTiming _gameTiming = default!; // Shitmed Change
 
     private void InitializeSlots()
     {
@@ -345,10 +345,11 @@ public partial class InventorySystem : EntitySystem
             if (!TryGetSlotContainer(uid, slotName, out var container, out _, inventory))
                 break;
 
-            if (container.ContainedEntity is { } entityUid && TryComp(entityUid, out TransformComponent? transform) && _gameTiming.IsFirstTimePredicted)
+            var entityUid = container.ContainedEntity;
+            if (entityUid != null && TryComp(entityUid, out TransformComponent? transform) && _gameTiming.IsFirstTimePredicted)
             {
-                _transform.AttachToGridOrMap(entityUid, transform);
-                _randomHelper.RandomOffset(entityUid, 0.5f);
+                _transform.AttachToGridOrMap((EntityUid)entityUid, transform);
+                _randomHelper.RandomOffset((EntityUid)entityUid, 0.5f);
             }
 
             break;
