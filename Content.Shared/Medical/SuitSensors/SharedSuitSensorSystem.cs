@@ -339,152 +339,181 @@ public abstract class SharedSuitSensorSystem : EntitySystem
     /// </summary>
     /// <param name="uid">Entity to get status</param>
     /// <returns>Full <see cref="SuitSensorStatus"/> of the chosen uid</returns>
-    public SuitSensorStatus? GetSensorState(Entity<SuitSensorComponent?, TransformComponent?> ent)
+public SuitSensorStatus? GetSensorState(Entity<SuitSensorComponent?, TransformComponent?> ent)
+{
+    if (!Resolve(ent, ref ent.Comp1, ref ent.Comp2, false))
+        return null;
+
+    var sensor = ent.Comp1;
+    var transform = ent.Comp2;
+
+    // check if sensor is enabled and worn by user
+    if (sensor.Mode == SuitSensorMode.SensorOff || sensor.User == null || !HasComp<MobStateComponent>(sensor.User)) // HS: Remove transform.GridUid == null) so that it prints "Unknown location" rather than not providing any player-side feedback
+        return null;
+
+    // try to get mobs id from ID slot
+    var userName = Loc.GetString("suit-sensor-component-unknown-name");
+    var userJob = Loc.GetString("suit-sensor-component-unknown-job");
+    var userJobIcon = "JobIconNoId";
+    var userJobDepartments = new List<string>();
+
+    if (_idCardSystem.TryFindIdCard(sensor.User.Value, out var card))
     {
-        if (!Resolve(ent, ref ent.Comp1, ref ent.Comp2, false))
-            return null;
+        if (card.Comp.FullName != null)
+            userName = card.Comp.FullName;
+        if (card.Comp.LocalizedJobTitle != null)
+            userJob = card.Comp.LocalizedJobTitle;
+        userJobIcon = card.Comp.JobIcon;
 
-        var sensor = ent.Comp1;
-        var transform = ent.Comp2;
-
-        // check if sensor is enabled and worn by user
-        if (sensor.Mode == SuitSensorMode.SensorOff || sensor.User == null || !HasComp<MobStateComponent>(sensor.User) || transform.GridUid == null)
-            return null;
-
-        // try to get mobs id from ID slot
-        var userName = Loc.GetString("suit-sensor-component-unknown-name");
-        var userJob = Loc.GetString("suit-sensor-component-unknown-job");
-        var userJobIcon = "JobIconNoId";
-        var userJobDepartments = new List<string>();
-
-        if (_idCardSystem.TryFindIdCard(sensor.User.Value, out var card))
-        {
-            if (card.Comp.FullName != null)
-                userName = card.Comp.FullName;
-            if (card.Comp.LocalizedJobTitle != null)
-                userJob = card.Comp.LocalizedJobTitle;
-            userJobIcon = card.Comp.JobIcon;
-
-            foreach (var department in card.Comp.JobDepartments)
-                userJobDepartments.Add(Loc.GetString(_proto.Index(department).Name));
-        }
-
-        // get health mob state
-        var isAlive = false;
-        if (TryComp(sensor.User.Value, out MobStateComponent? mobState))
-            isAlive = !_mobStateSystem.IsDead(sensor.User.Value, mobState);
-
-        // get mob total damage
-        var totalDamage = 0;
-        if (TryComp<DamageableComponent>(sensor.User.Value, out var damageable))
-            totalDamage = damageable.TotalDamage.Int();
-
-        // Get mob total damage crit threshold
-        int? totalDamageThreshold = null;
-        if (_mobThresholdSystem.TryGetThresholdForState(sensor.User.Value, MobState.Critical, out var critThreshold))
-            totalDamageThreshold = critThreshold.Value.Int();
-
-        // finally, form suit sensor status
-        var status = new SuitSensorStatus(GetNetEntity(sensor.User.Value), GetNetEntity(ent.Owner), userName, userJob, userJobIcon, userJobDepartments);
-        switch (sensor.Mode)
-        {
-            case SuitSensorMode.SensorBinary:
-                status.IsAlive = isAlive;
-                break;
-            case SuitSensorMode.SensorVitals:
-                status.IsAlive = isAlive;
-                status.TotalDamage = totalDamage;
-                status.TotalDamageThreshold = totalDamageThreshold;
-                break;
-            case SuitSensorMode.SensorCords:
-                status.IsAlive = isAlive;
-                status.TotalDamage = totalDamage;
-                status.TotalDamageThreshold = totalDamageThreshold;
-                EntityCoordinates coordinates;
-                var xformQuery = GetEntityQuery<TransformComponent>();
-
-                if (transform.GridUid != null)
-                {
-                    coordinates = new EntityCoordinates(transform.GridUid.Value,
-                        Vector2.Transform(_transform.GetWorldPosition(transform, xformQuery),
-                            _transform.GetInvWorldMatrix(xformQuery.GetComponent(transform.GridUid.Value), xformQuery)));
-                }
-                else if (transform.MapUid != null)
-                {
-                    coordinates = new EntityCoordinates(transform.MapUid.Value,
-                        _transform.GetWorldPosition(transform, xformQuery));
-                }
-                else
-                {
-                    coordinates = EntityCoordinates.Invalid;
-                }
-
-                status.Coordinates = GetNetCoordinates(coordinates);
-                break;
-        }
-
-        return status;
+        foreach (var department in card.Comp.JobDepartments)
+            userJobDepartments.Add(Loc.GetString(_proto.Index(department).Name));
     }
 
-    /// <summary>
-    /// Create a device network package from the suit sensors status.
-    /// </summary>
-    public NetworkPayload SuitSensorToPacket(SuitSensorStatus status)
+    // get health mob state
+    var isAlive = false;
+    if (TryComp(sensor.User.Value, out MobStateComponent? mobState))
+        isAlive = !_mobStateSystem.IsDead(sensor.User.Value, mobState);
+
+    // get mob total damage
+    var totalDamage = 0;
+    if (TryComp<DamageableComponent>(sensor.User.Value, out var damageable))
+        totalDamage = damageable.TotalDamage.Int();
+
+    // Get mob total damage crit threshold
+    int? totalDamageThreshold = null;
+    if (_mobThresholdSystem.TryGetThresholdForState(sensor.User.Value, MobState.Critical, out var critThreshold))
+        totalDamageThreshold = critThreshold.Value.Int();
+
+    // HS START: Determine mob location using station, grid, map, or "Unknown location" if all of those fail
+    var locationName = "Unknown location";
+
+    if (_stationSystem.GetOwningStation(sensor.User.Value) is { } stationUid && stationUid.Valid)
     {
-        var payload = new NetworkPayload()
-        {
-            [DeviceNetworkConstants.Command] = DeviceNetworkConstants.CmdUpdatedState,
-            [SuitSensorConstants.NET_NAME] = status.Name,
-            [SuitSensorConstants.NET_JOB] = status.Job,
-            [SuitSensorConstants.NET_JOB_ICON] = status.JobIcon,
-            [SuitSensorConstants.NET_JOB_DEPARTMENTS] = status.JobDepartments,
-            [SuitSensorConstants.NET_IS_ALIVE] = status.IsAlive,
-            [SuitSensorConstants.NET_SUIT_SENSOR_UID] = status.SuitSensorUid,
-            [SuitSensorConstants.NET_OWNER_UID] = status.OwnerUid,
-        };
+        locationName = Name(stationUid);
+    }
+    else if (transform.GridUid is { } gridUid && gridUid.Valid)
+    {
+        locationName = Name(gridUid);
+    }
+    else if (transform.MapUid is { } mapUid && mapUid.Valid)
+    {
+        locationName = Name(mapUid);
+    }
+    // HS END
 
-        if (status.TotalDamage != null)
-            payload.Add(SuitSensorConstants.NET_TOTAL_DAMAGE, status.TotalDamage);
-        if (status.TotalDamageThreshold != null)
-            payload.Add(SuitSensorConstants.NET_TOTAL_DAMAGE_THRESHOLD, status.TotalDamageThreshold);
-        if (status.Coordinates != null)
-            payload.Add(SuitSensorConstants.NET_COORDINATES, status.Coordinates);
+    // finally, form suit sensor status
+    var status = new SuitSensorStatus(GetNetEntity(sensor.User.Value), GetNetEntity(ent.Owner), userName, userJob, userJobIcon, userJobDepartments,  locationName);
 
-        return payload;
+    switch (sensor.Mode)
+    {
+        case SuitSensorMode.SensorBinary:
+            status.IsAlive = isAlive;
+            break;
+        case SuitSensorMode.SensorVitals:
+            status.IsAlive = isAlive;
+            status.TotalDamage = totalDamage;
+            status.TotalDamageThreshold = totalDamageThreshold;
+            break;
+        case SuitSensorMode.SensorCords:
+            status.IsAlive = isAlive;
+            status.TotalDamage = totalDamage;
+            status.TotalDamageThreshold = totalDamageThreshold;
+            EntityCoordinates coordinates;
+            var xformQuery = GetEntityQuery<TransformComponent>();
+
+            if (transform.GridUid != null)
+            {
+                coordinates = new EntityCoordinates(transform.GridUid.Value,
+                    Vector2.Transform(_transform.GetWorldPosition(transform, xformQuery),
+                        _transform.GetInvWorldMatrix(xformQuery.GetComponent(transform.GridUid.Value), xformQuery)));
+            }
+            else if (transform.MapUid != null)
+            {
+                coordinates = new EntityCoordinates(transform.MapUid.Value,
+                    _transform.GetWorldPosition(transform, xformQuery));
+            }
+            else
+            {
+                coordinates = EntityCoordinates.Invalid;
+            }
+
+            status.Coordinates = GetNetCoordinates(coordinates);
+            break;
     }
 
-    /// <summary>
-    /// Try to create the suit sensors status from the device network message.
-    /// </summary>
-    public SuitSensorStatus? PacketToSuitSensor(NetworkPayload payload)
+    return status;
+}
+
+/// <summary>
+/// Create a device network package from the suit sensors status.
+/// </summary>
+public NetworkPayload SuitSensorToPacket(SuitSensorStatus status)
+{
+    var payload = new NetworkPayload()
     {
-        // check command
-        if (!payload.TryGetValue(DeviceNetworkConstants.Command, out string? command))
-            return null;
-        if (command != DeviceNetworkConstants.CmdUpdatedState)
-            return null;
+        [DeviceNetworkConstants.Command] = DeviceNetworkConstants.CmdUpdatedState,
+        [SuitSensorConstants.NET_NAME] = status.Name,
+        [SuitSensorConstants.NET_JOB] = status.Job,
+        [SuitSensorConstants.NET_JOB_ICON] = status.JobIcon,
+        [SuitSensorConstants.NET_JOB_DEPARTMENTS] = status.JobDepartments,
+        [SuitSensorConstants.NET_IS_ALIVE] = status.IsAlive,
+        [SuitSensorConstants.NET_SUIT_SENSOR_UID] = status.SuitSensorUid,
+        [SuitSensorConstants.NET_OWNER_UID] = status.OwnerUid,
+        [SuitSensorConstants.NET_LOCATION_NAME] = status.LocationName, // Mono: Added to track bodies on named grids off-station
+    };
 
-        // check name, job and alive
-        if (!payload.TryGetValue(SuitSensorConstants.NET_NAME, out string? name)) return null;
-        if (!payload.TryGetValue(SuitSensorConstants.NET_JOB, out string? job)) return null;
-        if (!payload.TryGetValue(SuitSensorConstants.NET_JOB_ICON, out string? jobIcon)) return null;
-        if (!payload.TryGetValue(SuitSensorConstants.NET_JOB_DEPARTMENTS, out List<string>? jobDepartments)) return null;
-        if (!payload.TryGetValue(SuitSensorConstants.NET_IS_ALIVE, out bool? isAlive)) return null;
-        if (!payload.TryGetValue(SuitSensorConstants.NET_SUIT_SENSOR_UID, out NetEntity suitSensorUid)) return null;
-        if (!payload.TryGetValue(SuitSensorConstants.NET_OWNER_UID, out NetEntity ownerUid)) return null;
+    if (status.TotalDamage != null)
+        payload.Add(SuitSensorConstants.NET_TOTAL_DAMAGE, status.TotalDamage);
+    if (status.TotalDamageThreshold != null)
+        payload.Add(SuitSensorConstants.NET_TOTAL_DAMAGE_THRESHOLD, status.TotalDamageThreshold);
+    if (status.Coordinates != null)
+        payload.Add(SuitSensorConstants.NET_COORDINATES, status.Coordinates);
 
-        // try get total damage and cords (optionals)
-        payload.TryGetValue(SuitSensorConstants.NET_TOTAL_DAMAGE, out int? totalDamage);
-        payload.TryGetValue(SuitSensorConstants.NET_TOTAL_DAMAGE_THRESHOLD, out int? totalDamageThreshold);
-        payload.TryGetValue(SuitSensorConstants.NET_COORDINATES, out NetCoordinates? coords);
+    return payload;
+}
 
-        var status = new SuitSensorStatus(ownerUid, suitSensorUid, name, job, jobIcon, jobDepartments)
-        {
-            IsAlive = isAlive.Value,
-            TotalDamage = totalDamage,
-            TotalDamageThreshold = totalDamageThreshold,
-            Coordinates = coords,
-        };
-        return status;
-    }
+/// <summary>
+/// Try to create the suit sensors status from the device network message.
+/// </summary>
+public SuitSensorStatus? PacketToSuitSensor(NetworkPayload payload)
+{
+    // check command
+    if (!payload.TryGetValue(DeviceNetworkConstants.Command, out string? command))
+        return null;
+    if (command != DeviceNetworkConstants.CmdUpdatedState)
+        return null;
+
+    // check name, job and alive
+    if (!payload.TryGetValue(SuitSensorConstants.NET_NAME, out string? name))
+        return null;
+    if (!payload.TryGetValue(SuitSensorConstants.NET_JOB, out string? job))
+        return null;
+    if (!payload.TryGetValue(SuitSensorConstants.NET_JOB_ICON, out string? jobIcon))
+        return null;
+    if (!payload.TryGetValue(SuitSensorConstants.NET_JOB_DEPARTMENTS, out List<string>? jobDepartments))
+        return null;
+    if (!payload.TryGetValue(SuitSensorConstants.NET_IS_ALIVE, out bool? isAlive))
+        return null;
+    if (!payload.TryGetValue(SuitSensorConstants.NET_SUIT_SENSOR_UID, out NetEntity suitSensorUid))
+        return null;
+    if (!payload.TryGetValue(SuitSensorConstants.NET_OWNER_UID, out NetEntity ownerUid))
+        return null;
+
+    // try get total damage, location, and coordinates (optionals)
+    payload.TryGetValue(SuitSensorConstants.NET_TOTAL_DAMAGE, out int? totalDamage);
+    payload.TryGetValue(SuitSensorConstants.NET_TOTAL_DAMAGE_THRESHOLD, out int? totalDamageThreshold);
+    payload.TryGetValue(SuitSensorConstants.NET_COORDINATES, out NetCoordinates? coords);
+    payload.TryGetValue(SuitSensorConstants.NET_LOCATION_NAME, out string? locationName); // Mono: add locationName
+    locationName ??= "Unknown location"; // Mono: Gives Unknow location if all else fails
+
+    var status = new SuitSensorStatus(
+        ownerUid, suitSensorUid,name,job,jobIcon,jobDepartments,locationName) // Mono: add locationName
+    {
+        IsAlive = isAlive.Value,
+        TotalDamage = totalDamage,
+        TotalDamageThreshold = totalDamageThreshold,
+        Coordinates = coords,
+    };
+    return status;
+}
 }
