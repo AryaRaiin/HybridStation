@@ -26,10 +26,12 @@ public sealed class HandsFillSystem : EntitySystem
         if (!TryComp<HandsComponent>(ent, out var hands))
             return;
 
+        var handsEntity = (ent.Owner, hands);
         var coords = Transform(ent).Coordinates;
+
         foreach (var (name, fill) in ent.Comp.Hands)
         {
-            _hands.AddHand(ent, name, HandLocation.Middle, hands);
+            _hands.AddHand(handsEntity, name, HandLocation.Middle);
 
             if (fill is not {} id)
                 continue;
