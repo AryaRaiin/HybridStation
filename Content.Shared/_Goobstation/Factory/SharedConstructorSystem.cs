@@ -38,9 +38,8 @@ public abstract class SharedConstructorSystem : EntitySystem
             return;
 
         var msg = ent.Comp.Construction is {} id
-            ? Loc.GetString("constructor-examine", ("name", Proto.Index(id).Name))
+            ? Loc.GetString("constructor-examine", ("name", Proto.Index(id).Name!))
             : Loc.GetString("constructor-examine-unset");
-        args.PushMarkup(msg);
     }
 
     private void OnConstructed(Entity<ConstructorComponent> ent, ref ConstructedEvent args) =>
