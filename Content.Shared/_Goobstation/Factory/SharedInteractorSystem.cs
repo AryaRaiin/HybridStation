@@ -15,6 +15,7 @@ using Content.Shared.Interaction;
 using Content.Shared.Throwing;
 using Robust.Shared.Containers;
 using Robust.Shared.Physics.Events;
+using Content.Shared.Hands.EntitySystems; // HS
 
 namespace Content.Shared._Goobstation.Factory;
 
@@ -26,6 +27,7 @@ public abstract class SharedInteractorSystem : EntitySystem
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
     [Dependency] private readonly SharedInteractionSystem _interaction = default!;
     [Dependency] protected readonly StartableMachineSystem Machine = default!;
+    [Dependency] private readonly SharedHandsSystem _hands = default!; // HS
 
     private EntityQuery<ActiveDoAfterComponent> _doAfterQuery;
     private EntityQuery<HandsComponent> _handsQuery;
@@ -131,7 +133,9 @@ public abstract class SharedInteractorSystem : EntitySystem
 
     protected bool InteractWith(Entity<InteractorComponent> ent, EntityUid target)
     {
-        if (_handsQuery.CompOrNull(ent)?.ActiveHandEntity is not {} tool)
+        var hands = _handsQuery.CompOrNull(ent);
+        if (hands?.ActiveHandId is not {} handId ||
+            _hands.GetHeldItem((ent, hands), handId) is not {} tool)
             return _interaction.InteractHand(ent, target);
 
         var coords = Transform(target).Coordinates;
@@ -169,10 +173,11 @@ public abstract class SharedInteractorSystem : EntitySystem
 
     private void UpdateToolAppearance(EntityUid uid)
     {
-        var state = _handsQuery.CompOrNull(uid)?.ActiveHand?.IsEmpty == false
+        var hands = _handsQuery.CompOrNull(uid);
+        var state = hands?.ActiveHandId is {} handId &&
+                    _hands.GetHeldItem((uid, hands), handId) != null
             ? InteractorState.Inactive
             : InteractorState.Empty;
-        UpdateAppearance(uid, state);
     }
 
     protected void UpdateAppearance(EntityUid uid, InteractorState state) =>
