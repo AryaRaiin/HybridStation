@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MPL-2.0
 
 using Content.Shared.Damage;
+using Content.Shared.Damage.Components;
 using Content.Shared.Examine;
 using Content.Shared.Inventory;
 using Content.Shared.Movement.Systems;
