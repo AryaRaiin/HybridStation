@@ -87,7 +87,7 @@ public partial class SharedCorticalBorerSystem : EntitySystem
         }
 
         if (TryComp<DamageableComponent>(ent, out var damComp))
-            _damage.SetAllDamage(ent, damComp, 0);
+            _damage.SetAllDamage((ent, damComp), 0);
     }
 
     public bool TryEjectBorer(Entity<CorticalBorerComponent> ent)
