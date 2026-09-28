@@ -32,7 +32,7 @@ public sealed partial class LoadoutGroupPrototype : IPrototype, IInheritingProto
     /// </summary>
     [DataField]
     public int MinLimit = 1;
-    
+
     /// <summary>
     /// Number of loadouts that are selected by default.
     /// </summary>
@@ -54,4 +54,8 @@ public sealed partial class LoadoutGroupPrototype : IPrototype, IInheritingProto
     [AlwaysPushInheritance]
     [DataField(required: true)]
     public List<ProtoId<LoadoutPrototype>> Loadouts = new();
+
+    // AS: Frontier fallback functionality for loadout groups that do not meet their minimum item requirement.
+    [DataField]
+    public List<ProtoId<LoadoutPrototype>> Fallbacks = new();
 }
