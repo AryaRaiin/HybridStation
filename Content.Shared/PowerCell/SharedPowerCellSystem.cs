@@ -104,7 +104,6 @@ public abstract class SharedPowerCellSystem : EntitySystem
             ent.Comp.NextUpdateTime = Timing.CurTime;
 
         ent.Comp.Enabled = enabled;
-        QueueUpdate(ent); // Mono - fix, should be ported to wizden too
         Dirty(ent, ent.Comp);
     }
 
