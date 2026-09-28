@@ -19,19 +19,16 @@ public sealed class HitscanSpawnEntitySystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<HitscanSpawnEntityComponent, HitscanRaycastFiredEvent>(OnHitscanHit, after: [ typeof(HitscanReflectSystem) ]);
+        SubscribeLocalEvent<HitscanSpawnEntityComponent, HitscanRaycastFiredEvent>(OnHitscanHit, after: [typeof(HitscanReflectSystem)]);
     }
 
     private void OnHitscanHit(Entity<HitscanSpawnEntityComponent> ent, ref HitscanRaycastFiredEvent args)
     {
-        if (args.Canceled || args.HitEntity == null)
+        if (_net.IsClient || args.Data.HitEntity == null)
             return;
 
-        if (_net.IsClient)
-            return;
+        Spawn(ent.Comp.SpawnedEntity, Transform(args.Data.HitEntity.Value).Coordinates);
 
-        var entity = Spawn(ent.Comp.SpawnedEntity, Transform(args.HitEntity.Value).Coordinates);
-
-        // TODO: maybe split up the effects component or something - this wont play sounds and stuff (maybe that's ok?)
+        // TODO: Mono - maybe split up the effects component or something - this won't play sounds and stuff (maybe that's ok?)
     }
 }
