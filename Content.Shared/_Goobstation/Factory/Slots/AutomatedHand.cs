@@ -1,10 +1,3 @@
-// SPDX-FileCopyrightText: 2025 GoobBot <uristmchands@proton.me>
-// SPDX-FileCopyrightText: 2025 deltanedas <39013340+deltanedas@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2025 deltanedas <@deltanedas:kde.org>
-// SPDX-FileCopyrightText: 2025 gluesniffler <159397573+gluesniffler@users.noreply.github.com>
-//
-// SPDX-License-Identifier: AGPL-3.0-or-later
-
 using Content.Shared.Hands.Components;
 using Content.Shared.Hands.EntitySystems;
 
@@ -47,24 +40,25 @@ public sealed partial class AutomatedHand : AutomationSlot
 
     public override bool Insert(EntityUid item)
     {
-        return Hand is { } hand
+        return Hand is not null
             && base.Insert(item)
-            && _hands.TryPickup(Owner, item, hand);
+            && _hands.TryPickup(Owner, item, HandName);
     }
 
     public override bool CanInsert(EntityUid item)
     {
-        return Hand is { } hand
+        return Hand is not null
             && base.CanInsert(item)
-            && _hands.CanPickupToHand(Owner, item, hand);
+            && _hands.CanPickupToHand(Owner, item, HandName);
     }
 
     public override EntityUid? GetItem(EntityUid? filter)
     {
-        if (Hand?.HeldEntity is not { } item
-            || _filter.IsBlocked(filter, item))
+        var item = _hands.GetHeldItem(Owner, HandName);
+        if (item is not { } held
+            || _filter.IsBlocked(filter, held))
             return null;
 
-        return item;
+        return held;
     }
 }
