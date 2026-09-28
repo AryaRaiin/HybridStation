@@ -85,7 +85,7 @@ public sealed partial class SalvageSystem
     // Frontier
     private void ShutdownExpeditions()
     {
-        _configurationManager.UnsubValueChanged(CCVars.SalvageExpeditionCooldown, SetCooldownChange)
+        _configurationManager.UnsubValueChanged(CCVars.SalvageExpeditionCooldown, SetCooldownChange);
         _configurationManager.UnsubValueChanged(NFCCVars.SalvageExpeditionFailedCooldown, SetFailedCooldownChange);
     }
     // End Frontier

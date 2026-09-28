@@ -751,8 +751,7 @@ public sealed partial class ChatSystem : SharedChatSystem
             }
     }
 
-    // Mono START
-    protected override void SendEntityEmote(
+// Mono START
     private void SendEntityDirect(
         EntityUid source,
         string originalMessage,

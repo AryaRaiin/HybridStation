@@ -411,7 +411,7 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
                     GetNetEntity(otherDockXform.GridUid) :
                     null,
                 Color = comp.RadarColor,
-                HighlightedColor = comp.HighlightedRadarColor
+                HighlightedColor = comp.HighlightedRadarColor,
 
                 LabelName = comp.Name != null ? Loc.GetString(comp.Name) : null, // Frontier: docking labels
                 //RadarColor = comp.RadarColor, // Frontier, PulsarsEdge: don't rename, keep upstrem name
@@ -596,7 +596,7 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
         Angle angle,
         Dictionary<string, string>? portNames = null) // UNKNOWN
     {
-        if (!Resolve(entity, ref entity.Comp1, ref entity.Comp2, 
+        if (!Resolve(entity, ref entity.Comp1, ref entity.Comp2,
                 false)) // UNKNOWN
             return new NavInterfaceState(SharedRadarConsoleSystem.DefaultMaxRange, GetNetCoordinates(coordinates), angle, docks,
                 InertiaDampeningMode.Dampen); // Frontier: add inertial dampening
