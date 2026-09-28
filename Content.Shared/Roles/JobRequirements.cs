@@ -25,8 +25,35 @@ public static class JobRequirements
     {
         var sys = entManager.System<SharedRoleSystem>();
         var requirements = sys.GetRoleRequirements(job);
-        return TryRequirementsMet(requirements, playTimes, out reason, entManager, protoManager, profile);
+
+        if (TryRequirementsMet(requirements, playTimes, out reason, entManager, protoManager, profile))
+            return true;
+
+        // Frontier START: allow alternate requirement sets.
+        var altRequirementsSets = sys.GetAlternateJobRequirements(job) ?? new();
+
+        foreach (var requirementSet in altRequirementsSets.Values)
+        {
+            foreach (var requirement in requirementSet)
+            {
+                if (!requirement.Check(entManager, protoManager, profile, playTimes, out _))
+                    goto NextSet;
+            }
+
+            reason = null;
+            return true;
+
+            NextSet:
+            continue;
+        }
+
+        // If this happens, something's gone wrong. Only for error suppression.
+        if (reason == null)
+            reason = FormattedMessage.FromMarkupPermissive(Loc.GetString("role-timer-no-reason-given"));
+
+        return false;
     }
+    // Frontier END
 
     /// <summary>
     /// Checks if the list of requirements are met by the provided play-times.
@@ -44,47 +71,17 @@ public static class JobRequirements
         HumanoidCharacterProfile? profile)
     {
         reason = null;
+
         if (requirements == null)
             return true;
 
-
-        // Frontier: add alternate requirement sets
-        bool success = true;
         foreach (var requirement in requirements)
         {
             if (!requirement.Check(entManager, protoManager, profile, playTimes, out reason))
-            {
-                success = false;
-                break;
-            }
-        }
-        if (success)
-            return true;
-
-        var altRequirementsSets = sys.GetAlternateJobRequirements(job) ?? new();
-        foreach (var requirementSet in altRequirementsSets.Values)
-        {
-            success = true;
-            foreach (var requirement in requirementSet)
-            {
-                // Frontier: do not accumulate reasons for alternate job requirements.
-                if (!requirement.Check(entManager, protoManager, profile, playTimes, out _))
-                {
-                    success = false;
-                    break;
-                }
-            }
-            if (success)
-                return true;
+                return false;
         }
 
-        // If this happens, something's gone wrong.  Only for error suppression.
-        if (reason == null)
-            reason = FormattedMessage.FromMarkupPermissive(Loc.GetString("role-timer-no-reason-given"));
-
-        // Frontier: check alternate requirement times
-        return false;
-
+        return true;
     }
 }
 
