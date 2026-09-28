@@ -1,8 +1,3 @@
-// SPDX-FileCopyrightText: 2025 Ark
-// SPDX-FileCopyrightText: 2025 Daniel Lenrd
-//
-// SPDX-License-Identifier: MPL-2.0
-
 using Content.Shared.ActionBlocker;
 using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Hands.Components;
@@ -60,10 +55,14 @@ public sealed class BackEquipSystem : EntitySystem
         if (playerSession.AttachedEntity is not { Valid: true } uid || !Exists(uid))
             return;
 
-        if (!TryComp<HandsComponent>(uid, out var hands) || hands.ActiveHand == null)
+        if (!TryComp<HandsComponent>(uid, out var hands))
             return;
 
-        var handItem = hands.ActiveHand.HeldEntity;
+        var activeHand = _hands.GetActiveHand(uid);
+        if (activeHand == null)
+            return;
+
+        var handItem = _hands.GetActiveItem(uid);
 
         if (!_actionBlocker.CanInteract(uid, handItem))
             return;
@@ -76,7 +75,7 @@ public sealed class BackEquipSystem : EntitySystem
             return;
         }
 
-        if (handItem != null && !_hands.CanDropHeld(uid, hands.ActiveHand))
+        if (handItem != null && !_hands.CanDropHeld(uid, activeHand))
         {
             _popup.PopupClient(Loc.GetString("smart-equip-cant-drop"), uid, uid);
             return;
@@ -98,7 +97,7 @@ public sealed class BackEquipSystem : EntitySystem
                 return;
             }
 
-            _hands.TryDrop(uid, hands.ActiveHand, handsComp: hands);
+            _hands.TryDrop(uid);
             _inventory.TryEquip(uid, handItem.Value, equipmentSlot, predicted: true, checkDoafter: true);
             return;
         }
