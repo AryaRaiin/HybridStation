@@ -36,19 +36,19 @@ public sealed class MotionDetectorIgnoreHolderSystem : EntitySystem
 
         if (holder != null && holder == targetEntity)
         {
-            args.Cancel = true;
+            args.Cancelled = true;
             return;
         }
 
         if (holder != null && ShouldIgnoreCompanyMember(holder.Value, targetEntity))
         {
-            args.Cancel = true;
+            args.Cancelled = true;
             return;
         }
 
         if (!IsEntityMoving(targetEntity))
         {
-            args.Cancel = true;
+            args.Cancelled = true;
         }
     }
 
