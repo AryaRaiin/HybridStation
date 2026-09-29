@@ -5,7 +5,7 @@ using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Standing;
 using Content.Shared.Stunnable;
-using Content.Shared.Traits.Assorted; //Mono: Wheelchair user check
+using Content.Shared.Traits.Assorted; // Mono: Wheelchair user check
 using Robust.Shared.Input.Binding;
 using Robust.Shared.Player;
 using Robust.Shared.Serialization;
@@ -30,7 +30,6 @@ public abstract partial class SharedLayingDownSystem : EntitySystem
         SubscribeLocalEvent<LayingDownComponent, RefreshMovementSpeedModifiersEvent>(OnRefreshMovementSpeed);
         SubscribeLocalEvent<LayingDownComponent, RefreshWeightlessModifiersEvent>(OnRefreshWeightlessModifier);
         SubscribeLocalEvent<LayingDownComponent, EntParentChangedMessage>(OnParentChanged);
-
     }
 
     public override void Shutdown()
@@ -59,12 +58,8 @@ public abstract partial class SharedLayingDownSystem : EntitySystem
 
         var uid = args.SenderSession.AttachedEntity.Value;
 
-        if (HasComp<LegsParalyzedComponent>(uid)) //Mono: Stop wheelchair user trait from standing
+        if (HasComp<LegsParalyzedComponent>(uid)) // Mono: Stop wheelchair user trait from standing
             return;
-
-        // TODO: Wizard
-        //if (HasComp<FrozenComponent>(uid))
-        //   return;
 
         if (!TryComp(uid, out StandingStateComponent? standing) ||
             !TryComp(uid, out LayingDownComponent? layingDown))
@@ -77,7 +72,7 @@ public abstract partial class SharedLayingDownSystem : EntitySystem
         if (HasComp<KnockedDownComponent>(uid) || !_mobState.IsAlive(uid))
             return;
 
-        if (_standing.IsDown(uid, standing))
+        if (_standing.IsDown(uid))
             TryStandUp(uid, layingDown, standing);
         else
             TryLieDown(uid, layingDown, standing);
@@ -86,13 +81,12 @@ public abstract partial class SharedLayingDownSystem : EntitySystem
     private void OnStandingUpDoAfter(EntityUid uid, StandingStateComponent component, StandingUpDoAfterEvent args)
     {
         if (args.Handled || args.Cancelled || HasComp<KnockedDownComponent>(uid) ||
-            _mobState.IsIncapacitated(uid) || !_standing.Stand(uid))
+            _mobState.IsIncapacitated(uid))
         {
-            component.CurrentState = StandingState.Lying;
             return;
         }
 
-        component.CurrentState = StandingState.Standing;
+        _standing.Stand(uid);
     }
 
     private void OnRefreshMovementSpeed(EntityUid uid, LayingDownComponent component, RefreshMovementSpeedModifiersEvent args)
@@ -108,6 +102,7 @@ public abstract partial class SharedLayingDownSystem : EntitySystem
     {
         if (!_standing.IsDown(uid))
             return;
+
         args.ModifyAcceleration(1f, 0.10f);
     }
 
@@ -115,8 +110,8 @@ public abstract partial class SharedLayingDownSystem : EntitySystem
     {
         // If the entity is not on a grid, try to make it stand up to avoid issues
         if (!TryComp<StandingStateComponent>(uid, out var standingState)
-            || standingState.CurrentState is StandingState.Standing
-            || CanLieDown(uid) // Mono
+            || standingState.Standing
+            || CanLieDown(uid)
             || HasComp<LegsParalyzedComponent>(uid)) // Mono
         {
             return;
@@ -129,7 +124,7 @@ public abstract partial class SharedLayingDownSystem : EntitySystem
     {
         if (!Resolve(uid, ref standingState, false) ||
             !Resolve(uid, ref layingDown, false) ||
-            standingState.CurrentState is not StandingState.Lying ||
+            !_standing.IsDown(uid) ||
             !_mobState.IsAlive(uid) ||
             TerminatingOrDeleted(uid))
         {
@@ -144,18 +139,14 @@ public abstract partial class SharedLayingDownSystem : EntitySystem
             MultiplyDelay = false, // Goobstation
         };
 
-        if (!_doAfter.TryStartDoAfter(args))
-            return false;
-
-        standingState.CurrentState = StandingState.GettingUp;
-        return true;
+        return _doAfter.TryStartDoAfter(args);
     }
 
     public bool TryLieDown(EntityUid uid, LayingDownComponent? layingDown = null, StandingStateComponent? standingState = null, DropHeldItemsBehavior behavior = DropHeldItemsBehavior.NoDrop)
     {
         if (!Resolve(uid, ref standingState, false) ||
             !Resolve(uid, ref layingDown, false) ||
-            standingState.CurrentState is not StandingState.Standing ||
+            !standingState.Standing ||
             !CanLieDown(uid)) // Mono
         {
             if (behavior == DropHeldItemsBehavior.AlwaysDrop)
