@@ -44,8 +44,6 @@ using Content.Server.Mind;
 using Content.Server.Prayer;
 using Content.Server.Silicons.Laws;
 using Content.Server.Station.Systems;
-using Content.Server.Xenoarchaeology.XenoArtifacts; //PULSARSEDGE
-using Content.Server.Xenoarchaeology.XenoArtifacts.Triggers.Components; //PULSARSEDGE
 using Content.Shared.Administration;
 using Content.Shared.Administration.Systems;
 using Content.Shared.Chemistry.Components.SolutionManager;
@@ -215,7 +213,7 @@ namespace Content.Server.Administration.Systems
                             var stationUid = _stations.GetOwningStation(args.Target);
 
                             var profile = _gameTicker.GetPlayerProfile(targetActor.PlayerSession);
-                            _spawning.SpawnPlayerMob(coords.Value, null, profile, stationUid, 
+                            _spawning.SpawnPlayerMob(coords.Value, null, profile, stationUid,
                                 session: targetActor.PlayerSession); // Frontier: added session
                         },
                         ConfirmationPopup = true,
@@ -237,7 +235,7 @@ namespace Content.Server.Administration.Systems
 
                             var stationUid = _stations.GetOwningStation(args.Target);
 
-                            var profile = _ticker.GetPlayerProfile(targetActor.PlayerSession);
+                            var profile = _gameTicker.GetPlayerProfile(targetActor.PlayerSession);
                             var clonedMob = _spawning.SpawnPlayerMob(coords.Value, null, profile, stationUid,
                                 session: targetActor.PlayerSession); // Frontier: added session
 
@@ -534,31 +532,6 @@ namespace Content.Server.Administration.Systems
                 args.Verbs.Add(verb);
             }
 
-            // PULSARSEDGE START
-            // XenoArcheology
-            if (_adminManager.IsAdmin(player) && TryComp<ArtifactComponent>(args.Target, out var artifact))
-            {
-                // make artifact always active (by adding timer trigger)
-                args.Verbs.Add(new Verb()
-                {
-                    Text = Loc.GetString("artifact-verb-make-always-active"),
-                    Category = VerbCategory.Debug,
-                    Act = () => EntityManager.AddComponent<ArtifactTimerTriggerComponent>(args.Target),
-                    Disabled = EntityManager.HasComponent<ArtifactTimerTriggerComponent>(args.Target),
-                    Impact = LogImpact.High
-                });
-
-                // force to activate artifact ignoring timeout
-                args.Verbs.Add(new Verb()
-                {
-                    Text = Loc.GetString("artifact-verb-activate"),
-                    Category = VerbCategory.Debug,
-                    Act = () => _artifactSystem.ForceActivateArtifact(args.Target, component: artifact),
-                    Impact = LogImpact.High
-                });
-            }
-            // PULSARSEDGE END
-
             // Make Sentient verb
             if (_groupController.CanCommand(player, "makesentient") &&
                 args.User != args.Target &&
@@ -758,19 +731,22 @@ namespace Content.Server.Administration.Systems
             if (TryComp<HandsComponent>(source, out var sourceHands) &&
                 TryComp<HandsComponent>(target, out var targetHands))
             {
-                foreach (var hand in sourceHands.Hands.Values)
+                foreach (var (handId, _) in sourceHands.Hands)
                 {
-                    if (hand.HeldEntity == null)
+                    var heldEntity = _handsSystem.GetHeldItem(source, handId);
+
+                    if (heldEntity == null)
                         continue;
 
-                    var prototypeId = MetaData(hand.HeldEntity.Value).EntityPrototype?.ID;
+                    var prototypeId = MetaData(heldEntity.Value).EntityPrototype?.ID;
                     if (string.IsNullOrEmpty(prototypeId))
                         continue;
+
                     var cloneItem = Spawn(prototypeId, Transform(target).Coordinates);
 
                     if (_handsSystem.TryPickupAnyHand(target, cloneItem, checkActionBlocker: false, handsComp: targetHands))
                     {
-                        CopyContainedItems(hand.HeldEntity.Value, cloneItem);
+                        CopyContainedItems(heldEntity.Value, cloneItem);
                     }
                 }
             }
