@@ -323,13 +323,13 @@ public partial class ShuttleNavControl : BaseShuttleControl // Mono
         var mapPos = _transform.ToMapCoordinates(_coordinates.Value);
         var posMatrix = Matrix3Helpers.CreateTransform(_coordinates.Value.Position, _rotation.Value);
         var ourEntRot = RotateWithEntity ? _transform.GetWorldRotation(xform) : _rotation.Value;
-        if(_wasPanned && !RelativePanning){ourEntRot=new Angle(0)} // UNKNOWN
+        if (_wasPanned && !RelativePanning) { ourEntRot = new Angle(0);} // UNKNOWN
         var ourEntMatrix = Matrix3Helpers.CreateTransform(_transform.GetWorldPosition(xform), ourEntRot);
         var shuttleToWorld = Matrix3x2.Multiply(posMatrix, ourEntMatrix);
         Matrix3x2.Invert(shuttleToWorld, out var worldToShuttle);
         var shuttleToView = Matrix3x2.CreateScale(new Vector2(MinimapScale, -MinimapScale)) * Matrix3x2.CreateTranslation(MidPointVector);
 
-        
+
         DrawShields(handle, xform, worldToShuttle); // UNKNOWN
 
         // Frontier START - Corvax: north line drawing
@@ -402,7 +402,7 @@ public partial class ShuttleNavControl : BaseShuttleControl // Mono
             var hideColor = hideLabel && iff != null && (iff.Flags & IFFFlags.AlwaysShowColor) == 0x0; // Frontier
             var labelColor = _shuttles.GetIFFColor(grid, self: false, iff);
             if(hideColor){ // Frontier labelColor override
-                labelColor = blipOnly ? Color.Orange : Color.White
+                labelColor = blipOnly ? Color.Orange : Color.White;
             }
             var coordColor = new Color(labelColor.R * 0.8f, labelColor.G * 0.8f, labelColor.B * 0.8f, 0.5f);
 

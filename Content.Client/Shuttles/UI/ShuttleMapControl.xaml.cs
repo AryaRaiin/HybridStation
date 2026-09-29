@@ -237,7 +237,7 @@ public sealed partial class ShuttleMapControl : BaseShuttleControl
         foreach (var mapObj in mapObjects)
         {
             // If it's a grid-map skip it.
-            if (mapObj is GridMapObject gridObj && 
+            if (mapObj is GridMapObject gridObj &&
                 (EntManager.HasComponent<MapComponent>(gridObj.Entity) || !EntManager.EntityExists(gridObj.Entity))) // Frontier: add an 'or' EntityExists
                 continue;
 
@@ -389,7 +389,7 @@ public sealed partial class ShuttleMapControl : BaseShuttleControl
             var gridColor = _shuttles.GetIFFColor(grid, self: _shuttleEntity == grid.Owner, component: iffComp);
 
             // MONO START
-            if( hideColor ){ gridColor= blipOnly ? Color.Orange : Color.White }
+            if (hideColor) { gridColor = blipOnly ? Color.Orange : Color.White;}
             // MONO END
 
             var existingVerts = _verts.GetOrNew(gridColor);
@@ -416,8 +416,8 @@ public sealed partial class ShuttleMapControl : BaseShuttleControl
             var iffText = _shuttles.GetIFFLabel(grid, self: true, component: iffComp);
             // MONO START
             if(hideLabel){
-                iffText= detectionLevel == DetectionLevel.PartialDetected ? 
-                    Loc.GetString($"shuttle-console-signature-infrared") : 
+                iffText= detectionLevel == DetectionLevel.PartialDetected ?
+                    Loc.GetString($"shuttle-console-signature-infrared") :
                     Loc.GetString($"shuttle-console-signature-unknown");
             }
             // MONO END
