@@ -1,7 +1,6 @@
-<controls:FancyWindow xmlns="https://spacestation14.io"
-                      xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
-                      Title="{Loc admin-fax-title}"
-                      MinWidth="400">
+<DefaultWindow xmlns="https://spacestation14.io"
+               Title="{Loc admin-fax-title}"
+               MinWidth="400">
     <BoxContainer Orientation="Vertical" VerticalExpand="True">
         <BoxContainer Orientation="Horizontal">
             <Label Text="{Loc admin-fax-fax}" />
@@ -30,4 +29,4 @@
         <!-- End Frontier: stamp protection -->
         <Button Name="SendButton" Text="{Loc admin-fax-send}" Margin="0 10 0 0" />
     </BoxContainer>
-</controls:FancyWindow>
+</DefaultWindow>
