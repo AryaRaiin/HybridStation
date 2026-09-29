@@ -4,7 +4,6 @@ using Content.Server._DV.Cargo.Components;
 using Content.Server._DV.Cargo.Systems;
 using Content.Server._DV.Mail.Components;
 using Content.Server.Destructible.Thresholds.Behaviors;
-using Content.Server.Destructible.Thresholds.Triggers;
 using Content.Server.Destructible.Thresholds;
 using Content.Server.Destructible;
 using Content.Shared.Chat; // Einstein Engines - Languages
@@ -43,13 +42,16 @@ using System.Threading;
 using Timer = Robust.Shared.Timing.Timer;
 using Content.Server._NF.Bank; // Frontier
 using Content.Server._NF.SectorServices; // Frontier
-using Content.Server.Station.Components; // Frontier
 using Robust.Shared.Enums; // Frontier
 using Content.Shared._NF.Bank.Components; // Frontier
 using Content.Shared._NF.Bank.BUI; // Frontier
 using Content.Shared.SSDIndicator; // Frontier
 using Content.Server.Power.EntitySystems; // Frontier
 using Content.Server._NF.Mail.Components; // Frontier
+using Content.Shared.Station.Components; // Frontier
+using Content.Shared.Damage.Components; // HS
+using Content.Shared.Damage.Systems; // HS
+using Content.Shared.Destructible.Thresholds.Triggers; // HS
 
 namespace Content.Server._DV.Mail.EntitySystems
 {
