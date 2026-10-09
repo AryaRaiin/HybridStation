@@ -7,7 +7,7 @@ using Robust.Shared.Utility;
 
 namespace Content.Client.Players.PlayTimeTracking;
 
-public sealed partial class JobRequirementsManager : ISharedPlaytimeManager
+public sealed partial class JobRequirementsManager
 {
     public bool IsAllowed(GhostRolePrototype ghostRole, [NotNullWhen(false)] out FormattedMessage? reason)
     {
