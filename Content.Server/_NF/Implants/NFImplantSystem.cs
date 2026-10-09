@@ -1,4 +1,4 @@
-using Content.Server.Abilities.Mime;
+using Content.Shared.Abilities.Mime;
 using Content.Server.Bible.Components;
 using Content.Server.Implants;
 using Content.Shared._NF.Implants.Components;
@@ -25,10 +25,7 @@ public sealed class NFImplantSystem : EntitySystem
 
     private void OnBibleInserted(EntityUid uid, BibleUserImplantComponent component, ImplantImplantedEvent args)
     {
-        if (!args.Implanted.HasValue)
-            return;
-
-        EnsureComp<BibleUserComponent>(args.Implanted.Value);
+        EnsureComp<BibleUserComponent>(args.Implanted);
     }
 
     // Currently permanent, but should support removal if/when a viable solution is found.
@@ -42,15 +39,12 @@ public sealed class NFImplantSystem : EntitySystem
 
     private void OnMimeInserted(EntityUid uid, MimePowersImplantComponent component, ImplantImplantedEvent args)
     {
-        if (!args.Implanted.HasValue)
-            return;
-
-        EnsureComp<MimePowersComponent>(args.Implanted.Value, out var mimeComp);
+        EnsureComp<MimePowersComponent>(args.Implanted, out var mimeComp);
         mimeComp.PreventWriting = true;
-        // Note: must spawn the illiteracy component separately
-        EnsureComp<BlockWritingComponent>(args.Implanted.Value, out var blockWritingComp);
+
+        EnsureComp<BlockWritingComponent>(args.Implanted, out var blockWritingComp);
         blockWritingComp.FailWriteMessage = mimeComp.FailWriteMessage;
-        Dirty(args.Implanted.Value, blockWritingComp);
+        Dirty(args.Implanted, blockWritingComp);
     }
 
     private void OnMimeRemoved(EntityUid uid, MimePowersImplantComponent component, EntGotRemovedFromContainerMessage args)
