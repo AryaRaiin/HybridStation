@@ -7,7 +7,8 @@ using Robust.Shared.Serialization.Markdown.Mapping;
 using Robust.Shared.Serialization.Markdown.Value;
 using Robust.Shared.Timing;
 using Robust.Shared.Audio;
-using Content.Shared.GameTicking.Prototypes;
+using Robust.Shared.Utility;
+using Content.Shared._NF.Shipyard.Prototypes; // FRONTIER
 
 namespace Content.Shared.GameTicking
 {
@@ -96,14 +97,14 @@ namespace Content.Shared.GameTicking
     public sealed class TickerLobbyStatusEvent : EntityEventArgs
     {
         public bool IsRoundStarted { get; }
-        public ProtoId<LobbyBackgroundPrototype>? LobbyBackground { get; }
+        public string? LobbyBackground { get; }
         public bool YouAreReady { get; }
         // UTC.
         public TimeSpan StartTime { get; }
         public TimeSpan RoundStartTimeSpan { get; }
         public bool Paused { get; }
 
-        public TickerLobbyStatusEvent(bool isRoundStarted, ProtoId<LobbyBackgroundPrototype>? lobbyBackground, bool youAreReady, TimeSpan startTime, TimeSpan preloadTime, TimeSpan roundStartTimeSpan, bool paused)
+        public TickerLobbyStatusEvent(bool isRoundStarted, string? lobbyBackground, bool youAreReady, TimeSpan startTime, TimeSpan preloadTime, TimeSpan roundStartTimeSpan, bool paused)
         {
             IsRoundStarted = isRoundStarted;
             LobbyBackground = lobbyBackground;
@@ -145,10 +146,55 @@ namespace Content.Shared.GameTicking
         }
     }
 
+    // FRONTIER START: station display information
+    /// <summary>
+    /// Additional optional station-specific fields.
+    /// </summary>
+    /// <param name="stationSubtext">The subtext that is shown under the station name.</param>
+    /// <param name="stationDescription">A longer description of the station, describing what the player can do there</param>
+    /// <param name="stationIcon">The icon that represents the station and is shown next to the name.</param>
+    /// <param name="lobbySortOrder">The order in which this station should be displayed in the station picker.</param>
+    [Serializable, NetSerializable]
+    public sealed class StationDisplayInformation(
+        LocId? stationSubtext,
+        LocId? stationDescription,
+        ResPath? stationIcon,
+        int lobbySortOrder
+        )
+    {
+        public LocId? StationSubtext { get; } = stationSubtext;
+        public LocId? StationDescription { get; } = stationDescription;
+        public ResPath? StationIcon { get; } = stationIcon;
+        public int LobbySortOrder { get; } = lobbySortOrder;
+    }
+
+    /// <summary>
+    /// Additional optional vessel-specific fields.
+    /// </summary>
+    /// <param name="vesselAdvertisement">A player-input string advertising the ship to other players.</param>
+    /// <param name="vessel">The prototype ID for the vessel this ship is.</param>
+    /// <param name="hiddenIfNoJobs">If true, this vessel should be hidden when there are no open jobs on it.</param>
+    [Serializable, NetSerializable]
+    public sealed class VesselDisplayInformation(
+        string vesselAdvertisement,
+        ProtoId<VesselPrototype>? vessel,
+        bool hiddenIfNoJobs
+        )
+    {
+        public string VesselAdvertisement { get; } = vesselAdvertisement;
+        public ProtoId<VesselPrototype>? Vessel { get; } = vessel;
+        public bool HiddenIfNoJobs { get; } = hiddenIfNoJobs;
+    }
+    // FRONTIER END: station display information
+
     [Serializable, NetSerializable]
     public sealed class TickerJobsAvailableEvent(
         Dictionary<NetEntity, string> stationNames,
-        Dictionary<NetEntity, Dictionary<ProtoId<JobPrototype>, int?>> jobsAvailableByStation)
+        Dictionary<NetEntity, Dictionary<ProtoId<JobPrototype>, int?>> jobsAvailableByStation,
+        Dictionary<NetEntity, ProtoId<JobWeightPrototype>?> jobWeightsByStation,
+        // FRONTIER: Optional display metadata
+        Dictionary<NetEntity, StationDisplayInformation>? stationDisplayInfo = null,
+        Dictionary<NetEntity, VesselDisplayInformation>? vesselDisplayInfo = null)
         : EntityEventArgs
     {
         /// <summary>
@@ -157,6 +203,13 @@ namespace Content.Shared.GameTicking
         public Dictionary<NetEntity, Dictionary<ProtoId<JobPrototype>, int?>> JobsAvailableByStation { get; } = jobsAvailableByStation;
 
         public Dictionary<NetEntity, string> StationNames { get; } = stationNames;
+
+        public Dictionary<NetEntity, ProtoId<JobWeightPrototype>?> JobWeightsByStation { get; } = jobWeightsByStation;
+
+        // FRONTIER: Display metadata for stations and vessels
+        public Dictionary<NetEntity, StationDisplayInformation>? StationDisplayInfo { get; } = stationDisplayInfo;
+
+        public Dictionary<NetEntity, VesselDisplayInformation>? VesselDisplayInfo { get; } = vesselDisplayInfo;
     }
 
     [Serializable, NetSerializable, DataDefinition]
