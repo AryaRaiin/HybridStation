@@ -1,5 +1,5 @@
 ﻿using Content.Server.Chat.Managers;
-using Content.Server.IdentityManagement;
+using Content.Shared.IdentityManagement;
 using Content.Shared.Chat;
 using Content.Shared.Examine;
 using Content.Shared.Inventory;
@@ -43,16 +43,16 @@ namespace Content.Server._White.Examine
                 nameloc += "-selfaware";
             }
 
-            var identity = _identitySystem.GetEntityIdentity(uid);
-            var name = Loc.GetString(nameloc, ("name", identity));
+            var entityName = Name(uid);  // HS - Get the entity's current name
+            var name = Loc.GetString(nameloc, ("name", entityName));
             logLines.Add($"[color=DarkGray][font size=10]{name}[/font][/color]");
-            
+
             if (showExamine)
                 args.PushMarkup($"[font size=10]{name}[/font]", 15);
 
             var cansee = Loc.GetString(canseeloc, ("ent", uid));
             logLines.Add($"[color=DarkGray][font size=10]{cansee}[/font][/color]");
-            
+
             if (showExamine)
                 args.PushMarkup($"[font size=10]{cansee}[/font]", 14);
 
@@ -111,7 +111,7 @@ namespace Content.Server._White.Examine
 
                 var canseenothing = Loc.GetString(canseenothingloc, ("ent", uid));
                 logLines.Add($"[color=DarkGray][font size=10]{canseenothing}[/font][/color]");
-                
+
                 if (showExamine)
                     args.PushMarkup($"[font size=10]{canseenothing}[/font]", priority);
             }
