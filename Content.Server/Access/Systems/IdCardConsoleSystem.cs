@@ -42,13 +42,14 @@ public sealed class IdCardConsoleSystem : SharedIdCardConsoleSystem
     [Dependency] private readonly ThrowingSystem _throwing = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly ChatSystem _chat = default!;
+    [Dependency] private readonly ShipyardSystem _shipyard = default!; // Frontier
 
     public override void Initialize()
     {
         base.Initialize();
 
         SubscribeLocalEvent<IdCardConsoleComponent, WriteToTargetIdMessage>(OnWriteToTargetIdMessage);
-        SubscribeLocalEvent<IdCardConsoleComponent, WriteToShuttleDeedMessage>(OnWriteToShuttleDeedMessage); // Frontier
+        SubscribeLocalEvent<IdCardConsoleComponent, SharedIdCardSystem.WriteToShuttleDeedMessage>(OnWriteToShuttleDeedMessage); // Frontier
 
         // one day, maybe bound user interfaces can be shared too.
         SubscribeLocalEvent<IdCardConsoleComponent, ComponentStartup>(UpdateUserInterface);
@@ -72,7 +73,7 @@ public sealed class IdCardConsoleSystem : SharedIdCardConsoleSystem
     }
 
     //Frontier START
-    private void OnWriteToShuttleDeedMessage(EntityUid uid, IdCardConsoleComponent component, WriteToShuttleDeedMessage args)
+    private void OnWriteToShuttleDeedMessage(EntityUid uid, IdCardConsoleComponent component, SharedIdCardSystem.WriteToShuttleDeedMessage args)
     {
         if (args.Actor is not { Valid: true } player)
             return;
@@ -106,13 +107,13 @@ public sealed class IdCardConsoleSystem : SharedIdCardConsoleSystem
                 false,
                 null,
                 null,
-                false,
-                null,
                 null,
                 possibleAccess,
-                string.Empty,
+                new ProtoId<JobPrototype>(string.Empty),
                 privilegedIdName,
-                string.Empty);
+                string.Empty,
+                false,// Frontier
+                null);// Frontier
         }
         else
         {
@@ -143,13 +144,13 @@ public sealed class IdCardConsoleSystem : SharedIdCardConsoleSystem
                 true,
                 targetIdComponent.FullName,
                 targetIdComponent.LocalizedJobTitle,
-                hasShuttle, // Frontier
-                shuttleNameParts, // Frontier
                 targetAccessComponent.Tags.ToList(),
                 possibleAccess,
                 jobProto,
                 privilegedIdName,
-                Name(targetId));
+                Name(targetId),
+                hasShuttle,//Frontier
+                shuttleNameParts);//Frontier
         }
 
         _userInterface.SetUiState(uid, IdCardConsoleUiKey.Key, newState);
@@ -237,7 +238,7 @@ public sealed class IdCardConsoleSystem : SharedIdCardConsoleSystem
         if (!Resolve(uid, ref component))
             return;
 
-        if (component.TargetIdSlot.Item is not { Valid: true } targetId || !PrivilegedIdIsAuthorized(uid, component))
+        if (component.TargetIdSlot.Item is not { Valid: true } targetId || !PrivilegedIdIsAuthorized(uid, component, out _))
             return;
 
         if (!EntityManager.TryGetComponent<ShuttleDeedComponent>(targetId, out var shuttleDeed))
