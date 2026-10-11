@@ -11,7 +11,6 @@ using Content.Server.Polymorph.Components;
 using Content.Server.Polymorph.Systems;
 using Content.Shared.EntityEffects;
 using Content.Shared.Polymorph;
-using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 
 namespace Content.Server.EntityEffects.Effects;
@@ -22,21 +21,14 @@ public sealed partial class RevertPolymorph : EntityEffect
     ///     What polymorph prototype is used on effect
     /// </summary>
     [DataField("prototype", customTypeSerializer:typeof(PrototypeIdSerializer<PolymorphPrototype>))]
-    public string PolymorphPrototype { get; set; }
+    public string PolymorphPrototype { get; set; } = default!;
 
-    protected override string? ReagentEffectGuidebookText(IPrototypeManager prototype, IEntitySystemManager entSys)
-        => Loc.GetString("reagent-effect-guidebook-revert-polymorph",
-            ("chance", Probability), ("entityname",
-                prototype.Index<EntityPrototype>(prototype.Index<PolymorphPrototype>(PolymorphPrototype).Configuration.Entity).Name));
-
-    public override void Effect(EntityEffectBaseArgs args)
+    public override void RaiseEvent(EntityUid target, IEntityEffectRaiser raiser, float scale, EntityUid? user)
     {
-        var entityManager = args.EntityManager;
-        var uid = args.TargetEntity;
-        var polySystem = entityManager.System<PolymorphSystem>();
-
+        var entMan = IoCManager.Resolve<IEntityManager>();
+        var polySystem = entMan.System<PolymorphSystem>();
         // Make it into a prototype
-        entityManager.EnsureComponent<PolymorphableComponent>(uid);
-        polySystem.Revert(uid);
+        entMan.EnsureComponent<PolymorphableComponent>(target);
+        polySystem.Revert(target);
     }
 }
