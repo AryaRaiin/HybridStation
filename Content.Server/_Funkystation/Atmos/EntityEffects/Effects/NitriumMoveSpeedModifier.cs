@@ -8,7 +8,7 @@
 using Content.Shared.Chemistry.Components;
 using Content.Shared.EntityEffects;
 using Content.Shared.Movement.Systems;
-using Robust.Shared.Prototypes;
+using Robust.Shared.GameObjects;
 using Robust.Shared.Timing;
 
 namespace Content.Server.EntityEffects.Effects;
@@ -38,21 +38,10 @@ public sealed partial class NitriumMovespeedModifier : EntityEffect
     [DataField]
     public float StatusLifetime = 6f;
 
-    protected override string? ReagentEffectGuidebookText(IPrototypeManager prototype, IEntitySystemManager entSys)
+    public override void RaiseEvent(EntityUid target, IEntityEffectRaiser raiser, float scale, EntityUid? user)
     {
-        return Loc.GetString("reagent-effect-guidebook-movespeed-modifier",
-            ("chance", Probability),
-            ("walkspeed", WalkSpeedModifier),
-            ("sprintspeed", SprintSpeedModifier),
-            ("time", StatusLifetime));
-    }
-
-    /// <summary>
-    /// Remove reagent at set rate, changes the movespeed modifiers and adds a MovespeedModifierMetabolismComponent if not already there.
-    /// </summary>
-    public override void Effect(EntityEffectBaseArgs args)
-    {
-        var status = args.EntityManager.EnsureComponent<MovespeedModifierMetabolismComponent>(args.TargetEntity);
+        var entMan = IoCManager.Resolve<IEntityManager>();
+        var status = entMan.EnsureComponent<MovespeedModifierMetabolismComponent>(target);
 
         // Only refresh movement if we need to.
         var modified = !status.WalkSpeedModifier.Equals(WalkSpeedModifier) ||
@@ -64,8 +53,9 @@ public sealed partial class NitriumMovespeedModifier : EntityEffect
         IncreaseTimer(status, StatusLifetime);
 
         if (modified)
-            args.EntityManager.System<MovementSpeedModifierSystem>().RefreshMovementSpeedModifiers(args.TargetEntity);
+            entMan.System<MovementSpeedModifierSystem>().RefreshMovementSpeedModifiers(target);
     }
+
     public void IncreaseTimer(MovespeedModifierMetabolismComponent status, float time)
     {
         var gameTiming = IoCManager.Resolve<IGameTiming>();
