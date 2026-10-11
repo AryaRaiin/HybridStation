@@ -25,7 +25,7 @@ using Robust.Shared.Utility;
 using Content.Shared._NF.Bank.Components; // Frontier
 using Content.Shared._NF.Shipyard.Components; // Frontier
 using Content.Server._NF.Shipyard.Systems; // Frontier
-using Content.Server._NF.SectorServices; // Frontier
+using Content.Server._NF.SectorServices;
 
 namespace Content.Server.PDA
 {
@@ -41,8 +41,7 @@ namespace Content.Server.PDA
         [Dependency] private readonly UnpoweredFlashlightSystem _unpoweredFlashlight = default!;
         [Dependency] private readonly ContainerSystem _containerSystem = default!;
         [Dependency] private readonly IdCardSystem _idCard = default!;
-        [Dependency] private readonly SectorServiceSystem _sectorService = default!;
-        [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
+        [Dependency] private readonly SectorServiceSystem _sectorService = default!; // FRONTIER
 
         public override void Initialize()
         {
@@ -184,8 +183,8 @@ namespace Content.Server.PDA
         /// Send new UI state to clients, call if you modify something like uplink.
         /// </summary>
         //public override void UpdatePdaUi(EntityUid uid, PdaComponent? pda = null)
-        public override void UpdatePdaUi(EntityUid uid, PdaComponent? pda = null,
-            EntityUid? actor_uid = null) // Frontier
+        public void UpdatePdaUi(EntityUid uid, PdaComponent? pda = null,
+            EntityUid? actorUid = null) // Frontier
         {
             if (!Resolve(uid, ref pda, false))
                 return;
@@ -210,7 +209,7 @@ namespace Content.Server.PDA
             var id = CompOrNull<IdCardComponent>(pda.ContainedId);
             // Frontier START
             var balance = 0;
-            if (actor_uid != null && TryComp<BankAccountComponent>(actor_uid, out var account))
+            if (actorUid != null && TryComp<BankAccountComponent>(actorUid, out var account))
                 balance = account.Balance;
             var ownedShipName = "";
             if (TryComp<ShuttleDeedComponent>(pda.ContainedId, out var shuttleDeedComp))
@@ -223,6 +222,7 @@ namespace Content.Server.PDA
                 pda.FlashlightOn,
                 pda.PenSlot.HasItem,
                 pda.PaiSlot.HasItem,
+                pda.BookSlot.HasItem, // Frontier
                 new PdaIdInfoText
                 {
                     ActualOwnerName = pda.OwnerName,
@@ -231,8 +231,8 @@ namespace Content.Server.PDA
                     StationAlertLevel = pda.StationAlertLevel,
                     StationAlertColor = pda.StationAlertColor
                 },
-                balance, // Frontier
-                ownedShipName, // Frontier
+                balance,  // Frontier
+                ownedShipName,  // Frontier
                 pda.StationName,
                 showUplink,
                 hasInstrument,
@@ -246,7 +246,7 @@ namespace Content.Server.PDA
             if (!PdaUiKey.Key.Equals(args.UiKey))
                 return;
 
-            UpdatePdaUi(ent.Owner, ent.Comp, 
+            UpdatePdaUi(ent.Owner, ent.Comp,
                 args.Actor); // Frontier
         }
 
