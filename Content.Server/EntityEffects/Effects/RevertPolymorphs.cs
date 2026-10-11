@@ -27,7 +27,7 @@ public sealed partial class RevertPolymorph : EntityEffect
     {
         var entMan = IoCManager.Resolve<IEntityManager>();
         var polySystem = entMan.System<PolymorphSystem>();
-        // Make it into a prototype
+        // Ensures is polymorphable, then reverts
         entMan.EnsureComponent<PolymorphableComponent>(target);
         polySystem.Revert(target);
     }
