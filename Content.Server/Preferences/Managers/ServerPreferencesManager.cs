@@ -252,6 +252,12 @@ namespace Content.Server.Preferences.Managers
             }
         }
 
+        // HS START - compatibility for newer IServerPreferencesManager contract
+        public Task RefreshPreferencesAsync(ICommonSession session, CancellationToken cancel)
+        {
+            return LoadData(session, cancel);
+        }
+
         public void FinishLoad(ICommonSession session)
         {
             // This is a separate step from the actual database load.
