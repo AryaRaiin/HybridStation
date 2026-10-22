@@ -3,13 +3,11 @@ using System.Numerics;
 using Content.Client.CrewManifest;
 using Content.Client.GameTicking.Managers;
 using Content.Client.Lobby;
-using Content.Client.UserInterface.Controls;
 using Content.Client.Players.PlayTimeTracking;
+using Content.Client.UserInterface.Controls;
 using Content.Shared.CCVar;
-using Content.Shared.GameTicking; // Frontier
 using Content.Shared.Preferences;
 using Content.Shared.Roles;
-using Content.Shared.StatusIcon;
 using Robust.Client.Console;
 using Robust.Client.GameObjects;
 using Robust.Client.UserInterface;
@@ -170,17 +168,17 @@ namespace Content.Client.LateJoin
                 Array.Sort(departments, DepartmentUIComparer.Instance);
 
                 _jobButtons[id] = new Dictionary<string, List<JobButton>>();
+                _jobCategories[id] = new Dictionary<string, BoxContainer>();
 
                 foreach (var department in departments)
                 {
                     var departmentName = Loc.GetString(department.Name);
-                    _jobCategories[id] = new Dictionary<string, BoxContainer>();
-                    var stationAvailable = _gameTicker.StationJobInformationList[id];
+                    var stationAvailable = _gameTicker.JobsAvailable[id];
                     var jobsAvailable = new List<JobPrototype>();
 
                     foreach (var jobId in department.Roles)
                     {
-                        if (!stationAvailable.JobsAvailable.ContainsKey(jobId))
+                        if (!stationAvailable.ContainsKey(jobId))
                             continue;
 
                         jobsAvailable.Add(_prototypeManager.Index<JobPrototype>(jobId));
@@ -229,8 +227,7 @@ namespace Content.Client.LateJoin
 
                     foreach (var prototype in jobsAvailable)
                     {
-                        // Frontier: stationAvailable[prototype.ID]; -> stationAvailable.JobsAvailable[prototype.ID];
-                        var value = stationAvailable.JobsAvailable[prototype.ID];
+                        var value = stationAvailable[prototype.ID];
 
                         var jobLabel = new Label
                         {
@@ -261,7 +258,7 @@ namespace Content.Client.LateJoin
 
                         jobButton.OnPressed += _ => SelectedId.Invoke((id, jobButton.JobId));
 
-                        if (!_jobRequirements.IsAllowed(prototype, (HumanoidCharacterProfile?)_preferencesManager.Preferences?.SelectedCharacter, out var reason))
+                        if (!_jobRequirements.IsAllowed(prototype, (HumanoidCharacterProfile?) _preferencesManager.Preferences?.SelectedCharacter, out var reason))
                         {
                             jobButton.Disabled = true;
 
@@ -276,7 +273,7 @@ namespace Content.Client.LateJoin
                             {
                                 TextureScale = new Vector2(0.4f, 0.4f),
                                 Stretch = TextureRect.StretchMode.KeepCentered,
-                                Texture = _sprites.Frame0(new SpriteSpecifier.Texture(new ("/Textures/Interface/Nano/lock.svg.192dpi.png"))),
+                                Texture = _sprites.Frame0(new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/Nano/lock.svg.192dpi.png"))),
                                 HorizontalExpand = true,
                                 HorizontalAlignment = HAlignment.Right,
                             });
@@ -297,20 +294,15 @@ namespace Content.Client.LateJoin
             }
         }
 
-        private void JobsAvailableUpdated(IReadOnlyDictionary<NetEntity, StationJobInformation> updatedJobs)
+        private void JobsAvailableUpdated(IReadOnlyDictionary<NetEntity, Dictionary<ProtoId<JobPrototype>, int?>> updatedJobs)
         {
-            // Frontier: Made this more readable with simplified comparisons and LINQ expressions.
-            // Feel free to replace this with upstream code whenever, just mind that
-            // updatedJobs is now a dictionary of NetEntity to StationJobInformation.
-            // I changed this: jobInformation.TryGetValue   to this: jobInformation.JobsAvailable.TryGetValue
-            // Godspeed.
             foreach (var (stationNetEntity, jobInformation) in updatedJobs)
             {
                 if (!_jobButtons.TryGetValue(stationNetEntity, out var existingJobEntries))
                     continue;
                 foreach (var existingJobEntry in existingJobEntries)
                 {
-                    if (!jobInformation.JobsAvailable.TryGetValue(existingJobEntry.Key, out var updatedJobValue))
+                    if (!jobInformation.TryGetValue(existingJobEntry.Key, out var updatedJobValue))
                         continue;
                     foreach (var matchingJobButton in existingJobEntry.Value.Where(matchingJobButton => matchingJobButton.Amount != updatedJobValue))
                     {
@@ -341,7 +333,7 @@ namespace Content.Client.LateJoin
         public string JobId { get; }
         public string JobLocalisedName { get; }
         public int? Amount { get; private set; }
-        private bool _initialised = false;
+        private bool _initialised;
 
         public JobButton(Label jobLabel, ProtoId<JobPrototype> jobId, string jobLocalisedName, int? amount)
         {
@@ -356,14 +348,13 @@ namespace Content.Client.LateJoin
         public void RefreshLabel(int? amount)
         {
             if (Amount == amount && _initialised)
-            {
                 return;
-            }
+
             Amount = amount;
 
-            JobLabel.Text = Amount != null ?
-                Loc.GetString("late-join-gui-job-slot-capped", ("jobName", JobLocalisedName), ("amount", Amount)) :
-                Loc.GetString("late-join-gui-job-slot-uncapped", ("jobName", JobLocalisedName));
+            JobLabel.Text = Amount != null
+                ? Loc.GetString("late-join-gui-job-slot-capped", ("jobName", JobLocalisedName), ("amount", Amount))
+                : Loc.GetString("late-join-gui-job-slot-uncapped", ("jobName", JobLocalisedName));
         }
     }
 }

@@ -1,7 +1,9 @@
 <DefaultWindow xmlns="https://spacestation14.io"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                xmlns:graphics="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client"
+               x:Class="Content.Client.StationRecords.GeneralStationRecordConsoleWindow"
                Title="{Loc 'general-station-record-console-window-title'}"
-               MinSize="800 500"> <!-- Frontier: width 750<800, add graphics namespace -->
+               MinSize="800 500">
     <BoxContainer Orientation="Vertical">
         <BoxContainer Margin="5 5 5 10" HorizontalExpand="True">
             <OptionButton Name="StationRecordsFilterType" MinWidth="200" Margin="0 0 10 0"/>

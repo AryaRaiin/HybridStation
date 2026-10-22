@@ -1,7 +1,6 @@
-using Content.Client._NF.LateJoin;
 using Content.Client.Audio;
-using Content.Client.Eui;
 using Content.Client.GameTicking.Managers;
+using Content.Client.LateJoin;
 using Content.Client.Lobby.UI;
 using Content.Client.Message;
 using Content.Client.Playtime;
@@ -15,7 +14,6 @@ using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
 using Robust.Shared.Configuration;
 using Robust.Shared.Timing;
-using PickerWindow = Content.Client._NF.LateJoin.Windows.PickerWindow;
 
 namespace Content.Client.Lobby
 {
@@ -37,8 +35,8 @@ namespace Content.Client.Lobby
         protected override Type? LinkedScreenType { get; } = typeof(LobbyGui);
         public LobbyGui? Lobby;
 
-        // Frontier - save pickerwindow so it opens only once
-        private PickerWindow? _pickerWindow = null;
+        // TODO: Temporary fix, replaced old NF picker with standard late join GUI. We'll just take what upstream has, when it's time.
+        private LateJoinGui? _lateJoinGui = null;
 
         protected override void Startup()
         {
@@ -116,10 +114,9 @@ namespace Content.Client.Lobby
             {
                 return;
             }
-            // Frontier to downstream: if you want to skip the first window and go straight to station picker,
-            // simply change the enum to station or crew in the PickerWindow constructor.
-            _pickerWindow ??= new PickerWindow();
-            _pickerWindow.OpenCentered();
+
+            _lateJoinGui ??= new LateJoinGui();
+            _lateJoinGui.OpenCentered();
         }
 
         private void OnReadyToggled(BaseButton.ButtonToggledEventArgs args)
@@ -194,7 +191,7 @@ namespace Content.Client.Lobby
             {
                 Lobby!.StartTime.Text = string.Empty;
                 Lobby!.ReadyButton.Pressed = _gameTicker.AreWeReady;
-                Lobby!.ReadyButton.Text = Loc.GetString(Lobby!.ReadyButton.Pressed ? "lobby-state-player-status-ready": "lobby-state-player-status-not-ready");
+                Lobby!.ReadyButton.Text = Loc.GetString(Lobby!.ReadyButton.Pressed ? "lobby-state-player-status-ready" : "lobby-state-player-status-not-ready");
                 Lobby!.ReadyButton.ToggleMode = true;
                 Lobby!.ReadyButton.Disabled = false;
                 Lobby!.ObserveButton.Disabled = true;
@@ -202,7 +199,7 @@ namespace Content.Client.Lobby
 
             if (_gameTicker.ServerInfoBlob != null)
             {
-                //Lobby!.ServerInfo.SetInfoBlob(_gameTicker.ServerInfoBlob); // Frontier: ???
+                //Lobby!.ServerInfo.SetInfoBlob(_gameTicker.ServerInfoBlob);
             }
 
             var minutesToday = _playtimeTracking.PlaytimeMinutesToday;
@@ -223,7 +220,9 @@ namespace Content.Client.Lobby
                 Lobby.PlaytimeComment.SetMarkup(Loc.GetString(chosenString, ("hours", hoursToday)));
             }
             else
+            {
                 Lobby!.PlaytimeComment.Visible = false;
+            }
         }
 
         private void UpdateLobbySoundtrackInfo(LobbySoundtrackChangedEvent ev)
@@ -232,10 +231,7 @@ namespace Content.Client.Lobby
             {
                 Lobby!.LobbySong.SetMarkup(Loc.GetString("lobby-state-song-no-song-text"));
             }
-            else if (
-                ev.SoundtrackFilename != null
-                && _resourceCache.TryGetResource<AudioResource>(ev.SoundtrackFilename, out var lobbySongResource)
-                )
+            else if (_resourceCache.TryGetResource<AudioResource>(ev.SoundtrackFilename, out var lobbySongResource))
             {
                 var lobbyStream = lobbySongResource.AudioStream;
 
@@ -259,13 +255,12 @@ namespace Content.Client.Lobby
         {
             if (_gameTicker.LobbyBackground != null)
             {
-                Lobby!.Background.Texture = _resourceCache.GetResource<TextureResource>(_gameTicker.LobbyBackground );
+                Lobby!.Background.Texture = _resourceCache.GetResource<TextureResource>(_gameTicker.LobbyBackground);
             }
             else
             {
                 Lobby!.Background.Texture = null;
             }
-
         }
 
         private void SetReady(bool newReady)
