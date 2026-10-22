@@ -1,3 +1,4 @@
+using System.Linq;
 using Content.Server.Access.Systems;
 using Content.Server.Humanoid;
 using Content.Server.Mind;
@@ -26,7 +27,8 @@ using Content.Shared._NF.Bank.Components; // DeltaV
 using Content.Server._NF.Bank; // Frontier
 using Content.Server.Preferences.Managers; // Frontier
 using Content.Shared.NameIdentifier; // Frontier
-using Content.Server._EinsteinEngines.Silicon.IPC; // EinsteinEngines
+using Content.Server._EinsteinEngines.Silicon.IPC;
+using Content.Server.Spawners.Components; // EinsteinEngines
 using Content.Shared.Radio.Components; // Goobstation
 
 namespace Content.Server.Station.Systems;
@@ -69,7 +71,7 @@ public sealed class StationSpawningSystem : SharedStationSpawningSystem
     /// This only spawns the character, and does none of the mind-related setup you'd need for it to be playable.
     /// </remarks>
     //public EntityUid? SpawnPlayerCharacterOnStation(EntityUid? station, ProtoId<JobPrototype>? job, HumanoidCharacterProfile? profile, StationSpawningComponent? stationSpawning = null)
-    public EntityUid? SpawnPlayerCharacterOnStation(EntityUid? station, ProtoId<JobPrototype>? job, HumanoidCharacterProfile? profile, StationSpawningComponent? stationSpawning = null, 
+    public EntityUid? SpawnPlayerCharacterOnStation(EntityUid? station, ProtoId<JobPrototype>? job, HumanoidCharacterProfile? profile, StationSpawningComponent? stationSpawning = null,
         SpawnPointType spawnPointType = SpawnPointType.Unset, // DeltaV
         ICommonSession? session = null) // Frontier: add session
     {
@@ -77,7 +79,7 @@ public sealed class StationSpawningSystem : SharedStationSpawningSystem
             throw new ArgumentException("Tried to use a non-station entity as a station!", nameof(station));
 
         //var ev = new PlayerSpawningEvent(job, profile, station);
-        var ev = new PlayerSpawningEvent(job, profile, station, 
+        var ev = new PlayerSpawningEvent(job, profile, station,
             spawnPointType, // Delta-V: Set desired spawn point type.
             session); // Frontier: add session
 
@@ -403,7 +405,7 @@ public sealed class PlayerSpawningEvent : EntityEventArgs
     public readonly ICommonSession? Session;
 
     //public PlayerSpawningEvent(ProtoId<JobPrototype>? job, HumanoidCharacterProfile? humanoidCharacterProfile, EntityUid? station)
-    public PlayerSpawningEvent(ProtoId<JobPrototype>? job, HumanoidCharacterProfile? humanoidCharacterProfile, EntityUid? station, 
+    public PlayerSpawningEvent(ProtoId<JobPrototype>? job, HumanoidCharacterProfile? humanoidCharacterProfile, EntityUid? station,
         SpawnPointType spawnPointType = SpawnPointType.Unset, // DeltaV
         ICommonSession? session = null) // Frontier: added session
     {

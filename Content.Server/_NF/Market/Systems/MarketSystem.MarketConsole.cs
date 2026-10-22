@@ -12,6 +12,7 @@ using Content.Shared.Power;
 using Content.Shared.Stacks;
 using Content.Shared.Storage;
 using Content.Shared.Materials;
+using Content.Shared.Storage.Components;
 using Robust.Shared.Prototypes;
 
 

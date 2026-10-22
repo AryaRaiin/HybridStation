@@ -6,7 +6,8 @@ using Content.Server._EinsteinEngines.Power.Components;
 using Content.Server.Humanoid;
 using Content.Shared.Humanoid;
 using Content.Shared.Hands.Components;
-using Content.Shared.Hands.EntitySystems; //Monolith IPC rework
+using Content.Shared.Hands.EntitySystems;
+using Content.Shared.Power.Components; //Monolith IPC rework
 
 namespace Content.Server._EinsteinEngines.Silicon.Death;
 

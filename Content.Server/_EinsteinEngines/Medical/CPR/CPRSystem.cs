@@ -5,6 +5,8 @@ using Content.Server.Nutrition.EntitySystems;
 using Content.Server.Popups;
 using Content.Shared.Atmos.Rotting;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Components;
+using Content.Shared.Damage.Systems;
 using Content.Shared.DoAfter;
 using Content.Shared.Inventory;
 

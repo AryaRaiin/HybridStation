@@ -25,6 +25,7 @@ using Content.Server.Cargo.Systems; // Frontier
 using Content.Server.Power.Components;
 using Content.Server.Stack;
 using Content.Shared.ActionBlocker;
+using Content.Shared.Cargo;
 using Content.Shared.Construction;
 using Content.Shared.Database;
 using JetBrains.Annotations;

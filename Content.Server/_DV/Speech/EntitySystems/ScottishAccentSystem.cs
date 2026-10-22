@@ -2,6 +2,7 @@ using Content.Server._DV.Speech.Components;
 using Content.Server.Speech;
 using Content.Server.Speech.EntitySystems;
 using System.Text.RegularExpressions;
+using Content.Shared.Speech;
 
 namespace Content.Server._DV.Speech.EntitySystems;
 

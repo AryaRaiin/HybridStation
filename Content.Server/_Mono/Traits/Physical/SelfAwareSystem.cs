@@ -4,6 +4,7 @@
 
 using Content.Shared._Mono.Traits.Physical;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Components;
 using Content.Shared.Examine;
 using Content.Shared.FixedPoint;
 using Content.Shared.Mobs.Systems;

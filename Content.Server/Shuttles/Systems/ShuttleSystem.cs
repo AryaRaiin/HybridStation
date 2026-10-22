@@ -59,7 +59,8 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Content.Shared.Maps;
-using Content.Server._NF.Shuttles.Components; // Frontier
+using Content.Server._NF.Shuttles.Components;
+using Content.Server.GameTicking; // Frontier
 
 namespace Content.Server.Shuttles.Systems;
 

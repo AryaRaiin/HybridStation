@@ -10,9 +10,11 @@ using Content.Server.Power.EntitySystems;
 using Content.Server.PowerCell;
 using Content.Shared._Mono.Blocking; // Mono
 using Content.Shared.Damage;
+using Content.Shared.Damage.Systems;
 using Content.Shared.Examine;
 using Content.Shared.Item.ItemToggle;
 using Content.Shared.Item.ItemToggle.Components;
+using Content.Shared.Power;
 using Content.Shared.PowerCell.Components;
 
 namespace Content.Server._White.Blocking;

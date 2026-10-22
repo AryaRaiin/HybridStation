@@ -9,6 +9,7 @@ using Content.Server._NF.CryoSleep;
 using Content.Server.Chat.Managers;
 using Content.Server.Roles;
 using Content.Shared.GameTicking;
+using Content.Shared.Roles.Components;
 using Content.Shared.Roles.Jobs;
 using Robust.Shared.Map;
 

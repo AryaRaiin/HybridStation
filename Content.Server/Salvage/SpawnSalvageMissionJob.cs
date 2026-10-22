@@ -55,9 +55,12 @@ using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 using Content.Server.Shuttles.Components;
-using Content.Server._NF.Salvage; // Frontier: job complete event
-using Content.Server.Weather; // Frontier
-using Content.Shared.Weather; // Frontier
+using Content.Server._NF.Salvage;
+using Content.Server.Salvage.Expeditions.Structure; // Frontier: job complete event
+using Content.Server.Weather;
+using Content.Shared.Station.Components; // Frontier
+using Content.Shared.Weather;
+using Robust.Shared.Physics.Components; // Frontier
 
 namespace Content.Server.Salvage;
 
@@ -438,7 +441,7 @@ public sealed class SpawnSalvageMissionJob : Job<bool>
 
         return true;
     }
-    
+
     //Frontier START
     private void MassAdjustFTLExpedStartup(EntityUid? shuttleUid, out float massStartupTime)
     {

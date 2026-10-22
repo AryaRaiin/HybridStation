@@ -4,6 +4,7 @@ using Content.Server.Speech;
 using Content.Server.Speech.EntitySystems;
 using System.Linq;
 using Content.Server.Chat.Systems;
+using Content.Shared.Speech;
 
 namespace Content.Server._NF.Speech.EntitySystems;
 

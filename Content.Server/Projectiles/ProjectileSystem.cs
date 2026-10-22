@@ -44,7 +44,8 @@ using Robust.Shared.Physics.Events;
 using Robust.Shared.Player;
 using Content.Server.Chat.Systems; // Frontier
 using Content.Shared.Eye.Blinding.Components; // Frontier
-using Content.Shared.Eye.Blinding.Systems; // Frontier
+using Content.Shared.Eye.Blinding.Systems;
+using Content.Shared.StatusEffectNew; // Frontier
 using Robust.Shared.Random; // Frontier
 
 namespace Content.Server.Projectiles;

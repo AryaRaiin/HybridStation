@@ -7,6 +7,7 @@ using System.Threading;
 using Content.Server._NF.Trade;
 using Content.Server.GameTicking;
 using Content.Shared._NF.Trade;
+using Content.Shared.Cargo;
 using Content.Shared.Examine;
 using Timer = Robust.Shared.Timing.Timer;
 

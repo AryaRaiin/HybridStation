@@ -57,7 +57,8 @@ using Content.Shared.Mobs.Components; // Frontier
 using Content.Shared.NPC.Components; // Frontier
 using Content.Shared.Mobs; // Frontier
 using Content.Shared.Mech.Equipment.Components; // Monolith
-using Content.Server.Emp; // Monolith
+using Content.Server.Emp;
+using Content.Shared.Emp; // Monolith
 using Content.Shared.Shuttles.BUIStates; // Mono
 
 

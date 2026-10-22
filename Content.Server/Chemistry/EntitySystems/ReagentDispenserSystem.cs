@@ -22,7 +22,8 @@ using Content.Shared.Chemistry.Reagent; // Frontier
 using Content.Server.Labels; // Frontier
 using Content.Shared.Verbs; // Frontier
 using Content.Shared.Examine; // Frontier
-using Content.Server.Construction; // Frontier
+using Content.Server.Construction;
+using Content.Shared.Labels.EntitySystems; // Frontier
 
 namespace Content.Server.Chemistry.EntitySystems
 {
