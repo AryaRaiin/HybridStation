@@ -6,7 +6,8 @@ using Robust.Shared.Input;
 using System.Linq;
 using Content.Shared._NF.Bank.Components; // Frontier
 using Content.Shared.Containers.ItemSlots; // Frontier
-using Content.Shared.Stacks; // Frontier
+using Content.Shared.Stacks;
+using Robust.Client.GameObjects; // Frontier
 
 namespace Content.Client.VendingMachines
 {
@@ -79,7 +80,7 @@ namespace Content.Client.VendingMachines
             }
             // Frontier END
 
-            _menu?.Populate(_cachedInventory, enabled, 
+            _menu?.Populate(_cachedInventory, enabled,
                 _balance, cashSlotValue); // Frontier: add _balance
         }
 

@@ -16,13 +16,15 @@ using Content.Server.Nutrition.EntitySystems;
 using Content.Server.Nutrition.Components;
 using Content.Server.Chemistry.EntitySystems;
 using Content.Server.Popups;
+using Content.Shared.Body.Components;
 using Content.Shared.Chemistry.EntitySystems;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Player;
 using Robust.Shared.Random;
 using Robust.Shared.Prototypes;
-using Content.Shared.CombatMode.Pacification; // Frontier
+using Content.Shared.CombatMode.Pacification;
+using Content.Shared.Medical; // Frontier
 
 namespace Content.Server.Abilities.Felinid;
 

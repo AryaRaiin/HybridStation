@@ -2,6 +2,7 @@ using System.Linq;
 using Content.Shared.VendingMachines;
 using Robust.Client.Animations;
 using Robust.Client.GameObjects;
+using Robust.Shared.Containers;
 using Robust.Shared.GameStates;
 
 namespace Content.Client.VendingMachines;

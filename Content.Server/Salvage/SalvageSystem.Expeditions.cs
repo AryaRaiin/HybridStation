@@ -32,9 +32,12 @@ using Robust.Shared.CPUJob.JobQueues;
 using Robust.Shared.CPUJob.JobQueues.Queues;
 using Robust.Shared.GameStates;
 using Content.Server._NF.Salvage; // Frontier: graceful exped spawn failures
-using Content.Shared._NF.CCVar; // Frontier
-using Content.Shared.Shuttles.Components; // Frontier
-using Robust.Shared.Configuration; // Frontier
+using Content.Shared._NF.CCVar;
+using Content.Shared.Salvage; // Frontier
+using Content.Shared.Shuttles.Components;
+using Content.Shared.Station.Components; // Frontier
+using Robust.Shared.Configuration;
+using Robust.Shared.Random; // Frontier
 
 namespace Content.Server.Salvage;
 

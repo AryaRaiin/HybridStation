@@ -20,6 +20,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System.Linq;
 using System.Numerics;
 using Content.Shared.Shuttles.BUIStates;
 using Content.Shared.Shuttles.Components;
@@ -41,7 +42,10 @@ using Content.Shared._Crescent.ShipShields; // Crescent
 using Content.Client._Mono.Radar; // Mono
 using Content.Shared._Mono.Company; // Mono
 using Content.Shared._Mono.Detection; // Mono
-using Content.Shared._Mono.Radar; // Mono
+using Content.Shared._Mono.Radar;
+using Robust.Shared.Physics.Collision.Shapes;
+using Robust.Shared.Prototypes;
+using Robust.Shared.Timing; // Mono
 
 namespace Content.Client.Shuttles.UI;
 
