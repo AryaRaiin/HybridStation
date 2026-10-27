@@ -1,10 +1,9 @@
 using Content.Server.Atmos.Rotting;
 using Content.Server.Body.Components;
 using Content.Server.DoAfter;
-using Content.Server.Nutrition.EntitySystems;
 using Content.Server.Popups;
+using Content.Shared.ActionBlocker;
 using Content.Shared.Atmos.Rotting;
-using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Content.Shared.DoAfter;
@@ -27,13 +26,14 @@ public sealed class CPRSystem : EntitySystem
     [Dependency] private readonly PopupSystem _popupSystem = default!;
     [Dependency] private readonly DoAfterSystem _doAfterSystem = default!;
     [Dependency] private readonly MobStateSystem _mobStateSystem = default!;
-    [Dependency] private readonly FoodSystem _foodSystem = default!;
+
     [Dependency] private readonly DamageableSystem _damageable = default!;
     [Dependency] private readonly MobThresholdSystem _mobThreshold = default!;
     [Dependency] private readonly IRobustRandom _robustRandom = default!;
     [Dependency] private readonly RottingSystem _rottingSystem = default!;
     [Dependency] private readonly InventorySystem _inventory = default!;
     [Dependency] private readonly AudioSystem _audio = default!;
+    [Dependency] private readonly ActionBlockerSystem _actionBlocker = default!;
 
     public override void Initialize()
     {
@@ -79,7 +79,7 @@ public sealed class CPRSystem : EntitySystem
             return;
         }
 
-        if (_foodSystem.IsMouthBlocked(performer, performer) || _foodSystem.IsMouthBlocked(target, performer))
+        if (!_actionBlocker.CanSpeak(performer) || !_actionBlocker.CanSpeak(target))
             return;
 
         _popupSystem.PopupEntity(Loc.GetString("cpr-start-second-person", ("target", target)), target, performer);
@@ -112,7 +112,7 @@ public sealed class CPRSystem : EntitySystem
         }
 
         if (!performer.Comp.CPRHealing.Empty)
-            _damageable.TryChangeDamage(args.Target, performer.Comp.CPRHealing, true, origin: performer);
+            _damageable.TryChangeDamage(args.Target.Value, performer.Comp.CPRHealing, true, origin: performer);
 
         if (performer.Comp.RotReductionMultiplier > 0)
             _rottingSystem.ReduceAccumulator(
