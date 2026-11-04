@@ -21,9 +21,7 @@ public sealed class BorgSwitchableTypeSystem : SharedBorgSwitchableTypeSystem
 {
     [Dependency] private readonly BorgSystem _borgSystem = default!;
     [Dependency] private readonly ServerInventorySystem _inventorySystem = default!;
-
-    protected override void SelectBorgModule(Entity<BorgSwitchableTypeComponent> ent, ProtoId<BorgTypePrototype> borgType, 
-        ProtoId<BorgSubtypePrototype> borgSubtype) // UNKNOWN
+    protected override void SelectBorgModule(Entity<BorgSwitchableTypeComponent> ent, ProtoId<BorgTypePrototype> borgType)
     {
         var prototype = Prototypes.Index(borgType);
 
@@ -84,7 +82,6 @@ public sealed class BorgSwitchableTypeSystem : SharedBorgSwitchableTypeSystem
             _inventorySystem.SetTemplateId((ent.Owner, inventory), prototype.InventoryTemplateId);
         }
 
-        base.SelectBorgModule(ent, borgType, 
-            borgSubtype); // UNKNOWN
+        base.SelectBorgModule(ent, borgType);
     }
 }
