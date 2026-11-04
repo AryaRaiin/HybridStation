@@ -29,6 +29,7 @@ namespace Content.Server.Preferences.Managers
         [Dependency] private readonly ILogManager _log = default!;
         [Dependency] private readonly UserDbDataManager _userDb = default!;
         [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
+        [Dependency] private readonly IEntityManager _entityManager = default!; // Frontier
 
         // Cache player prefs on the server so we don't need as much async hell related to them.
         private readonly Dictionary<NetUserId, PlayerPrefData> _cachedPlayerPrefs =
@@ -276,6 +277,10 @@ namespace Content.Server.Preferences.Managers
                 MaxCharacterSlots = MaxCharacterSlots
             };
             _netManager.ServerSendMessage(msg, session.Channel);
+            // Frontier START: notify other entities that player preferences have loaded.
+            if (session.AttachedEntity is { } entity)
+                _entityManager.EventBus.RaiseLocalEvent(entity, new PreferencesLoadedEvent(session, prefsData.Prefs!));
+            // Frontier END
         }
 
         public void OnClientDisconnected(ICommonSession session)
@@ -382,6 +387,19 @@ namespace Content.Server.Preferences.Managers
             _userDb.AddOnLoadPlayer(LoadData);
             _userDb.AddOnFinishLoad(FinishLoad);
             _userDb.AddOnPlayerDisconnect(OnClientDisconnected);
+        }
+    }
+
+    // Frontier - Event for notifying that player preferences have loaded.
+    public sealed class PreferencesLoadedEvent : EntityEventArgs
+    {
+        public readonly ICommonSession Session;
+        public readonly PlayerPreferences Prefs;
+
+        public PreferencesLoadedEvent(ICommonSession session, PlayerPreferences prefs)
+        {
+            Session = session;
+            Prefs = prefs;
         }
     }
 }
