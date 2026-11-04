@@ -3,7 +3,7 @@ using System.Numerics;
 using Content.Client.Clickable;
 using Content.Client.UserInterface;
 using Content.Client.Viewport;
-using Content.Shared.Damage;
+using Content.Shared.Damage.Components;
 using Content.Shared.Input;
 using Robust.Client.ComponentTrees;
 using Robust.Client.GameObjects;
