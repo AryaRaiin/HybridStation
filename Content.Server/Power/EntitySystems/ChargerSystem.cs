@@ -12,6 +12,7 @@ using System.Diagnostics.CodeAnalysis;
 using Content.Shared.Storage.Components;
 using Robust.Server.Containers;
 using Content.Shared.Whitelist;
+using Content.Shared.Inventory; // Goob
 
 namespace Content.Server.Power.EntitySystems;
 
@@ -23,6 +24,7 @@ public sealed class ChargerSystem : SharedChargerSystem
     [Dependency] private readonly BatterySystem _battery = default!;
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
     [Dependency] private readonly EntityWhitelistSystem _whitelistSystem = default!;
+    [Dependency] private readonly InventorySystem _inventorySystem = default!; // Goob
 
     public override void Initialize()
     {
@@ -248,12 +250,40 @@ public sealed class ChargerSystem : SharedChargerSystem
     private bool SearchForBattery(EntityUid uid, [NotNullWhen(true)] out EntityUid? batteryUid, [NotNullWhen(true)] out BatteryComponent? component)
     {
         // try get a battery directly on the inserted entity
-        if (!TryComp(uid, out component))
+        if (TryComp(uid, out component))
         {
-            // or by checking for a power cell slot on the inserted entity
-            return _powerCell.TryGetBatteryFromSlot(uid, out batteryUid, out component);
+            batteryUid = uid;
+            return true;
         }
-        batteryUid = uid;
-        return true;
+
+        // or by checking for a power cell slot on the inserted entity
+        if (_powerCell.TryGetBatteryFromSlot(uid, out batteryUid, out component))
+            return true;
+
+        // Goob START - modsuits: look for a battery in worn equipment when the target has no battery of its own.
+        if (TryComp<InventoryComponent>(uid, out var inventory))
+        {
+            var relayEv = new FindInventoryBatteryEvent();
+            _inventorySystem.RelayEvent((uid, inventory), ref relayEv);
+
+            if (relayEv.FoundBattery != null)
+            {
+                batteryUid = relayEv.FoundBattery.Value.Owner;
+                component = relayEv.FoundBattery.Value.Comp;
+                return true;
+            }
+        }
+
+        return false;
+        // Goob END
     }
+}
+
+// Goob - HS: Re-added after the upstream merge removed it. It's required for modsuits.
+[ByRefEvent]
+public record struct FindInventoryBatteryEvent() : IInventoryRelayEvent
+{
+    public SlotFlags TargetSlots { get; } = SlotFlags.WITHOUT_POCKET;
+
+    public Entity<BatteryComponent>? FoundBattery { get; set; }
 }

@@ -1,11 +1,5 @@
-/* using Content.Shared.Containers.ItemSlots;
-using Content.Shared.Power;
+namespace Content.Server.Power.Components;
 
-namespace Content.Server.Power.Components
-{
-    [RegisterComponent]
-    public sealed partial class ActiveChargerComponent : Component  // Frontier: Upstream - #28984 Not used anymore, swap to ChargingComponent
-    {
-    }
-}
- */
+   // HS: Frontier commented this out, but the old ChargerSystem still uses it.
+   [RegisterComponent]
+   public sealed partial class ActiveChargerComponent : Component;
