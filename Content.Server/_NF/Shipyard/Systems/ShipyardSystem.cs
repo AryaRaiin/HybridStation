@@ -38,6 +38,8 @@ using Content.Shared._Mono.Shipyard;
 using Robust.Shared.EntitySerialization.Systems;
 using Robust.Shared.Utility;
 using Content.Shared.Doors.Components;
+using Content.Shared.Station.Components;
+using Content.Shared.Storage.Components;
 using Robust.Shared.Map.Components;
 
 namespace Content.Server._NF.Shipyard.Systems;

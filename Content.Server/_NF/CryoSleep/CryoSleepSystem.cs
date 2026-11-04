@@ -53,6 +53,7 @@ using Robust.Shared.Timing;
 using Content.Server.Ghost;
 using Content.Shared.Roles;
 using Content.Server._NF.Shuttles.Components;
+using Content.Shared.Station.Components;
 
 namespace Content.Server._NF.CryoSleep;
 

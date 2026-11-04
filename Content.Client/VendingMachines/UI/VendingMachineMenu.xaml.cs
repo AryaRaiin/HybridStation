@@ -39,7 +39,10 @@ using Robust.Shared.Prototypes;
 using FancyWindow = Content.Client.UserInterface.Controls.FancyWindow;
 using Robust.Client.UserInterface;
 using Content.Client.UserInterface.Controls;
+using Content.Shared.Cargo.Components;
+using Content.Shared.Chemistry.Components.SolutionManager;
 using Content.Shared.IdentityManagement;
+using Content.Shared.Stacks;
 using Robust.Client.Graphics;
 using Robust.Shared.Utility;
 

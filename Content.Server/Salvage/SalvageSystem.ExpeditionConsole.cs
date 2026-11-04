@@ -25,8 +25,12 @@ using Content.Shared.Mobs.Components; // Frontier
 using Content.Shared.NPC.Components; // Frontier
 using Content.Shared.IdentityManagement; // Frontier
 using Content.Shared.NPC; // Frontier
-using Content.Server._NF.Salvage; // Frontier
-using Content.Shared.Popups; // Frontier?
+using Content.Server._NF.Salvage;
+using Content.Server.Shuttles.Components; // Frontier
+using Content.Shared.Popups;
+using Content.Shared.Station.Components;
+using Robust.Shared.Map.Components;
+using Robust.Shared.Physics.Components; // Frontier?
 
 namespace Content.Server.Salvage;
 

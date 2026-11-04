@@ -26,6 +26,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Content.Server._NF.Station.Systems;
+using Content.Shared.Station.Components;
 using Robust.Shared.EntitySerialization.Systems;
 
 namespace Content.Server._NF.Smuggling;
