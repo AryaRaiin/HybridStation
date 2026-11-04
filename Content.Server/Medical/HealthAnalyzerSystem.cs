@@ -32,6 +32,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System.Linq;
 using Content.Server.Medical.Components;
 using Content.Server.PowerCell;
 using Content.Shared.Body.Components;
@@ -228,7 +229,7 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// </summary>
     /// <param name="healthAnalyzer">The health analyzer that's receiving the updates</param>
     /// <param name="target">The entity to analyze</param>
-    private void StopAnalyzingEntity(Entity<HealthAnalyzerComponent> healthAnalyzer, EntityUid target)
+    public void StopAnalyzingEntity(Entity<HealthAnalyzerComponent> healthAnalyzer, EntityUid target) // HS: Made public for CorticalBorerSystem
     {
         //Unlink the analyzer
         healthAnalyzer.Comp.ScannedEntity = null;
@@ -270,7 +271,7 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// <param name="target">The entity being scanned</param>
     /// <param name="scanMode">True makes the UI show ACTIVE, False makes the UI show INACTIVE</param>
     /// <param name="part">Shitmed Change: The body part being scanned, if any</param>
-    public void UpdateScannedUser(EntityUid healthAnalyzer, EntityUid target, bool scanMode, 
+    public void UpdateScannedUser(EntityUid healthAnalyzer, EntityUid target, bool scanMode,
         EntityUid? part = null) // Shitmed
     {
         if (!_uiSystem.HasUi(healthAnalyzer, HealthAnalyzerUiKey.Key))

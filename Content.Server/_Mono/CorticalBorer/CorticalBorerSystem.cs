@@ -6,17 +6,13 @@
 // SPDX-FileCopyrightText: 2025 ark1368
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
-
-using Content.Server.Body.Components;
 using Content.Server.Body.Systems;
 using Content.Server.Chat.Managers;
-using Content.Server.Chat.Systems;
 using Content.Server.DoAfter;
 using Content.Server.Ghost.Roles;
 using Content.Server.Ghost.Roles.Components;
 using Content.Server.Medical;
 using Content.Server.Medical.Components;
-using Content.Server.Nutrition.Components;
 using Content.Shared._Mono.CorticalBorer;
 using Content.Shared._Starlight.CollectiveMind;
 using Content.Shared.Administration.Logs;
@@ -39,6 +35,7 @@ using Robust.Server.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
+using Content.Server._Mono.Chat.Events;
 
 namespace Content.Server._Mono.CorticalBorer;
 
@@ -80,7 +77,7 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
         foreach (var actionId in ent.Comp.InitialCorticalBorerActions)
             _actions.AddAction(ent, actionId);
 
-        _alerts.ShowAlert(ent, ent.Comp.ChemicalAlert);
+        _alerts.ShowAlert(ent.Owner, ent.Comp.ChemicalAlert);
         UpdateUiState(ent);
     }
 
@@ -131,7 +128,7 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
         if (comp.ChemicalPoints % comp.UiUpdateInterval == 0)
             UpdateUiState(ent);
 
-        _alerts.ShowAlert(ent, ent.Comp.ChemicalAlert);
+        _alerts.ShowAlert(ent.Owner, ent.Comp.ChemicalAlert);
 
         Dirty(ent);
     }
@@ -191,7 +188,7 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
         solution.AddReagent(chemicalPrototype.Reagent, chemAmount);
 
         // add the chemicals to the bloodstream of the host
-        if (!_blood.TryAddToChemicals(comp.Host.Value, solution, bloodstream))
+        if (!_blood.TryAddToChemicals((comp.Host.Value, bloodstream), solution))
             return false;
 
         UpdateChems(ent, -((int)chemAmount * chemicalPrototype.Cost));
