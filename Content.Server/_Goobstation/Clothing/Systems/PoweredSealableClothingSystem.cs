@@ -1,4 +1,3 @@
-using Content.Server.Power.EntitySystems;
 using Content.Server.PowerCell;
 using Content.Shared._Goobstation.Clothing.Components;
 using Content.Shared._Goobstation.Clothing.Systems;
@@ -8,6 +7,7 @@ using Content.Shared.Movement.Systems;
 using Content.Shared.PowerCell;
 using Content.Shared.PowerCell.Components;
 using Content.Shared.Rounding;
+using Content.Shared.Power.Components; // Goob
 
 namespace Content.Server._Goobstation.Clothing.Systems;
 
@@ -16,6 +16,7 @@ public sealed partial class PoweredSealableClothingSystem : SharedPoweredSealabl
     [Dependency] private readonly AlertsSystem _alertsSystem = default!;
     [Dependency] private readonly PowerCellSystem _powerCellSystem = default!;
     [Dependency] private readonly MovementSpeedModifierSystem _movementSpeed = default!;
+    [Dependency] private readonly InventorySystem _inventorySystem = default!; // Goob
 
     public override void Initialize()
     {
@@ -115,5 +116,13 @@ public sealed partial class PoweredSealableClothingSystem : SharedPoweredSealabl
 
         if (_powerCellSystem.TryGetBatteryFromSlot(entity, out var batteryEnt, out var battery))
             args.Args.FoundBattery = (batteryEnt.Value, battery);
+    }
+    // Goobstation - Modsuits stuff
+    [ByRefEvent]
+    public record struct FindInventoryBatteryEvent() : IInventoryRelayEvent
+    {
+        public SlotFlags TargetSlots { get; } = SlotFlags.WITHOUT_POCKET;
+
+        public Entity<BatteryComponent>? FoundBattery { get; set; }
     }
 }
