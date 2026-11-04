@@ -231,36 +231,11 @@ public sealed class LobbyUIController : UIController, IOnStateEntered<LobbyState
             return;
         }
 
-        // Verify company exists, if not set it to "None"
-        if (!string.IsNullOrEmpty(humanoid.Company) &&
-            humanoid.Company != "None" &&
-            !_prototypeManager.HasIndex<CompanyPrototype>(humanoid.Company))
-        {
-            // Create a new profile with the company set to "None"
-            humanoid = humanoid.WithCompany("None");
-
-            // Update the character in preferences
-            if (_preferencesManager.Preferences != null)
-            {
-                _preferencesManager.UpdateCharacter(humanoid, _preferencesManager.Preferences.SelectedCharacterIndex);
-            }
-        }
 
         var dummy = LoadProfileEntity(humanoid, null, true);
         PreviewPanel.SetSprite(dummy);
         PreviewPanel.SetSummaryText(humanoid.Summary);
         PreviewPanel.SetBankBalanceText(humanoid.BankBalanceText); // Frontier
-
-        // Company Display
-        var companyId = humanoid.Company;
-        if (_prototypeManager.TryIndex<CompanyPrototype>(companyId, out var company))
-        {
-            PreviewPanel.SetCompanyText($"[color=white]Company:[/color] [color={company.Color.ToHex()}]{company.Name}[/color]");
-        }
-        else
-        {
-            PreviewPanel.SetCompanyText($"[color=white]Company:[/color] [color=yellow]{companyId}[/color]");
-        }
 
         // MonoCoins Display - Request balance from server and update display
         EnsureMonoCoinsSubscription();
