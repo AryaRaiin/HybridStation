@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Numerics;
 using Content.Shared.Input;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using Robust.Client.Graphics;
 using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
@@ -228,7 +229,7 @@ public class RadialMenu : BaseWindow
 /// Base class for radial menu buttons. Excludes all actions except clicks and alt-clicks
 /// from interactions.
 /// </summary>
-public abstract class RadialMenuTextureButtonBase : BaseButton
+public abstract class RadialMenuButtonBase : BaseButton
 {
     /// <inheritdoc />
     protected RadialMenuButtonBase()
@@ -341,7 +342,7 @@ public class RadialMenuButton : RadialMenuButtonBase
         OnButtonUp += OnClicked;
     }
 
-    private void OnClicked(ButtonEventArgs args)
+    private void OnClicked(BaseButton.ButtonEventArgs args)
     {
         if (TargetLayer == null && TargetLayerControlName == null)
             return;
@@ -537,7 +538,7 @@ public class RadialMenuButtonWithSector : RadialMenuButton, IRadialMenuItemWithS
         var angleTo = _angleSectorTo + _angleOffset;
         if (DrawBackground)
         {
-            var segmentColor = DrawMode == DrawModeEnum.Hover
+            var segmentColor = DrawMode == BaseButton.DrawModeEnum.Hover
                 ? _hoverBackgroundColorSrgb
                 : _backgroundColorSrgb;
 
@@ -546,7 +547,7 @@ public class RadialMenuButtonWithSector : RadialMenuButton, IRadialMenuItemWithS
 
         if (DrawBorder)
         {
-            var borderColor = DrawMode == DrawModeEnum.Hover
+            var borderColor = DrawMode == BaseButton.DrawModeEnum.Hover
                 ? _hoverBorderColorSrgb
                 : _borderColorSrgb;
             DrawAnnulusSector(handle, containerCenter, _innerRadius * UIScale, _outerRadius * UIScale, angleFrom, angleTo, borderColor, false);
