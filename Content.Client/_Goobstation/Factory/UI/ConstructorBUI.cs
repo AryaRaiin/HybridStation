@@ -26,7 +26,6 @@ public sealed class ConstructorBUI : BoundUserInterface
 
     private ConstructionMenu? _menu;
     private string? _id;
-    private List<ConstructionPrototype> _recipes = new();
     private readonly LocId _favoriteCatName = "construction-category-favorites";
     private readonly LocId _forAllCategoryName = "construction-category-all";
 
@@ -43,7 +42,6 @@ public sealed class ConstructorBUI : BoundUserInterface
     {
         base.Open();
 
-        // god BLESS whoever made construction ui for having it so decoupled <3
         _menu = this.CreateWindow<ConstructionMenu>();
         PopulateCategories();
         PopulateRecipes(string.Empty, string.Empty);
@@ -51,18 +49,18 @@ public sealed class ConstructorBUI : BoundUserInterface
         _menu.RecipeSelected += (_, item) =>
         {
             _menu.ClearRecipeInfo();
-            if (item?.Metadata is ConstructionPrototype proto)
-            {
-                _id = proto.ID;
-                _menu.SetRecipeInfo(proto.Name, proto.Description, _sprite.Frame0(proto.Icon),
-                    proto.Type != ConstructionType.Item, true); // TODO: favourites
-
-                GenerateStepList(proto);
-            }
-            else
+            if (item is null)
             {
                 _id = null;
+                return;
             }
+
+            var proto = item.Prototype;
+            _id = proto.ID;
+            _menu.SetRecipeInfo(proto.Name ?? string.Empty, proto.Description ?? string.Empty,
+                item.TargetPrototype, proto.Type != ConstructionType.Item, true);
+
+            GenerateStepList(proto);
         };
         _menu.BuildButtonToggled += (_, _) =>
         {
@@ -113,64 +111,40 @@ public sealed class ConstructorBUI : BoundUserInterface
     // copypasted and optimised from ConstructionMenuPresenter
     private void PopulateRecipes(string search, string category)
     {
-        if (PlayerManager.LocalEntity is not { } user
-            || _menu is not { } menu)
+        if (PlayerManager.LocalEntity is not { } user || _menu is not { } menu)
             return;
 
-        search = search.Trim().ToLowerInvariant();
-        var searching = !string.IsNullOrEmpty(search);
+        search = search.Trim();
         var isEmptyCategory = string.IsNullOrEmpty(category) || category == _forAllCategoryName;
+        var recipes = new List<ConstructionMenu.ConstructionMenuListData>();
 
-        _recipes.Clear();
         foreach (var recipe in _proto.EnumeratePrototypes<ConstructionPrototype>())
         {
-            if (recipe.Hide)
+            if (recipe.Hide || _whitelist.IsWhitelistFail(recipe.EntityWhitelist, user))
                 continue;
 
-            if (_whitelist.IsWhitelistFail(recipe.EntityWhitelist, user))
+            if (search.Length > 0 &&
+                !recipe.Name!.Contains(search, StringComparison.InvariantCultureIgnoreCase))
                 continue;
 
-            if (searching
-                && !recipe.Name.ToLowerInvariant().Contains(search))
+            if (!isEmptyCategory && (category == _favoriteCatName || recipe.Category != category))
                 continue;
 
-            if (!isEmptyCategory)
-            {
-                // TODO: when favourites get sent from server do this
-                // currently its specific to the G menu
-                //if (!_favoritedRecipes.Contains(recipe))
-                if (category == _favoriteCatName)
-                    continue;
-                else if (recipe.Category != category)
-                    continue;
-            }
+            if (!_construction.TryGetRecipePrototype(recipe.ID, out var targetProtoId))
+                continue;
 
-            _recipes.Add(recipe);
+            if (!_proto.TryIndex(targetProtoId, out EntityPrototype? targetProto))
+                continue;
+
+            recipes.Add(new(recipe, targetProto));
         }
 
-        _recipes.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.InvariantCulture));
-
-        var recipesList = menu.Recipes;
-        recipesList.Clear();
+        recipes.Sort((a, b) => string.Compare(a.Prototype.Name, b.Prototype.Name,
+            StringComparison.InvariantCulture));
 
         menu.RecipesGridScrollContainer.Visible = false;
         menu.Recipes.Visible = true;
-
-        // no grid because fuck you
-        foreach (var recipe in _recipes)
-            recipesList.Add(GetItem(recipe, recipesList));
-    }
-
-    private ItemList.Item GetItem(ConstructionPrototype recipe, ItemList itemList)
-    {
-        return new(itemList)
-        {
-            Metadata = recipe,
-            Text = recipe.Name,
-            Icon = _sprite.Frame0(recipe.Icon),
-            TooltipEnabled = true,
-            TooltipText = recipe.Description,
-        };
+        menu.Recipes.PopulateList(recipes);
     }
 
     private void GenerateStepList(ConstructionPrototype proto)
