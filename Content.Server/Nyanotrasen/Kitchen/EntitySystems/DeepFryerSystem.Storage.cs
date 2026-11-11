@@ -1,8 +1,6 @@
-﻿using Content.Server.Kitchen.Components;
-using Content.Server.Nyanotrasen.Kitchen.Components;
+﻿using Content.Server.Nyanotrasen.Kitchen.Components;
 using Content.Shared.Chemistry.Components;
 using Content.Shared.Database;
-using Content.Shared.Hands.Components;
 using Content.Shared.Interaction;
 using Content.Shared.Item;
 using Content.Shared.Nyanotrasen.Kitchen.UI;
@@ -82,12 +80,9 @@ public sealed partial class DeepFryerSystem
     {
         var user = args.Actor;
 
-        if (user == null ||
-            !TryComp<HandsComponent>(user, out var handsComponent) ||
-            handsComponent.ActiveHandEntity == null)
+        if (!_handsSystem.TryGetActiveItem(user, out var item))
             return;
 
-        if (handsComponent.ActiveHandEntity != null)
-            TryInsertItem(uid, component, user, handsComponent.ActiveHandEntity.Value);
+        TryInsertItem(uid, component, user, item.Value);
     }
 }
