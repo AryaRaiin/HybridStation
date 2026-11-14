@@ -68,7 +68,7 @@ public sealed partial class ParrotMemorySystem : SharedParrotMemorySystem
 
     private void OnHeadsetReceive(Entity<ParrotListenerComponent> entity, ref HeadsetRadioReceiveRelayEvent args)
     {
-        var message = args.RelayedEvent.Message;
+        var message = args.RelayedEvent.OriginalChatMsg.Message; // HS: Changed from args.RelayedEvent.Message -> args.RelayedEvent.OriginalChatMsg.Message
         var source = args.RelayedEvent.MessageSource;
 
         TryLearn(entity.Owner, message, source);
