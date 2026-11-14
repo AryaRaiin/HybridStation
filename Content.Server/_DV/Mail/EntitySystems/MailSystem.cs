@@ -52,6 +52,7 @@ using Content.Shared.Station.Components; // Frontier
 using Content.Shared.Damage.Components; // HS
 using Content.Shared.Damage.Systems; // HS
 using Content.Shared.Destructible.Thresholds.Triggers; // HS
+using Robust.Server.Player; // HS
 
 namespace Content.Server._DV.Mail.EntitySystems
 {
@@ -79,6 +80,7 @@ namespace Content.Server._DV.Mail.EntitySystems
         [Dependency] private readonly SectorServiceSystem _sectorService = default!; // Frontier
         [Dependency] private readonly BankSystem _bank = default!; // Frontier
         [Dependency] private readonly PowerReceiverSystem _powerReceiver = default!; // Frontier
+        [Dependency] private readonly IPlayerManager _players = default!; // HS
 
         private ISawmill _sawmill = default!;
 
@@ -545,7 +547,7 @@ namespace Content.Server._DV.Mail.EntitySystems
             // Frontier: TODO - should this be removed for Frontier?
             foreach (var access in recipient.AccessTags)
             {
-                accessReader.AccessLists.Add([access]);
+                _accessSystem.TryAddAccess((uid, accessReader), access);
             }
         }
 
@@ -616,7 +618,7 @@ namespace Content.Server._DV.Mail.EntitySystems
                 string stationName;
                 if (_stationSystem.GetOwningStation(receiverUid) is { Valid: true } station
                     && TryComp<StationDataComponent>(station, out var stationData)
-                    && _stationSystem.GetLargestGrid(stationData) is { Valid: true } stationGrid
+                    && _stationSystem.GetLargestGrid((station, stationData)) is { Valid: true } stationGrid
                     && TryName(stationGrid, out var gridName)
                     && gridName != null)
                 {
@@ -629,7 +631,9 @@ namespace Content.Server._DV.Mail.EntitySystems
 
                 // Mail recipients requires a connected player
                 if (!_mindSystem.TryGetMind(receiverUid, out var mindId, out var mindComp)
-                    || mindComp?.Session?.State.Status != SessionStatus.InGame)
+                    || mindComp.UserId is not { } userId // HS
+                    || !_players.TryGetSessionById(userId, out var session) // HS
+                    || session.State.Status != SessionStatus.InGame) // HS
                     return false;
 
                 // Antagonists (pirates and the like) don't get mail.
