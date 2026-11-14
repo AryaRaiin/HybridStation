@@ -78,8 +78,8 @@ public sealed class HumanoidAppearanceSystem : SharedHumanoidAppearanceSystem
         // add custom layers
         foreach (var (key, info) in component.CustomBaseLayers)
         {
-            oldLayers.Remove(key);            
-            SetLayerData(entity, sprite, key, info.Id, sexMorph: false, color: info.Color, 
+            oldLayers.Remove(key);
+            SetLayerData(entity, key, info.Id, sexMorph: false, color: info.Color,
                 overrideSkin: true);// Shitmed Change: For whatever reason these weren't actually ignoring the skin color as advertised.
         }
 
@@ -119,7 +119,7 @@ public sealed class HumanoidAppearanceSystem : SharedHumanoidAppearanceSystem
         var proto = _prototypeManager.Index<HumanoidSpeciesSpriteLayer>(protoId);
         component.BaseLayers[key] = proto;
 
-        if (proto.MatchSkin 
+        if (proto.MatchSkin
             && !overrideSkin) // Shitmed Change
             layer.Color = component.SkinColor.WithAlpha(proto.LayerAlpha);
 
@@ -375,7 +375,7 @@ public sealed class HumanoidAppearanceSystem : SharedHumanoidAppearanceSystem
             if (markingPrototype.Shader != null)
             {
             // use spriteComponent's layersetshader function to set the layer's shader to that which is specified.
-                _sprite.LayerSetShader(layerId, markingPrototype.Shader);
+                sprite.LayerSetShader(layerId, markingPrototype.Shader);
             }
             // impstation edit end
             _sprite.LayerSetVisible((entity.Owner, sprite), layerId, visible);
