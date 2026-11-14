@@ -67,4 +67,16 @@ public sealed class ProtectedGridSystem : EntitySystem
             args.Cancelled = true;
         }
     }
+    // HS START: from PublicTransitSystem.cs to here
+    public void ProtectTransitGrid(EntityUid uid)
+    {
+        var prot = EnsureComp<ProtectedGridComponent>(uid);
+        prot.PreventArtifactTriggers = true;
+        prot.PreventEmpEvents = true;
+        prot.PreventExplosions = true;
+        prot.PreventFloorPlacement = true;
+        prot.PreventFloorRemoval = true;
+        prot.PreventRCDUse = true;
+    }
+    // HS END
 }

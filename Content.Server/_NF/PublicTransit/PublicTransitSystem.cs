@@ -35,6 +35,7 @@ public sealed class PublicTransitSystem : EntitySystem
     [Dependency] private readonly MetaDataSystem _meta = default!;
     [Dependency] private readonly StationRenameWarpsSystems _renameWarps = default!;
     [Dependency] private readonly DockingSystem _dockSystem = default!;
+    [Dependency] private readonly ProtectedGridSystem _protectedGrid = default!; // HS
 
     /// <summary>
     /// If enabled then spawns the bus and sets up the bus line.
@@ -121,13 +122,7 @@ public sealed class PublicTransitSystem : EntitySystem
     private void OnShuttleStartup(EntityUid uid, TransitShuttleComponent component, ComponentStartup args)
     {
         EnsureComp<PreventPilotComponent>(uid);
-        var prot = EnsureComp<ProtectedGridComponent>(uid);
-        prot.PreventArtifactTriggers = true;
-        prot.PreventEmpEvents = true;
-        prot.PreventExplosions = true;
-        prot.PreventFloorPlacement = true;
-        prot.PreventFloorRemoval = true;
-        prot.PreventRCDUse = true;
+        _protectedGrid.ProtectTransitGrid(uid);
 
         var stationName = Loc.GetString(component.Name);
 
