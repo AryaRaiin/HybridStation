@@ -6,7 +6,7 @@
         <Button Name="TraitButton" Access="Public" StyleClasses="OpenBottom" MaxWidth="250" TextAlign="Left">
             <BoxContainer Orientation="Horizontal">
                 <Label Name="CostLabel" MinWidth="30" />
-                <Label Name="NameLabel" Margin="10,0,0,0" />
+                <Label Name="NameLabel" Access="Public" Margin="10,0,0,0" /> <!-- HS: Made public so the profile editor can mark unavailable traits. -->
             </BoxContainer>
         </Button>
     </BoxContainer>
