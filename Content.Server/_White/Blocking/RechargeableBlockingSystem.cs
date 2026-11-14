@@ -9,13 +9,15 @@ using Content.Server.Power.Components;
 using Content.Server.Power.EntitySystems;
 using Content.Server.PowerCell;
 using Content.Shared._Mono.Blocking; // Mono
-using Content.Shared.Damage;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Examine;
 using Content.Shared.Item.ItemToggle;
 using Content.Shared.Item.ItemToggle.Components;
 using Content.Shared.Power;
 using Content.Shared.PowerCell.Components;
+using System.Diagnostics.CodeAnalysis;
+using Content.Shared.Power.Components;
+using Content.Shared.PowerCell; // HS
 
 namespace Content.Server._White.Blocking;
 
@@ -39,7 +41,22 @@ public sealed class RechargeableBlockingSystem : SharedBlockingSystem // Mono
     {
         if (!component.Discharged)
         {
-            _powerCell.OnBatteryExamined(uid, null, args);
+            // HS START: Changed from using _powerCell.OnBatteryExamined, as it would've shown duplicate details shown by powerCell, not object attached battery
+            if (!HasComp<PowerCellComponent>(uid) && !HasComp<PowerCellSlotComponent>(uid))
+            {
+                if (TryGetBattery(uid, out var battery, out _))
+                {
+                    var charge = battery.CurrentCharge / battery.MaxCharge * 100;
+                    args.PushMarkup(Loc.GetString("power-cell-component-examine-details",
+                        ("currentCharge", $"{charge:F0}")));
+                }
+                else
+                {
+                    args.PushMarkup(Loc.GetString("power-cell-component-examine-details-no-battery"));
+                }
+            }
+            // HS END
+
             return;
         }
 
@@ -49,7 +66,7 @@ public sealed class RechargeableBlockingSystem : SharedBlockingSystem // Mono
 
     private int GetRemainingTime(EntityUid uid)
     {
-        if (!_battery.TryGetBatteryComponent(uid, out var batteryComponent, out var batteryUid)
+        if (!TryGetBattery(uid, out var batteryComponent, out var batteryUid)
             || !TryComp<BatterySelfRechargerComponent>(batteryUid, out var recharger)
             || recharger is not { AutoRechargeRate: > 0, AutoRecharge: true })
             return 0;
@@ -60,13 +77,13 @@ public sealed class RechargeableBlockingSystem : SharedBlockingSystem // Mono
 
     private void OnDamageChanged(EntityUid uid, RechargeableBlockingComponent component, DamageChangedEvent args)
     {
-        if (!_battery.TryGetBatteryComponent(uid, out var batteryComponent, out var batteryUid)
+        if (!TryGetBattery(uid, out var batteryComponent, out var batteryUid)
             || !_itemToggle.IsActivated(uid)
             || args.DamageDelta == null)
             return;
 
         var batteryUse = Math.Min(args.DamageDelta.GetTotal().Float(), batteryComponent.CurrentCharge);
-        _battery.TryUseCharge(batteryUid.Value, batteryUse, batteryComponent);
+        _battery.TryUseCharge(batteryUid, batteryUse, batteryComponent);
     }
 
     private void AttemptToggle(EntityUid uid, RechargeableBlockingComponent component, ref ItemToggleActivateAttemptEvent args)
@@ -91,13 +108,13 @@ public sealed class RechargeableBlockingSystem : SharedBlockingSystem // Mono
 
     private void CheckCharge(EntityUid uid, RechargeableBlockingComponent component)
     {
-        if (!_battery.TryGetBatteryComponent(uid, out var battery, out _))
+        if (!TryGetBattery(uid, out var battery, out var batteryUid))
             return;
 
         BatterySelfRechargerComponent? recharger;
         if (battery.CurrentCharge < 1)
         {
-            if (TryComp(uid, out recharger))
+            if (TryComp(batteryUid, out recharger))
                 recharger.AutoRechargeRate = component.DischargedRechargeRate;
 
             component.Discharged = true;
@@ -109,7 +126,27 @@ public sealed class RechargeableBlockingSystem : SharedBlockingSystem // Mono
             return;
 
         component.Discharged = false;
-        if (TryComp(uid, out recharger))
-                recharger.AutoRechargeRate = component.ChargedRechargeRate;
+        if (TryComp(batteryUid, out recharger))
+            recharger.AutoRechargeRate = component.ChargedRechargeRate;
     }
+    // HS START: added TryGetBattery back, used for checking if an object has its own battery before checking the battery slot
+    private bool TryGetBattery(EntityUid uid, [NotNullWhen(true)] out BatteryComponent? battery, out EntityUid batteryUid)
+    {
+        if (TryComp(uid, out battery))
+        {
+            batteryUid = uid;
+            return true;
+        }
+
+        if (_powerCell.TryGetBatteryFromSlot(uid, out var slottedUid, out battery))
+        {
+            batteryUid = slottedUid.Value;
+            return true;
+        }
+
+        batteryUid = default;
+        return false;
+    }
+    // HS END
 }
+
