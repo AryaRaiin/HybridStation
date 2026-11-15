@@ -2,23 +2,19 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Content.Server.Administration.Logs;
 using Content.Server.Audio;
-using Content.Server.Cargo.Systems;
 using Content.Server.Chemistry.Containers.EntitySystems;
 using Content.Server.Construction;
 using Content.Server.DoAfter;
 using Content.Server.Fluids.EntitySystems;
 using Content.Server.Kitchen.Components;
 using Content.Server.Nutrition;
-using Content.Server.Nutrition.Components;
 using Content.Server.Nyanotrasen.Kitchen.Components;
 using Content.Server.Popups;
 using Content.Server.Power.EntitySystems;
-using Content.Server.Temperature.Components;
 using Content.Server.Temperature.Systems;
 using Content.Shared.Chemistry.Components;
 using Content.Shared.Chemistry.Components.SolutionManager;
 using Content.Shared.Chemistry.EntitySystems;
-using Content.Shared.Chemistry.Reagent;
 using Content.Shared.Construction;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Prototypes;
@@ -53,13 +49,13 @@ using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
-using Content.Shared._NF.Kitchen.Components; // Frontier
-using Content.Server._NF.Kitchen.Components;
 using Content.Shared.Cargo;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Nutrition.Components;
 using Content.Shared.Temperature.Components; // Frontier
+using Content.Server._NF.Kitchen.Components; // Frontier
+using Content.Shared._NF.Kitchen.Components; // Frontier
 
 namespace Content.Server.Nyanotrasen.Kitchen.EntitySystems;
 
@@ -86,6 +82,7 @@ public sealed partial class DeepFryerSystem : SharedDeepfryerSystem
     [Dependency] private readonly AmbientSoundSystem _ambientSoundSystem = default!;
     [Dependency] private readonly MetaDataSystem _metaDataSystem = default!;
     [Dependency] private readonly EntityWhitelistSystem _whitelistSystem = default!;
+    [Dependency] private readonly SharedEntityEffectsSystem _entityEffects = default!; // HS
 
     private static readonly string CookingDamageType = "Heat";
     private static readonly float CookingDamageAmount = 10.0f;
@@ -228,14 +225,14 @@ public sealed partial class DeepFryerSystem : SharedDeepfryerSystem
         }
 
         // Damage non-food items and mobs.
-        if ((!HasComp<FoodComponent>(item) || HasComp<MobStateComponent>(item)) &&
+        if ((!HasComp<EdibleComponent>(item) || HasComp<MobStateComponent>(item)) &&
             TryComp<DamageableComponent>(item, out var damageableComponent))
         {
             var damage = new DamageSpecifier(_prototypeManager.Index<DamageTypePrototype>(CookingDamageType),
                 CookingDamageAmount);
 
-            var result = _damageableSystem.TryChangeDamage(item, damage, origin: uid);
-            if (result?.GetTotal() > FixedPoint2.Zero)
+            var result = _damageableSystem.ChangeDamage(item, damage, origin: uid);
+            if (result.GetTotal() > FixedPoint2.Zero)
             {
                 // TODO: Smoke, waste, sound, or some indication.
             }
@@ -247,7 +244,7 @@ public sealed partial class DeepFryerSystem : SharedDeepfryerSystem
     /// </summary>
     private void BurnItem(EntityUid uid, DeepFryerComponent component, EntityUid item)
     {
-        if (HasComp<FoodComponent>(item) &&
+        if (HasComp<EdibleComponent>(item) &&
             !HasComp<MobStateComponent>(item) &&
             MetaData(item).EntityPrototype?.ID != component.CharredPrototype)
         {
@@ -443,24 +440,22 @@ public sealed partial class DeepFryerSystem : SharedDeepfryerSystem
         if (!solutionExisted)
             _sawmill.Warning(
                 $"{ToPrettyString(uid)} did not have a {component.SolutionName} solution container. It has been created.");
+
+        // TODO: Verify this is functioning as expected for when reagents are inside the deep fryer, not sure if this worked before due to previous comment.
+        if (!_solutionContainerSystem.TryGetSolution(uid, component.SolutionName, out var solutionEntity))
+        {
+            _sawmill.Warning($"Could not find solution {component.SolutionName} on {ToPrettyString(uid)}.");
+            return;
+        }
+
         foreach (var reagent in component.Solution.Contents.ToArray())
         {
-            //JJ Comment - not sure this works. Need to check if Reagent.ToString is correct.
-            _prototypeManager.TryIndex<ReagentPrototype>(reagent.Reagent.ToString(), out var proto);
-
-            var effectsArgs = new EntityEffectReagentArgs(uid,
-                EntityManager,
-                null,
-                component.Solution,
-                reagent.Quantity,
-                proto!,
-                null,
-                1f);
             foreach (var effect in component.UnsafeOilVolumeEffects)
             {
-                if (!effect.ShouldApply(effectsArgs, _random))
-                    continue;
-                effect.Effect(effectsArgs);
+                _entityEffects.TryApplyEffect(
+                    solutionEntity.Value.Owner,
+                    effect,
+                    reagent.Quantity.Float());
             }
         }
     }
@@ -514,11 +509,8 @@ public sealed partial class DeepFryerSystem : SharedDeepfryerSystem
     /// </summary>
     private void OnThrowHitBy(EntityUid uid, DeepFryerComponent component, ThrowHitByEvent args)
     {
-        if (args.Handled)
-            return;
-
         // Chefs never miss this. :)
-        var missChance = HasComp<ProfessionalChefComponent>(args.User) ? 0f : ThrowMissChance;
+        var missChance = HasComp<ProfessionalChefComponent>(args.Component.Thrower) ? 0f : ThrowMissChance;
 
         if (!CanInsertItem(uid, component, args.Thrown) ||
             _random.Prob(missChance) ||
@@ -528,10 +520,10 @@ public sealed partial class DeepFryerSystem : SharedDeepfryerSystem
                 Loc.GetString("deep-fryer-thrown-missed"),
                 uid);
 
-            if (args.User != null)
+            if (args.Component.Thrower != null)
             {
                 _adminLogManager.Add(LogType.Action, LogImpact.Low,
-                    $"{ToPrettyString(args.User.Value)} threw {ToPrettyString(args.Thrown)} at {ToPrettyString(uid)}, and it missed.");
+                    $"{ToPrettyString(args.Component.Thrower.Value)} threw {ToPrettyString(args.Thrown)} at {ToPrettyString(uid)}, and it missed.");
             }
 
             return;
@@ -550,15 +542,14 @@ public sealed partial class DeepFryerSystem : SharedDeepfryerSystem
                 uid);
         }
 
-        if (args.User != null)
+        if (args.Component.Thrower != null)
         {
             _adminLogManager.Add(LogType.Action, LogImpact.Low,
-                $"{ToPrettyString(args.User.Value)} threw {ToPrettyString(args.Thrown)} at {ToPrettyString(uid)}, and it landed inside.");
+                $"{ToPrettyString(args.Component.Thrower.Value)} threw {ToPrettyString(args.Thrown)} at {ToPrettyString(uid)}, and it landed inside.");
         }
 
         AfterInsert(uid, component, args.Thrown);
 
-        args.Handled = true;
     }
 
     private void OnSolutionChange(EntityUid uid, DeepFryerComponent component, SolutionChangedEvent args)
@@ -627,7 +618,7 @@ public sealed partial class DeepFryerSystem : SharedDeepfryerSystem
         if (!TryComp<HandsComponent>(user, out var handsComponent))
             return false;
 
-        heldItem = handsComponent.ActiveHandEntity;
+        heldItem = _handsSystem.GetActiveItem((user, handsComponent));
 
         if (heldItem == null ||
             !TryComp<SolutionTransferComponent>(heldItem, out var solutionTransferComponent) ||
@@ -660,12 +651,13 @@ public sealed partial class DeepFryerSystem : SharedDeepfryerSystem
         if (!_solutionContainerSystem.TryGetSolution(component.Owner, component.Solution.Name, out var solution))
             return;
 
-        _solutionTransferSystem.Transfer(user,
+        _solutionTransferSystem.Transfer(new SolutionTransferData(
+            user,
             uid,
             solution.Value,
             heldItem.Value,
             heldSolution.Value,
-            transferAmount);
+            transferAmount));
 
         // UI update is not necessary here, because the solution change event handles it.
     }

@@ -2,7 +2,6 @@
 using Content.Server.Atmos.Components;
 using Content.Server.Body.Components;
 using Content.Server.Ghost.Roles.Components;
-using Content.Server.Nutrition.Components;
 using Content.Server.Nyanotrasen.Kitchen.Components;
 using Content.Shared.Atmos.Rotting;
 using Content.Shared.Buckle.Components;
@@ -15,6 +14,8 @@ using Content.Shared.Nyanotrasen.Kitchen.Prototypes;
 using Content.Shared.Paper;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
+using Content.Shared.Body.Components; // HS
+using Content.Shared.Body.Components; // HS
 
 namespace Content.Server.Nyanotrasen.Kitchen.EntitySystems;
 
@@ -64,7 +65,7 @@ public sealed partial class DeepFryerSystem
             RemComp<RottingComponent>(mob);
 
             // Ensure it's Food here, so it passes the whitelist.
-            var mobFoodComponent = EnsureComp<FoodComponent>(mob);
+            var mobFoodComponent = EnsureComp<EdibleComponent>(mob); // HS: change from FoodComponent to EdibleComponent
             _solutionContainerSystem.EnsureSolution(mob, mobFoodComponent.Solution, out var alreadyHadFood);
 
             if (!_solutionContainerSystem.TryGetSolution(mob, mobFoodComponent.Solution, out var mobFoodSolution))
@@ -136,7 +137,7 @@ public sealed partial class DeepFryerSystem
             paperComponent.Content = stringBuilder.ToString();
         }
 
-        var foodComponent = EnsureComp<FoodComponent>(item);
+        var foodComponent = EnsureComp<EdibleComponent>(item); // HS: changed from FoodComponent to EdibleComponent
         var extraSolution = new Solution();
         if (TryComp(item, out FlavorProfileComponent? flavorProfileComponent))
         {

@@ -1,7 +1,5 @@
 ﻿using System.Linq;
 using Content.Server.Nyanotrasen.Kitchen.Components;
-using Content.Shared.Chemistry.Reagent;
-using Content.Shared.EntityEffects;
 using Content.Shared.FixedPoint;
 using Content.Shared.Popups;
 using Robust.Shared.Player;
@@ -48,20 +46,15 @@ public sealed partial class DeepFryerSystem
                         //JJ Comment - this code block makes the Linter fail, and doesn't seem to be necessary with the changes I made.
                         foreach (var reagent in component.Solution.Contents.ToArray())
                         {
-                            _prototypeManager.TryIndex<ReagentPrototype>(reagent.Reagent.ToString(), out var proto);
-
                             foreach (var effect in component.UnsafeOilVolumeEffects)
                             {
-                                effect.Effect(new EntityEffectReagentArgs(uid,
-                                        EntityManager,
-                                        null,
-                                        component.Solution,
-                                        reagent.Quantity,
-                                        proto!,
-                                        null,
-                                        1f));
+                                // HS START:
+                                _entityEffects.ApplyEffect(
+                                    solution.Value.Owner,
+                                    effect,
+                                    reagent.Quantity.Float());
+                                // HS END
                             }
-
                         }
 
                         component.Solution.RemoveAllSolution();
