@@ -65,6 +65,12 @@ public record struct HitscanRaycastFiredData
     /// Player who shot the gun, if null the gun was fired by itself.
     /// </summary>
     public EntityUid? Shooter;
+
+    // HS: Stores where the shot was fired.
+    public EntityCoordinates FromCoordinates;
+
+    // HS: Stores how far the ray of the shot traveled to the hit or to max range.
+    public float DistanceTried;
 }
 
 /// <summary>

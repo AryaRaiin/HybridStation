@@ -24,12 +24,12 @@ public sealed partial class HitscanRadarSystem : EntitySystem
 
     private void OnHitscanRaycastFired(Entity<HitscanRadarSignatureComponent> ent, ref HitscanRaycastFiredEvent ev)
     {
-        var shooter = ev.Shooter ?? ev.Gun; // If "there is no shooter" then the shooter is a gun
+        var shooter = ev.Data.Shooter ?? ev.Data.Gun; // If "there is no shooter" then the shooter is a gun
         var shooterCoords = new EntityCoordinates(shooter, Vector2.Zero);
         var radarEntity = Spawn(null, shooterCoords);
         var radarComponent = EnsureComp<HitscanRadarComponent>(radarEntity);
-        var startPos = _transform.ToMapCoordinates(ev.FromCoordinates).Position;
-        var endPos = startPos + ev.ShotDirection.Normalized() * ev.DistanceTried;
+        var startPos = _transform.ToMapCoordinates(ev.Data.FromCoordinates).Position;
+        var endPos = startPos + ev.Data.ShotDirection.Normalized() * ev.Data.DistanceTried;
         InheritShooterSettings(shooter, radarComponent); // Grab visual fields from hitscan entity and imbue radarComponent with em
 
         radarComponent.StartPosition = startPos;
