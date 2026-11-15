@@ -25,30 +25,26 @@ using System.Linq;
 using System.Threading;
 using Content.Server.Salvage.Expeditions;
 using Content.Shared.CCVar;
-using Content.Shared.Examine;
 using Content.Shared.Salvage.Expeditions;
 using Content.Shared.Shuttles.Components;
 using Robust.Shared.CPUJob.JobQueues;
 using Robust.Shared.CPUJob.JobQueues.Queues;
 using Robust.Shared.GameStates;
-using Content.Server._NF.Salvage; // Frontier: graceful exped spawn failures
+using Content.Server._NF.Salvage;
+using Content.Server.Salvage.Expeditions.Structure; // Frontier: graceful exped spawn failures
 using Content.Shared._NF.CCVar;
+using Content.Shared.Examine; // Frontier
 using Content.Shared.Salvage; // Frontier
-using Content.Shared.Shuttles.Components;
-using Content.Shared.Station.Components; // Frontier
-using Robust.Shared.Configuration;
+using Content.Shared.Station.Components;
 using Robust.Shared.Random; // Frontier
 
 namespace Content.Server.Salvage;
 
 public sealed partial class SalvageSystem
 {
-    /*
-     * Handles setup / teardown of salvage expeditions.
-     */
-
+    // Handles setup / teardown of salvage expeditions.
     //private const int MissionLimit = 3;
-    private const int MissionLimit = 5; // Frontier?
+    private const int MissionLimit = 5; // Frontier
 
     private readonly JobQueue _salvageQueue = new();
     private readonly List<(SpawnSalvageMissionJob Job, CancellationTokenSource CancelToken)> _salvageJobs = new();
@@ -157,7 +153,11 @@ public sealed partial class SalvageSystem
         // Finish mission
         if (TryComp<SalvageExpeditionDataComponent>(component.Station, out var data))
         {
-            FinishExpedition((component.Station, data), uid);
+            FinishExpedition(
+                (component.Station, data),
+                (uid, component),
+                uid,
+                shuttle: null);
         }
     }
 
@@ -187,12 +187,13 @@ public sealed partial class SalvageSystem
             comp.Cooldown = false;
             comp.NextOffer += TimeSpan.FromSeconds(_cooldown);
             */
-            if (!HasComp<FTLComponent>(_station.GetLargestGrid(Comp<StationDataComponent>(uid))))
+            if (!HasComp<FTLComponent>(
+                    _station.GetLargestGrid((uid, Comp<StationDataComponent>(uid)))))
                 comp.Cooldown = false;
-            comp.NextOffer = currentTime + TimeSpan.FromSeconds(_cooldown);
-            // Frontier END
+
             GenerateMissions(comp);
-            UpdateConsoles((uid, comp));
+            UpdateConsoles((uid, comp), uid);
+
         }
     }
 
@@ -207,28 +208,34 @@ public sealed partial class SalvageSystem
         UpdateConsoles(expedition);
     }
     */
-    private void FinishExpedition(Entity<SalvageExpeditionDataComponent> expedition, EntityUid uid, EntityUid? shuttle)
+    private void FinishExpedition(
+        Entity<SalvageExpeditionDataComponent> stationData,
+        Entity<SalvageExpeditionComponent> expedition,
+        EntityUid announceEntity,
+        EntityUid? shuttle)
     {
-        var component = expedition.Comp;
-        component.NextOffer = _timing.CurTime + TimeSpan.FromSeconds(_cooldown);
-        Announce(uid, Loc.GetString("salvage-expedition-completed"));
-        // Finish mission cleanup.
-        switch (expedition.MissionParams.MissionType)
-        {
-            // Handles the mining taxation.
-            case SalvageMissionType.Mining:
-                expedition.Completed = true;
+        var data = stationData.Comp;
+        var mission = expedition.Comp;
 
-                if (shuttle != null && TryComp<SalvageMiningExpeditionComponent>(uid, out var mining))
+        data.NextOffer = _timing.CurTime + TimeSpan.FromSeconds(_cooldown);
+        Announce(announceEntity, Loc.GetString("salvage-expedition-completed"));
+
+        switch (mission.MissionParams.MissionType)
+        {
+            case SalvageMissionType.Mining:
+                mission.Completed = true;
+
+                if (shuttle != null &&
+                    TryComp<SalvageMiningExpeditionComponent>(announceEntity, out var mining))
                 {
                     var xformQuery = GetEntityQuery<TransformComponent>();
                     var entities = new List<EntityUid>();
                     MiningTax(entities, shuttle.Value, mining, xformQuery);
 
-                    var tax = GetMiningTax(expedition.MissionParams.Difficulty);
+                    var tax = GetMiningTax(mission.MissionParams.Difficulty);
                     _random.Shuffle(entities);
 
-                    // TODO: urgh this pr is already taking so long I'll do this later
+                    // TODO: Mining tax? If desired, it was an unfinished feature.
                     for (var i = 0; i < Math.Ceiling(entities.Count * tax); i++)
                     {
                         // QueueDel(entities[i]);
@@ -239,25 +246,22 @@ public sealed partial class SalvageSystem
         }
 
         // Handle payout after expedition has finished
-        if (expedition.Completed)
+        if (mission.Completed)
         {
-            Log.Debug($"Completed mission {expedition.MissionParams.MissionType} with seed {expedition.MissionParams.Seed}");
-            component.NextOffer = _timing.CurTime + TimeSpan.FromSeconds(_cooldown);
-            Announce(uid, Loc.GetString("salvage-expedition-mission-completed"));
-            GiveRewards(expedition);
+            Log.Debug($"Completed mission {mission.MissionParams.MissionType} with seed {mission.MissionParams.Seed}");
+            Announce(announceEntity, Loc.GetString("salvage-expedition-mission-completed"));
+            GiveRewards(mission);
         }
         else
         {
-            Log.Debug($"Failed mission {expedition.MissionParams.MissionType} with seed {expedition.MissionParams.Seed}");
-            component.NextOffer = _timing.CurTime + TimeSpan.FromSeconds(_failedCooldown);
-            Announce(uid, Loc.GetString("salvage-expedition-mission-failed"));
+            Log.Debug($"Failed mission {mission.MissionParams.MissionType} with seed {mission.MissionParams.Seed}");
+            data.NextOffer = _timing.CurTime + TimeSpan.FromSeconds(_failedCooldown);
+            Announce(announceEntity, Loc.GetString("salvage-expedition-mission-failed"));
         }
 
-
-        component.ActiveMission = 0;
-        component.Cooldown = true;
-        if (shuttle != null)
-            UpdateConsoles(shuttle.Value, component);
+        data.ActiveMission = 0;
+        data.Cooldown = true;
+        UpdateConsoles(stationData, stationData.Owner);
     }
 
     /// <summary>
@@ -280,28 +284,60 @@ public sealed partial class SalvageSystem
     }
     // Frontier END: overhaul FinishExpedition
 
+    // HS START: Based off Monolith's version, but altered to fit upstreamm codebase
     private void GenerateMissions(SalvageExpeditionDataComponent component)
     {
         component.Missions.Clear();
 
+        var missionTypes = Enum.GetValues<SalvageMissionType>().ToList();
+        missionTypes.Remove(SalvageMissionType.Mining);
+
+        if (missionTypes.Count == 0 || _missionDifficulties.Count == 0)
+            return;
+
+        var difficulties = _missionDifficulties.ToList();
+        _random.Shuffle(difficulties);
+
+        if (difficulties.Count > MissionLimit)
+            difficulties = difficulties.Take(MissionLimit).ToList();
+
+        // Frontier START
+        while (difficulties.Count < MissionLimit)
+        {
+            var index = _random.Next(_missionDifficulties.Count);
+            difficulties.Add(_missionDifficulties[index]);
+        }
+
+        difficulties.Sort();
+        // Frontier END
+
         for (var i = 0; i < MissionLimit; i++)
         {
+            _random.Shuffle(missionTypes);
+
             var mission = new SalvageMissionParams
             {
                 Index = component.NextIndex,
+                MissionType = missionTypes[0],
                 Seed = _random.Next(),
-                Difficulty = "Moderate",
+                Difficulty = difficulties[i],
             };
 
             component.Missions[component.NextIndex++] = mission;
         }
     }
+    // HS END
 
     private SalvageExpeditionConsoleState GetState(SalvageExpeditionDataComponent component)
     {
         var missions = component.Missions.Values.ToList();
-        return new SalvageExpeditionConsoleState(component.NextOffer, component.Claimed, component.Cooldown, component.ActiveMission, missions,
-            component.CanFinish); // Frontier
+        return new SalvageExpeditionConsoleState(
+            component.NextOffer,
+            component.Claimed,
+            component.Cooldown,
+            component.CanFinish,
+            component.ActiveMission,
+            missions);
     }
 
     private void SpawnMission(SalvageMissionParams missionParams, EntityUid station, EntityUid? coordinatesDisk)
@@ -327,18 +363,17 @@ public sealed partial class SalvageSystem
         _salvageQueue.EnqueueJob(job);
     }
 
-
-    // UNKNOWN START
+    // MONO START
     private void OnStructureExamine(EntityUid uid, SalvageStructureComponent component, ExaminedEvent args)
     {
         args.PushMarkup(Loc.GetString("salvage-expedition-structure-examine"));
     }
-    // UNKNOWN END
+    // MONO END
 
     // Frontier START
     private void GiveRewards(SalvageExpeditionComponent comp)
     {
-        if (!_cfgManager.GetCVar(NFCCVars.SalvageExpeditionRewardsEnabled))
+        if (!_configurationManager.GetCVar(NFCCVars.SalvageExpeditionRewardsEnabled))
             return;
 
         var palletList = new List<EntityUid>();
@@ -359,7 +394,6 @@ public sealed partial class SalvageSystem
             Spawn(reward, (Transform(_random.Pick(palletList)).MapPosition));
         }
     }
-    // Frontier END
 
     // Frontier: handle exped spawn job failures gracefully - reset the console
     private void OnExpeditionSpawnComplete(EntityUid uid, SalvageExpeditionDataComponent component, ExpeditionSpawnCompleteEvent ev)
@@ -368,7 +402,7 @@ public sealed partial class SalvageSystem
         {
             component.ActiveMission = 0;
             component.Cooldown = false;
-            UpdateConsoles(uid, component);
+            UpdateConsoles((uid, component), uid);
         }
     }
     // End Frontier
