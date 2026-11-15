@@ -1,31 +1,24 @@
 using Content.Server.Atmos.Rotting;
 using Content.Server.Body.Systems;
 using Content.Server.Chat.Systems;
-using Content.Shared.Body.Organ;
 using Content.Shared.Body.Part;
 using Content.Server.Popups;
 using Content.Shared.Bed.Sleep;
 using Content.Shared.CCVar;
 using Content.Shared.Damage;
-using Content.Shared.Eye.Blinding.Components;
 using Content.Shared.Eye.Blinding.Systems;
-using Content.Shared.Interaction;
-using Content.Shared.Inventory;
 using Content.Shared._Shitmed.Medical.Surgery;
 using Content.Shared._Shitmed.Medical.Surgery.Conditions;
 using Content.Shared._Shitmed.Medical.Surgery.Effects.Step;
-using Content.Shared._Shitmed.Medical.Surgery.Steps;
-using Content.Shared._Shitmed.Medical.Surgery.Steps.Parts;
 using Content.Shared._Shitmed.Medical.Surgery.Tools;
 using Content.Shared.Prototypes;
 using Robust.Server.GameObjects;
 using Robust.Shared.Configuration;
-using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
-using System.Linq;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Verbs;
+using Content.Shared.StatusEffectNew; // HS
 
 namespace Content.Server._Shitmed.Medical.Surgery;
 
@@ -40,6 +33,7 @@ public sealed class SurgerySystem : SharedSurgerySystem
     [Dependency] private readonly UserInterfaceSystem _ui = default!;
     [Dependency] private readonly RottingSystem _rot = default!;
     [Dependency] private readonly BlindableSystem _blindableSystem = default!;
+    [Dependency] private readonly StatusEffectsSystem _statusEffects = default!; // HS
 
     private readonly List<EntProtoId> _surgeries = new();
 
@@ -148,7 +142,7 @@ public sealed class SurgerySystem : SharedSurgerySystem
     private void OnSurgeryDamageChange(Entity<SurgeryDamageChangeEffectComponent> ent, ref SurgeryStepDamageChangeEvent args)
     {
         var damageChange = ent.Comp.Damage;
-        if (HasComp<ForcedSleepingComponent>(args.Body))
+        if (_statusEffects.HasEffectComp<ForcedSleepingStatusEffectComponent>(args.Body)) // HS: Changed to status effect
             damageChange = damageChange * ent.Comp.SleepModifier;
 
         SetDamage(args.Body, damageChange, 0.5f, args.User, args.Part);
@@ -167,7 +161,7 @@ public sealed class SurgerySystem : SharedSurgerySystem
 
     private void OnStepScreamComplete(Entity<SurgeryStepEmoteEffectComponent> ent, ref SurgeryStepEvent args)
     {
-        if (HasComp<ForcedSleepingComponent>(args.Body))
+        if (_statusEffects.HasEffectComp<ForcedSleepingStatusEffectComponent>(args.Body))
             return;
 
         _chat.TryEmoteWithChat(args.Body, ent.Comp.Emote);
