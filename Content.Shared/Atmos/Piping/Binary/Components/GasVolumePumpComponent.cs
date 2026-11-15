@@ -42,4 +42,9 @@ public sealed partial class GasVolumePumpComponent : Component
 
     [DataField]
     public float LastMolesTransferred;
+
+    // HS START: Added for specific pumps in GasVolumePumpSystem.cs
+    [DataField]
+    public bool StartOnMapInit;
+    // HS END
 }
