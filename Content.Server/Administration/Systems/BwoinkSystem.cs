@@ -9,7 +9,6 @@ using Content.Server.Administration.Managers;
 using Content.Server.Afk;
 using Content.Server.Database;
 using Content.Server.Discord;
-using Content.Server.Discord.DiscordLink;
 using Content.Server.GameTicking;
 using Content.Server.Players.RateLimiting;
 using Content.Server.Preferences.Managers;
@@ -46,7 +45,6 @@ namespace Content.Server.Administration.Systems
         [Dependency] private readonly IServerDbManager _dbManager = default!;
         [Dependency] private readonly PlayerRateLimitManager _rateLimit = default!;
         [Dependency] private readonly IServerPreferencesManager _preferencesManager = default!;
-        [Dependency] private readonly DiscordChatLink _discordChatLink = default!;
 
         [GeneratedRegex(@"^https://(?:(?:canary|ptb)\.)?discord\.com/api/webhooks/(\d+)/((?!.*/).*)$")]
         private static partial Regex DiscordRegex();
@@ -282,18 +280,6 @@ namespace Content.Server.Administration.Systems
                 var discordMessage = GenerateAHelpMessage(messageParams);
                 queue.Enqueue(discordMessage);
             }
-
-            // Send to Discord chat link (thread-based integration)
-            // Fire and forget - don't block the main thread
-            _ = Task.Run(async () =>
-            {
-                var lookup = await _playerLocator.LookupIdAsync(session.UserId);
-                var playerName = lookup?.Username ?? "Unknown";
-                var roundId = _gameTicker.RoundId;
-                var characterName = _minds.GetCharacterName(session.UserId);
-                var discordMessage = $"{session.Name} {message}";
-                _discordChatLink.SendAhelpMessage(session.UserId, playerName, "System", discordMessage, true, roundId, characterName);
-            });
         }
 
         private void OnGameRunLevelChanged(GameRunLevelChangedEvent args)
@@ -836,20 +822,6 @@ namespace Content.Server.Administration.Systems
                     noReceivers: nonAfkAdmins.Count == 0
                 );
                 _messageQueues[msg.UserId].Enqueue(GenerateAHelpMessage(messageParams));
-            }
-
-            // Send to Discord chat link (thread-based integration)
-            if (sendWebhook && !fromWebhook)
-            {
-                // Fire and forget - don't block the main thread
-                _ = Task.Run(async () =>
-                {
-                    var lookup = await _playerLocator.LookupIdAsync(message.UserId);
-                    var playerName = lookup?.Username ?? "Unknown";
-                    var roundId = _gameTicker.RoundId;
-                    var characterName = _minds.GetCharacterName(message.UserId);
-                    _discordChatLink.SendAhelpMessage(message.UserId, playerName, senderName, message.Text, message.AdminOnly, roundId, characterName);
-                });
             }
 
             if (admins.Count != 0 || sendsWebhook)
