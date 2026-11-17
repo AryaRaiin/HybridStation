@@ -1,7 +1,6 @@
 using System.Linq;
 using Content.Client.Stylesheets;
 using Content.Shared.CCVar;
-using Content.Shared.Procedural;
 using Content.Shared.Salvage.Expeditions;
 using Content.Shared.Salvage.Expeditions.Modifiers;
 using JetBrains.Annotations;
@@ -9,6 +8,7 @@ using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
 using Robust.Shared.Configuration;
 using Robust.Shared.Prototypes;
+using Content.Shared.Salvage; // HS
 
 namespace Content.Client.Salvage.UI;
 
@@ -57,25 +57,33 @@ public sealed class SalvageExpeditionConsoleBoundUserInterface : BoundUserInterf
             var missionParams = current.Missions[i];
 
             var offering = new OfferingWindowOption();
-            offering.Title = Loc.GetString($"salvage-expedition-type");
+            offering.Title = Loc.GetString($"salvage-expedition-type-{missionParams.MissionType}"); // HS
 
-            var difficultyId = "Moderate";
-            var difficultyProto = _protoManager.Index<SalvageDifficultyPrototype>(difficultyId);
-            // TODO: Selectable difficulty soon.
-            var mission = salvage.GetMission(difficultyProto, missionParams.Seed);
+            // HS START: Selectable difficulty type
+            var mission = salvage.GetMission(
+                missionParams.MissionType,
+                missionParams.Difficulty,
+                missionParams.Seed);
 
-            // Difficulty
-            // Details
-            offering.AddContent(new Label()
+            // Colors the difficulties in UI
+            var difficultyColor = missionParams.Difficulty switch
+            {
+                DifficultyRating.Minimal => Color.FromHex("#52B4E996"),
+                DifficultyRating.Minor => Color.FromHex("#9FED5896"),
+                DifficultyRating.Moderate => Color.FromHex("#EFB34196"),
+                DifficultyRating.Hazardous => Color.FromHex("#DE3A3A96"),
+                DifficultyRating.Extreme => Color.FromHex("#D381C996"),
+                _ => throw new ArgumentOutOfRangeException(),
+            };
+            // HS END
+            offering.AddContent(new Label
             {
                 Text = Loc.GetString("salvage-expedition-window-difficulty")
             });
 
-            var difficultyColor = difficultyProto.Color;
-
             offering.AddContent(new Label
             {
-                Text = Loc.GetString("salvage-expedition-difficulty-Moderate"),
+                Text = Loc.GetString($"salvage-expedition-difficulty-{missionParams.Difficulty}"), // HS
                 FontColorOverride = difficultyColor,
                 HorizontalAlignment = Control.HAlignment.Left,
                 Margin = new Thickness(0f, 0f, 0f, 5f),
@@ -83,18 +91,16 @@ public sealed class SalvageExpeditionConsoleBoundUserInterface : BoundUserInterf
 
             offering.AddContent(new Label
             {
-                Text = Loc.GetString("salvage-expedition-difficulty-players"),
-                HorizontalAlignment = Control.HAlignment.Left,
+                Text = Loc.GetString("salvage-expedition-window-details") // HS
             });
 
             offering.AddContent(new Label
             {
-                Text = difficultyProto.RecommendedPlayers.ToString(),
+                Text = salvage.GetMissionDescription(mission), // HS
                 HorizontalAlignment = Control.HAlignment.Left,
                 Margin = new Thickness(0f, 0f, 0f, 5f),
                 StyleClasses = { StyleClass.LabelKeyText },
             });
-
             // Details
             offering.AddContent(new Label
             {

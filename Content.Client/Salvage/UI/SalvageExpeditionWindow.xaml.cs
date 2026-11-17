@@ -253,7 +253,7 @@ public sealed partial class SalvageExpeditionWindow : FancyWindow,
             if (state.ActiveMission == missionParams.Index)
             {
                 claimButton.Text = Loc.GetString("salvage-expedition-window-claimed");
-                claimButton.AddStyleClass(StyleBase.ButtonCaution);
+                claimButton.AddStyleClass(StyleNano.ButtonCaution); // HS: Changed button from StyleBase to StyleNano
             }
             else
             {
