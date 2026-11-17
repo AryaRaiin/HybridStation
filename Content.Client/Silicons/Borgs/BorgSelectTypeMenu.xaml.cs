@@ -31,6 +31,7 @@ public sealed partial class BorgSelectTypeMenu : FancyWindow
     {
         RobustXamlLoader.Load(this);
         IoCManager.InjectDependencies(this);
+        SubtypeSelection.SubtypeSelected += () => ConfirmTypeButton.Disabled = false; // HS: Add confirmation button after subtype selection
 
         var group = new ButtonGroup();
         foreach (var borgType in _prototypeManager.EnumeratePrototypes<BorgTypePrototype>().OrderBy(PrototypeName))
@@ -58,19 +59,22 @@ public sealed partial class BorgSelectTypeMenu : FancyWindow
 
         InfoContents.Visible = true;
         InfoPlaceholder.Visible = false;
-        ConfirmTypeButton.Disabled = false;
+        SubtypeSelection.FillContainer(prototype); // HS: This loads subtype options when the chassis is selected.
+        ConfirmTypeButton.Disabled = true;
 
         NameLabel.Text = PrototypeName(prototype);
-        DescriptionLabel.Text = Loc.GetString($"borg-type-{prototype.ID}-desc");
+        DescriptionLabel.Text = Loc.GetString($"borg-type-{prototype.ID}-desc"); // HS
         ChassisView.SetPrototype(prototype.DummyPrototype);
     }
 
     private void ConfirmButtonPressed(BaseButton.ButtonEventArgs obj)
     {
-        if (_selectedBorgType == null)
+        if (_selectedBorgType == null ||
+            SubtypeSelection.SelectedBorgSubtype == null || // HS
+            SubtypeSelection.SelectedBorgSubtype.ParentBorgType != _selectedBorgType) // HS
             return;
 
-        ConfirmedBorgType?.Invoke(_selectedBorgType);
+        ConfirmedBorgType?.Invoke(_selectedBorgType, SubtypeSelection.SelectedBorgSubtype); // HS
     }
 
     private static string PrototypeName(BorgTypePrototype prototype)
