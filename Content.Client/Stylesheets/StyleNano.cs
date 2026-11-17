@@ -39,7 +39,25 @@ namespace Content.Client.Stylesheets
 
         }
 
+    // HS START: Font for Goob features
+    public static Font NotoStack2ElectricBoogaloo(
+        this IResourceCache resCache,
+        string path = "/Fonts/NotoSans/NotoSans-Regular.ttf",
+        int size = 10)
+    {
+        return resCache.GetFont(
+            new[]
+            {
+                path,
+                "/Fonts/NotoSans/NotoSansSymbols-Regular.ttf",
+                "/Fonts/NotoSans/NotoSansSymbols2-Regular.ttf",
+                "/Fonts/NotoSans/NotoSansSC-Regular.ttf",
+            },
+            size);
     }
+    // HS END
+}
+
     // STLYE SHEETS WERE A MISTAKE. KILL ALL OF THIS WITH FIRE
     [Obsolete("Please use the new sheetlet system to define styles, and remove all references to this class as it may be deleted in the future")]
     // i did :)
