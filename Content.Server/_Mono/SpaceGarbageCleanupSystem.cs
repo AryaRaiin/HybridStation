@@ -4,11 +4,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Content.Server.Shuttles.Components;
 using Content.Shared._Mono.CCVar;
 using Robust.Shared.Configuration;
 using Robust.Shared.Containers;
 using Robust.Shared.Timing;
+using Content.Shared.Shuttles.Components; // HS
 
 namespace Content.Server._Mono;
 

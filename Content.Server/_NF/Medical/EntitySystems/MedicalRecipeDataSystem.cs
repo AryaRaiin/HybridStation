@@ -1,6 +1,5 @@
 using System.Linq;
 using Content.Client.Chemistry.EntitySystems;
-using Content.Server.Medical.Components;
 using Content.Shared.Chemistry.Components.SolutionManager;
 using Content.Shared.Chemistry.Reagent;
 using Content.Shared.Damage;
@@ -10,6 +9,7 @@ using Robust.Shared.Enums;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
+using Content.Shared.Medical.Healing; // HS
 
 namespace Content.Server._NF.Medical.EntitySystems;
 

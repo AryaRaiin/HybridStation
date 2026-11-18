@@ -1,8 +1,8 @@
 using System.Linq;
-using Content.Server.Storage.Components;
 using Robust.Shared.Containers;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Timing;
+using Content.Shared.Storage.Components; // HS
 
 namespace Content.Server.Shuttles.Systems;
 

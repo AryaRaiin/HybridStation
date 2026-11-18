@@ -26,6 +26,7 @@ using Content.Shared.Weapons.Ranged.Events;
 using Robust.Shared.Map;
 using Robust.Shared.Player;
 using SpaceArtilleryComponent = Content.Server._Mono.SpaceArtillery.Components.SpaceArtilleryComponent;
+using Content.Shared.Power.Components; // HS
 
 namespace Content.Server._Mono.SpaceArtillery;
 

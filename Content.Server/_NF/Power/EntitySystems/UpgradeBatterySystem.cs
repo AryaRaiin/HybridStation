@@ -1,8 +1,8 @@
 using Content.Server.Construction;
-using Content.Server.Power.Components;
 using JetBrains.Annotations;
 using Content.Server._NF.Power.Components;
 using Content.Server.Power.EntitySystems;
+using Content.Shared.Power.Components; // HS
 
 namespace Content.Server._NF.Power.EntitySystems;
 

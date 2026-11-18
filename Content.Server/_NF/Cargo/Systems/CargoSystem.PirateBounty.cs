@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Content.Server._NF.Contraband.Components;
 using Content.Server._NF.Pirate.Components;
-using Content.Server.Labels;
 using Content.Shared._NF.Bank;
 using Content.Shared._NF.Pirate;
 using Content.Shared._NF.Pirate.Components;
@@ -17,6 +16,7 @@ using Robust.Shared.Containers;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
 using Content.Shared.Stacks;
+using Content.Shared.Labels.EntitySystems; // HS
 
 namespace Content.Server.Cargo.Systems; // Needs to collide with base namespace
 
