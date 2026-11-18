@@ -515,30 +515,6 @@ namespace Content.Server.Database
             return RunDbCommand(() => _db.GetPlayerPreferencesAsync(userId, cancel));
         }
 
-        public Task<int> GetMonoCoinsAsync(NetUserId userId, CancellationToken cancel = default)
-        {
-            DbReadOpsMetric.Inc();
-            return RunDbCommand(() => _db.GetMonoCoinsAsync(userId, cancel));
-        }
-
-        public Task SetMonoCoinsAsync(NetUserId userId, int balance, CancellationToken cancel = default)
-        {
-            DbWriteOpsMetric.Inc();
-            return RunDbCommand(() => _db.SetMonoCoinsAsync(userId, balance, cancel));
-        }
-
-        public Task<int> AddMonoCoinsAsync(NetUserId userId, int amount, CancellationToken cancel = default)
-        {
-            DbWriteOpsMetric.Inc();
-            return RunDbCommand(() => _db.AddMonoCoinsAsync(userId, amount, cancel));
-        }
-
-        public Task<bool> TrySubtractMonoCoinsAsync(NetUserId userId, int amount, CancellationToken cancel = default)
-        {
-            DbWriteOpsMetric.Inc();
-            return RunDbCommand(() => _db.TrySubtractMonoCoinsAsync(userId, amount, cancel));
-        }
-
         public Task AssignUserIdAsync(string name, NetUserId userId)
         {
             DbWriteOpsMetric.Inc();
@@ -1069,7 +1045,7 @@ namespace Content.Server.Database
             DbWriteOpsMetric.Inc();
             return RunDbCommand(() => _db.RemoveJobWhitelist(player, job));
         }
-        
+
         // Frontier: ghost role DB ops
         public Task AddGhostRoleWhitelist(Guid player, ProtoId<GhostRolePrototype> ghostRole)
         {
