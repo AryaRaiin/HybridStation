@@ -120,7 +120,10 @@ public partial class ShuttleNavControl : BaseShuttleControl // Mono
     }
     // HS END
 
-    //public ShuttleNavControl() : base(64f, 256f, 256f)
+    public ShuttleNavControl() : this(64f, 256f, 256f)
+    {
+    }
+
     public ShuttleNavControl(float minRange=64f, float maxRange=256f, float range=256f) : base(minRange, maxRange, range) // Mono allow overrides to default
     {
         RobustXamlLoader.Load(this);
