@@ -284,7 +284,7 @@ public sealed partial class ChatSystem : SharedChatSystem
         if (player != null && emoteStr != message && emoteStr != null)
         {
             //SendEntityEmote(source, emoteStr, range, nameOverride, ignoreActionBlocker);
-            SendEntityEmote(source, emoteStr, range, nameOverride, language, ignoreActionBlocker); // Einstein Engines - Language
+            SendEntityEmoteInternal(source, emoteStr, range, nameOverride, language, ignoreActionBlocker: ignoreActionBlocker); // HS: updated for EE languages
         }
 
         // This can happen if the entire string is sanitized out.
@@ -339,7 +339,7 @@ public sealed partial class ChatSystem : SharedChatSystem
                 break;
             case InGameICChatType.Emote:
                 //SendEntityEmote(source, message, range, nameOverride, hideLog: hideLog, ignoreActionBlocker: ignoreActionBlocker);
-                SendEntityEmote(source, message, range, nameOverride, language, hideLog: hideLog, ignoreActionBlocker: ignoreActionBlocker); // Einstein Engines - Language
+                SendEntityEmoteInternal(source, message, range, nameOverride, language, hideLog: hideLog, ignoreActionBlocker: ignoreActionBlocker); // HS: updated for EE languages
                 break;
         }
     }
@@ -608,7 +608,7 @@ public sealed partial class ChatSystem : SharedChatSystem
 
         SendInVoiceRange(ChatChannel.Local, name, message, wrappedMessage, obfuscated, wrappedObfuscated, source, range, languageOverride: language); // Einstein Engines - Language
 
-        var ev = new EntitySpokeEvent(source, message, null, false); // Einstein Engines - Language
+        var ev = new EntitySpokeEvent(source, message, null, null); // HS: updated for EE languages
         RaiseLocalEvent(source, ev, true);
 
         // To avoid logging any messages sent by entities that are not players, like vendors, cloning, etc.
