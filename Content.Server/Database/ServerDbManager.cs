@@ -51,13 +51,6 @@ namespace Content.Server.Database
         Task<PlayerPreferences?> GetPlayerPreferencesAsync(NetUserId userId, CancellationToken cancel);
         #endregion
 
-        #region MonoCoins
-        Task<int> GetMonoCoinsAsync(NetUserId userId, CancellationToken cancel = default);
-        Task SetMonoCoinsAsync(NetUserId userId, int balance, CancellationToken cancel = default);
-        Task<int> AddMonoCoinsAsync(NetUserId userId, int amount, CancellationToken cancel = default);
-        Task<bool> TrySubtractMonoCoinsAsync(NetUserId userId, int amount, CancellationToken cancel = default);
-        #endregion
-
         #region User Ids
         // Username assignment (for guest accounts, so they persist GUID)
         Task AssignUserIdAsync(string name, NetUserId userId);
