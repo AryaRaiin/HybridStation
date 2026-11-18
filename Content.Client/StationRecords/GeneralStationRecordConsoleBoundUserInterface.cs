@@ -24,10 +24,7 @@ public sealed class GeneralStationRecordConsoleBoundUserInterface : BoundUserInt
             SendMessage(new SelectStationRecord(key));
         _window.OnFiltersChanged += (type, filterValue) =>
             SendMessage(new SetStationRecordFilter(type, filterValue));
-        _window.OnJobAdd += OnJobsAdd; // Frontier: job modification buttons
-        _window.OnJobSubtract += OnJobsSubtract; // Frontier: job modification buttons
         _window.OnDeleted += id => SendMessage(new DeleteStationRecord(id));
-        _window.OnAdvertisementChanged += OnAdvertisementChanged; // Frontier: job modification buttons
     }
 
     // Frontier: job modification buttons, ship advertisements
