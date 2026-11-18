@@ -68,6 +68,8 @@ namespace Content.Server.Destructible
         [Dependency] public readonly IPrototypeManager PrototypeManager = default!;
         [Dependency] public readonly IAdminLogManager AdminLogger = default!;
 
+        [Dependency] public readonly Content.Shared.Trigger.Systems.TriggerSystem TriggerSystem = default!; // HS
+
         public override void Initialize()
         {
             base.Initialize();
