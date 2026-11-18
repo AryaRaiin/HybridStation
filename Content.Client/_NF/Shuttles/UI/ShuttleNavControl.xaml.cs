@@ -14,7 +14,6 @@ using Content.Shared.Shuttles.BUIStates;
 using Content.Shared.Shuttles.Components;
 using Robust.Shared.Physics.Components;
 using System.Numerics;
-using Content.Shared._Mono.Company;
 using Robust.Client.Graphics;
 using Robust.Shared.Collections;
 using Robust.Shared.Prototypes;
@@ -77,31 +76,6 @@ namespace Content.Client.Shuttles.UI
                 UiPosition = uiPosition,
                 VectorToPosition = uiPosition - new Vector2(uiXCentre, uiYCentre),
                 Color = color
-            });
-        }
-
-        private static void NfAddBlipToList(List<BlipData> blipDataList, bool isOutsideRadarCircle, Vector2 uiPosition, int uiXCentre, int uiYCentre, Color color, EntityUid gridUid = default)
-        {
-            // Check if the entity has a company component and use that color if available
-            Color blipColor = color;
-
-            if (gridUid != default &&
-                IoCManager.Resolve<IEntityManager>().TryGetComponent(gridUid, out Shared._Mono.Company.CompanyComponent? companyComp) &&
-                !string.IsNullOrEmpty(companyComp.CompanyName))
-            {
-                var prototypeManager = IoCManager.Resolve<IPrototypeManager>();
-                if (prototypeManager.TryIndex<CompanyPrototype>(companyComp.CompanyName, out var prototype) && prototype != null)
-                {
-                    blipColor = prototype.Color;
-                }
-            }
-
-            blipDataList.Add(new BlipData
-            {
-                IsOutsideRadarCircle = isOutsideRadarCircle,
-                UiPosition = uiPosition,
-                VectorToPosition = uiPosition - new Vector2(uiXCentre, uiYCentre),
-                Color = blipColor
             });
         }
 

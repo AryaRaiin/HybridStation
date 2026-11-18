@@ -68,7 +68,6 @@ using Content.Shared.Access;
 using Content.Shared._NF.Bank.BUI;
 using Content.Shared._NF.ShuttleRecords;
 using Content.Server.StationEvents.Components;
-using Content.Shared._Mono.Company;
 using Content.Shared.Forensics.Components;
 using Content.Shared.Shuttles.Components;
 using Robust.Shared.Player;
@@ -262,14 +261,6 @@ public sealed partial class ShipyardSystem : SharedShipyardSystem
                  !string.IsNullOrEmpty(voucherCompany.CompanyName))
         {
             companyName = voucherCompany.CompanyName;
-        }
-
-        // Apply company to ship if we found one
-        if (!string.IsNullOrEmpty(companyName))
-        {
-            var shipCompany = EnsureComp<CompanyComponent>(shuttleUid);
-            shipCompany.CompanyName = companyName;
-            Dirty(shuttleUid, shipCompany);
         }
 
         EntityUid? shuttleStation = null;
