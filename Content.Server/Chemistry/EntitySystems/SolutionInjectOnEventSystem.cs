@@ -108,8 +108,7 @@ public sealed class SolutionInjectOnCollideSystem : EntitySystem
             {
                 // Only show popup to attacker
                 if (source != null)
-                    _popup.PopupEntity(Loc.GetString(injector.Comp.BlockedByHardsuitPopupMessage, ("weapon", injector.Owner), ("target", target)), target, source.Value, PopupType.SmallCaution);
-
+                    _popup.PopupEntity(Loc.GetString(injector.Comp.BlockedByArmorPopupMessage, ("weapon", injector.Owner), ("target", target)), target, source.Value, PopupType.SmallCaution);
                 continue;
             }
 
