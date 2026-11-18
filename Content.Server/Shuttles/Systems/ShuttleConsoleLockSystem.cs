@@ -17,7 +17,6 @@ using Robust.Shared.Audio.Systems;
 using Content.Shared.Verbs;
 using Robust.Shared.Utility;
 using Content.Server._NF.Shipyard.Components;
-using Content.Shared._Mono.Company;
 using Content.Shared._Mono.Shipyard;
 using Content.Shared.Silicons.Borgs.Components;
 using Content.Shared.Interaction;

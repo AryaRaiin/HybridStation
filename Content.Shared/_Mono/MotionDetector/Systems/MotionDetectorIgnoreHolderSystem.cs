@@ -39,12 +39,6 @@ public sealed class MotionDetectorIgnoreHolderSystem : EntitySystem
             return;
         }
 
-        if (holder != null && ShouldIgnoreCompanyMember(holder.Value, targetEntity))
-        {
-            args.Cancelled = true;
-            return;
-        }
-
         if (!IsEntityMoving(targetEntity))
         {
             args.Cancelled = true;
@@ -64,28 +58,6 @@ public sealed class MotionDetectorIgnoreHolderSystem : EntitySystem
         var speed = velocity.Length();
 
         return speed > minVelocityThreshold;
-    }
-
-    /// <summary>
-    /// Checks if the target entity should be ignored based on company affiliation.
-    /// </summary>
-    private bool ShouldIgnoreCompanyMember(EntityUid holder, EntityUid target)
-    {
-        if (!TryComp<CompanyComponent>(holder, out var holderCompany))
-            return false;
-
-        if (!TryComp<CompanyComponent>(target, out var targetCompany))
-            return false;
-
-        if (string.IsNullOrEmpty(holderCompany.CompanyName) ||
-            string.IsNullOrEmpty(targetCompany.CompanyName) ||
-            holderCompany.CompanyName == "None" ||
-            targetCompany.CompanyName == "None")
-        {
-            return false;
-        }
-
-        return holderCompany.CompanyName == targetCompany.CompanyName;
     }
 
     /// <summary>

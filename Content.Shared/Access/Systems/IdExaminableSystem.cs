@@ -71,28 +71,12 @@ public sealed class IdExaminableSystem : EntitySystem
     {
         var jobSuffix = string.IsNullOrWhiteSpace(id.LocalizedJobTitle) ? string.Empty : $" ({id.LocalizedJobTitle})";
 
-        // Get company information if available
-        var companySuffix = string.Empty;
-        if (!string.IsNullOrWhiteSpace(id.CompanyName) && id.CompanyName != "None")
-        {
-            if (_prototypeManager.TryIndex<CompanyPrototype>(id.CompanyName, out var companyProto))
-            {
-                companySuffix = $" - [color={companyProto.Color.ToHex()}]{companyProto.Name}[/color]";
-            }
-            else
-            {
-                companySuffix = $" - {id.CompanyName}";
-            }
-        }
-
         var val = string.IsNullOrWhiteSpace(id.FullName)
             ? Loc.GetString(id.NameLocId,
-                ("jobSuffix", jobSuffix),
-                ("companySuffix", companySuffix))
+                ("jobSuffix", jobSuffix))
             : Loc.GetString(id.FullNameLocId,
                 ("fullName", id.FullName),
-                ("jobSuffix", jobSuffix),
-                ("companySuffix", companySuffix));
+                ("jobSuffix", jobSuffix));
 
         return val;
     }

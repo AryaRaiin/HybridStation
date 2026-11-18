@@ -6,7 +6,6 @@ using Content.Client.Inventory;
 using Content.Client.Lobby.UI;
 using Content.Client.Players.PlayTimeTracking;
 using Content.Client.Station;
-using Content.Shared._Mono.Company;
 using Content.Shared.CCVar;
 using Content.Shared.Clothing;
 using Content.Shared.GameTicking;

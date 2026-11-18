@@ -5,7 +5,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using System.Linq;
-using Content.Shared._Mono.Company;
 using Content.Shared._Mono.Ships.Components;
 using Content.Shared._NF.Shipyard.Prototypes;
 using Content.Shared.Shuttles.Components;
@@ -131,10 +130,6 @@ public sealed class CloakSuppressionSystem : EntitySystem
             if (HasComp<TemporaryFtlIffStorageComponent>(shipUid))
                 continue;
 
-            // Check if the target ship has a matching company
-            if (ShouldNotSuppressShip(shipUid, hunterPrototype))
-                continue;
-
             var shipPos = _transform.GetMapCoordinates(shipUid, xform: shipXform);
             var distance = (hunterPos.Position - shipPos.Position).Length();
 
@@ -144,25 +139,6 @@ public sealed class CloakSuppressionSystem : EntitySystem
                 SuppressShipIff(shipUid, hunterUid, iffComp);
             }
         }
-    }
-
-    /// <summary>
-    /// Checks if a ship should be suppressed based on company matching.
-    /// </summary>
-    private bool ShouldNotSuppressShip(EntityUid shipUid, VesselPrototype hunterPrototype)
-    {
-        // If no companies specified, suppress all ships
-        if (hunterPrototype.Company.Count == 0)
-            return false;
-
-        // Check if the ship has a company component that matches any of the hunter's allied companies
-        if (TryComp<CompanyComponent>(shipUid, out var companyComp))
-        {
-            return hunterPrototype.Company.Contains(companyComp.CompanyName);
-        }
-
-        // If ship has no company component, suppress it
-        return false;
     }
 
     /// <summary>
