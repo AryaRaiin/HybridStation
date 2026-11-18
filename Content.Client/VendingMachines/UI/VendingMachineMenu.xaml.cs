@@ -43,8 +43,8 @@ using Content.Shared.Cargo.Components;
 using Content.Shared.Chemistry.Components.SolutionManager;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Stacks;
-using Robust.Client.Graphics;
 using Robust.Shared.Utility;
+using Content.Shared.Chemistry.Reagent; // HS
 
 namespace Content.Client.VendingMachines.UI
 {
@@ -157,7 +157,7 @@ namespace Content.Client.VendingMachines.UI
             {
                 var entry = inventory[i];
 
-                if (!_prototypeManager.Resolve(entry.ID, out var prototype))
+                if (!_prototypeManager.Resolve(entry.ID, out var prototype) || prototype == null)
                 {
                     _amounts[entry.ID] = 0;
                     continue;
@@ -186,7 +186,7 @@ namespace Content.Client.VendingMachines.UI
                     if (priceComponent.Price != 0)
                     {
                         var price = (float)priceComponent.Price;
-                        cost = (int)(price * priceModifier);
+                        cost = (int)(price);
                     }
                     else
                     {
@@ -194,14 +194,14 @@ namespace Content.Client.VendingMachines.UI
                             && prototype.TryGetComponent<StackComponent>(out var stack, _entityManager.ComponentFactory))
                         {
                             var price = stackPrice.Price * stack.Count;
-                            cost = (int)(price * priceModifier);
+                            cost = (int)(price);
                         }
                         else
-                            cost = (int)(cost * priceModifier);
+                            cost = (int)(cost);
                     }
                 }
                 else
-                    cost = (int)(cost * priceModifier);
+                    cost = (int)(cost);
 
                 if (prototype != null && prototype.TryGetComponent<SolutionContainerManagerComponent>(out var priceSolutions, _entityManager.ComponentFactory))
                 {
@@ -211,12 +211,12 @@ namespace Content.Client.VendingMachines.UI
                         {
                             foreach (var (reagent, quantity) in solution.Contents)
                             {
-                                if (!_prototypeManager.Resolve(reagent.Prototype, out var reagentProto))
+                                if (!_prototypeManager.TryIndex<ReagentPrototype>(reagent.Prototype, out var reagentProto))
                                     continue;
 
                                 // TODO check ReagentData for price information?
                                 var costReagent = quantity.Float() * reagentProto.PricePerUnit;
-                                cost += (int)(costReagent * priceModifier);
+                                cost += (int)(costReagent);
                             }
                         }
                     }
@@ -258,11 +258,10 @@ namespace Content.Client.VendingMachines.UI
                 }
                 // Frontier END: unlimited vending
 
-
                 if (itemText.Length > longestEntry.Length)
                     longestEntry = itemText;
 
-                listData.Add(new VendorItemsListData(prototype.ID, i)
+                listData.Add(new VendorItemsListData(entry.ID, i)
                 {
                     ItemText = itemText,
                 });

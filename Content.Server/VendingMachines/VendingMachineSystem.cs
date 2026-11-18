@@ -317,10 +317,6 @@ namespace Content.Server.VendingMachines
             if (price == 0)
                 price = 20;
 
-
-            if (TryComp<MarketModifierComponent>(sender, out var modifier))
-                price *= modifier.Mod;
-
             var totalPrice = (int) price;
 
             // If any price has a vendor price, explicitly use its value - higher OR lower, over others.
