@@ -91,7 +91,7 @@ public sealed class VendingMachineSystem : SharedVendingMachineSystem
     // Frontier START
     private void OnEntityInserted(Entity<VendingMachineComponent> ent, ref EntInsertedIntoContainerMessage args)
     {
-        if (_uiSystem.TryGetOpenUi<VendingMachineBoundUserInterface>(ent.Owner, VendingMachineUiKey.Key, out var bui))
+        if (UISystem.TryGetOpenUi<VendingMachineBoundUserInterface>(ent.Owner, VendingMachineUiKey.Key, out var bui))
         {
             bui.Refresh();
         }
@@ -99,7 +99,7 @@ public sealed class VendingMachineSystem : SharedVendingMachineSystem
 
     private void OnEntityRemoved(Entity<VendingMachineComponent> ent, ref EntRemovedFromContainerMessage args)
     {
-        if (_uiSystem.TryGetOpenUi<VendingMachineBoundUserInterface>(ent.Owner, VendingMachineUiKey.Key, out var bui))
+        if (UISystem.TryGetOpenUi<VendingMachineBoundUserInterface>(ent.Owner, VendingMachineUiKey.Key, out var bui))
         {
             bui.Refresh();
         }
