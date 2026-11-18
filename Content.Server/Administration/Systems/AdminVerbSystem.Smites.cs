@@ -100,7 +100,7 @@ using Robust.Shared.Audio; // Frontier
 using Content.Server._NF.Speech.Components; // Frontier
 using Content.Shared.Damage.Prototypes; // Frontier
 using Content.Shared.Bed.Sleep; // Frontier
-
+using Content.Shared.Damage; // HS
 namespace Content.Server.Administration.Systems;
 
 public sealed partial class AdminVerbSystem
@@ -1088,64 +1088,6 @@ public sealed partial class AdminVerbSystem
             Message = string.Join(": ", homingRodSlowName, Loc.GetString("admin-smite-homing-rod-slow-description"))
         };
         args.Verbs.Add(homingRodSlow);
-
-        // Frontier START
-        var cavemanName = Loc.GetString("admin-smite-caveman-name").ToLowerInvariant();
-        Verb caveman = new()
-        {
-            Text = cavemanName,
-            Category = VerbCategory.Smite,
-            Icon = new SpriteSpecifier.Rsi(new("_NF/Objects/Weapons/Melee/caveman_club.rsi"), "icon"),
-            Act = () =>
-            {
-                // Remove whatever they're holding, summon & pickup the funny club, destroy on failure
-                var hand = _handsSystem.GetActiveHand(args.Target);
-                if (hand != null)
-                {
-                    _handsSystem.TryDrop(args.Target, hand);
-                    var club = EntityManager.SpawnNextToOrDrop("CavemanClubCursed", args.Target);
-                    if (club.Valid &&
-                        !_handsSystem.TryPickupAnyHand(args.Target, club, false))
-                    {
-                        QueueDel(club);
-                    }
-                }
-
-                if (_prototypeManager.TryIndex<DamageTypePrototype>("Blunt", out var bluntProto))
-                {
-                    var bluntDamage = new DamageSpecifier(bluntProto, 10);
-                    _damageable.TryChangeDamage(args.Target, bluntDamage, true);
-                }
-
-                // Make them slip and fall.
-                var hadSlipComponent = EnsureComp(args.Target, out SlipperyComponent slipComponent);
-                if (!hadSlipComponent)
-                {
-                    slipComponent.SlipData.SuperSlippery = true;
-                    slipComponent.SlipData.ParalyzeTime = TimeSpan.FromSeconds(10);
-                    slipComponent.SlipData.LaunchForwardsMultiplier = 1;
-                }
-
-                _slipperySystem.TrySlip(args.Target, slipComponent, args.Target, requiresContact: false);
-                if (!hadSlipComponent)
-                {
-                    RemComp(args.Target, slipComponent);
-                }
-
-                // Fall asleep
-                _sleep.TrySleeping(args.Target);
-
-                // Play a noise, they bonked their head
-                _popup.PopupEntity(Loc.GetString("admin-smite-caveman-self"), args.Target, player, PopupType.LargeCaution);
-                _audio.PlayPvs(new SoundPathSpecifier("/Audio/_NF/Effects/bonk.ogg"), args.Target, AudioParams.Default.WithMaxDistance(30.0f).WithVolume(3.0f));
-
-                EnsureComp<CavemanAccentComponent>(args.Target);
-            },
-            Impact = LogImpact.Extreme,
-            Message = string.Join(": ", cavemanName, Loc.GetString("admin-smite-caveman-description"))
-        };
-        args.Verbs.Add(caveman);
-        // Frontier END
     }
 
     public void HomingLaunchSequence(EntityUid target, EntProtoId proto, float distance, float speed)
