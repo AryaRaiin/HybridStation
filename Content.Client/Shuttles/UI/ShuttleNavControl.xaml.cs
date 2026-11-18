@@ -102,6 +102,24 @@ public partial class ShuttleNavControl : BaseShuttleControl // Mono
 
     private List<Entity<MapGridComponent>> _grids = new();
 
+    // HS START: Mono radar/pan/fire state lost in the merge
+    protected bool _isMouseInside;
+    protected bool _isMouseDown;
+    private bool _wasPanned;
+    protected Vector2 _lastMousePos;
+    private EntityCoordinates? _oldCoordinates;
+    private float _updateAccumulator;
+    private float _lastFireTime;
+    protected bool RelativePanning;
+    private const float RadarUpdateInterval = 0.15f;
+    private const float FireRateLimit = 0.1f;
+    // Frontier helper, mouse position relative to this control
+    private Vector2 GetMouseCoordinatesFromCenter()
+    {
+        return _uiManager.MousePositionScaled.Position - GlobalPosition;
+    }
+    // HS END
+
     //public ShuttleNavControl() : base(64f, 256f, 256f)
     public ShuttleNavControl(float minRange=64f, float maxRange=256f, float range=256f) : base(minRange, maxRange, range) // Mono allow overrides to default
     {
@@ -367,7 +385,6 @@ public partial class ShuttleNavControl : BaseShuttleControl // Mono
 
         handle.DrawPrimitives(DrawPrimitiveTopology.TriangleFan, radarPosVerts, Color.Lime);
 
-        var rot = ourEntRot + _rotation.Value;
         var viewBounds = new Box2Rotated(new Box2(-WorldRange, -WorldRange, WorldRange, WorldRange).Translated(mapPos.Position), rot, mapPos.Position);
         var viewAABB = viewBounds.CalcBoundingBox();
 
@@ -408,7 +425,6 @@ public partial class ShuttleNavControl : BaseShuttleControl // Mono
             if(hideColor){ // Frontier labelColor override
                 labelColor = blipOnly ? Color.Orange : Color.White;
             }
-            var coordColor = new Color(labelColor.R * 0.8f, labelColor.G * 0.8f, labelColor.B * 0.8f, 0.5f);
 
             var isPlayerShuttle = iff != null && (iff.Flags & IFFFlags.IsPlayerShuttle) != 0x0;
             // Others default:
@@ -424,7 +440,6 @@ public partial class ShuttleNavControl : BaseShuttleControl // Mono
                     Loc.GetString($"shuttle-console-signature-unknown");
             }
             // Mono END
-
 
             //if (ShowIFF &&
             //     labelName != null)
@@ -482,7 +497,7 @@ public partial class ShuttleNavControl : BaseShuttleControl // Mono
                     );
                 }
 
-                var scaledMousePosition = GetMouseCoordinatesFromCenter().Position * UIScale;
+                var scaledMousePosition = GetMouseCoordinatesFromCenter() * UIScale; // HS: changed from GetMouseCoordinatesFromCenter().Position
                 var isMouseOver = Vector2.Distance(scaledMousePosition, uiPosition * UIScale) < 30f;
 
                 // Distant stations that are not player controlled ships
@@ -584,7 +599,6 @@ public partial class ShuttleNavControl : BaseShuttleControl // Mono
                         };
                         handle.DrawString(Font, (uiPosition + coordOffset) * UIScale, coordsText, 0.7f * UIScale, displayColor);
                     }
-                    handle.DrawString(Font, coordUiPosition, coordsText, 0.7f, coordColor);
                 }
                 NfAddBlipToList(blipDataList, isOutsideRadarCircle, uiPosition, uiXCentre, uiYCentre, labelColor, hideLabel ? default : gUid); // Frontier code
                 // End Frontier: IFF drawing functions
@@ -845,12 +859,12 @@ public partial class ShuttleNavControl : BaseShuttleControl // Mono
         }
     }
 
-    private Vector2 InverseScalePosition(Vector2 value)
+    protected Vector2 InverseScalePosition(Vector2 value)
     {
         return (value - MidPointVector) / MinimapScale;
     }
 
-    // UNKNOWN START
+    // MONO START
     public class BlipData
     {
         public bool IsOutsideRadarCircle { get; set; }
@@ -909,5 +923,5 @@ public partial class ShuttleNavControl : BaseShuttleControl // Mono
             }
         }
     }
-    // UNKNOWN END
+    // MONO END
 }
