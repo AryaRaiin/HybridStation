@@ -16,7 +16,6 @@ using Content.Shared.Storage.Components;
 using Content.Shared.Lock;
 using Content.Shared._NF.Whitelist.Components;
 using Content.Shared.Silicons.Borgs.Components;
-using Content.Shared._Mono.Company;
 using Content.Shared.Ghost;
 using Content.Shared.Silicons.StationAi;
 using Robust.Shared.Map;

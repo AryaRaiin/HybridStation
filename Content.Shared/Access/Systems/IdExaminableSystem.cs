@@ -3,7 +3,6 @@ using Content.Shared.Examine;
 using Content.Shared.Inventory;
 using Content.Shared.PDA;
 using Content.Shared.Verbs;
-using Content.Shared._Mono.Company;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 
