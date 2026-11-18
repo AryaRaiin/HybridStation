@@ -101,6 +101,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Replays;
 using Robust.Shared.Utility;
+using Content.Server._Mono.Chat.Events; // HS - Cortical borer speech moved to _Mono
 
 namespace Content.Server.Chat.Systems;
 
@@ -130,6 +131,8 @@ public sealed partial class ChatSystem : SharedChatSystem
     [Dependency] private readonly CollectiveMindUpdateSystem _collectiveMind = default!; // Goobstation - Starlight collective mind port
 
     public readonly Color DefaultSpeakColor = Color.White; // Einstein Engines - Language
+
+    private const float DefaultObfuscationFactor = 0.2f; // Percentage of symbols in a whispered message that can be seen even by "far" listeners
 
     private bool _loocEnabled = true;
     private bool _deadLoocEnabled;
@@ -204,11 +207,11 @@ public sealed partial class ChatSystem : SharedChatSystem
         bool checkRadioPrefix = true,
         bool ignoreActionBlocker = false)
     {
-        TrySendInGameICMessage(source, message, desiredType, hideChat ? ChatTransmitRange.HideChat : ChatTransmitRange.Normal, hideLog, shell, player, nameOverride, checkRadioPrefix, ignoreActionBlocker);
+        TrySendInGameICMessageInternal(source, message, desiredType, hideChat ? ChatTransmitRange.HideChat : ChatTransmitRange.Normal, hideLog, shell, player, nameOverride, checkRadioPrefix, ignoreActionBlocker);
     }
 
     /// <inheritdoc />
-    public override void TrySendInGameICMessage(
+    private void TrySendInGameICMessageInternal(
         EntityUid source,
         string message,
         InGameICChatType desiredType,
@@ -605,7 +608,7 @@ public sealed partial class ChatSystem : SharedChatSystem
 
         SendInVoiceRange(ChatChannel.Local, name, message, wrappedMessage, obfuscated, wrappedObfuscated, source, range, languageOverride: language); // Einstein Engines - Language
 
-        var ev = new EntitySpokeEvent(source, message, null, false, language); // Einstein Engines - Language
+        var ev = new EntitySpokeEvent(source, message, null, false); // Einstein Engines - Language
         RaiseLocalEvent(source, ev, true);
 
         // To avoid logging any messages sent by entities that are not players, like vendors, cloning, etc.
@@ -730,7 +733,7 @@ public sealed partial class ChatSystem : SharedChatSystem
         // Einstein Engines - Languages end
 
         //var ev = new EntitySpokeEvent(source, message, channel, obfuscatedMessage);
-        var ev = new EntitySpokeEvent(source, message, channel, true, language); // Einstein Engines - Languages
+        var ev = new EntitySpokeEvent(source, message, channel, languageObfuscatedMessage); // Einstein Engines - Languages
         RaiseLocalEvent(source, ev, true);
         if (!hideLog)
             if (originalMessage == message)
@@ -827,12 +830,25 @@ public sealed partial class ChatSystem : SharedChatSystem
         string action,
         ChatTransmitRange range,
         string? nameOverride,
-        LanguagePrototype language, // Einstein Engines - Language
         bool hideLog = false,
         bool checkEmote = true,
         bool ignoreActionBlocker = false,
-        NetUserId? author = null
-        )
+        NetUserId? author = null)
+    {
+        var language = _language.GetLanguage(source);
+        SendEntityEmoteInternal(source, action, range, nameOverride, language, hideLog, checkEmote, ignoreActionBlocker, author);
+    }
+
+    private void SendEntityEmoteInternal(
+            EntityUid source,
+            string action,
+            ChatTransmitRange range,
+            string? nameOverride,
+            LanguagePrototype language,
+            bool hideLog = false,
+            bool checkEmote = true,
+            bool ignoreActionBlocker = false,
+            NetUserId? author = null)
     {
         if (!_actionBlocker.CanEmote(source) && !ignoreActionBlocker)
             return;
@@ -1245,3 +1261,4 @@ public sealed partial class ChatSystem : SharedChatSystem
 public record ExpandICChatRecipientsEvent(EntityUid Source, float VoiceRange, Dictionary<ICommonSession, ChatSystem.ICChatRecipientData> Recipients)
 {
 }
+
