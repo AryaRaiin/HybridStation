@@ -42,7 +42,6 @@ public sealed partial class CargoSystem : SharedCargoSystem
     [Dependency] private readonly MetaDataSystem _metaSystem = default!;
     [Dependency] private readonly RadioSystem _radio = default!;
     [Dependency] private readonly SectorServiceSystem _sectorService = default!; // Frontier
-    [Dependency] private readonly EntityWhitelistSystem _whitelistSystem = default!; // Frontier
 
     private EntityQuery<TransformComponent> _xformQuery;
     private EntityQuery<CargoSellBlacklistComponent> _blacklistQuery;

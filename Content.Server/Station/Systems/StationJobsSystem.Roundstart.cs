@@ -6,13 +6,10 @@ using Content.Server.Station.Components;
 using Content.Server.Station.Events;
 using Content.Shared.Preferences;
 using Content.Shared.Roles;
-using Robust.Server.Player;
 using Robust.Shared.Network;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
-using Robust.Server.Player; // Frontier
-using Content.Shared.Players.PlayTimeTracking; // Frontier
 
 namespace Content.Server.Station.Systems;
 
@@ -22,7 +19,6 @@ public sealed partial class StationJobsSystem
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
     [Dependency] private readonly IBanManager _banManager = default!;
     [Dependency] private readonly AntagSelectionSystem _antag = default!;
-    [Dependency] private readonly IPlayerManager _playerManager = default!; // Frontier
     [Dependency] private readonly PlayTimeTrackingSystem _playTime = default!; // Frontier
 
     private Dictionary<int, HashSet<string>> _jobsByWeight = default!;
@@ -306,7 +302,7 @@ public sealed partial class StationJobsSystem
             _random.Shuffle(givenStations);
 
             // Frontier: get player session
-            _playerManager.TryGetSessionById(player, out var nfSession);
+            _player.TryGetSessionById(player, out var nfSession);
             // End Frontier
 
             foreach (var station in givenStations)

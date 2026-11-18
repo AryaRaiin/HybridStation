@@ -49,7 +49,8 @@ using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 using Content.Shared.Localizations;
 using Content.Shared.Power;
-using Content.Server.Construction; // Frontier
+using Content.Server.Construction;
+using Content.Server.Power.Components; // Frontier
 using Content.Shared.DeviceLinking.Events; // Frontier
 
 namespace Content.Server.Shuttles.Systems;
@@ -687,7 +688,7 @@ public sealed class ThrusterSystem : EntitySystem
         args.AddPercentageUpgrade("thruster-comp-upgrade-thrust", component.Thrust / component.BaseThrust);
     }
     // UNKNOWN END
-    
+
     #endregion
 
     private int GetFlagIndex(DirectionFlag flag)

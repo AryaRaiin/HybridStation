@@ -20,12 +20,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using System.Collections;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
-using Content.Server.Atmos;
 using Content.Server.Atmos.Components;
 using Content.Server.Atmos.EntitySystems;
 using Robust.Shared.CPUJob.JobQueues;
@@ -35,7 +33,6 @@ using Content.Server.Procedural;
 using Content.Server.Salvage.Expeditions;
 using Content.Shared.Atmos;
 using Content.Shared.Construction.EntitySystems;
-using Content.Shared.Dataset;
 using Content.Shared.Gravity;
 using Content.Shared.Parallax.Biomes;
 using Content.Shared.Physics;
@@ -575,7 +572,6 @@ public sealed class SpawnSalvageMissionJob : Job<bool>
 
                 var spawnPosition = _map.GridTileToLocal(mapUid, grid, spawnTile);
                 var uid = _entManager.SpawnEntity(shaggy, spawnPosition);
-                _entManager.AddComponent<SalvageStructureComponent>(uid);
                 structureComp.Structures.Add(uid);
                 break;
             }

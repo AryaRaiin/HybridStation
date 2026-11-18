@@ -44,6 +44,7 @@ using Content.Shared.Temperature.Components;
 using Content.Server.Atmos.Components; // Mono
 using Content.Server.Atmos.EntitySystems; // Mono
 using Content.Shared._NF.Kitchen.Components; // Frontier
+using Content.Shared.Atmos.Components; // Frontier
 
 namespace Content.Server.Kitchen.EntitySystems
 {

@@ -17,6 +17,7 @@ using Robust.Shared.Timing;
 
 // Shitmed START
 using System.Linq;
+using Content.Server.Body.Components;
 using Content.Shared.Damage;
 using Content.Shared.Gibbing.Events;
 // Shitmed END
@@ -79,7 +80,7 @@ public sealed partial class BodySystem : SharedBodySystem // Shitmed change: mad
         if (layer != null)
         {
             var layers = HumanoidVisualLayersExtension.Sublayers(layer.Value);
-            _humanoidSystem.SetLayersVisibility( bodyEnt.Owner, 
+            _humanoidSystem.SetLayersVisibility( bodyEnt.Owner,
                     new[] { layer.Value }, //Shitmed Change?
                     visible: true);
         }

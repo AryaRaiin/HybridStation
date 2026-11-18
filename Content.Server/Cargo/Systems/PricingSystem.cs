@@ -46,6 +46,7 @@ using Robust.Shared.Utility;
 using Content.Server.Materials.Components; // Frontier
 using Content.Server._Mono.VendingMachine; // Mono
 using System.Linq;
+using Content.Shared.Cargo.Components;
 using Content.Shared.Research.Prototypes;
 
 namespace Content.Server.Cargo.Systems;
@@ -137,7 +138,7 @@ public sealed class PricingSystem : EntitySystem
             partPenalty = component.Price * (1 - partRatio) * component.MissingBodyPartPenalty;
         }
 
-        args.Price += (component.Price - partPenalty) * (_mobStateSystem.IsAlive(uid, state) ? 1.0 : component.DeathPenalty) 
+        args.Price += (component.Price - partPenalty) * (_mobStateSystem.IsAlive(uid, state) ? 1.0 : component.DeathPenalty)
             * (HasComp<LabGrownComponent>(uid) ? 1.0 : component.LabGrownPenalty); // Frontier - LabGrown
     }
 

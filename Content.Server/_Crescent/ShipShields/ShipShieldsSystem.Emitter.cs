@@ -6,13 +6,12 @@ using Content.Shared._Crescent.ShipShields;
 using Content.Server.Power.Components;
 using Content.Shared.Projectiles;
 using Robust.Shared.Physics.Components;
-using Content.Server.Emp;
 using Content.Server.Explosion.EntitySystems;
 using Content.Server.Station.Systems;
 using Robust.Shared.Audio.Systems;
 using Content.Shared.Examine;
-using Content.Server.Explosion.Components;
 using Content.Shared.Explosion.Components;
+using Content.Shared.Trigger.Components.Effects;
 
 namespace Content.Server._Crescent.ShipShields;
 public partial class ShipShieldsSystem

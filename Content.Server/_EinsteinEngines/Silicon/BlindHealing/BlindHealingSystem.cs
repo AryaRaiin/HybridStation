@@ -4,6 +4,7 @@ using Content.Server.Stack;
 using Content.Shared._EinsteinEngines.Silicon.BlindHealing;
 using Content.Shared.Cargo.Components;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Components;
 using Content.Shared.Database;
 using Content.Shared.DoAfter;
 using Content.Shared.Eye.Blinding.Components;
