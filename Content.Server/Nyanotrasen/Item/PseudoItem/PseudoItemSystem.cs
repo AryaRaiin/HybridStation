@@ -38,25 +38,24 @@ public sealed class PseudoItemSystem : SharedPseudoItemSystem
         if (component.Active)
             return;
 
-        if (!TryComp<StorageComponent>(args.Using, out var targetStorage))
+        // HS START
+        if (args.Using is not { } storageUid || !TryComp<StorageComponent>(storageUid, out var targetStorage))
             return;
 
-        if (!CheckItemFits((uid, component), (args.Using.Value, targetStorage)))
-            return;
-
-        if (args.Hands?.ActiveHandEntity == null)
+        if (!CheckItemFits((uid, component), (storageUid, targetStorage)))
             return;
 
         AlternativeVerb verb = new()
         {
             Act = () =>
             {
-                StartInsertDoAfter(args.User, uid, args.Hands.ActiveHandEntity.Value, component);
+                StartInsertDoAfter(args.User, uid, storageUid, component);
             },
             Text = Loc.GetString("action-name-insert-other", ("target", Identity.Entity(args.Target, EntityManager))),
             Priority = 2
         };
         args.Verbs.Add(verb);
+        // HS END
     }
 
     protected override void OnGettingPickedUpAttempt(EntityUid uid, PseudoItemComponent component, GettingPickedUpAttemptEvent args)
