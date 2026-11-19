@@ -487,7 +487,8 @@ public sealed partial class CargoSystem
 
         if (amount > 0)
         {
-            _stack.SpawnMultiple("Doubloon", amount, Transform(uid).Coordinates);
+            Robust.Shared.Prototypes.EntProtoId doubloon = "Doubloon"; // HS
+            _stack.SpawnMultipleAtPosition(doubloon, amount, Transform(uid).Coordinates); // HS
             _audio.PlayPvs(component.AcceptSound, uid);
             _popup.PopupEntity(Loc.GetString("pirate-bounty-redemption-success", ("bounties", redeemedBounties), ("amount", amount)), args.Actor);
         }
