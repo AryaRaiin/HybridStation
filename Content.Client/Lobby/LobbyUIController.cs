@@ -140,6 +140,11 @@ public sealed class LobbyUIController : UIController, IOnStateEntered<LobbyState
         ReloadCharacterSetup();
     }
 
+    public void OnStateEntered(LobbyState state)
+    {
+        PreviewPanel?.SetLoaded(_preferencesManager.ServerDataLoaded);
+        ReloadCharacterSetup();
+    }
     public void OnStateExited(LobbyState state)
     {
         PreviewPanel?.SetLoaded(false);
