@@ -157,7 +157,7 @@ namespace Content.Server.Forensics
                         sectorDD.FMCAccumulator -= payout;
 
                         var stackPrototype = _prototypeManager.Index<StackPrototype>("FederationMilitaryCredit");
-                        _stackSystem.Spawn(payout, stackPrototype, Transform(target).Coordinates);
+                        _stackSystem.SpawnMultipleAtPosition(stackPrototype, payout, Transform(target).Coordinates);
                     }
                 }
             }
