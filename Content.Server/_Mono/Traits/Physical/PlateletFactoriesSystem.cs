@@ -87,7 +87,7 @@ public sealed class PlateletFactoriesSystem : EntitySystem
         if (heal.DamageDict.Count == 0)
             return;
 
-        _damageable.TryChangeDamage(uid, heal, true, false, damage);
+        _damageable.TryChangeDamage((uid, damage), heal, true, false); // HS
     }
 }
 
