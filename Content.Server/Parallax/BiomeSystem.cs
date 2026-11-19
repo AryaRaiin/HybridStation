@@ -1,15 +1,11 @@
-using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using Content.Server.Atmos;
-using Content.Server.Atmos.Components;
 using Content.Server.Atmos.EntitySystems;
 using Content.Server.Decals;
 using Content.Server.Ghost.Roles.Components;
 using Content.Server.Shuttles.Events;
 using Content.Server.Shuttles.Systems;
 using Content.Shared.Atmos;
-using Content.Shared.Decals;
 using Content.Shared.Ghost;
 using Content.Shared.Gravity;
 using Content.Shared.Light.Components;
@@ -93,7 +89,6 @@ public sealed partial class BiomeSystem : SharedBiomeSystem
         SubscribeLocalEvent<FTLStartedEvent>(OnFTLStarted);
         SubscribeLocalEvent<ShuttleFlattenEvent>(OnShuttleFlatten);
         Subs.CVar(_configManager, CVars.NetMaxUpdateRange, SetLoadRange, true);
-        InitializeCommands();
         SubscribeLocalEvent<PrototypesReloadedEventArgs>(ProtoReload);
     }
 
