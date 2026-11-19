@@ -1,8 +1,6 @@
-using Content.Server.Nutrition.Components;
 using Content.Shared.Actions;
 using Content.Shared.Actions.Events;
 using Content.Shared.Audio;
-using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Content.Shared.IdentityManagement;
@@ -13,6 +11,7 @@ using Content.Shared.Popups;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
+using Content.Shared.Charges.Systems; // HS
 
 namespace Content.Server.Abilities.Chitinid;
 
@@ -26,6 +25,7 @@ public sealed partial class ChitinidSystem : EntitySystem
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly DamageableSystem _damageable = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
+    [Dependency] private readonly SharedChargesSystem _charges = default!; // HS
 
     public override void Initialize()
     {
@@ -47,12 +47,12 @@ public sealed partial class ChitinidSystem : EntitySystem
             if (chitinid.AmountAbsorbed >= chitinid.MaximumAbsorbed || _mobState.IsDead(uid))
                 continue;
 
-            if (_damageable.TryChangeDamage(uid, chitinid.Healing, damageable: damageable) is {} delta)
+            if (_damageable.TryChangeDamage((uid, damageable), chitinid.Healing, out var delta))
             {
                 chitinid.AmountAbsorbed += -delta.GetTotal().Float();
                 if (chitinid.ChitziteAction != null && chitinid.AmountAbsorbed >= chitinid.MaximumAbsorbed)
                 {
-                    _actions.SetCharges(chitinid.ChitziteAction, 1); // You get the charge back and that's it. Tough.
+                    _charges.SetCharges((chitinid.ChitziteAction.Value, null), 1); // You get the charge back and that's it. Tough.
                     _actions.SetEnabled(chitinid.ChitziteAction, true);
                 }
             }
