@@ -16,11 +16,11 @@
 // using Content.Goobstation.Server.Explosion.Components.OnTrigger;
 using Content.Server._Goobstation.Explosion.Components;
 // using Content.Server.Explosion.Components;
-using Content.Server.Explosion.EntitySystems;
 // using Content.Shared.Hands.Components;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Inventory;
 using Content.Shared.Trigger;
+using Content.Shared.Trigger.Systems;
 
 // using Content.Shared.Weapons.Melee.Events;
 
