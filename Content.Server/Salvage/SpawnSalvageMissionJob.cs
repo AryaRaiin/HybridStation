@@ -58,6 +58,8 @@ using Content.Server.Weather;
 using Content.Shared.Station.Components; // Frontier
 using Content.Shared.Weather;
 using Robust.Shared.Physics.Components; // Frontier
+using Content.Server.Shuttles.Systems; // HS
+using Content.Server.Station.Systems; // HS
 
 namespace Content.Server.Salvage;
 
@@ -77,6 +79,10 @@ public sealed class SpawnSalvageMissionJob : Job<bool>
     private readonly SalvageMissionParams _missionParams;
 
     private readonly ISawmill _sawmill;
+
+    private readonly SalvageSystem _salvage; // HS
+    private readonly ShuttleSystem _shuttle; // HS
+    private readonly StationSystem _stationSystem; // HS
 
     // Frontier START: Used for saving state between async job
 #pragma warning disable IDE1006 // suppressing _ prefix complaints to reduce merge conflict area
@@ -112,6 +118,10 @@ public sealed class SpawnSalvageMissionJob : Job<bool>
         CancellationToken cancellation = default) : base(maxTime, cancellation)
     {
         _entManager = entManager;
+        _weather = entManager.System<WeatherSystem>(); // HS
+        _salvage = entManager.System<SalvageSystem>(); // HS
+        _shuttle = entManager.System<ShuttleSystem>(); // HS
+        _stationSystem = entManager.System<StationSystem>(); // HS
         _timing = timing;
         _prototypeManager = protoManager;
         _anchorable = anchorable;
@@ -131,27 +141,34 @@ public sealed class SpawnSalvageMissionJob : Job<bool>
     // Frontier START: gracefully handle expedition failures
     protected override async Task<bool> Process()
     {
-        bool success = true;
-        string? errorStackTrace = null;
+        var success = false;
+
         try
         {
-            await InternalProcess().ContinueWith((t) => { success = false; errorStackTrace = t.Exception?.InnerException?.StackTrace; }, TaskContinuationOptions.OnlyOnFaulted);
+            success = await InternalProcess();
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            _sawmill.Error($"Expedition generation failed: {e}");
         }
         finally
         {
-            ExpeditionSpawnCompleteEvent ev = new(Station, success, _missionParams.Index);
+            var ev = new ExpeditionSpawnCompleteEvent(Station, success, _missionParams.Index);
             _entManager.EventBus.RaiseLocalEvent(Station, ev);
-            if (errorStackTrace != null)
-                Logger.ErrorS("salvage", $"Expedition generation failed with exception: {errorStackTrace}!");
-            if (!success)
+
+            if (!success && mapUid.Valid)
             {
-                // Invalidate station, expedition cancellation will be handled by task handler
                 if (_entManager.TryGetComponent<SalvageExpeditionComponent>(mapUid, out var salvage))
                     salvage.Station = EntityUid.Invalid;
 
                 _entManager.QueueDeleteEntity(mapUid);
             }
         }
+
         return success;
     }
     // Frontier END: gracefully handle expedition failures
@@ -184,8 +201,7 @@ public sealed class SpawnSalvageMissionJob : Job<bool>
 
         // Setup mission configs
         // As we go through the config the rating will deplete so we'll go for most important to least important.
-        var difficultyId = "Moderate";
-        var difficultyProto = _prototypeManager.Index<SalvageDifficultyPrototype>(difficultyId);
+        // var difficultyId = "Moderate";
 
         var mission = _entManager.System<SharedSalvageSystem>()
             //.GetMission(difficultyProto, _missionParams.Seed);
@@ -222,7 +238,7 @@ public sealed class SpawnSalvageMissionJob : Job<bool>
             if (!air.Space)
             {
                 var weather = _entManager.EnsureComponent<WeatherComponent>(mapUid);
-                _entManager.System<WeatherSystem>().SetWeather(mapId, _prototypeManager.Index<WeatherPrototype>(missionWeather.WeatherPrototype), null);
+                _weather.SetWeather(mapId, _prototypeManager.Index<WeatherPrototype>(missionWeather.WeatherPrototype), null);
                 _entManager.Dirty(mapUid, weather);
             }
             // Frontier? END
@@ -252,28 +268,26 @@ public sealed class SpawnSalvageMissionJob : Job<bool>
 
         // We'll use the dungeon rotation as the spawn angle
         var dungeonRotation = _dungeon.GetDungeonRotation(_missionParams.Seed);
-        Dungeon dungeon = default!; // Frontier: explicitly type as Dungeon
+        Dungeon? dungeon = null;
+        Vector2 dungeonOffset = Vector2.Zero;
 
-        Vector2 dungeonOffset = new Vector2(); // Frontier: needed for dungeon offset
-        if (config != SalvageMissionType.Mining) // Frontier: why?
+        var config = _missionParams.MissionType;
+
+        if (config != SalvageMissionType.Mining)
         {
             var maxDungeonOffset = minDungeonOffset + 12;
             var dungeonOffsetDistance = minDungeonOffset + (maxDungeonOffset - minDungeonOffset) * random.NextFloat();
-            var dungeonOffset = new Vector2(0f, dungeonOffsetDistance);
+            dungeonOffset = new Vector2(0f, dungeonOffsetDistance);
             dungeonOffset = dungeonRotation.RotateVec(dungeonOffset);
+
             var dungeonMod = _prototypeManager.Index<SalvageDungeonModPrototype>(mission.Dungeon);
             var dungeonConfig = _prototypeManager.Index(dungeonMod.Proto);
-            var dungeons = await WaitAsyncTask(_dungeon.GenerateDungeonAsync(dungeonConfig, mapUid, grid, (Vector2i)dungeonOffset,
-                _missionParams.Seed,
-                dungeonConfig.ID)); // Frontier: add dungeonConfig.ID ... but why? dungeonConfig is already passed in
+            var dungeons = await WaitAsyncTask(_dungeon.GenerateDungeonAsync(
+                dungeonConfig, dungeonConfig.ID, mapUid, grid, (Vector2i) dungeonOffset, _missionParams.Seed));
 
-            var dungeon = dungeons.First();
-
-            // Aborty
-            if (dungeon.Rooms.Count == 0)
-            {
+            dungeon = dungeons.FirstOrDefault();
+            if (dungeon == null || dungeon.Rooms.Count == 0)
                 return false;
-            }
 
             expedition.DungeonLocation = dungeonOffset;
         }
@@ -281,15 +295,18 @@ public sealed class SpawnSalvageMissionJob : Job<bool>
         // FRONTIER START
         // Frontier: get map bounding box
         Box2 dungeonBox = new Box2(dungeonOffset, dungeonOffset);
-        foreach (var tile in dungeon.AllTiles)
+            if (dungeon != null)
         {
-            dungeonBox = dungeonBox.ExtendToContain(tile);
+            foreach (var tile in dungeon.AllTiles)
+            {
+                dungeonBox = dungeonBox.ExtendToContain(tile);
+            }
         }
 
         var stationData = _entManager.GetComponent<StationDataComponent>(Station);
 
         // Frontier: get ship bounding box relative to largest grid coords
-        var shuttleUid = _stationSystem.GetLargestGrid(stationData);
+        var shuttleUid = _stationSystem.GetLargestGrid((Station, stationData));
         Box2 shuttleBox = new Box2();
 
         if (shuttleUid is { Valid: true } vesselUid &&
@@ -313,7 +330,7 @@ public sealed class SpawnSalvageMissionJob : Job<bool>
         }
         // FRONTIER END
 
-        List<Vector2i> reservedTiles = new();
+        // List<Vector2i> reservedTiles = new();
 
         /* Frontier START: no need for intersecting tiles, we offset the map
         foreach (var tile in _map.GetTilesIntersecting(mapUid, grid, new Circle(Vector2.Zero, landingPadRadius), false))
@@ -325,7 +342,7 @@ public sealed class SpawnSalvageMissionJob : Job<bool>
         }
         */// Frontier END
 
-        var budgetEntries = new List<IBudgetEntry>();
+        // var budgetEntries = new List<IBudgetEntry>();
 
         // Frontier START: Mission setup
         switch (config)
@@ -333,11 +350,11 @@ public sealed class SpawnSalvageMissionJob : Job<bool>
             case SalvageMissionType.Mining:
                 await SetupMining(mission, mapUid);
                 break;
-            case SalvageMissionType.Destruction:
-                await SetupStructure(mission, dungeon, mapUid, grid, random);
+                case SalvageMissionType.Destruction:
+                await SetupStructure(mission, dungeon ?? throw new InvalidOperationException("Missing expedition dungeon"), mapUid, grid, random);
                 break;
-            case SalvageMissionType.Elimination:
-                await SetupElimination(mission, dungeon, mapUid, grid, random);
+                case SalvageMissionType.Elimination:
+                await SetupElimination(mission, dungeon ?? throw new InvalidOperationException("Missing expedition dungeon"), mapUid, grid, random);
                 break;
             default:
                 throw new NotImplementedException();
@@ -496,12 +513,12 @@ public sealed class SpawnSalvageMissionJob : Job<bool>
             switch (rule)
             {
                 case BiomeMarkerLoot biomeLoot:
+                {
+                    if (_entManager.TryGetComponent<BiomeComponent>(gridUid, out var biome))
                     {
-                        if (_entManager.TryGetComponent<BiomeComponent>(gridUid, out var biome))
-                        {
-                            _biome.AddMarkerLayer(gridUid, biome, biomeLoot.Prototype);
-                        }
+                        _biome.AddMarkerLayer(gridUid, biome, biomeLoot.Prototype.Id);
                     }
+                }
                     break;
                 case BiomeTemplateLoot biomeLoot:
                     {
