@@ -6,5 +6,4 @@ job-supervisors-cadet = all higher ranking TSFMC personnel
 job-supervisors-prisoner = all TSFMC personnel
 job-supervisors-nfsd = Fireteam Leaders, and the Colonel
 job-supervisors-pirate = the ASR Cell Commander and Agent
-job-supervisors-nobody = nobody
 job-supervisors-ws = Winter Solstice

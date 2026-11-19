@@ -39,5 +39,4 @@ lathe-menu-item-batch = {$index}. {$name} ({$printed}/{$total})
 # UNKNOWN START
 lathe-menu-loop = Loop
 lathe-menu-skip = Skip If Insufficient
-lathe-menu-silo-linked-message = Silo Linked
 # UNKNOWN END
