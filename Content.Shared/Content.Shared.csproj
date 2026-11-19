@@ -26,6 +26,6 @@
   <Import Project="..\RobustToolbox\MSBuild\Robust.Properties.targets" />
   <Import Project="..\RobustToolbox\MSBuild\Robust.CompNetworkGenerator.targets" />
   <ItemGroup>
-    <Compile Include="..\Content.Goobstation.Common\Construction\ConstructedEvent.cs" Link="Construction\ConstructedEvent.cs" /> <!-- HS
+    <Compile Include="..\Content.Goobstation.Common\Construction\ConstructedEvent.cs" Link="Construction\ConstructedEvent.cs" /> <!-- HS -->
   </ItemGroup>
 </Project>
