@@ -779,6 +779,20 @@ namespace Content.Server.Kitchen.EntitySystems
             }
         }
 
+        // HS START: These are from Monolith... which are from Frontier
+        private void OnRefreshParts(Entity<MicrowaveComponent> ent, ref RefreshPartsEvent args)
+        {
+            var rating = args.PartRatings[ent.Comp.MachinePartCookTimeMultiplier];
+            ent.Comp.FinalCookTimeMultiplier = ent.Comp.CookTimeMultiplier
+                                               * MathF.Pow(ent.Comp.CookTimeScalingConstant, rating - 1);
+        }
+
+        private void OnUpgradeExamine(Entity<MicrowaveComponent> ent, ref UpgradeExamineEvent args)
+        {
+            args.AddPercentageUpgrade("microwave-component-upgrade-cook-time", ent.Comp.FinalCookTimeMultiplier);
+        }
+        // HS END
+
         #region ui
         private void OnEjectMessage(Entity<MicrowaveComponent> ent, ref MicrowaveEjectMessage args)
         {
