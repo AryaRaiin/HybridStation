@@ -24,4 +24,12 @@ public sealed partial class WarpPointComponent : Component
     /// </summary>
     [DataField]
     public EntityWhitelist? Blacklist;
+
+    // HS START
+    [DataField]
+    public bool AdminOnly;
+
+    [DataField]
+    public bool UseStationName;
+    // HS END
 }
