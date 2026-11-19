@@ -486,8 +486,7 @@ public sealed partial class InstrumentSystem : SharedInstrumentSystem
             {
                 if (instrument.InstrumentPlayer is {Valid: true} mob)
                 {
-                    //_stuns.TryUpdateParalyzeDuration(mob, TimeSpan.FromSeconds(1));
-                    _stuns.TryParalyze(mob, TimeSpan.FromSeconds(1), true); // Mono - Wizden does TryUpdateParalyzeDuration here
+                    _stuns.TryUpdateParalyzeDuration(mob, TimeSpan.FromSeconds(1));
 
                     _popup.PopupEntity(Loc.GetString("instrument-component-finger-cramps-max-message"),
                         uid, mob, PopupType.LargeCaution);
