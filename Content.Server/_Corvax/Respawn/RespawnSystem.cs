@@ -101,8 +101,8 @@ public sealed class RespawnSystem : EntitySystem
         if (HasComp<GhostComponent>(entity)) // Don't penalize user for reobserving
             return;
 
-        if (e.Mind.Comp.Session != null && _admin.IsAdmin(e.Mind.Comp.Session)) // Admins get free respawns
-            return;
+        if (_player.TryGetSessionById(e.Mind.Comp.UserId.Value, out var session) && _admin.IsAdmin(session))
+            return; // Admins get free respawns
 
         if (TryComp<CorticalBorerInfestedComponent>(entity, out var infestedComp) &&
             TryComp<CorticalBorerComponent>(infestedComp.Borer, out var borerComp) &&
