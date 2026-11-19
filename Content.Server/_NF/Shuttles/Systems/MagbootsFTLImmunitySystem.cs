@@ -123,19 +123,16 @@ public sealed class MagbootsFTLImmunitySystem : EntitySystem
             return false;
 
         // Check if container is an inventory slot on an entity
-        if (!_inventory.TryGetContainerSlotEnumerator(container.Owner, out var enumerator))
+        if (!_inventory.TryGetContainerSlotEnumerator(container.Owner, out var enumerator, SlotFlags.FEET))
             return false;
 
         // Find the specific slot that should contain these magboots
         while (enumerator.MoveNext(out var slot))
         {
-            if (slot.ID == component.Slot && _container.TryGetContainer(container.Owner, slot.ID, out var slotContainer))
+            if (slot.Contains(uid))
             {
-                if (slotContainer.Contains(uid))
-                {
-                    wearer = container.Owner;
-                    return true;
-                }
+                wearer = container.Owner;
+                return true;
             }
         }
 
