@@ -7,9 +7,6 @@ ui-options-function-target-right-hand = Target right hand
 ui-options-function-target-left-foot = Target left foot
 ui-options-function-target-right-foot = Target right foot
 
-ui-options-function-smart-equip-pocket1 = Smart-equip to 1st pocket
-ui-options-function-smart-equip-pocket2 = Smart-equip to 2nd pocket
-ui-options-function-smart-equip-suit-storage = Smart-equip to shoulder
 ui-options-function-smart-equip-id = Smart-equip to PDA slot
 ui-options-function-smart-equip-shoes = Smart-equip to boots
 ui-options-function-smart-equip-outer-clothing = Smart-equip to armor storage
