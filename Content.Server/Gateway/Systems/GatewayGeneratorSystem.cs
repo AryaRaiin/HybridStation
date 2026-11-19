@@ -184,7 +184,8 @@ public sealed class GatewayGeneratorSystem : EntitySystem
         var dungeonRotation = _dungeon.GetDungeonRotation(seed);
         var dungeonPosition = (origin + dungeonRotation.RotateVec(new Vector2i(0, dungeonDistance))).Floored();
 
-        _dungeon.GenerateDungeon(_protoManager.Index(DungeonConfig), args.MapUid, grid, dungeonPosition, seed);
+        var dungeonProto = _protoManager.Index(DungeonConfig);
+        _dungeon.GenerateDungeon(dungeonProto, dungeonProto.ID, args.MapUid, grid, dungeonPosition, seed);
 
         // TODO: Dungeon mobs + loot.
 
