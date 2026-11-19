@@ -330,8 +330,12 @@ public sealed partial class MechSystem : SharedMechSystem
             _damageable.ChangeDamage(component.PilotSlot.ContainedEntity.Value, damage);
         }
         // Frontier - Eject players from mechs when they go crit
-        if (TryComp<MobStateComponent>(component.PilotSlot.ContainedEntity.Value, out var state) && state.CurrentState != MobState.Alive)
+        if (component.PilotSlot.ContainedEntity is { } pilot &&
+            TryComp<MobStateComponent>(pilot, out var state) &&
+            state.CurrentState != MobState.Alive)
+        {
             TryEject(uid, component);
+        }
     }
 
     // Mono START
