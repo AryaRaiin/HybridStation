@@ -545,7 +545,7 @@ public sealed class DeadDropSystem : EntitySystem
             if (!TryComp<StationDataComponent>(reportStation, out var stationData))
                 continue; // Not a station?
 
-            var stationGrid = _station.GetLargestGrid(stationData);
+            var stationGrid = _station.GetLargestGrid((reportStation, stationData)); // HS added reportStation
             if (stationGrid == null)
                 continue; // Nobody to send our message.
 
