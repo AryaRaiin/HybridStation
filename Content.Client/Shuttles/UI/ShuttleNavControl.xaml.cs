@@ -570,7 +570,7 @@ public partial class ShuttleNavControl : BaseShuttleControl // Mono
                     }
                 }
 
-                NfAddBlipToList(blipDataList, isOutsideRadarCircle, uiPosition, uiXCentre, uiYCentre, labelColor, hideLabel ? default : gUid);
+                NfAddBlipToList(blipDataList, isOutsideRadarCircle, uiPosition, uiXCentre, uiYCentre, labelColor);
             }
 
             // Frontier Don't skip drawing blips if they're out of range.
