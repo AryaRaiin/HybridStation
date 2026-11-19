@@ -42,26 +42,6 @@ public sealed partial class LobbyCharacterPreviewPanel : Control
     }
     // End Frontier
 
-    // Company Display
-    public void SetCompanyText(string value)
-    {
-        if (string.IsNullOrEmpty(value))
-        {
-            Company.SetMessage(string.Empty);
-            return;
-        }
-
-        Company.SetMessage(FormattedMessage.FromMarkupPermissive(value));
-    }
-    // End Company Display
-
-    // MonoCoins Display
-    public void SetMonoCoinsText(string value)
-    {
-        MonoCoins.Text = value;
-    }
-    // End MonoCoins Display
-
     public void SetSprite(EntityUid uid)
     {
         if (_previewDummy != null)

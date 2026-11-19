@@ -273,9 +273,7 @@ namespace Content.Server.Database
                 profile.Age,
                 sex,
                 gender,
-                balance,
-                new HumanoidCharacterAppearance
-                (
+                new HumanoidCharacterAppearance(
                     profile.HairName,
                     Color.FromHex(profile.HairColor),
                     profile.FacialHairName,
@@ -284,14 +282,14 @@ namespace Content.Server.Database
                     Color.FromHex(profile.SkinColor),
                     markings,
                     height,
-                    width
-                ),
+                    width),
                 spawnPriority,
                 jobs,
                 (PreferenceUnavailableMode) profile.PreferenceUnavailable,
                 antags.ToHashSet(),
                 traits.ToHashSet(),
-                loadouts);
+                loadouts,
+                balance);
         }
 
         private static Profile ConvertProfiles(HumanoidCharacterProfile humanoid, int slot, Profile? profile = null)
