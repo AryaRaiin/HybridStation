@@ -55,13 +55,13 @@ public sealed class SiliconDeathSystem : EntitySystem
 
         if(!TryComp<HandsComponent>(uid, out var handsComp))
             return;
-        _hands.RemoveHands(uid, handsComp); // edit end
+        _hands.RemoveHands((uid, handsComp)); // edit end
 
 
         if (TryComp(uid, out HumanoidAppearanceComponent? humanoidAppearanceComponent))
         {
             var layers = HumanoidVisualLayersExtension.Sublayers(HumanoidVisualLayers.HeadSide);
-            _humanoidAppearanceSystem.SetLayersVisibility(uid, layers, false, true, humanoidAppearanceComponent);
+            _humanoidAppearanceSystem.SetLayersVisibility((uid, humanoidAppearanceComponent), layers, false);
         }
 
         siliconDeadComp.Dead = true;
