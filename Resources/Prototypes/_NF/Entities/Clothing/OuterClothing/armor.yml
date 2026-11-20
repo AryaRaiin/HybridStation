@@ -90,3 +90,26 @@
     sprite: _NF/Clothing/OuterClothing/Vests/mercenary_webvest_black.rsi
   - type: Clothing
     sprite: _NF/Clothing/OuterClothing/Vests/mercenary_webvest_black.rsi
+
+# HS START
+- type: entity
+  parent: [BaseC1Contraband, ClothingOuterStorageBase, AllowSuitStorageClothing]
+  id: ClothingOuterVestWebMercenary
+  name: mercenary web vest
+  description: A high-quality armored vest made from a hard synthetic material. It's surprisingly flexible and light, despite formidable armor plating.
+  components:
+  - type: Sprite
+    sprite: Clothing/OuterClothing/Vests/mercwebvest.rsi
+  - type: Clothing
+    sprite: Clothing/OuterClothing/Vests/mercwebvest.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.75
+        Slash: 0.75
+        Piercing: 0.75
+        Heat: 0.80
+        Caustic: 0.9
+  - type: ExplosionResistance
+    damageCoefficient: 0.90
+# HS END

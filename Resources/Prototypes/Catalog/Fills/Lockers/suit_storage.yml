@@ -335,3 +335,25 @@
     # TODO: Gone until reworked to have no space protection
     #- id: ClothingOuterHardsuitWizard
     #- id: JetpackVoidFilled
+
+# HST START
+- type: entity
+  id: SuitStorageBasic
+  parent: SuitStorageBase
+  suffix: Basic Hardsuit
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      entity_storage: !type:NestedSelector
+        tableId: FillSuitStorageBasic
+
+- type: entityTable
+  id: FillSuitStorageBasic
+  table: !type:AllSelector
+    children:
+    - id: OxygenTankFilled
+    - id: NitrogenTankFilled
+    - id: ClothingOuterHardsuitBasic
+    - id: ClothingMaskBreath
+    - id: JetpackMiniFilled
+# HS END

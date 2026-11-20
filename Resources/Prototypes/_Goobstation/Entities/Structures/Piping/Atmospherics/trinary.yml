@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 - type: entity
-  parent: GasFilterBase
+  parent: GasFilter
   id: GasFilterInline
   name: inline gas filter
   description: Filters gases from a pipenet without splitting it in two.

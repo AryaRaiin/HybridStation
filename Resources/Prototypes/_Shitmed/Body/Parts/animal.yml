@@ -7,3 +7,17 @@
   - type: Sprite
     layers:
     - state: head_m
+
+# HS START
+- type: entity
+  abstract: true
+  parent: BasePart
+  id: PartAnimalBase
+  components:
+  - type: Sprite
+    sprite: Mobs/Species/Reptilian/parts.rsi
+  - type: Icon
+    sprite: Mobs/Species/Reptilian/parts.rsi
+  - type: StaticPrice
+    price: 50
+# HS END

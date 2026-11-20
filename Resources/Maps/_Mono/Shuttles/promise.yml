@@ -5555,7 +5555,7 @@ entities:
       filteredGas: NitrousOxide
     - type: AtmosPipeColor
       color: '#03FCD3FF'
-- proto: GasFilterBase
+- proto: GasFilter
   entities:
   - uid: 12
     components:

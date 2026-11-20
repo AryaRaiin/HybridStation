@@ -196,3 +196,16 @@
       map: ["enum.OpenableVisuals.Layer"]
     - state: fill-5 # this will need to be different with a different maxFillLevels
       map: ["enum.SolutionContainerLayers.Fill"]
+
+# HS START
+- type: entity
+  id: DrinkGlassBase
+  abstract: true
+  parent: [DrinkBaseMaterialGlass, DrinkBase]
+  components:
+  - type: FitsInDispenser
+    solution: drink
+  - type: Tag
+    tags:
+    - DrinkGlass
+# HS END

@@ -39,7 +39,7 @@
     currentLabel: reagent-name-root-beer-float
 
 - type: entity
-  parent: [DrinkBottleVisualsAll, DrinkBottleGlassBaseFull]
+  parent: [DrinkVisualsAllFilled, DrinkBottleGlassBaseFull]
   id: DrinkBeerCervezaCristalFull
   name: cerveza cristal bottle
   suffix: Admeme
