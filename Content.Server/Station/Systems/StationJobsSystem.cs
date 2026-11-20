@@ -257,7 +257,7 @@ public sealed partial class StationJobsSystem : EntitySystem
 
         // Enforce the MaxJobSlots limit
         var clampedAmount = Math.Min(amount, MaxJobSlots);
-        
+
         var jobList = stationJobs.JobList;
 
         switch (jobList.ContainsKey(jobPrototypeId))
@@ -491,7 +491,7 @@ public sealed partial class StationJobsSystem : EntitySystem
 
     private bool _availableJobsDirty;
 
-    private TickerJobsAvailableEvent _cachedAvailableJobs = new(new()); // Frontier: use one dictionary of composite objects instead of two
+    private TickerJobsAvailableEvent _cachedAvailableJobs = new(new(), new(), new());// HS: Originally Frontier, updated, now uses separate dictionaries
 
     /// <summary>
     /// Assembles an event from the current available-to-play jobs.
@@ -500,59 +500,52 @@ public sealed partial class StationJobsSystem : EntitySystem
     /// <returns>The event.</returns>
     private TickerJobsAvailableEvent GenerateJobsAvailableEvent()
     {
-        // If late join is disallowed, return no available jobs.
-        if (_gameTicker.DisallowLateJoin)
-            return new TickerJobsAvailableEvent(new()); // Frontier: changed param type
+        // HS START
+        var stationNames = new Dictionary<NetEntity, string>();
+        var jobsAvailable = new Dictionary<NetEntity, Dictionary<ProtoId<JobPrototype>, int?>>();
+        var jobWeights = new Dictionary<NetEntity, ProtoId<JobWeightPrototype>?>();
+        var stationDisplay = new Dictionary<NetEntity, StationDisplayInformation>();
+        var vesselDisplay = new Dictionary<NetEntity, VesselDisplayInformation>();
 
-        var query = EntityQueryEnumerator<StationJobsComponent>();
-
-        // Frontier: the dictionary inside a dictionary replaced with <NetEntity, StationJobInformation> which is much cleaner.
-        var stationJobInformationList = new Dictionary<NetEntity, StationJobInformation>();
-
-        while (query.MoveNext(out var station, out var comp))
+        if (!_gameTicker.DisallowLateJoin)
         {
-            var stationNetEntity = GetNetEntity(station);
-            var list = comp.JobList.ToDictionary(x => x.Key, x => x.Value);
+            var query = EntityQueryEnumerator<StationJobsComponent>();
 
-            // Frontier: overwrite station/vessel information generation
-            var isLateJoinStation = false;
-            VesselDisplayInformation? vesselDisplay = null;
-            StationDisplayInformation? stationDisplay = null;
-            if (TryComp<ExtraShuttleInformationComponent>(station, out var extraVesselInfo))
+            while (query.MoveNext(out var station, out var comp))
             {
-                if (extraVesselInfo.HiddenWithoutOpenJobs && !list.Any(x => x.Value != 0))
-                    continue;
+                var netStation = GetNetEntity(station);
+                var jobs = comp.JobList.ToDictionary(x => x.Key, x => x.Value);
 
-                vesselDisplay = new VesselDisplayInformation(
-                    vesselAdvertisement: extraVesselInfo.Advertisement,
-                    vessel: extraVesselInfo.Vessel,
-                    hiddenIfNoJobs: extraVesselInfo.HiddenWithoutOpenJobs
-                );
-            }
-            else
-            {
-                isLateJoinStation = true;
-                if (TryComp<ExtraStationInformationComponent>(station, out var extraStationInformation))
+                if (TryComp<ExtraShuttleInformationComponent>(station, out var vesselInfo))
                 {
-                    stationDisplay = new StationDisplayInformation(
-                        stationSubtext: extraStationInformation.StationSubtext,
-                        stationDescription: extraStationInformation.StationDescription,
-                        stationIcon: extraStationInformation.IconPath,
-                        lobbySortOrder: extraStationInformation.LobbySortOrder
-                    );
+                    // HS: Preserves Frontier's hiding of vessels with no open jobs
+                    if (vesselInfo.HiddenWithoutOpenJobs && !jobs.Any(x => x.Value != 0))
+                        continue;
+
+                    vesselDisplay[netStation] = new VesselDisplayInformation(
+                        vesselInfo.Advertisement,
+                        vesselInfo.Vessel,
+                        vesselInfo.HiddenWithoutOpenJobs);
                 }
+                else if (TryComp<ExtraStationInformationComponent>(station, out var stationInfo))
+                {
+                    stationDisplay[netStation] = new StationDisplayInformation(
+                        stationInfo.StationSubtext,
+                        stationInfo.StationDescription,
+                        stationInfo.IconPath,
+                        stationInfo.LobbySortOrder);
+                }
+
+                stationNames[netStation] = Name(station);
+                jobsAvailable[netStation] = jobs;
+                // Map specific job weights aren't implemented yet, will need to rework much of this with next upstream merge.
+                jobWeights[netStation] = null;
             }
-            var stationJobInformation = new StationJobInformation(
-                stationName: Name(station),
-                jobsAvailable: list,
-                isLateJoinStation: isLateJoinStation,
-                stationDisplayInfo: stationDisplay,
-                vesselDisplayInfo: vesselDisplay
-            );
-            stationJobInformationList.Add(stationNetEntity, stationJobInformation);
-            // End Frontier: overwrite station/vessel information generation
         }
-        return new TickerJobsAvailableEvent(stationJobInformationList); // Frontier: changed param type
+
+        return new TickerJobsAvailableEvent(
+            stationNames, jobsAvailable, jobWeights, stationDisplay, vesselDisplay);
+        // HS END
     }
 
     /// <summary>
