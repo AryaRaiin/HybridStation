@@ -237,9 +237,9 @@
         },
         {
             "name": "Zookeeper"
-        }
+        },
         {
             "name": "MailCarrier"
-        },
+        }
     ]
 }

@@ -20,7 +20,6 @@
             "name": "rubber-3"
         },
         {
-<<<<<<< HEAD:Resources/Textures/Objects/Weapons/Guns/Ammunition/Magazine/Shotgun/m12.rsi/meta.json
             "name": "mag-1"
         },
         {
@@ -38,7 +37,8 @@
         {
             "name": "inhand-right-stripe",
             "directions": 4
-=======
+        },
+        {
             "name": "rubber-4"
         },
         {
@@ -46,7 +46,6 @@
         },
         {
             "name": "rubber-6"
->>>>>>> monolith/main:Resources/Textures/_Mono/Objects/Weapons/Guns/Ammunition/SpeedLoaders/45_magnum/45_magnum_rubber_speed_loader.rsi/meta.json
         }
     ]
 }
