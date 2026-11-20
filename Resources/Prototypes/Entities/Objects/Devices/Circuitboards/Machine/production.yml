@@ -1363,13 +1363,13 @@
     stackRequirements:
       Glass: 5
       Manipulator: 2
-    tagRequirements:
-        GlassBeaker:
-          amount: 2
-          defaultPrototype: Beaker
       Cable: 1
+    tagRequirements:
+      GlassBeaker:
+        amount: 2
+        defaultPrototype: Beaker
 
-# Shitmed 
+# Shitmed
 - type: entity
   id: MedicalBiofabMachineBoard
   parent: BaseMachineCircuitboard

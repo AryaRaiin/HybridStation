@@ -124,7 +124,7 @@
     tags:
     - Trash
   - type: SpaceGarbage
-     cleanupExempt: true # Mono
+    cleanupExempt: true # Mono
 
 - type: entity
   parent: [Matchbox, BaseSyndicateContraband]
