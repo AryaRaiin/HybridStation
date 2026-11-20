@@ -222,7 +222,8 @@ public sealed partial class ContrabandTurnInSystem : SharedContrabandTurnInSyste
         SellPallets(gridUid, component, null, out var price);
 
         var stackPrototype = _protoMan.Index<StackPrototype>(component.RewardType);
-        _stack.Spawn(price, stackPrototype, uid.ToCoordinates());
+        if (price > 0)
+            _stack.SpawnMultipleAtPosition(stackPrototype, price, uid.ToCoordinates());
         UpdatePalletConsoleInterface(uid, component);
     }
 }
