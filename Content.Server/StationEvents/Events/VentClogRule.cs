@@ -53,7 +53,7 @@ public sealed class VentClogRule : StationEventSystem<VentClogRuleComponent>
 
         foreach (var (_, transform) in EntityQuery<GasVentPumpComponent, TransformComponent>())
         {
-            if (CompOrNull<StationMemberComponent>(transform.GridUid)?.Station != chosenStation)
+            if (CompOrNull<StationMemberComponent>(transform.GridUid)?.Station is not { } station || !chosenStation.Contains(station)) // HS
             {
                 continue;
             }
