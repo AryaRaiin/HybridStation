@@ -211,7 +211,7 @@ public sealed partial class ChatSystem : SharedChatSystem
     }
 
     /// <inheritdoc />
-    private void TrySendInGameICMessageInternal(
+    public void TrySendInGameICMessageInternal( // HS: Made public due to EE language requirements in TelephoneSystem.cs
         EntityUid source,
         string message,
         InGameICChatType desiredType,

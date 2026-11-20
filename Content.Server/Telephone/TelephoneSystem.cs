@@ -116,7 +116,7 @@ public sealed class TelephoneSystem : SharedTelephoneSystem
         var range = args.TelephoneSource.Comp.LinkedTelephones.Count > 1 ? ChatTransmitRange.HideChat : ChatTransmitRange.GhostRangeLimit;
         var volume = entity.Comp.SpeakerVolume == TelephoneVolume.Speak ? InGameICChatType.Speak : InGameICChatType.Whisper;
 
-        _chat.TrySendInGameICMessage(speaker, args.Message, volume, range, nameOverride: name, checkRadioPrefix: false,
+        _chat.TrySendInGameICMessageInternal(speaker, args.Message, volume, range, nameOverride: name, checkRadioPrefix: false, // HS: TrySendInGameICMessage -> TrySendInGameICMessageInternal
             languageOverride: args.Language); // Einstein Engines - Language
     }
 
