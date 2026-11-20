@@ -195,29 +195,29 @@ public sealed partial class ShuttleConsoleSystem : SharedShuttleConsoleSystem
             return;
         }
 
-        RemovePilot(args.Actor);
+        if (TryComp<PilotComponent>(args.Actor, out var pilot) && pilot.Console == uid) // HS
+            RemovePilot(args.Actor, pilot); // HS
     }
 
     private void OnConsoleUIOpenAttempt(EntityUid uid, ShuttleConsoleComponent component,
         AfterActivatableUIOpenEvent args)
     {
-        // UNKNOWN START
+        // MONOLITH START
         //TryPilot(args.User, uid);
         var shuttle = _transform.GetParentUid(uid);
         var uiOpen = _crewedShuttle.AnyGunneryConsoleActiveByPlayer(shuttle, args.User);
         var forceOne = HasComp<CrewedShuttleComponent>(shuttle) && !HasComp<AdvancedPilotComponent>(args.User);
 
-        // Crewed shuttles should not allow people to have both gunnery and shuttle consoles open.
         if (uiOpen && forceOne)
         {
-            args.Cancel();
+            _ui.CloseUi(uid, ShuttleConsoleUiKey.Key, args.User); // HS
             _popup.PopupClient(Loc.GetString("shuttle-console-crewed"), args.User);
             return;
         }
 
         if (!TryPilot(args.User, uid))
-            args.Cancel();
-        // UNKNOWN END
+            _ui.CloseUi(uid, ShuttleConsoleUiKey.Key, args.User); // HS
+        // MONOLITH  END
     }
 
     private void OnConsoleAnchorChange(EntityUid uid, ShuttleConsoleComponent component,
