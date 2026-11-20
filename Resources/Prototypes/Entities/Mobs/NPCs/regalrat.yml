@@ -102,7 +102,6 @@
       - CannotSuicide
       - FootstepSound
   - type: NoSlip
-  - type: Rummager
   - type: RatKing
     hungerPerArmyUse: 25
     hungerPerDomainUse: 50
