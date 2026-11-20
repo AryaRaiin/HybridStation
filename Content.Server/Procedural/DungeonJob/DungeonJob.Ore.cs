@@ -5,6 +5,7 @@ using Content.Shared.Procedural.DungeonLayers;
 using Robust.Shared.Collections;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
+using Content.Shared.Maps; // HS
 
 namespace Content.Server.Procedural.DungeonJob;
 
@@ -21,7 +22,6 @@ public sealed partial class DungeonJob
     {
         foreach (var dungeon in dungeons)
         {
-            var emptyTiles = false;
             var replaceEntities = new Dictionary<Vector2i, EntityUid>();
             var availableTiles = new List<Vector2i>();
 
@@ -31,25 +31,29 @@ public sealed partial class DungeonJob
                     continue;
 
                 // Empty tile, skip if relevant.
-                if (!emptyTiles && (!_maps.TryGetTile(_grid, node, out var tile) || tile.IsEmpty))
+                if (!_maps.TryGetTile(_grid, node, out var tile) || tile.IsEmpty)
                     continue;
 
                 // Check if it's a valid spawn, if so then use it.
-                var enumerator = _maps.GetAnchoredEntitiesEnumerator(_gridUid, _grid, node);
-                var found = false;
+                if (gen.TileMask != null &&
+                    !gen.TileMask.Contains(((ContentTileDefinition) _tileDefManager[tile.TypeId]).ID))
+                    continue;
 
-                // We use existing entities as a mark to spawn in place
-                // OR
-                // We check for any existing entities to see if we can spawn there.
+                var enumerator = _maps.GetAnchoredEntitiesEnumerator(_gridUid, _grid, node);
+                var found = gen.EntityMask == null;
+
                 while (enumerator.MoveNext(out var uid))
                 {
-                    // We can't replace so just stop here.
-                    if (gen.Replacement == null)
+                    if (gen.EntityMask == null)
+                    {
+                        // We can't replace so just stop here.
+                        found = false;
                         break;
+                    }
 
                     var prototype = _entManager.GetComponent<MetaDataComponent>(uid.Value).EntityPrototype;
 
-                    if (prototype?.ID == gen.Replacement)
+                    if (prototype != null && gen.EntityMask.Contains(prototype.ID))
                     {
                         replaceEntities[node] = uid.Value;
                         found = true;
@@ -143,7 +147,7 @@ public sealed partial class DungeonJob
 
                 if (groupSize > 0)
                 {
-                    _sawmill.Warning($"Found remaining group size for ore veins of {gen.Replacement ?? "null"}!");
+                    _sawmill.Warning($"Found remaining group size for ore veins of {gen.Entity}!"); // HS
                 }
             }
         }
