@@ -158,7 +158,7 @@ public sealed partial class ShipyardSystem : SharedShipyardSystem
         }
 
         var price = _pricing.AppraiseGrid(shuttleGrid.Value, null);
-        var targetGrid = _station.GetLargestGrid(stationData);
+        var targetGrid = _station.GetLargestGrid((stationUid, stationData)); // HS
 
         if (targetGrid == null) //how are we even here with no station grid
         {
@@ -218,7 +218,7 @@ public sealed partial class ShipyardSystem : SharedShipyardSystem
             return result;
         }
 
-        var targetGrid = _station.GetLargestGrid(stationGrid);
+        var targetGrid = _station.GetLargestGrid((stationUid, stationGrid)); // HS
 
         if (targetGrid == null)
         {
