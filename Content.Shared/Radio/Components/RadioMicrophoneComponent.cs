@@ -41,6 +41,6 @@ public sealed partial class RadioMicrophoneComponent : Component
     /// <summary>
     /// Nuclear 14 feature, the frequency the radio transmits and receives on. Critical for handhelds on HS fork.
     /// </summary>
-    [DataField, AutoNetworkedField] // HS
+    [DataField] // HS
     public int Frequency; // HS
 }
