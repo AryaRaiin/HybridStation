@@ -5,7 +5,6 @@ using Content.Shared._NF.CrateMachine;
 using Content.Shared._NF.CrateMachine.Components;
 using Content.Shared.Maps;
 using Robust.Server.GameObjects;
-using Robust.Shared.Map;
 
 namespace Content.Server._NF.CrateMachine;
 
@@ -15,7 +14,7 @@ namespace Content.Server._NF.CrateMachine;
 /// </summary>
 public sealed partial class CrateMachineSystem : SharedCrateMachineSystem
 {
-    [Dependency] private readonly IMapManager _mapManager = default!;
+    [Dependency] private readonly TurfSystem _turf = default!; // HS
     [Dependency] private readonly EntityLookupSystem _lookup = default!;
     [Dependency] private readonly EntityStorageSystem _storage = default!;
     [Dependency] private readonly TransformSystem _transform = default!;
@@ -31,7 +30,7 @@ public sealed partial class CrateMachineSystem : SharedCrateMachineSystem
     {
         if (!TryComp(crateMachineUid, out TransformComponent? crateMachineTransform))
             return true;
-        var tileRef = crateMachineTransform.Coordinates.GetTileRef(EntityManager, _mapManager);
+        var tileRef = _turf.GetTileRef(crateMachineTransform.Coordinates); // HS
         if (tileRef == null)
             return true;
 
