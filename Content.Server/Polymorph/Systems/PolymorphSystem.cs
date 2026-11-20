@@ -248,12 +248,11 @@ public sealed partial class PolymorphSystem : EntitySystem
         // Copy specified components over
         foreach (var compName in configuration.CopiedComponents)
         {
-            if (!_compFact.TryGetRegistration(compName, out var reg)
+            if (!Factory.TryGetRegistration(compName, out var reg)
                 || !EntityManager.TryGetComponent(uid, reg.Idx, out var comp))
                 continue;
 
             var copy = _serialization.CreateCopy(comp, notNullableOverride: true);
-            copy.Owner = child;
             AddComp(child, copy, true);
         }
         // Einstein Engines - Language end
