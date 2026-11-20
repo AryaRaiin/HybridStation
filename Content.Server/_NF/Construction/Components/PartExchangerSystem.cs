@@ -147,7 +147,7 @@ public sealed class PartExchangerSystem : EntitySystem
                         else
                         {
                             // Partial stack is needed, split off what we need, ensure the new entry is moved.
-                            EntityUid splitStack = _stack.Split(part, partsNeeded, Transform(uid).Coordinates, state.Stack) ?? EntityUid.Invalid;
+                            EntityUid splitStack = _stack.Split((part, state.Stack), partsNeeded, Transform(uid).Coordinates) ?? EntityUid.Invalid;
 
                             if (splitStack == EntityUid.Invalid)
                                 continue;
@@ -263,7 +263,7 @@ public sealed class PartExchangerSystem : EntitySystem
                         else
                         {
                             // Partial stack is needed, split off what we need, ensure the new entry is moved.
-                            EntityUid splitStack = _stack.Split(part, partsNeeded, Transform(uid).Coordinates, state.Stack) ?? EntityUid.Invalid;
+                            EntityUid splitStack = _stack.Split((part, state.Stack), partsNeeded, Transform(uid).Coordinates) ?? EntityUid.Invalid;
 
                             if (splitStack == EntityUid.Invalid)
                                 continue;
