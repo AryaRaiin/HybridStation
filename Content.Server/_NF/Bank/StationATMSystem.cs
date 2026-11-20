@@ -156,8 +156,7 @@ public sealed partial class BankSystem
         }
 
         // validate stack prototypes
-        if (!TryComp<StackComponent>(component.CashSlot.ContainerSlot.ContainedEntity, out var stackComponent) ||
-            stackComponent.StackTypeId == null)
+        if (!TryComp<StackComponent>(component.CashSlot.ContainerSlot.ContainedEntity, out var stackComponent)) // HS
         {
             _log.Info($"ATM cash slot contains bad stack prototype");
             ConsolePopup(args.Actor, Loc.GetString("bank-atm-menu-wrong-cash"));
@@ -303,22 +302,16 @@ public sealed partial class BankSystem
     {
         leftAmount = 0;
         empty = false;
-        var cashEntity = component.CashSlot.ContainerSlot?.ContainedEntity;
 
-        if (!TryComp<StackComponent>(cashEntity, out var cashStack) ||
+        if (component.CashSlot.ContainerSlot?.ContainedEntity is not { } cashEntity || !TryComp<StackComponent>(cashEntity, out var cashStack) ||
             cashStack.StackTypeId != component.CashType)
         {
             return;
         }
 
-        int newAmount = cashStack.Count;
-        cashStack.Count = newAmount - amount;
+        _stackSystem.SetCount((cashEntity, cashStack), cashStack.Count - amount);
         leftAmount = cashStack.Count;
-
-        if (cashStack.Count <= 0)
-            empty = true;
-
-        return;
+        empty = leftAmount <= 0;
     }
 
     private void PlayDenySound(EntityUid uid, StationBankATMComponent component)
