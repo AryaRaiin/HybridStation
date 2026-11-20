@@ -95,7 +95,7 @@ public sealed class RandomSentienceRule : StationEventSystem<RandomSentienceRule
         foreach (var station in stations) // Mono change: multiple stations
         {
             ChatSystem.DispatchStationAnnouncement(
-                station.Value,
+                station,
                 Loc.GetString("station-event-random-sentience-announcement",
                     ("kind1", kind1), ("kind2", kind2), ("kind3", kind3), ("amount", groupList.Count),
                     ("data", _random.Pick(_prototype.Index(DataSourceNames))),
