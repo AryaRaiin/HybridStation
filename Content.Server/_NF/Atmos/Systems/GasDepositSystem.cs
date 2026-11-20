@@ -290,7 +290,9 @@ public sealed class GasDepositSystem : SharedGasDepositSystem
             amount *= priceMod.Mod;
 
         var stackPrototype = _prototype.Index(ent.Comp.CashType);
-        _stack.Spawn((int)amount, stackPrototype, xform.Coordinates);
+        var payout = (int) amount; // HS
+        if (payout > 0) // HS
+            _stack.SpawnMultipleAtPosition(stackPrototype, payout, xform.Coordinates); // HS
         _audio.PlayPvs(ent.Comp.ApproveSound, ent);
         UI.SetUiState(ent.Owner,
             GasSaleConsoleUiKey.Key,
