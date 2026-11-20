@@ -64,7 +64,7 @@ public sealed class RandomFaxRule : StationEventSystem<RandomFaxRuleComponent>
                 continue;
             }
 
-            var grid = StationSystem.GetLargestGrid(stationData);
+            var grid = StationSystem.GetLargestGrid((chosenStation.Value, stationData)); // HS: Added chosenStation
 
             if (grid is null)
             {
