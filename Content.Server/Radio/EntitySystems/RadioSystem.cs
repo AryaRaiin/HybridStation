@@ -85,8 +85,8 @@ public sealed class RadioSystem : EntitySystem
     {
         if (args.Channel != null && component.Channels.Contains(args.Channel.ID))
         {
-            SendRadioMessage(uid, args.Message, args.Channel, uid, 
-                language: args.Language); // Einstein Engines - Language
+            SendRadioMessage(uid, args.Message, args.Channel, uid, // HS
+                language: _language.GetLanguage(uid)); // HS edited: Einstein Engines - Language
             args.Channel = null; // prevent duplicate messages from other listeners.
         }
     }
@@ -97,8 +97,8 @@ public sealed class RadioSystem : EntitySystem
     /// </summary>
     public int GetFrequency(EntityUid source, RadioChannelPrototype channel)
     {
-        if (TryComp<RadioMicrophoneComponent>(source, out var radioMicrophone))
-            return radioMicrophone.Frequency;
+        if (TryComp<RadioMicrophoneComponent>(source, out var mic) && mic.Frequency != 0) // HS
+            return mic.Frequency; // HS
 
         return channel.Frequency;
     }
@@ -111,10 +111,10 @@ public sealed class RadioSystem : EntitySystem
         // Einstein Engines - Languages begin
         {
             var msg = args.OriginalChatMsg;
-            if (listener != null && !_language.CanUnderstand(component.Owner, args.Language.ID))
+            if (!_language.CanUnderstand(uid, args.Language.ID)) // HS
                 msg = args.LanguageObfuscatedChatMsg;
 
-            _netMan.ServerSendMessage(msg, actor.PlayerSession.Channel);
+            _netMan.ServerSendMessage(new MsgChatMessage { Message = msg }, actor.PlayerSession.Channel); // HS
             // Einstein Engines - Languages end
 
             // Mono START
@@ -148,7 +148,7 @@ public sealed class RadioSystem : EntitySystem
         LanguagePrototype? language = null) // Einstein Engines - Language
     {
         // Einstein Engines - Language begin
-        if (!language)
+        if (language == null) // HS
             language = _language.GetLanguage(messageSource);
         else if (!language.SpeechOverride.AllowRadio)
             return;
