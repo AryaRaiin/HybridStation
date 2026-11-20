@@ -21,6 +21,7 @@ using Content.Shared.Research.Components;
 using Content.Shared.Research.Prototypes;
 using Content.Shared._Goobstation.Research; // R&D Console Rework
 using System.Linq; // R&D Console Rework
+using Robust.Shared.Prototypes; // HS
 
 namespace Content.Server.Research.Systems;
 
@@ -81,7 +82,7 @@ public sealed partial class ResearchSystem
         if (TryGetClientServer(uid, out var serverUid, out var server, clientComponent) &&
             TryComp<TechnologyDatabaseComponent>(serverUid, out var db))
         {
-            var unlockedTechs = new HashSet<string>(db.UnlockedTechnologies);
+            var unlockedTechs = new HashSet<ProtoId<TechnologyPrototype>>(db.UnlockedTechnologies); // HS
             techList = allTechs.ToDictionary(
                 proto => proto.ID,
                 proto =>
