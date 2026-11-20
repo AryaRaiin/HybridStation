@@ -52,6 +52,6 @@ public sealed class SayLanguageCommand : IConsoleCommand
             return;
         }
 
-        chats.TrySendInGameICMessage(playerEntity, message, InGameICChatType.Speak, ChatTransmitRange.Normal, false, shell, player, languageOverride: language);
+        chats.TrySendInGameICMessageInternal(playerEntity, message, InGameICChatType.Speak, ChatTransmitRange.Normal, false, shell, player, languageOverride: language); // HS
     }
 }
