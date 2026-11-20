@@ -43,9 +43,8 @@ public sealed partial class MarketSystem
     /// <param name="entitySoldEvent">The details of the event</param>
     private void OnEntitySoldEvent(ref EntitySoldEvent entitySoldEvent)
     {
-        var station = _station.GetOwningStation(entitySoldEvent.Grid);
-        if (station is null ||
-            !_entityManager.TryGetComponent<CargoMarketDataComponent>(station, out var market))
+        var station = entitySoldEvent.Station; // HS
+        if (!_entityManager.TryGetComponent<CargoMarketDataComponent>(station, out var market)) // HS
         {
             return;
         }
