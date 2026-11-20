@@ -169,7 +169,7 @@ public sealed class RadioDeviceSystem : SharedRadioDeviceSystem
         using (args.PushGroup(nameof(RadioMicrophoneComponent)))
         {
             //args.PushMarkup(Loc.GetString("handheld-radio-component-on-examine", ("frequency", proto.Frequency)));
-            args.PushMarkup(Loc.GetString("handheld-radio-component-on-examine", ("frequency", 
+            args.PushMarkup(Loc.GetString("handheld-radio-component-on-examine", ("frequency",
                 component.Frequency ))); //Nuclear-14
             args.PushMarkup(Loc.GetString("handheld-radio-component-chennel-examine",
                 ("channel", proto.LocalizedName)));
@@ -184,7 +184,7 @@ public sealed class RadioDeviceSystem : SharedRadioDeviceSystem
         var channel = _protoMan.Index<RadioChannelPrototype>(component.BroadcastChannel)!;
         if (_recentlySent.Add((args.Message, args.Source, channel)))
             //_radio.SendRadioMessage(args.Source, args.Message, channel, uid);
-            _radio.SendRadioMessage(args.Source, args.Message, channel, uid, 
+            _radio.SendRadioMessage(args.Source, args.Message, channel, uid,
                 frequency: component.Frequency); // Nuclear-14
     }
 
@@ -211,10 +211,10 @@ public sealed class RadioDeviceSystem : SharedRadioDeviceSystem
 
         // log to chat so people can identity the speaker/source, but avoid clogging ghost chat if there are many radios
         //_chat.TrySendInGameICMessage(uid, args.Message, InGameICChatType.Whisper, ChatTransmitRange.GhostRangeLimit, nameOverride: name, checkRadioPrefix: false);
-        _chat.TrySendInGameICMessage(uid,
+        _chat.TrySendInGameICMessageInternal(uid, // HS TrySendInGameICMessage -> TrySendInGameICMessageInternal
             args.OriginalChatMsg.Message, // Einstein Engines - Languages
             component.OutputChatType, ChatTransmitRange.GhostRangeLimitNoAdminCheck, //Frontier
-            nameOverride: name, checkRadioPrefix: false, 
+            nameOverride: name, checkRadioPrefix: false,
             languageOverride: args.Language); // Einstein Engines - Languages
     }
 
@@ -284,7 +284,7 @@ public sealed class RadioDeviceSystem : SharedRadioDeviceSystem
 
         if (TryComp<RadioMicrophoneComponent>(ent, out var mic))
         {
-            mic.BroadcastChannel = channel;
+            mic.BroadcastChannel = channel.Value;
             if(_protoMan.TryIndex<RadioChannelPrototype>(channel, out var channelProto)) // Frontier
                 mic.Frequency = _radio.GetFrequency(ent, channelProto); // Frontier
         }

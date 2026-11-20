@@ -24,4 +24,11 @@ public sealed partial class RadioSpeakerComponent : Component
 
     [DataField, AutoNetworkedField]
     public bool Enabled;
+
+    /// <summary>
+    /// The chat type used when this speaker
+    /// relays a radio message.
+    /// </summary>
+    [DataField]
+    public InGameICChatType OutputChatType = InGameICChatType.Whisper;
 }
