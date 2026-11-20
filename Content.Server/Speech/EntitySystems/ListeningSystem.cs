@@ -21,7 +21,7 @@ public sealed class ListeningSystem : EntitySystem
 
     private void OnSpeak(EntitySpokeEvent ev)
     {
-        PingListeners(ev.Source, ev.Message, ev.IsWhisper); // Einstein Engines - Languages
+        PingListeners(ev.Source, ev.Message, ev.ObfuscatedMessage != null); // HS: EE Languages IsWhisper -> ObfuscatedMessage
     }
 
     public void PingListeners(EntityUid source, string message, bool isWhisper) // Einstein Engines - Language
