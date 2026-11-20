@@ -1,4 +1,6 @@
 using Content.IntegrationTests.Tests.Interaction;
+using Content.Shared._DV.Construction; // HS
+using Content.Shared.Lathe; // HS
 
 namespace Content.IntegrationTests.Tests.Construction.Interaction;
 
@@ -55,34 +57,31 @@ public sealed class MachineConstruction : InteractionTest
         AssertPrototype("Autolathe");
     }
 
+    // HS upgraded lathe test
     [Test]
     public async Task UpgradeLathe()
     {
-        // Partially deconstruct a protolathe.
         await SpawnTarget(Protolathe);
-        var serverTarget = SEntMan.GetEntity(Target!.Value);
 
-        // Initially has all quality-1 parts.
-        foreach (var part in SConstruction.GetAllParts(serverTarget))
+        float timeBefore = 0;
+        float materialBefore = 0;
+        await Server.WaitAssertion(() =>
         {
-            Assert.That(part.Part.Rating, Is.EqualTo(1)); // Frontier: using MachinePartState instead of MachinePart
-        }
+            var lathe = SEntMan.GetComponent<LatheComponent>(SEntMan.GetEntity(Target!.Value));
+            timeBefore = lathe.FinalTimeMultiplier;
+            materialBefore = lathe.FinalMaterialUseMultiplier;
+        });
 
-        // Partially deconstruct lathe
-        await Interact(Screw, Pry, Pry);
-        AssertPrototype(MachineFrame);
+        await Interact(Screw, "LatheUpgradeKitHyper");
 
-        // Reconstruct with better parts.
-        await Interact(ProtolatheBoard, Bin4, Bin4, Manipulator4, Manipulator4, Beaker, Beaker);
-        await Interact(Screw);
-        AssertPrototype(Protolathe);
-
-
-        // Query now returns higher quality parts.
-        foreach (var part in SConstruction.GetAllParts(SEntMan.GetEntity(Target!.Value)))
+        await Server.WaitAssertion(() =>
         {
-            Assert.That(part.Part.Rating, Is.EqualTo(4)); // Frontier: using MachinePartState instead of MachinePart
-        }
+            var target = SEntMan.GetEntity(Target!.Value);
+            var lathe = SEntMan.GetComponent<LatheComponent>(target);
+            Assert.That(SEntMan.HasComponent<UpgradedMachineComponent>(target), Is.True);
+            Assert.That(lathe.FinalTimeMultiplier, Is.EqualTo(timeBefore * 1.5f).Within(0.001f));
+            Assert.That(lathe.FinalMaterialUseMultiplier, Is.EqualTo(materialBefore * 0.5f).Within(0.001f));
+        });
     }
 }
 
