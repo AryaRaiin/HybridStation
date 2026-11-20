@@ -31,6 +31,7 @@ using Robust.Shared.Utility;
 using Content.Shared.Prying.Systems;
 using Microsoft.Extensions.ObjectPool;
 using Prometheus;
+using Content.Shared.Gravity; // HS
 
 namespace Content.Server.NPC.Systems;
 
@@ -67,6 +68,7 @@ public sealed partial class NPCSteeringSystem : SharedNPCSteeringSystem
     [Dependency] private readonly SharedPhysicsSystem _physics = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly SharedCombatModeSystem _combat = default!;
+    [Dependency] private readonly SharedGravitySystem _gravity = default!; // HS
 
     private EntityQuery<FixturesComponent> _fixturesQuery;
     private EntityQuery<MovementSpeedModifierComponent> _modifierQuery;
@@ -345,6 +347,15 @@ public sealed partial class NPCSteeringSystem : SharedNPCSteeringSystem
         _modifierQuery.TryGetComponent(uid, out var modifier);
         var moveSpeed = GetSprintSpeed(uid, modifier);
         var body = _physicsQuery.GetComponent(uid);
+        // HS START: TrySeek needs acceleration, friction, and movement mmultiplyer
+        var weightless = _gravity.IsWeightless(uid);
+        var acceleration = weightless
+            ? modifier?.WeightlessAcceleration ?? MovementSpeedModifierComponent.DefaultWeightlessAcceleration
+            : modifier?.Acceleration ?? MovementSpeedModifierComponent.DefaultAcceleration;
+        var friction = weightless
+            ? modifier?.WeightlessFriction ?? MovementSpeedModifierComponent.DefaultWeightlessFriction
+            : modifier?.Friction ?? MovementSpeedModifierComponent.DefaultFriction;
+        // HS END
         var dangerPoints = steering.DangerPoints;
         dangerPoints.Clear();
         Span<float> interest = stackalloc float[InterestDirections];
@@ -357,8 +368,9 @@ public sealed partial class NPCSteeringSystem : SharedNPCSteeringSystem
         RaiseLocalEvent(uid, ref ev);
         // If seek has arrived at the target node for example then immediately re-steer.
         var forceSteer = true;
+        var moveMultiplier = 1f; // HS
 
-        if (steering.CanSeek && !TrySeek(uid, mover, steering, body, xform, offsetRot, moveSpeed, interest, frameTime, ref forceSteer))
+        if (steering.CanSeek && !TrySeek(uid, mover, steering, body, xform, offsetRot, moveSpeed, acceleration, friction, interest, frameTime, ref forceSteer, ref moveMultiplier)) // HS: added acceleration, friction, moveMultiplier
         {
             SetDirection(uid, mover, steering, Vector2.Zero);
             return;
@@ -405,7 +417,7 @@ public sealed partial class NPCSteeringSystem : SharedNPCSteeringSystem
 
         if (desiredDirection != -1)
         {
-            resultDirection = new Angle(desiredDirection * InterestRadians).ToVec();
+            resultDirection = new Angle(desiredDirection * InterestRadians).ToVec() * moveMultiplier; // HS: Added moveMultiplier
         }
 
         steering.LastSteerDirection = resultDirection;
