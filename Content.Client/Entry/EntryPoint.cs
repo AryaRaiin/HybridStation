@@ -199,6 +199,7 @@ namespace Content.Client.Entry
             _prototypeManager.RegisterIgnore("codewordGenerator");
             _prototypeManager.RegisterIgnore("codewordFaction");
             _prototypeManager.RegisterIgnore("pointOfInterest"); // Frontier: worldgen-related, server-only
+            _prototypeManager.RegisterIgnore("gcQueue"); // HS
 
             _componentFactory.GenerateNetIds();
             _adminManager.Initialize();
