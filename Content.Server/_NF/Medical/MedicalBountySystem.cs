@@ -129,7 +129,7 @@ public sealed partial class MedicalBountySystem : EntitySystem
             Log.Info($"Adding {randomDamage} {damageType} damage to {entityName}");
         }
 
-        _damageable.TryChangeDamage(entity, damageToApply, true, damageable: damageable);
+        _damageable.TryChangeDamage((entity, damageable), damageToApply, ignoreResistances: true); // HS
 
         // Inject reagents into chemical solution, if any (only if entity has bloodstream)
         if (hasBloodstream && bloodstream != null)
@@ -142,7 +142,7 @@ public sealed partial class MedicalBountySystem : EntitySystem
                 Solution soln = new Solution();
                 var reagentQuantity = _random.Next(reagentValue.MinQuantity, reagentValue.MaxQuantity + 1);
                 soln.AddReagent(reagentType, reagentQuantity);
-                if (_bloodstream.TryAddToChemicals(entity, soln, bloodstream))
+                if (_bloodstream.TryAddToChemicals((entity, bloodstream), soln)) // HS
                     bountyValueAccum += reagentQuantity * reagentValue.ValuePerPoint;
             }
         }
@@ -205,7 +205,7 @@ public sealed partial class MedicalBountySystem : EntitySystem
         if (bountyPayout > 0)
         {
             // Use SpawnMultiple in case spesos ever have a limit.
-            _stack.SpawnMultiple("SpaceCash", bountyPayout, Transform(uid).Coordinates);
+            _stack.SpawnMultipleAtPosition(new EntProtoId("SpaceCash"), bountyPayout, Transform(uid).Coordinates); // HS
 
             // Pay tax accounts
             foreach (var (account, taxCoeff) in component.TaxAccounts)
