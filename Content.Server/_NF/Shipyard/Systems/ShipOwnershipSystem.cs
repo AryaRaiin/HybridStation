@@ -179,8 +179,8 @@ public sealed class ShipOwnershipSystem : EntitySystem
 
             // Check if we have a player entity that's either still around or alive and may come back
             if (_mind.TryGetMind(child, out var mind, out var mindComp)
-                && (mindComp.Session != null
-                || !_mind.IsCharacterDeadPhysically(mindComp)))
+                && ((mindComp.UserId is { } userId && _playerManager.TryGetSessionById(userId, out _))
+                    || !_mind.IsCharacterDeadPhysically(mindComp)))
             {
                 return Name(child);
             }

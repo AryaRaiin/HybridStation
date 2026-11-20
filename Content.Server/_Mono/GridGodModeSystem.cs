@@ -7,6 +7,7 @@ using Content.Shared.Ghost;
 using Content.Shared.Mind;
 using Content.Shared.Mobs.Components;
 using Robust.Shared.Map.Components;
+using Robust.Server.Player; // HS
 
 namespace Content.Server._Mono;
 
@@ -18,6 +19,7 @@ public sealed class GridGodModeSystem : EntitySystem
     [Dependency] private readonly EntityLookupSystem _lookup = default!;
     [Dependency] private readonly GodmodeSystem _godmode = default!;
     [Dependency] private readonly SharedMindSystem _mind = default!;
+    [Dependency] private readonly IPlayerManager _playerManager = default!; // HS
 
     public override void Initialize()
     {
@@ -111,7 +113,8 @@ public sealed class GridGodModeSystem : EntitySystem
 
         // Check if we have a player entity that's either still around or alive and may come back
         if (_mind.TryGetMind(entityUid, out var mind, out var mindComp) &&
-            (mindComp.Session != null || !_mind.IsCharacterDeadPhysically(mindComp)))
+            ((mindComp.UserId is { } userId && _playerManager.TryGetSessionById(userId, out _))
+             || !_mind.IsCharacterDeadPhysically(mindComp)))
         {
             return true;
         }
