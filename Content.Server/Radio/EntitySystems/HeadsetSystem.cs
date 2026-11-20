@@ -133,16 +133,17 @@ public sealed class HeadsetSystem : SharedHeadsetSystem
         if (TryComp(parent, out ActorComponent? actor))
             _netMan.ServerSendMessage(args.ChatMsg, actor.PlayerSession.Channel);
         */
-        if (TryComp(parent, out ActorComponent? actor)){
-            var canUnderstand = _language.CanUnderstand(Transform(uid).ParentUid, args.Language.ID);
+        if (TryComp(parent, out ActorComponent? actor))
+        {
+            var canUnderstand = _language.CanUnderstand(parent, args.Language.ID);
+            var message = canUnderstand ? args.OriginalChatMsg : args.LanguageObfuscatedChatMsg;
+
             _netMan.ServerSendMessage(
-                canUnderstand ? args.OriginalChatMsg : args.LanguageObfuscatedChatMsg,
+                new MsgChatMessage { Message = message },
                 actor.PlayerSession.Channel);
 
-            // MONO START - Send radio noise event to client
             var radioNoiseEvent = new RadioNoiseEvent(GetNetEntity(uid), args.Channel.ID);
             RaiseNetworkEvent(radioNoiseEvent, actor.PlayerSession);
-            // MONO END
         }
         // Einstein Engines - Language end
 
