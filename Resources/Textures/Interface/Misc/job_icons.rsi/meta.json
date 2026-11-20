@@ -197,7 +197,7 @@
             "name": "ShaftMiner"
         },
         {
-
+          "name": "StationAi"
         },
         {
             "name": "StationEngineer"
@@ -237,9 +237,6 @@
         },
         {
             "name": "Zookeeper"
-        },
-        {
-            "name": "MailCarrier"
         }
     ]
 }
