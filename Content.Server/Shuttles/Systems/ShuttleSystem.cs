@@ -227,44 +227,40 @@ public sealed partial class ShuttleSystem : SharedShuttleSystem
         args.Modifier *= ent.Comp.DampingModifier;
     }
 
+    // HS START: This is from Monolith with some edits
+    public void GetAllDockedShuttles(EntityUid grid, HashSet<EntityUid> result)
+    {
+        var visited = new HashSet<EntityUid> { grid };
+        var pending = new Queue<EntityUid>();
+        pending.Enqueue(grid);
+
+        while (pending.TryDequeue(out var current))
+        {
+            result.Add(current);
+
+            foreach (var dock in _dockSystem.GetDocks(current))
+            {
+                if (dock.Comp.DockedWith is not { } otherDock ||
+                    !TryComp<TransformComponent>(otherDock, out var otherTransform) ||
+                    otherTransform.GridUid is not { } otherGrid ||
+                    !visited.Add(otherGrid))
+                    continue;
+
+                pending.Enqueue(otherGrid);
+            }
+        }
+    }
+
+    // HS: Sets damping to 0 so tile friction doesn't slow it during FTL, edited from Monolith
     private void OnFTLStarted(Entity<ShuttleComponent> ent, ref FTLStartedEvent args)
     {
         ent.Comp.DampingModifier = 0f;
-        // UNKNOWN START
-        var gridUid = args.Entity;
-        var dockedShuttles = new HashSet<EntityUid>();
-        GetAllDockedShuttles(gridUid, dockedShuttles);
-        // Process each docked ship (excluding the main ship which we already processed)
-        foreach (var dockedUid in dockedShuttles)
-        {
-            if (dockedUid == gridUid)
-                continue;
-            if (EntityManager.TryGetComponent<ShuttleComponent>(dockedUid, out var dockedComp))
-            {
-                dockedComp.DampingModifier = 0f;
-            }
-        }
-        // UNKNOWN END
     }
 
+    // HS: Restores normal damping modifier, edited from Monolith
     private void OnFTLCompleted(Entity<ShuttleComponent> ent, ref FTLCompletedEvent args)
     {
         ent.Comp.DampingModifier = ent.Comp.BodyModifier;
-        // UNKNOWN START
-        var gridUid = args.Entity;
-        // Todo: Account for scenarios where shuttles undock mid-FTL
-        var dockedShuttles = new HashSet<EntityUid>();
-        GetAllDockedShuttles(gridUid, dockedShuttles);
-        // Process each docked ship (excluding the main ship which we already processed)
-        foreach (var dockedUid in dockedShuttles)
-        {
-            if (dockedUid == gridUid)
-                continue;
-            if (EntityManager.TryGetComponent<ShuttleComponent>(dockedUid, out var dockedComp))
-            {
-                dockedComp.DampingModifier = dockedComp.BodyModifier;
-            }
-        }
-        // UNKNOWN END
     }
+    // HS END
 }
