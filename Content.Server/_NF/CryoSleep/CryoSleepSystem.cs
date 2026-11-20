@@ -54,6 +54,8 @@ using Content.Server.Ghost;
 using Content.Shared.Roles;
 using Content.Server._NF.Shuttles.Components;
 using Content.Shared.Station.Components;
+using Robust.Server.Player; // HS
+using Robust.Shared.Player; // HS
 
 namespace Content.Server._NF.CryoSleep;
 
@@ -80,6 +82,7 @@ public sealed partial class CryoSleepSystem : SharedCryoSleepSystem
     [Dependency] private readonly JobSystem _jobs = default!;
     [Dependency] private readonly StationJobsSystem _stationJobs = default!;
     [Dependency] private readonly StationSystem _station = default!;
+    [Dependency] private readonly IPlayerManager _playerManager = default!; // HS
 
     private readonly Dictionary<NetUserId, StoredBody?> _storedBodies = new();
     private EntityUid? _storageMap;
@@ -249,10 +252,12 @@ public sealed partial class CryoSleepSystem : SharedCryoSleepSystem
         }
 
         // If the inserted player has disconnected, it will be stored immediately.
-        if (_mind.TryGetMind(toInsert.Value, out var mind, out var mindComp))
+        ICommonSession? session = null; // HS
+
+        if (_mind.TryGetMind(toInsert.Value, out _, out var mindComp) && mindComp.UserId is { } userId && _playerManager.TryGetSessionById(userId, out var playerSession)) // HS
         {
-            var session = mindComp.Session;
-            if (session is not null && session.Status == SessionStatus.Disconnected)
+            session = playerSession; // HS
+            if (session.Status == SessionStatus.Disconnected) // HS
             {
                 CryoStoreBody(toInsert.Value, cryopod);
                 return true;
@@ -261,9 +266,9 @@ public sealed partial class CryoSleepSystem : SharedCryoSleepSystem
 
         var success = _container.Insert(toInsert.Value, component.BodyContainer);
 
-        if (success && mindComp?.Session != null)
+        if (success && session != null) // HS
         {
-            _euiManager.OpenEui(new CryoSleepEui(toInsert.Value,  cryopod, this), mindComp.Session);
+            _euiManager.OpenEui(new CryoSleepEui(toInsert.Value, cryopod, this), session); // HS
         }
 
         if (success)
@@ -543,7 +548,7 @@ public sealed partial class CryoSleepSystem : SharedCryoSleepSystem
 
         // Get the entity owned by this mind
         var mindEntity = args.MindId;
-        if (!_mind.TryGetSession(mindEntity, out var session) ||
+        if (args.Mind.UserId is not { } userId || !_playerManager.TryGetSessionById(userId, out var session) || // HS
             session.AttachedEntity is not { Valid: true } playerEntity)
             return;
 
