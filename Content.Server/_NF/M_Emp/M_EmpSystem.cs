@@ -289,7 +289,7 @@ namespace Content.Server._NF.M_Emp
 
             var empRange = 100;
             var empEnergyConsumption = 2_700_000;
-            var empDisabledDuration = 60;
+            var empDisabledDuration = TimeSpan.FromSeconds(60); // HS
 
             var xform = Transform(uid);
             List<EntityUid>? immuneGridList = null;

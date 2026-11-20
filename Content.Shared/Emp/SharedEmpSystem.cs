@@ -6,6 +6,7 @@ using Robust.Shared.Map;
 using Robust.Shared.Timing;
 using Robust.Shared.Network;
 using Robust.Shared.Prototypes;
+using Content.Shared.Tiles; // HS
 
 namespace Content.Shared.Emp;
 
@@ -40,10 +41,19 @@ public abstract class SharedEmpSystem : EntitySystem
     /// <param name="energyConsumption">The amount of energy consumed by the EMP pulse. In Joule.</param>
     /// <param name="duration">The duration of the EMP effects.</param>
     /// <param name="user">The player that caused the effect. Used for predicted audio.</param>
-    public void EmpPulse(MapCoordinates mapCoordinates, float range, float energyConsumption, TimeSpan duration, EntityUid? user = null)
+    public void EmpPulse(MapCoordinates mapCoordinates, float range, float energyConsumption, TimeSpan duration, EntityUid? user = null, List<EntityUid>? immuneGrids = null) // HS: Restoring immuneGrids from Frontier
     {
         foreach (var uid in _lookup.GetEntitiesInRange(mapCoordinates, range))
         {
+            // HS START: Grid immunity from EMP
+            var gridUid = Transform(uid).GridUid;
+            if (gridUid != null &&
+                ((immuneGrids != null && immuneGrids.Contains(gridUid.Value)) ||
+                 (TryComp<ProtectedGridComponent>(gridUid, out var prot) && prot.PreventEmpEvents)))
+            {
+                continue;
+            }
+            // HS END
             TryEmpEffects(uid, energyConsumption, duration, user);
         }
         // TODO: replace with PredictedSpawn once it works with animated sprites
