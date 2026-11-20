@@ -629,7 +629,17 @@ public sealed partial class ShuttleSystem
         }
 
         comp.State = FTLState.Cooldown;
-        comp.StateTime = StartEndTime.FromCurTime(_gameTiming, FTLCooldown);
+        // HS START
+        var cooldown = _cfg.GetCVar(CCVars.FTLCooldown);
+
+        if (TryGetFTLDrive(uid, out _, out var drive) &&
+            _physicsQuery.TryGetComponent(uid, out var cooldownBody))
+        {
+            MassAdjustFTLCooldown(cooldownBody, drive, out cooldown);
+        }
+        // HS END
+
+        comp.StateTime = StartEndTime.FromCurTime(_gameTiming, cooldown);
         _console.RefreshShuttleConsoles(uid);
         _mapSystem.SetPaused(mapId, false);
         Smimsh(uid, xform: xform);
