@@ -192,7 +192,7 @@ public sealed partial class SalvageSystem
                 comp.Cooldown = false;
 
             GenerateMissions(comp);
-            UpdateConsoles((uid, comp), uid);
+            UpdateConsoles(uid, comp); // HS
 
         }
     }
@@ -261,7 +261,7 @@ public sealed partial class SalvageSystem
 
         data.ActiveMission = 0;
         data.Cooldown = true;
-        UpdateConsoles(stationData, stationData.Owner);
+        UpdateConsoles(stationData.Owner, stationData.Comp); // HS
     }
 
     /// <summary>
@@ -402,7 +402,7 @@ public sealed partial class SalvageSystem
         {
             component.ActiveMission = 0;
             component.Cooldown = false;
-            UpdateConsoles((uid, component), uid);
+            UpdateConsoles(uid, component); // HS
         }
     }
     // End Frontier
