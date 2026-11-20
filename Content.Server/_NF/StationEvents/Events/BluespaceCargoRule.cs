@@ -31,10 +31,9 @@ public sealed class BluespaceCargoRule : StationEventSystem<BluespaceCargoRuleCo
         if (!TryGetRandomStation(out var chosenStation, HasComp<StationJobsComponent>))
             return;
 
-        if (!TryComp<StationDataComponent>(chosenStation, out var stationData))
-            return;
-
-        var grid = StationSystem.GetLargestGrid(stationData);
+     //   if (!TryComp<StationDataComponent>(chosenStation, out var stationData))
+     //     return;
+        var grid = StationSystem.GetLargestGrid(chosenStation.Value); // HS
 
         if (grid is null)
             return;
