@@ -47,34 +47,6 @@
   abstract: true
   components: *softRockComps
 
-# region Upstream
-- type: entity
-  id: AsteroidRockBananiumCrab
-  parent: AsteroidRockBananium
-  suffix: Bananium Crab
-  components:
-    - type: OreVein
-      oreChance: 1.0
-      currentOre: OreBananiumCrabNF
-
-- type: entity
-  id: AsteroidRockCoalCrab
-  parent: AsteroidRockCoal
-  suffix: Coal Crab
-  components:
-    - type: OreVein
-      oreChance: 1.0
-      currentOre: OreCoalCrabNF
-
-- type: entity
-  id: AsteroidRockGoldCrab
-  parent: AsteroidRockGold
-  suffix: Gold Crab
-  components:
-    - type: OreVein
-      oreChance: 1.0
-      currentOre: OreGoldCrabNF
-
 - type: entity
   id: AsteroidRockPlasmaCrab
   parent: AsteroidRockPlasma
@@ -92,7 +64,6 @@
     - type: OreVein
       oreChance: 1.0
       currentOre: OreSaltCrabNF
-# endregion Upstream
 
 # region Ore
 - type: entity

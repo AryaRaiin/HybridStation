@@ -143,7 +143,7 @@
   suffix: Coal Crab
   components:
   - type: OreVein
-    currentOre: OreCoalCrab
+    currentOre: OreCoalCrabNF # Frontier, more aggressive
 
 - type: entity
   id: AsteroidRockGold
@@ -174,7 +174,7 @@
   suffix: Gold Crab
   components:
   - type: OreVein
-    currentOre: OreGoldCrab
+    currentOre: OreGoldCrabNF # Frontier, more aggressive
 
 - type: entity
   id: AsteroidRockDiamond
@@ -375,7 +375,7 @@
   suffix: Bananium Crab
   components:
   - type: OreVein
-    currentOre: OreBananiumCrab
+    currentOre: OreBananiumCrabNF # Frontier version, more dangerous
 
 - type: entity
   id: AsteroidRockSalt
