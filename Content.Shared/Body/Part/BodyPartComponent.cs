@@ -47,16 +47,16 @@ public sealed partial class BodyPartComponent : Component, ISurgeryToolComponent
     [DataField, AutoNetworkedField]
     public FixedPoint2 VitalDamage = 100;
 
-    [DataField, AlwaysPushInheritance]
+    [DataField] // HS
     public string ToolName { get; set; } = "A body part";
 
-    [DataField, AlwaysPushInheritance]
+    [DataField] // HS
     public string SlotId = "";
 
     [DataField, AutoNetworkedField]
     public bool? Used { get; set; } = null;
 
-    [DataField, AlwaysPushInheritance]
+    [DataField] // HS
     public float Speed { get; set; } = 1f;
 
     /// <summary>
