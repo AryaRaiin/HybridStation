@@ -17,7 +17,10 @@
         reagents:
         - ReagentId: IceCream
           Quantity: 300
-  - type: Drink
+  - type: Edible
+    edible: Drink
+    destroyOnEmpty: false
+    utensil: None
   - type: Label
     currentLabel: reagent-name-ice-cream
 
@@ -34,7 +37,10 @@
         reagents:
         - ReagentId: RootBeerFloat
           Quantity: 300
-  - type: Drink
+  - type: Edible
+    edible: Drink
+    destroyOnEmpty: false
+    utensil: None
   - type: Label
     currentLabel: reagent-name-root-beer-float
 

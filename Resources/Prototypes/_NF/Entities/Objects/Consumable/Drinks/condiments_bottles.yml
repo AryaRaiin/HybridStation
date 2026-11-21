@@ -11,7 +11,10 @@
         reagents:
         - ReagentId: Astrotame
           Quantity: 150
-  - type: Drink
+  - type: Edible
+    edible: Drink
+    destroyOnEmpty: false
+    utensil: None
   - type: Label
     currentLabel: reagent-name-astrotame
 
@@ -28,7 +31,10 @@
         reagents:
         - ReagentId: BbqSauce
           Quantity: 150
-  - type: Drink
+  - type: Edible
+    edible: Drink
+    destroyOnEmpty: false
+    utensil: None
   - type: Label
     currentLabel: reagent-name-bbq-sauce
 
@@ -45,7 +51,10 @@
         reagents:
         - ReagentId: Coldsauce
           Quantity: 150
-  - type: Drink
+  - type: Edible
+    edible: Drink
+    destroyOnEmpty: false
+    utensil: None
   - type: Label
     currentLabel: reagent-name-coldsauce
 
@@ -62,7 +71,10 @@
         reagents:
         - ReagentId: HorseradishSauce
           Quantity: 150
-  - type: Drink
+  - type: Edible
+    edible: Drink
+    destroyOnEmpty: false
+    utensil: None
   - type: Label
     currentLabel: reagent-name-horseradish-sauce
 
@@ -79,7 +91,10 @@
         reagents:
         - ReagentId: Hotsauce
           Quantity: 150
-  - type: Drink
+  - type: Edible
+    edible: Drink
+    destroyOnEmpty: false
+    utensil: None
   - type: Label
     currentLabel: reagent-name-hotsauce
 
@@ -96,7 +111,10 @@
         reagents:
         - ReagentId: Ketchup
           Quantity: 150
-  - type: Drink
+  - type: Edible
+    edible: Drink
+    destroyOnEmpty: false
+    utensil: None
   - type: Label
     currentLabel: reagent-name-ketchup
 
@@ -113,7 +131,10 @@
         reagents:
         - ReagentId: Mustard
           Quantity: 150
-  - type: Drink
+  - type: Edible
+    edible: Drink
+    destroyOnEmpty: false
+    utensil: None
   - type: Label
     currentLabel: reagent-name-mustard
 
@@ -130,6 +151,9 @@
         reagents:
         - ReagentId: Soysauce
           Quantity: 150
-  - type: Drink
+  - type: Edible
+    edible: Drink
+    destroyOnEmpty: false
+    utensil: None
   - type: Label
     currentLabel: reagent-name-soysauce

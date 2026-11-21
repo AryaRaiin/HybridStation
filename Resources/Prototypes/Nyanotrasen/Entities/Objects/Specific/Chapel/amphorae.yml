@@ -17,7 +17,10 @@
     solutions:
       jar:
         maxVol: 120
-  - type: Drink
+  - type: Edible
+    edible: Drink
+    destroyOnEmpty: false
+    utensil: None
     solution: jar
   - type: Spillable
     solution: jar

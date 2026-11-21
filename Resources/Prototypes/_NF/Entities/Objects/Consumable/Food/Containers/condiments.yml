@@ -5,7 +5,10 @@
   name: squeeze bottle
   description: A thin plastic container used to store condiments.
   components:
-  - type: Drink
+  - type: Edible
+    edible: Drink
+    destroyOnEmpty: false
+    utensil: None
     solution: food
   - type: SolutionContainerManager
     solutions:
