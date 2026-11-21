@@ -116,8 +116,8 @@
     - type: Access
     - type: Timer
     - type: TimedSpawner
-    - type: Advertise
-      pack: FuelVendAds # placeholder, required field, unused
+    - type: DatasetVocalizer
+    - type: Vocalizer
     - type: Jittering
 
 - type: entity
@@ -403,10 +403,11 @@
     factions:
     - SimpleHostile
   - type: Carriable # Carrying system from nyanotrasen.
-  - type: Advertise
-    pack: syndicatehumanoidchatter
-    minimumWait: 120 # 1 * 2
-    maximumWait: 240 # 2 * 60
+  - type: DatasetVocalizer
+    dataset: syndicatehumanoidchatter
+  - type: Vocalizer
+    minVocalizeInterval: 120s
+    maxVocalizeInterval: 240s
     nextAdvertisementTime: 0
   - type: FTLKnockdownImmune
   - type: Respirator

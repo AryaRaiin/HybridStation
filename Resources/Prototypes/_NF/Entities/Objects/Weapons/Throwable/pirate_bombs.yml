@@ -6,7 +6,7 @@
   - type: RandomTimerTrigger
     min: 2
     max: 8
-  - type: OnUseTimerTrigger # todo: make it activate through welder/lighter/fire instead
+  - type: TimerTrigger # todo: make it activate through welder/lighter/fire instead
     delay: 5
     examinable: false
     initialBeepDelay: 0
@@ -35,6 +35,7 @@
     - state: icon
       map: ["enum.TriggerVisualLayers.Base"]
   - type: ExplodeOnTrigger
+    keyOut: timer
   - type: Explosive # Weak explosion with rad damage spread over a large radius.
     explosionType: Radioactive
     totalIntensity: 40
@@ -72,6 +73,7 @@
     - state: icon
       map: ["enum.TriggerVisualLayers.Base"]
   - type: SmokeOnTrigger
+    keysIn: [timer]
     duration: 10
     spreadAmount: 10
     smokePrototype: Smoke
@@ -82,5 +84,7 @@
       - ReagentId: Napalm
         Quantity: 8
   - type: DeleteOnTrigger
-  - type: SoundOnTrigger
+    keysIn: [timer]
+  - type: EmitSoundOnTrigger
+    keysIn: [timer]
     sound: /Audio/Items/smoke_grenade_smoke.ogg

@@ -16,7 +16,7 @@
     - state: wires
   - type: Item
     sprite: _Mono/Objects/Weapons/Bombs/bottlebomb.rsi
-  - type: OnUseTimerTrigger
+  - type: TimerTrigger
     delay: 3
     examinable: false
   - type: Explosive
@@ -26,6 +26,7 @@
     maxIntensity: 3
     canCreateVacuum: false
   - type: ExplodeOnTrigger
+    keysIn: [timer]
   - type: Appearance
   - type: AnimationPlayer
   - type: TimerTriggerVisuals

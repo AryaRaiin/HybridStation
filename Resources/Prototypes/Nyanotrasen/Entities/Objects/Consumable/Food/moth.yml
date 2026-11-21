@@ -180,7 +180,7 @@
       - cheesy
       - tofu
       - leafy
-  - type: Food
+  - type: Edible
     trash:
       - FoodPlateSmall
   - type: Sprite
@@ -368,7 +368,7 @@
   - type: SliceableFood
     count: 6
     slice: FoodMothGreenLasagneSlice
-  - type: Food
+  - type: Edible
     trash:
       - FoodPlate
   - type: Sprite
@@ -514,7 +514,6 @@
           Quantity: 2
         - ReagentId: Omnizine
           Quantity: 1
-#Tastes like pasta, cornbread and cheese
 
 #Soups and Stews
 
@@ -541,9 +540,8 @@
           Quantity: 6
         - ReagentId: Water
           Quantity: 4
-  - type: Food
+  - type: Edible
     requiresSpecialDigestion: true
-  - type: MothFood # Frontier
 #Tastes like cotton and broth
 
 - type: entity
@@ -916,9 +914,8 @@
           Quantity: 8
         - ReagentId: Vitamin
           Quantity: 6
-  - type: Food
+  - type: Edible
     requiresSpecialDigestion: true
-  - type: MothFood # Frontier
 #Tastes like cheese, salad and bread
 
 - type: entity
@@ -1117,9 +1114,8 @@
   - type: Sprite
     sprite: Nyanotrasen/Objects/Consumable/Food/moth.rsi
     state: pizza-cotton
-  - type: Food
+  - type: Edible
     requiresSpecialDigestion: true
-  - type: MothFood # Frontier
 
 - type: entity
   name: slice of cheese cotton pizza
@@ -1135,9 +1131,8 @@
   - type: Sprite
     sprite: Nyanotrasen/Objects/Consumable/Food/moth.rsi
     state: pizza-cotton-slice
-  - type: Food
+  - type: Edible
     requiresSpecialDigestion: true
-  - type: MothFood # Frontier
 # Tastes like crust, cotton, cheese
 
 # Sweets
@@ -1195,11 +1190,8 @@
           Quantity: 10
         - ReagentId: Sugar
           Quantity: 10
-  - type: MothFood # Frontier
-  # Frontier: edible without special requirements
-  # - type: Food
-  #   requiresSpecialDigestion: true
-  # End Frontier
+  - type: Edible
+    requiresSpecialDigestion: true
 #Tastes like vanilla and clouds.
 
 - type: entity
@@ -1225,11 +1217,8 @@
           Quantity: 4
         - ReagentId: Sugar
           Quantity: 2
-  - type: MothFood # Frontier
-  # Frontier: edible without special requirements
-  # - type: Food
-  #   requiresSpecialDigestion: true
-  # End Frontier
+  - type: Edible
+    requiresSpecialDigestion: true
 #Tastes like vanilla and clouds.
 
 - type: entity
@@ -1266,8 +1255,6 @@
           Quantity: 5
         - ReagentId: Vitamin
           Quantity: 1
-  - type: MothFood # Frontier
-  - type: Food
+  - type: Edible
     requiresSpecialDigestion: true
-
 #Tastes like muffin, dust and lint

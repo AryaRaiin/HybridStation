@@ -48,11 +48,11 @@
   result: BorgModuleArtistry
 
 # Cargo Modules
-
-- type: latheRecipe
-  parent: BaseGoldBorgModuleRecipe
-  id: BorgModuleAdvancedMining
-  result: BorgModuleAdvancedMining
+# HS: Disabled in favor of NF version of BorgModuleAdvancedMining
+#- type: latheRecipe
+#  parent: BaseGoldBorgModuleRecipe
+#  id: BorgModuleAdvancedMining
+#  result: BorgModuleAdvancedMining
 
 # Engineering Modules
 

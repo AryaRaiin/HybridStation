@@ -127,11 +127,6 @@
     nameSegments:
     - NamesFirstMilitary
     - NamesLastMilitary
-  - type: NpcFactionMember
-    factions:
-    - TSFMC
-  - type: Company
-    companyName: TSFHighComm
   - type: MindShield
   - type: SurgerySpeedModifier
     speedModifier: 1.5

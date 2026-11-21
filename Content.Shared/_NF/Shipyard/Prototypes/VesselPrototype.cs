@@ -144,12 +144,6 @@ public sealed class VesselPrototype : IPrototype, IInheritingPrototype
     /// </summary>
     [DataField]
     public bool CloakHunter;
-
-    /// <summary>
-    /// List of company names whose ships this vessel will not suppress IFF flags for.
-    /// </summary>
-    [DataField]
-    public List<string> Company = new();
 }
 
 public enum VesselSize : byte

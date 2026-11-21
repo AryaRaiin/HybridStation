@@ -18,7 +18,7 @@
     layers:
     - state: icon
       map: ["base"]
-  - type: OnUseTimerTrigger
+  - type: TimerTrigger
     delay: 10
     delayOptions: [10, 15, 20, 25]
     initialBeepDelay: 0
@@ -26,8 +26,6 @@
       path: /Audio/Effects/Cargo/buzz_two.ogg
       params:
         volume: -6
-    startOnStick: true
-    canToggleStartOnStick: true
   - type: Explosive
     explosionType: DemolitionCharge
     totalIntensity: 400 # mono

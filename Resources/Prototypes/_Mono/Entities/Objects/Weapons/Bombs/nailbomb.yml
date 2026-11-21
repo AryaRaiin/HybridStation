@@ -14,7 +14,7 @@
     - state: base
       map: ["enum.TriggerVisualLayers.Base"]
     - state: wires
-  - type: OnUseTimerTrigger
+  - type: TimerTrigger
     delay: 5
     examinable: false
     initialBeepDelay: 0
@@ -29,6 +29,7 @@
   #   intensitySlope: 5
   #   maxIntensity: 6
   #   canCreateVacuum: false
+  - type: TriggerOnUse # HS
   - type: ProjectileGrenade
     fillPrototype: PelletClusterLethal
     capacity: 50

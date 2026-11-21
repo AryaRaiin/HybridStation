@@ -229,12 +229,13 @@
   - sprite: Mobs/Customization/vox_parts.rsi
     state: tail_docked
 
-- type: marking
-  id: VoxTailSplit
-  bodyPart: Tail
-  markingCategory: Tail
-  speciesRestriction: [Vox]
-  forcedColoring: true
-  sprites:
-  - sprite: Mobs/Customization/vox_parts.rsi
-    state: tail_split
+# HS: Disabled in favor of Impstation version
+  #- type: marking
+  #  id: VoxTailSplit
+  #  bodyPart: Tail
+  # markingCategory: Tail
+  #  speciesRestriction: [Vox]
+  #  forcedColoring: true
+  # sprites:
+    # - sprite: Mobs/Customization/vox_parts.rsi
+#    state: tail_split
