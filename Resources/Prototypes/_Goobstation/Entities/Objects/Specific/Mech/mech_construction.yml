@@ -43,14 +43,14 @@
   - type: ContainerContainer
     containers:
       mech-assembly-container: !type:Container
-  - type: MechAssembly
-    finishedPrototype: RipleyMKIIChassis
-    requiredParts:
-      RipleyMKIIUpgradeKit: false
-      RipleyLArm: false
-      RipleyRArm: false
-      RipleyLLeg: false
-      RipleyRLeg: false
+  - type: PartAssembly
+    parts:
+      RipleyMKII: [RipleyMKIIUpgradeKit, RipleyLArm, RipleyRArm, RipleyLLeg, RipleyRLeg]
+    containerId: mech-assembly-container
+  - type: Construction
+    graph: RipleyMKIIHarnessAssembly
+    node: start
+    defaultTarget: assembled
   - type: Sprite
     state: ripleymkii_harness+o
     noRot: true
@@ -124,13 +124,14 @@
   - type: ContainerContainer
     containers:
       mech-assembly-container: !type:Container
-  - type: MechAssembly
-    finishedPrototype: ClarkeChassis
-    requiredParts:
-      ClarkeHead: false
-      ClarkeLArm: false
-      ClarkeRArm: false
-      ClarkeTreads: false
+  - type: PartAssembly
+    parts:
+      Clarke: [ClarkeHead, ClarkeLArm, ClarkeRArm, ClarkeTreads]
+    containerId: mech-assembly-container
+  - type: Construction
+    graph: ClarkeHarnessAssembly
+    node: start
+    defaultTarget: assembled
   - type: Sprite
     state: clarke_harness+o
     noRot: true
@@ -256,14 +257,14 @@
   - type: ContainerContainer
     containers:
       mech-assembly-container: !type:Container
-  - type: MechAssembly
-    finishedPrototype: DurandChassis
-    requiredParts:
-      DurandHead: false
-      DurandLArm: false
-      DurandRArm: false
-      DurandLLeg: false
-      DurandRLeg: false
+  - type: PartAssembly
+    parts:
+      Durand: [DurandHead, DurandLArm, DurandRArm, DurandLLeg, DurandRLeg]
+    containerId: mech-assembly-container
+  - type: Construction
+    graph: DurandHarnessAssembly
+    node: start
+    defaultTarget: assembled
   - type: Sprite
     state: durand_harness+o
     noRot: true
@@ -401,14 +402,14 @@
   - type: ContainerContainer
     containers:
       mech-assembly-container: !type:Container
-  - type: MechAssembly
-    finishedPrototype: GygaxChassis
-    requiredParts:
-      GygaxHead: false
-      GygaxLArm: false
-      GygaxRArm: false
-      GygaxLLeg: false
-      GygaxRLeg: false
+  - type: PartAssembly
+    parts:
+      Gygax: [GygaxHead, GygaxLArm, GygaxRArm, GygaxLLeg, GygaxRLeg]
+    containerId: mech-assembly-container
+  - type: Construction
+    graph: GygaxHarnessAssembly
+    node: start
+    defaultTarget: assembled
   - type: Sprite
     state: gygax_harness+o
     noRot: true

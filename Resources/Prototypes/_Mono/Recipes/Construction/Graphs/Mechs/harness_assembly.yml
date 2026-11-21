@@ -1,0 +1,108 @@
+# This is part of HS's port of Monolith mechs to the PartAssembly system
+- type: constructionGraph
+  id: BroadswordHarnessAssembly
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: assembled
+      steps:
+      - assemblyId: Broadsword
+        guideString: mech-construction-guide-string
+  - node: assembled
+    actions:
+    - !type:DeleteEntitiesInContainer
+      container: mech-assembly-container
+    - !type:SpawnPrototype
+      prototype: BroadswordChassis
+    - !type:DeleteEntity
+
+- type: constructionGraph
+  id: HalberdHarnessAssembly
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: assembled
+      steps:
+      - assemblyId: Halberd
+        guideString: mech-construction-guide-string
+  - node: assembled
+    actions:
+    - !type:DeleteEntitiesInContainer
+      container: mech-assembly-container
+    - !type:SpawnPrototype
+      prototype: HalberdChassis
+    - !type:DeleteEntity
+
+- type: constructionGraph
+  id: SabreHarnessAssembly
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: assembled
+      steps:
+      - assemblyId: Sabre
+        guideString: mech-construction-guide-string
+  - node: assembled
+    actions:
+    - !type:DeleteEntitiesInContainer
+      container: mech-assembly-container
+    - !type:SpawnPrototype
+      prototype: SabreChassis
+    - !type:DeleteEntity
+
+- type: constructionGraph
+  id: FlailHarnessAssembly
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: assembled
+      steps:
+      - assemblyId: Flail
+        guideString: mech-construction-guide-string
+  - node: assembled
+    actions:
+    - !type:DeleteEntitiesInContainer
+      container: mech-assembly-container
+    - !type:SpawnPrototype
+      prototype: FlailChassis
+    - !type:DeleteEntity
+
+- type: constructionGraph
+  id: SpyglassHarnessAssembly
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: assembled
+      steps:
+      - assemblyId: Spyglass
+        guideString: mech-construction-guide-string
+  - node: assembled
+    actions:
+    - !type:DeleteEntitiesInContainer
+      container: mech-assembly-container
+    - !type:SpawnPrototype
+      prototype: SpyglassChassis
+    - !type:DeleteEntity
+
+- type: constructionGraph
+  id: MaceHarnessAssembly
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: assembled
+      steps:
+      - assemblyId: Mace
+        guideString: mech-construction-guide-string
+  - node: assembled
+    actions:
+    - !type:DeleteEntitiesInContainer
+      container: mech-assembly-container
+    - !type:SpawnPrototype
+      prototype: MaceChassis
+    - !type:DeleteEntity

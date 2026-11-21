@@ -54,14 +54,14 @@
   - type: ContainerContainer
     containers:
       mech-assembly-container: !type:Container
-  - type: MechAssembly
-    finishedPrototype: BroadswordChassis
-    requiredParts:
-      BroadswordHead: false
-      BroadswordLArm: false
-      BroadswordRArm: false
-      BroadswordLLeg: false
-      BroadswordRLeg: false
+  - type: PartAssembly
+    parts:
+      Broadsword: [BroadswordHead, BroadswordLArm, BroadswordRArm, BroadswordLLeg, BroadswordRLeg]
+    containerId: mech-assembly-container
+  - type: Construction
+    graph: BroadswordHarnessAssembly
+    node: start
+    defaultTarget: assembled
   - type: Sprite
     state: broadsword_harness+o
     noRot: true
@@ -179,14 +179,14 @@
   - type: ContainerContainer
     containers:
       mech-assembly-container: !type:Container
-  - type: MechAssembly
-    finishedPrototype: HalberdChassis
-    requiredParts:
-      BroadswordHead: false
-      BroadswordLArm: false
-      BroadswordRArm: false
-      BroadswordLLeg: false
-      BroadswordRLeg: false
+  - type: PartAssembly
+    parts:
+      Halberd: [BroadswordHead, BroadswordLArm, BroadswordRArm, BroadswordLLeg, BroadswordRLeg]
+    containerId: mech-assembly-container
+  - type: Construction
+    graph: HalberdHarnessAssembly
+    node: start
+    defaultTarget: assembled
   - type: Sprite
     state: broadsword_harness+o
     noRot: true
@@ -245,14 +245,14 @@
   - type: ContainerContainer
     containers:
       mech-assembly-container: !type:Container
-  - type: MechAssembly
-    finishedPrototype: SabreChassis
-    requiredParts:
-      BroadswordHead: false
-      BroadswordLArm: false
-      BroadswordRArm: false
-      BroadswordLLeg: false
-      BroadswordRLeg: false
+  - type: PartAssembly
+    parts:
+      Sabre: [BroadswordHead, BroadswordLArm, BroadswordRArm, BroadswordLLeg, BroadswordRLeg]
+    containerId: mech-assembly-container
+  - type: Construction
+    graph: SabreHarnessAssembly
+    node: start
+    defaultTarget: assembled
   - type: Sprite
     state: broadsword_harness+o
     noRot: true
@@ -330,14 +330,14 @@
   - type: ContainerContainer
     containers:
       mech-assembly-container: !type:Container
-  - type: MechAssembly
-    finishedPrototype: FlailChassis
-    requiredParts:
-      FlailHead: false
-      FlailLArm: false
-      FlailRArm: false
-      FlailLLeg: false
-      FlailRLeg: false
+  - type: PartAssembly
+    parts:
+      Flail: [FlailHead, FlailLArm, FlailRArm, FlailLLeg, FlailRLeg]
+    containerId: mech-assembly-container
+  - type: Construction
+    graph: FlailHarnessAssembly
+    node: start
+    defaultTarget: assembled
   - type: Sprite
     state: flail_harness+o
     noRot: true
@@ -435,14 +435,14 @@
   - type: ContainerContainer
     containers:
       mech-assembly-container: !type:Container
-  - type: MechAssembly
-    finishedPrototype: SpyglassChassis
-    requiredParts:
-      FlailHead: false
-      FlailLArm: false
-      FlailRArm: false
-      FlailLLeg: false
-      FlailRLeg: false
+  - type: PartAssembly
+    parts:
+      Spyglass: [FlailHead, FlailLArm, FlailRArm, FlailLLeg, FlailRLeg]
+    containerId: mech-assembly-container
+  - type: Construction
+    graph: SpyglassHarnessAssembly
+    node: start
+    defaultTarget: assembled
   - type: Sprite
     state: flail_harness+o
     noRot: true
@@ -480,14 +480,14 @@
   - type: ContainerContainer
     containers:
       mech-assembly-container: !type:Container
-  - type: MechAssembly
-    finishedPrototype: MaceChassis
-    requiredParts:
-      FlailHead: false
-      FlailLArm: false
-      FlailRArm: false
-      FlailLLeg: false
-      FlailRLeg: false
+  - type: PartAssembly
+    parts:
+      Mace: [FlailHead, FlailLArm, FlailRArm, FlailLLeg, FlailRLeg]
+    containerId: mech-assembly-container
+  - type: Construction
+    graph: MaceHarnessAssembly
+    node: start
+    defaultTarget: assembled
   - type: Sprite
     state: flail_harness+o
     noRot: true

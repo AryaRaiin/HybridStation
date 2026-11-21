@@ -1,0 +1,72 @@
+# This is part of HS's port of Goobstation mechs to the PartAssembly system
+- type: constructionGraph
+  id: RipleyMKIIHarnessAssembly
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: assembled
+      steps:
+      - assemblyId: RipleyMKII
+        guideString: mech-construction-guide-string
+  - node: assembled
+    actions:
+    - !type:DeleteEntitiesInContainer
+      container: mech-assembly-container
+    - !type:SpawnPrototype
+      prototype: RipleyMKIIChassis
+    - !type:DeleteEntity
+
+- type: constructionGraph
+  id: ClarkeHarnessAssembly
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: assembled
+      steps:
+      - assemblyId: Clarke
+        guideString: mech-construction-guide-string
+  - node: assembled
+    actions:
+    - !type:DeleteEntitiesInContainer
+      container: mech-assembly-container
+    - !type:SpawnPrototype
+      prototype: ClarkeChassis
+    - !type:DeleteEntity
+
+- type: constructionGraph
+  id: DurandHarnessAssembly
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: assembled
+      steps:
+      - assemblyId: Durand
+        guideString: mech-construction-guide-string
+  - node: assembled
+    actions:
+    - !type:DeleteEntitiesInContainer
+      container: mech-assembly-container
+    - !type:SpawnPrototype
+      prototype: DurandChassis
+    - !type:DeleteEntity
+
+- type: constructionGraph
+  id: GygaxHarnessAssembly
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: assembled
+      steps:
+      - assemblyId: Gygax
+        guideString: mech-construction-guide-string
+  - node: assembled
+    actions:
+    - !type:DeleteEntitiesInContainer
+      container: mech-assembly-container
+    - !type:SpawnPrototype
+      prototype: GygaxChassis
+    - !type:DeleteEntity
