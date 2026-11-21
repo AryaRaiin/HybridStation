@@ -19,7 +19,7 @@
     size: Tiny
   - type: StaticPrice
     price: 1250 # People can consistently pump out a million in less than an hour of fent production, fuck that.
-  - type: Food
+  - type: Edible
   - type: FlavorProfile
     flavors:
     - bitter

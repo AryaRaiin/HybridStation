@@ -64,7 +64,7 @@
     maxWritableArea: 256.0, 0.0
   - type: Paper
     contentSize: 280 # Tweet
-  - type: Food
+  - type: Edible
     solution: food
     delay: 1
     forceFeedDelay: 3

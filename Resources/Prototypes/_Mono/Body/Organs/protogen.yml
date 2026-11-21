@@ -6,7 +6,7 @@
   - type: Sprite
     sprite: _Mono/Mobs/Species/Protogen/organs.rsi
   - type: Organ
-  - type: Food
+  - type: Edible
   #    quality: Nasty # Frontier
   - type: Extractable
     grindableSolutionName: organ

@@ -187,7 +187,7 @@
       - salty
       - resomi
   - type: Item
-  - type: Food
+  - type: Edible
     trash:
       - BucketPaper
   - type: SolutionContainerManager
@@ -220,7 +220,7 @@
       - salty
       - meaty
   - type: Item
-  - type: Food
+  - type: Edible
     trash:
       - BucketPaper
   - type: SolutionContainerManager
