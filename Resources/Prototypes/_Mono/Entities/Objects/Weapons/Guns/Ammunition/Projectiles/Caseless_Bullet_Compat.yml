@@ -1,0 +1,22 @@
+# HS: Caseless bullet compatability at this location to avoid upstream edits, they are all from Monolith.
+- type: entity
+  id: BulletCaselessRifle
+  name: bullet (.25 caseless)
+  parent: BaseBullet
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 19
+
+- type: entity
+  id: BulletCaselessRiflePractice
+  name: bullet (.25 caseless practice)
+  parent: BaseBulletPractice
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Blunt: 2

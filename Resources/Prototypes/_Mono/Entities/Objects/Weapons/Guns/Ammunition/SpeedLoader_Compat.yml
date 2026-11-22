@@ -1,0 +1,32 @@
+# HS: Speedloader compatability at this location to avoid upstream edits, they are all from Monolith.
+- type: entity
+  id: SpeedLoaderPistol
+  name: "speed loader (.35 auto)"
+  parent: [ BaseItem, BaseC1Contraband ]
+  components:
+  - type: Tag
+    tags:
+    - SpeedLoaderPistol
+  - type: SpeedLoader
+  - type: BallisticAmmoProvider
+    whitelist:
+      tags:
+      - CartridgePistol
+    capacity: 6
+    proto: CartridgePistol
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Ammunition/SpeedLoaders/Pistol/pistol_speed_loader.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: base-6
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+        ents: []
+  - type: MagazineVisuals
+    magState: base
+    steps: 7
+    zeroVisible: false
+  - type: Appearance

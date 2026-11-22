@@ -1,0 +1,18 @@
+# HS: Backpack compatability at this location to avoid upstream edits, they are all from NF.
+- type: entity
+  parent: ClothingHandsGlovesCombat
+  id: ClothingHandsMercenaryGlovesCombat
+  name: mercenary combat gloves
+  description: High-quality combat gloves to protect hands from mechanical damage during combat.
+  components:
+  - type: Sprite
+    sprite: Clothing/Hands/Gloves/mercbattle.rsi
+  - type: Clothing
+    sprite: Clothing/Hands/Gloves/mercbattle.rsi
+  - type: Butcherable
+    butcheringType: Knife
+    spawned:
+    - id: ClothingHandsGlovesMercFingerless
+  - type: Fiber
+    fiberMaterial: fibers-insulative
+    fiberColor: fibers-olive

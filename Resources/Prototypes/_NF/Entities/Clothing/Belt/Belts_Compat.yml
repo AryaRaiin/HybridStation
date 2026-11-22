@@ -1,0 +1,11 @@
+# HS: Backpack compatability at this location to avoid upstream edits, they are all from NF.
+- type: entity
+  parent: NFClothingBeltStorageBase
+  id: ClothingBeltMercenaryWebbing
+  name: mercenary webbing
+  description: Ideal for storing everything from ammo to weapons and combat essentials.
+  components:
+  - type: Sprite
+    sprite: Clothing/Belt/mercwebbing.rsi
+  - type: Clothing
+    sprite: Clothing/Belt/mercwebbing.rsi

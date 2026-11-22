@@ -1,0 +1,14 @@
+# HS: Backpack compatability at this location to avoid upstream edits, they are all from NF.
+- type: entity
+  parent: [ ClothingHeadBase ]
+  id: ClothingHeadHatBeretMercenary
+  name: mercenary beret
+  description: Olive beret, the badge depicts a jackal on a rock.
+  components:
+  - type: Sprite
+    sprite: Clothing/Head/Hats/beret_merc.rsi
+  - type: Clothing
+    sprite: Clothing/Head/Hats/beret_merc.rsi
+  - type: Tag
+    tags:
+    - PetWearable

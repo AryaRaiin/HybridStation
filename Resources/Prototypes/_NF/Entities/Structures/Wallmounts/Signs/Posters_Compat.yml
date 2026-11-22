@@ -1,0 +1,9 @@
+# HS: Backpack compatability at this location to avoid upstream edits, they are all from NF.
+- type: entity
+  parent: PosterBase
+  id: PosterContrabandBustyBackdoorExoBabes6
+  name: "Busty Backdoor Exo Babes 6"
+  description: "Get a load, or give, of these all natural Exos!"
+  components:
+  - type: Sprite
+    state: poster36_contraband

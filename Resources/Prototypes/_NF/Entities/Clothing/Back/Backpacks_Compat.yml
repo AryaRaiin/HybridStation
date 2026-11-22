@@ -1,0 +1,9 @@
+# HS: Backpack compatability at this location to avoid upstream edits, they are all from NF.
+- type: entity
+  parent: NFClothingBackpack
+  id: ClothingBackpackMercenary
+  name: mercenary backpack
+  description: A backpack that has been in many dangerous places, a reliable combat backpack.
+  components:
+  - type: Sprite
+    sprite: Clothing/Back/Backpacks/merc.rsi
