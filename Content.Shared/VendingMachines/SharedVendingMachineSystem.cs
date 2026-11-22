@@ -95,6 +95,7 @@ public abstract partial class SharedVendingMachineSystem : EntitySystem
             DenyEnd = component.DenyEnd,
             DispenseOnHitEnd = component.DispenseOnHitEnd,
             Broken = component.Broken,
+            CashSlotBalance = component.CashSlotBalance, // HS
         };
     }
 

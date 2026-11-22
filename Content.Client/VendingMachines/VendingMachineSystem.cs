@@ -31,6 +31,8 @@ public sealed class VendingMachineSystem : SharedVendingMachineSystem
 
         var uid = entity.Owner;
         var component = entity.Comp;
+        var cashSlotBalanceChanged = component.CashSlotBalance != state.CashSlotBalance; // Hs
+        component.CashSlotBalance = state.CashSlotBalance; // HS
 
         component.Contraband = state.Contraband;
         component.EjectEnd = state.EjectEnd;
@@ -64,7 +66,7 @@ public sealed class VendingMachineSystem : SharedVendingMachineSystem
 
         if (UISystem.TryGetOpenUi<VendingMachineBoundUserInterface>(uid, VendingMachineUiKey.Key, out var bui))
         {
-            if (fullUiUpdate)
+            if (fullUiUpdate || cashSlotBalanceChanged)
             {
                 bui.Refresh();
             }

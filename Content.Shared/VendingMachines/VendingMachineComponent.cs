@@ -9,7 +9,7 @@ using Content.Shared.Containers.ItemSlots; // Frontier
 
 namespace Content.Shared.VendingMachines
 {
-    [RegisterComponent, NetworkedComponent, AutoGenerateComponentPause, AutoGenerateComponentState]
+    [RegisterComponent, NetworkedComponent, AutoGenerateComponentPause]
     public sealed partial class VendingMachineComponent : Component
     {
         /// <summary>
@@ -226,7 +226,7 @@ namespace Content.Shared.VendingMachines
         /// The current balance in the cash slot.
         /// Kept for
         /// </summary>
-        [DataField, AutoNetworkedField]
+        [DataField]
         public int CashSlotBalance;
 
         /// <summary>
@@ -341,5 +341,7 @@ namespace Content.Shared.VendingMachines
         public TimeSpan? DispenseOnHitEnd;
 
         public bool Broken;
+
+        public int CashSlotBalance; // HS
     }
 }
