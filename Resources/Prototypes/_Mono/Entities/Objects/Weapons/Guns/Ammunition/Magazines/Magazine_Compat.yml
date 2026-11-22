@@ -8,7 +8,7 @@
     proto: Cartridge635x40mmCaseless
   - type: Sprite
     layers:
-    - state: red
+    - state: base
       map: ["enum.GunVisualLayers.Base"]
     - state: mag-1
       map: ["enum.GunVisualLayers.Mag"]
@@ -23,7 +23,7 @@
     capacity: 20
   - type: Sprite
     layers:
-    - state: red
+    - state: base
       map: ["enum.GunVisualLayers.Base"]
     - state: mag-1
       map: ["enum.GunVisualLayers.Mag"]
@@ -38,7 +38,90 @@
     capacity: 10
   - type: Sprite
     layers:
-    - state: red
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 5
+    zeroVisible: false
+  - type: Appearance
+
+- type: entity
+  id: BaseMagazine635x40mmCaseless
+  name: "magazine (6.35x40mm Caseless)"
+  parent: [ BaseCartridge, RecyclableItemSteelTiny ]
+  abstract: true
+  components:
+  - type: Tag
+    tags:
+    - Magazine635x40mmCaseless
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    whitelist:
+      tags:
+      - Cartridge635x40mmCaseless
+    proto: Cartridge635x40mmCaseless
+    capacity: 30
+  - type: Item
+    size: Small
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    sprite: _Mono/Objects/Weapons/Guns/Ammunition/Magazine/6.35x40mm_caseless/6.35x40mm_caseless_rifle_mag.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 2
+    zeroVisible: false
+  - type: Appearance
+
+- type: entity
+  id: BaseMagazine635x40mmCaselessShort
+  name: "caseless rifle short magazine (6.35x40mm Caseless)"
+  parent: BaseMagazine635x40mmCaseless
+  abstract: true
+  components:
+  - type: BallisticAmmoProvider
+    proto: Cartridge635x40mmCaseless
+    capacity: 10
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _Mono/Objects/Weapons/Guns/Ammunition/Magazine/6.35x40mm_caseless/6.35x40mm_caseless_rifle_mag_short.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+
+- type: entity
+  id: BaseMagazine635x40mmCaselessPistol
+  name: "pistol magazine (6.35x40mm Caseless)"
+  parent: BaseMagazine635x40mmCaseless
+  abstract: true
+  components:
+  - type: Tag
+    tags:
+    - Magazine635x40mmCaselessPistol
+  - type: BallisticAmmoProvider
+    whitelist:
+      tags:
+      - Cartridge635x40mmCaseless
+    proto: Cartridge635x40mmCaseless
+    capacity: 10
+  - type: Item
+    size: Small
+  - type: Sprite
+    sprite: _Mono/Objects/Weapons/Guns/Ammunition/Magazine/6.35x40mm_caseless/6.35x40mm_caseless_pistol_mag.rsi
+    layers:
+    - state: base
       map: ["enum.GunVisualLayers.Base"]
     - state: mag-1
       map: ["enum.GunVisualLayers.Mag"]
