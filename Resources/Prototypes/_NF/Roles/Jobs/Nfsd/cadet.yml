@@ -37,7 +37,7 @@
   id: Cadet
   name: job-name-cadet-nf
   description: job-description-cadet-nf
-  playTimeTracker: JobSecurityCadet
+  playTimeTracker: JobNFCadet # HS
   requirements:
     - !type:OverallPlaytimeRequirement
       time: 32400 # 9 hours # mono

@@ -31,14 +31,14 @@
       department: Security
       time: 28800 # 8 hours # mono
     - !type:RoleTimeRequirement
-      role: JobSecurityOfficer
+      role: JobDeputy # HS
       time: 90000 # 25 hours # mono
   alternateRequirementSets:
     longerPlaytimeLessSec:
     - !type:OverallPlaytimeRequirement
       time: 108000 # 12 hours # mono
     - !type:RoleTimeRequirement
-      role: JobSecurityOfficer
+      role: JobDeputy # HS
       time: 21600 # 6 hours
   startingGear: SeniorOfficerGear
   icon: JobIconSergeant

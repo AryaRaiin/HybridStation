@@ -21,12 +21,29 @@
 
 - type: playTimeTracker
   id: JobPirateCaptain
-  
+
 - type: playTimeTracker
   id: JobPirateFirstMate
-  
+
 - type: playTimeTracker
   id: JobPirate
 
 - type: playTimeTracker
   id: JobDirectorOfCare
+
+# HS START
+- type: playTimeTracker
+  id: JobNFDetective
+
+- type: playTimeTracker
+  id: JobSheriff
+
+- type: playTimeTracker
+  id: JobNFCadet
+
+- type: playTimeTracker
+  id: JobDeputy
+
+- type: playTimeTracker
+  id: JobBailiff
+  #HS END

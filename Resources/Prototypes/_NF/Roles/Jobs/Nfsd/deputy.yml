@@ -46,7 +46,7 @@
   id: Deputy
   name: job-name-deputy
   description: job-description-deputy
-  playTimeTracker: JobSecurityOfficer
+  playTimeTracker: JobDeputy # HS
   requirements: # Mono
   - !type:OverallPlaytimeRequirement
     time: 7200 # 2 hours

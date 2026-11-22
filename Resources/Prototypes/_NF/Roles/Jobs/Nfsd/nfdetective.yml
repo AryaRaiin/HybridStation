@@ -38,7 +38,7 @@
   id: NFDetective
   name: job-name-nf-detective
   description: job-description-nf-detective
-  playTimeTracker: JobDetective
+  playTimeTracker: JobNFDetective # HS
   requirements:
     - !type:OverallPlaytimeRequirement
       time: 10800 # 3 hours # mono
