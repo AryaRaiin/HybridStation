@@ -138,6 +138,7 @@
   description: Wanted across multiple sectors!
   components:
   - type: VendingMachine
+    pack: EmptyVendingMachineInventory # HS
     cashSlot: Null
     offState: off
     brokenState: broken

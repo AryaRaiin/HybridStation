@@ -64,30 +64,6 @@
     prototype: AsteroidRockSaltCrabNF
 
 - type: entity
-  id: WallSpawnAsteroidBananium
-  parent: WallSpawnAsteroid
-  categories: [ HideSpawnMenu ] # Frontier
-  components:
-  - type: SpawnOnDespawn
-    prototype: AsteroidRockBananium
-
-- type: entity
-  id: WallSpawnAsteroidCoal
-  parent: WallSpawnAsteroid
-  categories: [ HideSpawnMenu ] # Frontier
-  components:
-  - type: SpawnOnDespawn
-    prototype: AsteroidRockCoal
-
-- type: entity
-  id: WallSpawnAsteroidGold
-  parent: WallSpawnAsteroid
-  categories: [ HideSpawnMenu ] # Frontier
-  components:
-  - type: SpawnOnDespawn
-    prototype: AsteroidRockGold
-
-- type: entity
   id: WallSpawnAsteroidPlasma
   parent: WallSpawnAsteroid
   categories: [ HideSpawnMenu ] # Frontier

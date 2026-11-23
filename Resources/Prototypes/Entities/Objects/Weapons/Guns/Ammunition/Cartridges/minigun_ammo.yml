@@ -2,11 +2,12 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-- type: entity
-  id: CartridgeMinigun
-  name: cartridge (.10 rifle)
-  parent: BaseCartridge556x45mm
-  components:
-  - type: CartridgeAmmo
-    proto: BulletMinigun
-    deleteOnSpawn: true
+# HS: Disabled due to the same ammo existing on upstream. Revisit.
+#- type: entity
+#  id: CartridgeMinigun
+#  name: cartridge (.10 rifle)
+#  parent: BaseCartridge556x45mm
+#  components:
+#  - type: CartridgeAmmo
+#    proto: BulletMinigun
+#    deleteOnSpawn: true
