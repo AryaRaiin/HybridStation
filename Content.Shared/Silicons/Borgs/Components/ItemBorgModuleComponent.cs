@@ -30,13 +30,8 @@ public sealed partial class ItemBorgModuleComponent : Component
     [DataField]
     public string HoldingContainer = "holding_container";
 
-    // Frontier START
-    /// <summary>
-    /// Frontier: a module ID to check for equivalence
-    /// </summary>
-    [DataField(required: true)]
-    public string ModuleId = default!;
-    // Frontier END
+    [DataField]
+    public string? ModuleId;
 }
 
 [DataDefinition, Serializable, NetSerializable]

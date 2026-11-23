@@ -326,11 +326,11 @@ public sealed partial class BorgSystem
                 if (!TryComp<ItemBorgModuleComponent>(containedModuleUid, out var containedItemModuleComp))
                     continue;
 
-                /* Frontier: no item check
-                if (containedItemModuleComp.Hands.Count == itemModuleComp.Hands.Count &&
-                    containedItemModuleComp.Hands.All(itemModuleComp.Hands.Contains))
-                */
-                if (containedItemModuleComp.ModuleId == itemModuleComp.ModuleId) // Frontier: ID comparison
+                // HS: Use Frontier's module IDs when available; otherwise compare hands as Wizden does.
+                if (itemModuleComp.ModuleId != null && containedItemModuleComp.ModuleId != null
+                        ? itemModuleComp.ModuleId == containedItemModuleComp.ModuleId
+                        : containedItemModuleComp.Hands.Count == itemModuleComp.Hands.Count &&
+                          containedItemModuleComp.Hands.All(itemModuleComp.Hands.Contains))
                 {
                     if (user != null)
                         Popup.PopupEntity(Loc.GetString("borg-module-duplicate"), uid, user.Value);
