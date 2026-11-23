@@ -1,10 +1,9 @@
 using Content.Server._DV.Cargo.Components;
-using Content.Shared.Cargo;
 using JetBrains.Annotations;
 
 namespace Content.Server._DV.Cargo.Systems;
 
-public sealed partial class LogisticStatsSystem : SharedCargoSystem
+public sealed partial class LogisticStatsSystem : EntitySystem // HS: SharedCargoSystem -> EntitySystem
 {
     [PublicAPI]
     public void AddOpenedMailEarnings(SectorLogisticStatsComponent component, int earnedMoney) // Frontier: remove EntityUid as first arg
