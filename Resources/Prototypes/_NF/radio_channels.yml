@@ -18,7 +18,7 @@
 - type: radioChannel
   id: Nfsd
   name: chat-radio-ncmc
-  keycode: 's'
+  keycode: 'h' # HS
   frequency: 1023
   color: "#0c8ad3"
 
