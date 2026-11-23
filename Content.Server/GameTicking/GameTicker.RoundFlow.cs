@@ -277,7 +277,7 @@ namespace Content.Server.GameTicking
                     ev.Offset,
                     ev.Rotation))
             {
-                throw new Exception($"Failed to load game map {ev.GameMap.ID}");
+                throw new Exception($"Failed to load game map '{ev.GameMap.ID}' from '{ev.GameMap.MapPath}'"); // HS: added ev.GameMap.MapPath
             }
 
             mapId = map.Value.Comp.MapId;
