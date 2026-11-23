@@ -6,11 +6,6 @@ namespace Content.Server._DV.Cargo.Systems;
 
 public sealed partial class LogisticStatsSystem : SharedCargoSystem
 {
-    public override void Initialize()
-    {
-        base.Initialize();
-    }
-
     [PublicAPI]
     public void AddOpenedMailEarnings(SectorLogisticStatsComponent component, int earnedMoney) // Frontier: remove EntityUid as first arg
     {
