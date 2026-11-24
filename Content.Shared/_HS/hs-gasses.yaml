@@ -15,10 +15,10 @@ file: Resources/Prototypes/Reagents/gasses.yml
         effects:
         - !type:Emote
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: BZ
             min: 0.2
-          - !type:OrganType
+          - !type:MetabolizerTypeCondition
             type: Slime
             shouldHave: false
           emote: Cough
@@ -26,10 +26,10 @@ file: Resources/Prototypes/Reagents/gasses.yml
           probability: 0.1
         - !type:HealthChange
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: BZ
             min: 0.5
-          - !type:OrganType
+          - !type:MetabolizerTypeCondition
             type: Slime
             shouldHave: false
           scaleByQuantity: true
@@ -40,10 +40,10 @@ file: Resources/Prototypes/Reagents/gasses.yml
               Poison: 1.5
         - !type:GenericStatusEffect
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: BZ
             min: 1
-          - !type:OrganType
+          - !type:MetabolizerTypeCondition
             type: Slime
             shouldHave: false
           key: SeeingRainbows
@@ -53,10 +53,10 @@ file: Resources/Prototypes/Reagents/gasses.yml
           refresh: false
         - !type:Emote
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: BZ
             min: 0.2
-          - !type:OrganType
+          - !type:MetabolizerTypeCondition
             type: Slime
             shouldHave: true
           emote: Laugh
@@ -64,10 +64,10 @@ file: Resources/Prototypes/Reagents/gasses.yml
           probability: 0.1
         - !type:Emote
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: BZ
             min: 0.2
-          - !type:OrganType
+          - !type:MetabolizerTypeCondition
             type: Slime
             shouldHave: true
           emote: Scream
@@ -75,10 +75,10 @@ file: Resources/Prototypes/Reagents/gasses.yml
           probability: 0.01
         - !type:PopupMessage
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: BZ
             min: 0.5
-          - !type:OrganType
+          - !type:MetabolizerTypeCondition
             type: Slime
             shouldHave: true
           type: Local
@@ -87,20 +87,20 @@ file: Resources/Prototypes/Reagents/gasses.yml
           probability: 0.1
         - !type:MovespeedModifier
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: BZ
             min: 1
-          - !type:OrganType
+          - !type:MetabolizerTypeCondition
             type: Slime
             shouldHave: true
           walkSpeedModifier: 0.65
           sprintSpeedModifier: 0.65
         - !type:GenericStatusEffect
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: BZ
             min: 1
-          - !type:OrganType
+          - !type:MetabolizerTypeCondition
             type: Slime
             shouldHave: true
           key: ForcedSleep
@@ -126,7 +126,7 @@ file: Resources/Prototypes/Reagents/gasses.yml
         effects:
         - !type:HealthChange
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: Healium
             min: 1
             max: 15
@@ -139,7 +139,7 @@ file: Resources/Prototypes/Reagents/gasses.yml
               Brute: -2
         - !type:HealthChange
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: Healium
             min: 15
           ignoreResistances: true
@@ -150,7 +150,7 @@ file: Resources/Prototypes/Reagents/gasses.yml
               Brute: -12
         - !type:PopupMessage
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: Healium
             min: 4
           type: Local
@@ -159,7 +159,7 @@ file: Resources/Prototypes/Reagents/gasses.yml
           probability: 0.1
         - !type:GenericStatusEffect
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: Healium
             min: 8
           key: ForcedSleep
@@ -169,7 +169,7 @@ file: Resources/Prototypes/Reagents/gasses.yml
         - !type:Drunk
           boozePower: 150
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: Healium
             min: 4
       Medicine:
@@ -182,7 +182,7 @@ file: Resources/Prototypes/Reagents/gasses.yml
               Brute: -0.1
         - !type:GenericStatusEffect
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: Healium
             min: 6
           key: ForcedSleep
@@ -192,7 +192,7 @@ file: Resources/Prototypes/Reagents/gasses.yml
         - !type:Drunk
           boozePower: 50
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: Healium
             min: 3
           # needs to be made into hypothium to work well as a chem, use as a gas otherwise
@@ -214,21 +214,21 @@ file: Resources/Prototypes/Reagents/gasses.yml
         effects:
         - !type:NitriumMovespeedModifier
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: Nitrium
             min: 3
           walkSpeedModifier: 1.25
           sprintSpeedModifier: 1.25
         - !type:AddReagentToBlood
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: Nitrium
             min: 6
           reagent: NitrosylPlasmide
           amount: 2.5
         - !type:GenericStatusEffect
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: Nitrium
             min: 8
           key: Stutter
@@ -236,7 +236,7 @@ file: Resources/Prototypes/Reagents/gasses.yml
           time: 8
         - !type:HealthChange
           conditions:
-          - !type:ReagentThreshold
+          - !type:ReagentCondition
             reagent: Nitrium
             min: 10
           ignoreResistances: true
