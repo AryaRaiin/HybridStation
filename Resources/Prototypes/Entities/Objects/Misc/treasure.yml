@@ -152,7 +152,6 @@
     state: coin_iron
   - type: Item
     size: Tiny
-  - type: StaticPrice
   - type: PhysicalComposition
     materialComposition:
       Steel: 300
