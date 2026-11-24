@@ -484,14 +484,18 @@
       collection: MaleSneezes
     Cough:
       collection: MaleCoughs
+    Yawn: # DV
+      collection: MaleYawn # DV
     Whistle:
       collection: Whistles
     Sigh:
       collection: MaleSigh
+    Crying: # DV
+      collection: MaleCry # DV
     Scream:
-      collection: VulpkaninScreams
+      collection: MaleScreams # DV
     Growl:
-      collection: VulpkaninGrowls
+      collection: VulpkaninMaleGrowl #Monolith
     Snarl:
       collection: VulpkaninSnarls
     Bark:
@@ -499,7 +503,9 @@
     Whine:
       collection: VulpkaninWhines
     Howl:
-      collection: VulpkaninHowls
+      collection: VulpkaninMaleHowl #Monolith
+    Awoo:
+      collection: VulpkaninMaleHowl #Monolith
     Gasp:
       collection: MaleGasp
     DefaultDeathgasp:
@@ -516,14 +522,18 @@
       collection: FemaleSneezes
     Cough:
       collection: FemaleCoughs
+    Yawn: # DV
+      collection: FemaleYawn # DV
     Whistle:
       collection: Whistles
     Sigh:
       collection: FemaleSigh
+    Crying: # DV
+      collection: FemaleCry # DV
     Scream:
-      collection: VulpkaninScreams
+      collection: FemaleScreams # DV
     Growl:
-      collection: VulpkaninGrowls
+    collection: VulpkaninFemaleGrowl #Monolith
     Snarl:
       collection: VulpkaninSnarls
     Bark:
@@ -531,7 +541,9 @@
     Whine:
       collection: VulpkaninWhines
     Howl:
-      collection: VulpkaninHowls
+      collection: VulpkaninFemaleHowl #Monolith
+    Awoo:
+      collection: VulpkaninFemaleHowl #Monolith
     Gasp:
       collection: FemaleGasp
     DefaultDeathgasp:
