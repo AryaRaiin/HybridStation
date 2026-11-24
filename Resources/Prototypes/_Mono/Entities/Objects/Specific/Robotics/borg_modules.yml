@@ -11,10 +11,10 @@
     layers:
     - state: syndicate
     - state: icon-syndicate
-- type: ItemBorgModule
-  moduleId: Security
-  hands: # HS
-  - item: EnergySword # HS
-  - item: WeaponPistolAnaconda # HS
+  - type: ItemBorgModule
+    moduleId: Security
+    hands:
+    - item: EnergySword
+    - item: WeaponPistolAnaconda
   - type: BorgModuleIcon
     icon: { sprite: Interface/Actions/actions_borg.rsi, state: syndicate-weapon-module }
