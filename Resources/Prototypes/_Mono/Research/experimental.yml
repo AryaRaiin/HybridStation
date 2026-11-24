@@ -14,7 +14,6 @@
   - CarpCallerMachineCircuitboard
   technologyPrerequisites:
   - BasicParts
-  position: 1, -5
 
 - type: technology
   id: BluespaceTethering
@@ -27,7 +26,6 @@
   - ClothingShoesBootsMagVoid
   technologyPrerequisites:
   - MagnetsTech
-  position: -2, -2
 
 - type: technology
   id: BasicParts
@@ -36,4 +34,3 @@
   discipline: Experimental
   tier: 1
   cost: 5000
-  position: 0, 0

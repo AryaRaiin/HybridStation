@@ -20,17 +20,12 @@ public sealed class TechnologyTreeTests
 
         var protoManager = server.ResolveDependency<IPrototypeManager>();
 
-        Dictionary<Vector2i, string> techNamesByPosition = new();
-
         await server.WaitPost(() =>
         {
             Assert.Multiple(() =>
             {
                 foreach (var tech in protoManager.EnumeratePrototypes<TechnologyPrototype>())
                 {
-                    Assert.That(techNamesByPosition.TryGetValue(tech.Position, out var techName), Is.False, $"Tech {tech.ID} has a duplicate position {tech.Position} with {techName}.");
-                    techNamesByPosition[tech.Position] = tech.ID;
-
                     foreach (var recipe in tech.RecipeUnlocks)
                     {
                         Assert.That(protoManager.TryIndex(recipe, out var proto), Is.True, $"Technology {tech.ID} unlocks recipe {recipe} which does not exist.");

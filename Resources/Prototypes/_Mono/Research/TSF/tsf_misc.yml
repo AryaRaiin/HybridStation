@@ -14,7 +14,6 @@
   - ForensicsScannerTSF
   technologyPrerequisites:
   - UniversalMaterialResearchT1
-  position: 12, -2
 
 - type: technology
   id: TsfPocketCrowbar
@@ -27,7 +26,6 @@
   - CrowbarPocketTSF
   technologyPrerequisites:
   - UniversalMaterialResearchT1
-  position: 12, -1
 
 - type: technology
   id: TsfDemag
@@ -40,7 +38,6 @@
   - DemagTSF
   technologyPrerequisites:
   - UniversalMaterialResearchT1
-  position: 12, -3
 
 - type: technology
   id: TsfmcMopp
@@ -54,7 +51,6 @@
   - ClothingHandsGlovesMoppTsf
   technologyPrerequisites:
   - TsfmcAdvancedEquipment
-  position: 13, 6
 
 - type: technology
   id: TsfEshield
@@ -67,7 +63,6 @@
   - EnergyShieldTSF
   technologyPrerequisites:
   - UniversalMaterialResearchT2
-  position: 13, 7
 
 - type: technology
   id: TsfPolaris
@@ -80,7 +75,6 @@
   - PolarisVoucherTSF
   technologyPrerequisites:
   - UniversalMaterialResearchT2
-  position: 11, 9
 
 - type: technology
   id: TsfFlyssa
@@ -94,7 +88,6 @@
   technologyPrerequisites:
   - TsfSynthalloyProduction
   - TsfPolaris
-  position: 13, 14
 
 - type: technology
   id: TsfMeds
@@ -108,7 +101,6 @@
   - MeshTSF
   technologyPrerequisites:
   - UniversalMaterialResearchT1
-  position: 12, -4
 
 - type: technology
   id: TsfNanofoam
@@ -121,7 +113,6 @@
   - NanolaminateFoamGrenadeTSF
   technologyPrerequisites:
   - UniversalMaterialResearchT2
-  position: 12, 4
 
 - type: technology
   id: TsfIndustrialStorage
@@ -135,7 +126,6 @@
     - MaterialBoxFlatpackTSF
   technologyPrerequisites:
   - UniversalMaterialResearchT1
-  position: 13, 1
 
 - type: technology
   id: TsfIndustrialProcessing
@@ -148,7 +138,6 @@
     - OreProcessorIndustrialMachineCircuitboard
   technologyPrerequisites:
   - TsfIndustrialStorage
-  position: 13, 2
 
 - type: technology
   id: TsfPortableRecharger
@@ -161,7 +150,6 @@
     - PortableRecharger
   technologyPrerequisites:
   - UniversalMaterialResearchT1
-  position: 12, -5
 
 - type: technology
   id: TsfNvd
@@ -174,7 +162,6 @@
     - ClothingEyesNightVisionGoggles
   technologyPrerequisites:
   - TsfForensics
-  position: 13, -2
 
 - type: technology
   id: TsfMotionDetector
@@ -187,7 +174,6 @@
   - MotionDetectorTSF
   technologyPrerequisites:
   - TsfForensics
-  position: 11, -2
 
 - type: technology
   id: TsfSynthalloyProduction
@@ -201,4 +187,3 @@
   technologyPrerequisites:
   - TsfIndustrialProcessing
   - UniversalMaterialResearchT3
-  position: 13, 11

@@ -23,7 +23,6 @@
   - SodaDispenserMachineCircuitboard
   technologyPrerequisites:
   - BasicParts
-  position: 4, -1
 
 - type: technology
   id: MiscellaneousItemsOrganization
@@ -53,7 +52,6 @@
   - NFPouchCargo
   technologyPrerequisites:
   - BasicParts
-  position: 7, -1
 
 # Tier 2
 
@@ -69,7 +67,6 @@
   - ChemDispenserMachineCircuitboard
   technologyPrerequisites:
   - AdvancedParts
-  position: -4, 10
 
 - type: technology
   id: IndustrialMedicine
@@ -83,7 +80,6 @@
   - HotplateMachineCircuitboard
   technologyPrerequisites:
   - AdvancedParts
-  position: -2, 10
 
 - type: technology
   id: AdvancedPersonalPropulsion
@@ -96,7 +92,6 @@
   - JetpackVoid
   technologyPrerequisites:
   - Shuttlecraft
-  position: -4, 7
 
 - type: technology
   id: AdvancedFoodService
@@ -112,7 +107,6 @@
   - ElectricRangeMachineCircuitboard
   technologyPrerequisites:
   - FoodService
-  position: 4, -2
 
 - type: technology
   id: MobileSanitation
@@ -126,4 +120,3 @@
   technologyPrerequisites:
   - AdvancedParts
   - AdvancedCleaning
-  position: 5, -3

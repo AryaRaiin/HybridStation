@@ -31,7 +31,6 @@
   - NaniteApplicatorSyndicate
   technologyPrerequisites:
   - UniversalMaterialResearchT1
-  position: 20, -1
 
 - type: technology
   id: RogueHypospray
@@ -44,7 +43,6 @@
   - HyposprayRogue
   technologyPrerequisites:
   - UniversalMaterialResearchT1
-  position: 20, -2
 
 - type: technology
   id: RogueEmag
@@ -57,7 +55,6 @@
   - EmagRogue
   technologyPrerequisites:
   - UniversalMaterialResearchT2
-  position: 21, 4
 
 - type: technology
   id: RogueEmag2
@@ -70,7 +67,6 @@
   - AccessBreakerRogue
   technologyPrerequisites:
   - UniversalMaterialResearchT2
-  position: 21, 3
 
 - type: technology
   id: RogueThermals
@@ -83,4 +79,3 @@
   - ClothingEyesThermalVisionGoggles
   technologyPrerequisites:
   - UniversalMaterialResearchT1
-  position: 20, -3

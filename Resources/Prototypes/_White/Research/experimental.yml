@@ -12,7 +12,6 @@
   - ClothingHelmetAttachmentNVGsBasic
   technologyPrerequisites:
   - SuperParts
-  position: 1, 15
 
 - type: technology
   id: ThermalVisionTech
@@ -26,4 +25,3 @@
   - ClothingHelmetAttachmentInfraredBasic
   technologyPrerequisites:
   - NightVisionTech
-  position: 2, 15

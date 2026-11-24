@@ -17,7 +17,6 @@
   technologyPrerequisites:
   - MercArmementSimple
   - AdvancedParts
-  position: 4, 1
 
 - type: technology
   id: MercArmementSimple
@@ -34,7 +33,6 @@
   - WeaponSubMachineGunFirestarter
   technologyPrerequisites:
   - MercArmementBasic
-  position: 3, 1
 
 - type: technology
   id: MercArmementBasic
@@ -50,4 +48,3 @@
   - WeaponShotgunKammererNF
   technologyPrerequisites:
   - BasicParts
-  position: 2, 1

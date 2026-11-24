@@ -17,7 +17,6 @@
   - EnergyDaggerRogue
   technologyPrerequisites:
   - UniversalMaterialResearchT1
-  position: 19, 2
 
 - type: technology
   id: RogueEsword
@@ -32,7 +31,6 @@
   technologyPrerequisites:
   - RogueEdagger
   - UniversalMaterialResearchT2
-  position: 19, 6
 
 - type: technology
   id: HFSwordTech
@@ -45,7 +43,6 @@
   - HFSwordVT7
   technologyPrerequisites:
   - RogueEsword
-  position: 19, 12
 
 - type: technology
   id: RogueBasicGuns
@@ -59,7 +56,6 @@
   - WeaponRevolverPythonRogue
   technologyPrerequisites:
   - UniversalMaterialResearchT1
-  position: 20, 2
 
 - type: technology
   id: RogueAdvancedGuns
@@ -74,7 +70,6 @@
   technologyPrerequisites:
   - RogueBasicGuns
   - UniversalMaterialResearchT2
-  position: 20, 7
 
 - type: technology
   id: RogueCQCGuns
@@ -88,7 +83,6 @@
   - WeaponShotgunBulldogRogue
   technologyPrerequisites:
   - RogueAdvancedGuns
-  position: 20, 8
 
 - type: technology
   id: RogueHristov
@@ -104,7 +98,6 @@
   technologyPrerequisites:
   - RogueAdvancedGuns
   - UniversalMaterialResearchT3
-  position: 20, 12
 
 - type: technology
   id: RogueSubsonic
@@ -123,4 +116,3 @@
   - MagazineAsmgtUniversal635x40mm
   technologyPrerequisites:
   - RogueCQCGuns
-  position: 21, 8

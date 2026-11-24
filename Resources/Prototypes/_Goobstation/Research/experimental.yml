@@ -18,6 +18,5 @@
   - ModsuitShell
   - ModsuitPlatingExternal
   - ModsuitCoreStandard
-  position: 2, 7
   technologyPrerequisites:
   - HardsuitsBasic

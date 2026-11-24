@@ -12,7 +12,6 @@
   - NFBlueprintConstructionBagOfHolding
   technologyPrerequisites:
   - AdvancedToolsTechnology
-  position: -2, 18
 
 - type: technology
   id: HardsuitsBasic
@@ -25,7 +24,6 @@
   - ClothingOuterHardsuitBasic
   technologyPrerequisites:
     - AdvancedParts
-  position: 2, 8
 
 - type: technology
   id: HardsuitsSpecialized
@@ -44,7 +42,6 @@
   - ClothingOuterHardsuitPilot
   technologyPrerequisites:
   - HardsuitsBasic
-  position: 3, 8
 
 # Tier 2
 
@@ -62,7 +59,6 @@
   - ClothingOuterHardsuitLuxury
   technologyPrerequisites:
   - HardsuitsSpecialized
-  position: 3, 7
 
 # Tier 3
 
@@ -80,4 +76,3 @@
     - NFBlueprintClothingOuterHardsuitMaximPrototype
   technologyPrerequisites:
   - HardsuitsArmored
-  position: 4, 7

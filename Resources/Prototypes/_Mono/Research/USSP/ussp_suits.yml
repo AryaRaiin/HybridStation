@@ -16,7 +16,6 @@
   - ClothingOuterHardsuitUsspL10AUSSP
   technologyPrerequisites:
   - UniversalMaterialResearchT1
-  position: 16, 1
 
 - type: technology
   id: UsspMediumSuits
@@ -31,7 +30,6 @@
   technologyPrerequisites:
   - UsspBasicSuits
   - UniversalMaterialResearchT2
-  position: 16, 6
 
 - type: technology
   id: UsspAdvancedSuits
@@ -46,4 +44,3 @@
   technologyPrerequisites:
   - UsspMediumSuits
   - UniversalMaterialResearchT3
-  position: 16, 11

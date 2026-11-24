@@ -31,7 +31,6 @@
   discipline: FactionUniversal
   tier: 1
   cost: 5000
-  position: 10, 0
 
 - type: technology
   id: UniversalMaterialResearchT2
@@ -42,7 +41,6 @@
   cost: 50000
   technologyPrerequisites:
   - UniversalMaterialResearchT1
-  position: 10, 5
 
 - type: technology
   id: UniversalMaterialResearchT3
@@ -53,4 +51,3 @@
   cost: 100000
   technologyPrerequisites:
   - UniversalMaterialResearchT2
-  position: 10, 10
