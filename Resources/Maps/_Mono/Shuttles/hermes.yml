@@ -2469,8 +2469,6 @@ entities:
     - type: Transform
       pos: -1.5,-8.5
       parent: 1
-    - type: Advertise
-      nextAdvertisementTime: 598.3667875
 - proto: WallReinforced
   entities:
   - uid: 222

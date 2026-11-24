@@ -5121,8 +5121,6 @@ entities:
     - type: Transform
       pos: 3.5,-8.5
       parent: 1
-    - type: Advertise
-      nextAdvertisementTime: 3482.5636781
 - proto: VendingMachineNutri
   entities:
   - uid: 180
@@ -5130,8 +5128,6 @@ entities:
     - type: Transform
       pos: 2.5,5.5
       parent: 1
-    - type: Advertise
-      nextAdvertisementTime: 3240.9640097
 - proto: VendingMachineSeedsUnlocked
   entities:
   - uid: 181
@@ -5139,8 +5135,6 @@ entities:
     - type: Transform
       pos: 2.5,6.5
       parent: 1
-    - type: Advertise
-      nextAdvertisementTime: 3088.8641298
 - proto: WallReinforced
   entities:
   - uid: 23

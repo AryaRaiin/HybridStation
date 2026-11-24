@@ -19708,8 +19708,6 @@ entities:
     - type: Transform
       pos: -3.5,11.5
       parent: 1
-    - type: Advertise
-      nextAdvertisementTime: 2352.998157
 - proto: VendingMachineCoffee
   entities:
   - uid: 2201
@@ -19717,8 +19715,6 @@ entities:
     - type: Transform
       pos: -2.5,11.5
       parent: 1
-    - type: Advertise
-      nextAdvertisementTime: 2525.998057
 - proto: VendingMachineTankDispenserEVA
   entities:
   - uid: 2202

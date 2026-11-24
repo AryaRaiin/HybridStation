@@ -22064,8 +22064,6 @@ entities:
     - type: Transform
       pos: 10.5,15.5
       parent: 1
-    - type: Advertise
-      nextAdvertisementTime: 248.6422244
 - proto: VendingMachineAstroVendPOI
   entities:
   - uid: 3182
@@ -22073,8 +22071,6 @@ entities:
     - type: Transform
       pos: 9.5,15.5
       parent: 1
-    - type: Advertise
-      nextAdvertisementTime: 773.666486
 - proto: VendingMachineBooze
   entities:
   - uid: 3183
@@ -22082,8 +22078,6 @@ entities:
     - type: Transform
       pos: 18.5,30.5
       parent: 1
-    - type: Advertise
-      nextAdvertisementTime: 500.6422244
 - proto: VendingMachineChefvend
   entities:
   - uid: 3184
@@ -22091,8 +22085,6 @@ entities:
     - type: Transform
       pos: 17.5,20.5
       parent: 1
-    - type: Advertise
-      nextAdvertisementTime: 587.6422244
 - proto: VendingMachineChemicals
   entities:
   - uid: 2883
@@ -22114,8 +22106,6 @@ entities:
     - type: Transform
       pos: 16.5,20.5
       parent: 1
-    - type: Advertise
-      nextAdvertisementTime: 663.666564
 - proto: VendingMachineEngivend
   entities:
   - uid: 3187
@@ -22130,15 +22120,11 @@ entities:
     - type: Transform
       pos: 11.5,15.5
       parent: 1
-    - type: Advertise
-      nextAdvertisementTime: 521.6422244
   - uid: 3189
     components:
     - type: Transform
       pos: -10.5,23.5
       parent: 1
-    - type: Advertise
-      nextAdvertisementTime: 447.6422244
 - proto: VendingMachineNutri
   entities:
   - uid: 3190
@@ -22146,8 +22132,6 @@ entities:
     - type: Transform
       pos: 26.5,18.5
       parent: 1
-    - type: Advertise
-      nextAdvertisementTime: 661.666601
 - proto: VendingMachineRestockSeeds
   entities:
   - uid: 3191
@@ -22167,8 +22151,6 @@ entities:
     - type: Transform
       pos: 26.5,19.5
       parent: 1
-    - type: Advertise
-      nextAdvertisementTime: 643.66656
 - proto: VendingMachineTankDispenserEVAPOI
   entities:
   - uid: 3194

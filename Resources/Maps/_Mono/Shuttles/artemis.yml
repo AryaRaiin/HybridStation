@@ -2910,8 +2910,6 @@ entities:
     - type: Transform
       pos: -1.5,3.5
       parent: 1
-    - type: Advertise
-      nextAdvertisementTime: 438.3884717
 - proto: WallReinforced
   entities:
   - uid: 3

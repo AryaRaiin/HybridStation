@@ -30956,15 +30956,11 @@ entities:
     - type: Transform
       pos: -25.5,18.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 183.4669255
   - uid: 4184
     components:
     - type: Transform
       pos: 0.5,18.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 192.4669255
 - proto: VendingMachineBarista
   entities:
   - uid: 4185
@@ -30972,8 +30968,6 @@ entities:
     - type: Transform
       pos: -37.5,15.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 394.4669255
 - proto: VendingMachineBluespaceDrive
   entities:
   - uid: 4186
@@ -30981,8 +30975,6 @@ entities:
     - type: Transform
       pos: -25.5,6.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 419.4669255
 - proto: VendingMachineChefvend
   entities:
   - uid: 4187
@@ -30990,8 +30982,6 @@ entities:
     - type: Transform
       pos: -39.5,15.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 339.4669255
 - proto: VendingMachineCigsPOI
   entities:
   - uid: 4188
@@ -30999,8 +30989,6 @@ entities:
     - type: Transform
       pos: 18.5,19.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 501.4669255
 - proto: VendingMachineCiviMedPlus
   entities:
   - uid: 4189
@@ -31008,8 +30996,6 @@ entities:
     - type: Transform
       pos: 19.5,28.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 240.4669255
 - proto: VendingMachineClothing
   entities:
   - uid: 4190
@@ -31017,8 +31003,6 @@ entities:
     - type: Transform
       pos: 22.5,21.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 634.4999295
 - proto: VendingMachineCuddlyCritterVend
   entities:
   - uid: 4191
@@ -31026,15 +31010,11 @@ entities:
     - type: Transform
       pos: 4.5,18.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 256.4669255
   - uid: 4192
     components:
     - type: Transform
       pos: -29.5,18.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 599.4999385
 - proto: VendingMachineDinnerware
   entities:
   - uid: 4193
@@ -31042,8 +31022,6 @@ entities:
     - type: Transform
       pos: -38.5,15.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 640.4669255
 - proto: VendingMachineEngivendPOI
   entities:
   - uid: 4194
@@ -31065,29 +31043,21 @@ entities:
     - type: Transform
       pos: -25.5,13.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 242.4669255
   - uid: 4197
     components:
     - type: Transform
       pos: -29.5,13.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 399.4669255
   - uid: 4198
     components:
     - type: Transform
       pos: 0.5,13.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 308.4669255
   - uid: 4199
     components:
     - type: Transform
       pos: 4.5,13.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 285.4669255
 - proto: VendingMachineJaniDrobe
   entities:
   - uid: 4200
@@ -31095,8 +31065,6 @@ entities:
     - type: Transform
       pos: -28.5,35.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 529.4669255
 - proto: VendingMachineMailDrobe
   entities:
   - uid: 4201
@@ -31104,8 +31072,6 @@ entities:
     - type: Transform
       pos: 21.5,14.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 252.4669255
 - proto: VendingMachineMailVend
   entities:
   - uid: 4202
@@ -31113,8 +31079,6 @@ entities:
     - type: Transform
       pos: 18.5,18.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 352.4669255
 - proto: VendingMachineRestockChefvend
   entities:
   - uid: 4203
@@ -31153,8 +31117,6 @@ entities:
     - type: Transform
       pos: 14.5,24.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 635.4669255
 - proto: VendingMachineTankDispenserEVAPOI
   entities:
   - uid: 4209
@@ -31169,8 +31131,6 @@ entities:
     - type: Transform
       pos: 20.5,14.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 591.4999165
 - proto: VendingMachineVendomatPOI
   entities:
   - uid: 4211
@@ -31178,8 +31138,6 @@ entities:
     - type: Transform
       pos: 16.5,13.5
       parent: 2
-    - type: Advertise
-      nextAdvertisementTime: 713.4998685
 - proto: VendingMachineYouToolPOI
   entities:
   - uid: 4212

@@ -13237,8 +13237,6 @@ entities:
     - type: Transform
       pos: -1.5,15.5
       parent: 1
-    - type: Advertise
-      nextAdvertisementTime: 2181.664999
 - proto: SMESAdvanced
   entities:
   - uid: 1947
