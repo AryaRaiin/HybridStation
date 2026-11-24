@@ -78,7 +78,7 @@
 #        amount: 0.75 # Frontier
       - !type:SatiateHunger # Frontier
         conditions: # Frontier
-        - !type:ReagentThreshold # Frontier
+        - !type:ReagentCondition # Frontier
           reagent: Nutriment # Frontier
           min: 0.1 # Frontier
         factor: 1 # Frontier

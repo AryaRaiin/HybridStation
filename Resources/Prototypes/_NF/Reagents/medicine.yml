@@ -18,7 +18,7 @@
       effects:
       - !type:HealthChange
         conditions:
-        - !type:Temperature
+        - !type:TemperatureCondition
           max: 213.0
         damage:
 #          types: #Mono start: RR reversal buff and base 3x effect
@@ -29,9 +29,9 @@
             Brute: -18
       - !type:HealthChange
         conditions:
-        - !type:Temperature
+        - !type:TemperatureCondition
           max: 213.0
-        - !type:TotalDamage
+        - !type:TotalDamageCondition
           min: 1000
         damage:
           groups:
@@ -51,7 +51,7 @@
       effects:
       - !type:HealthChange
         conditions:
-        - !type:Temperature
+        - !type:TemperatureCondition
           max: 213.0
         damage:
           types:
@@ -62,9 +62,9 @@
             Brute: 3
       - !type:HealthChange
         conditions:
-        - !type:Temperature
+        - !type:TemperatureCondition
           max: 213.0
-        - !type:TotalDamage
+        - !type:TotalDamageCondition
           min: 1000 #Mono start: RR reversal buff
         damage:
           groups:

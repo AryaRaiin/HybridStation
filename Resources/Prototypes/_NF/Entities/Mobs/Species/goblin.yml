@@ -98,7 +98,7 @@
     - reagents: [ Water, SpaceCleaner, SoapReagent ]
       methods: [ Touch ]
       effects:
-      - !type:WashCreamPieReaction
+      - !type:WashCreamPie # HS
     - reagents: [ Water, SpaceCleaner, SoapReagent ]
       methods: [ Touch ]
       effects:

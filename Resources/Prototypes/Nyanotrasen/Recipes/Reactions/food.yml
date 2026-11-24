@@ -11,10 +11,10 @@
     Cream:
       amount: 5
   effects:
-    - !type:CreateEntityReactionEffect
+    - !type:SpawnEntity
       entity: FoodCurdCheese
       number: 2
-      
+
 # Mozzarella
 - type: reaction
   id: CurdlingMozzarella
@@ -29,7 +29,7 @@
       amount: 5
       catalyst: true
   effects:
-    - !type:CreateEntityReactionEffect
+    - !type:SpawnEntity
       entity: FoodMozzarella
       number: 2
 
@@ -42,4 +42,3 @@
       amount: 1
   products:
     OilGhee: 1
-    

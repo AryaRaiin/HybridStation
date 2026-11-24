@@ -5,26 +5,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 - type: technology
-  id: RipleyAPLU
-  name: research-technology-ripley-aplu
-  entityIcon: MechRipleyBattery
-  discipline: MechaEngineering
-  tier: 1
-  cost: 10000
-  recipeUnlocks:
-  - RipleyHarness
-  - RipleyLArm
-  - RipleyRArm
-  - RipleyLLeg
-  - RipleyRLeg
-  - RipleyCentralElectronics
-  - RipleyPeripheralsElectronics
-  - MechEquipmentGrabber
-  technologyPrerequisites:
-  - AdvancedParts
-  position: 2, 10
-
-- type: technology
   id: Ripley2
   name: research-technology-ripley-mkii
   entityIcon: MechRipley2Battery

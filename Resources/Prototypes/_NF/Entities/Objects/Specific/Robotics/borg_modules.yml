@@ -10,12 +10,12 @@
       sprite: _NF/Objects/Specific/Robotics/borgmodule.rsi
   - type: ItemBorgModule
     moduleId: NFAdvancedMining
-    items:
-    - MiningDrillDiamond
-    - Shovel
-    - AdvancedMineralScannerUnpowered
-    - JawsOfLife
-    - RadioHandheldNF
+    hands: # HS
+    - item: MiningDrillDiamond # HS
+    - item: Shovel # HS
+    - item: AdvancedMineralScannerUnpowered # HS
+    - item: JawsOfLife # HS
+    - item: RadioHandheldNF # HS
   - type: DroppableBorgModule
     moduleId: NFAdvancedMining
     items:
@@ -38,13 +38,13 @@
       sprite: _NF/Objects/Specific/Robotics/borgmodule.rsi
   - type: ItemBorgModule
     moduleId: NFAdvancedParamedic
-    items:
-    - HandheldHealthAnalyzerUnpowered
-    - Suture10Lingering
-    - Mesh10Lingering
-    - Gauze10Lingering
-    - Bloodpack10Lingering
-    - SyringeBluespace
+    hands:  # HS
+    - item: HandheldHealthAnalyzerUnpowered # HS
+    - item: Suture10Lingering # HS
+    - item: Mesh10Lingering # HS
+    - item: Gauze10Lingering # HS
+    - item: Bloodpack10Lingering # HS
+    - item: SyringeBluespace # HS
   - type: BorgModuleIcon
     icon: { sprite: _NF/Interface/Actions/actions_borg.rsi, state: adv-paramed-module }
 

@@ -109,7 +109,7 @@
       - !type:AdjustReagent
         reagent: Ethanol
         amount: 0.4
-      - !type:ExplosionReactionEffect
+      - !type:Explosion
         explosionType: Default
         maxIntensity: 0.1
         intensityPerUnit: 0.05
@@ -171,7 +171,7 @@
             Radiation: -0.05
             Asphyxiation: 1
         conditions:
-        - !type:ReagentThreshold
+        - !type:ReagentCondition
           min: 35
       - !type:ModifyBloodLevel
         amount: 0.2
@@ -221,19 +221,4 @@
     state: icon_empty
   metamorphicMaxFillLevels: 4
   metamorphicFillBaseName: fill-
-  metamorphicChangeColor: false
-
-- type: reagent
-  id: Eggnog
-  name: reagent-name-eggnog
-  parent: BaseAlcohol
-  desc: reagent-desc-eggnog
-  physicalDesc: reagent-physical-desc-thick
-  flavor: creamy
-  color: "#ffebc4"
-  metamorphicSprite:
-    sprite: _NF/Objects/Consumable/Drinks/eggnog.rsi
-    state: icon_empty
-  metamorphicMaxFillLevels: 8
-  metamorphicFillBaseName: fill
   metamorphicChangeColor: false

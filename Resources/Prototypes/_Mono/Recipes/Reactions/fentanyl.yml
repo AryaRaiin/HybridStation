@@ -33,7 +33,7 @@
     Dylovene:
       amount: 1
   effects:
-  - !type:ExplosionReactionEffect
+  - !type:Explosion
     explosionType: Default
     maxIntensity: 100
     intensityPerUnit: 0.65
@@ -53,5 +53,5 @@
     Tricordrazine: 1
     Dylovene: 5
   effects:
-    - !type:CreateEntityReactionEffect
+    - !type:SpawnEntity
       entity: FentanylSolidified

@@ -19,13 +19,13 @@
       - !type:SatiateThirst
         factor: -0.5
         conditions:
-        - !type:OrganType
+        - !type:MetabolizerTypeCondition
           type: Goblin
           shouldHave: false
       - !type:ChemVomit
         probability: 0.025
         conditions:
-        - !type:OrganType
+        - !type:MetabolizerTypeCondition
           type: Goblin
           shouldHave: false
       - !type:GenericStatusEffect
@@ -36,13 +36,13 @@
         time: 30
         refresh: true
         conditions:
-        - !type:OrganType
+        - !type:MetabolizerTypeCondition
           type: Goblin
           shouldHave: false
       # Effects for goblins
       - !type:SatiateThirst
         factor: 1
         conditions:
-        - !type:OrganType
-          type: Goblin
-          shouldHave: true
+        - !type:MetabolizerTypeCondition
+          type: [Goblin] # HS
+          inverted: true # HS

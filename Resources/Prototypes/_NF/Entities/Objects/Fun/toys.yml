@@ -105,7 +105,7 @@
     tags:
     - Soap
   - type: Slippery
-    slipData: 
+    slipData:
       paralyzeTime: 0.7
       launchForwardsMultiplier: 0.5
   - type: StepTrigger
@@ -412,14 +412,6 @@
   - type: MeleeWeapon
     soundHit:
       path: /Audio/_DV/Voice/Vulpkanin/dog_bark1.ogg
-
-- type: entity
-  parent: BasePlushieVulp
-  id: PlushieVulp
-  components:
-  - type: Sprite
-    sprite: _NF/Objects/Fun/toys.rsi
-    state: plushie_vulp
 
 - type: entity
   parent: BasePlushieVulp

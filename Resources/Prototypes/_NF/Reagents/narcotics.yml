@@ -15,7 +15,7 @@
         showInChat: true
         probability: 0.05
         conditions:
-        - !type:OrganType
+        - !type:MetabolizerTypeCondition
           type: Dwarf
           shouldHave: false
       - !type:Emote
@@ -23,7 +23,7 @@
         showInChat: true
         probability: 0.025
         conditions:
-        - !type:OrganType
+        - !type:MetabolizerTypeCondition
           type: Dwarf
           shouldHave: false
       # Effects for dwarfs
@@ -37,7 +37,7 @@
         - "rock-dust-effect-nf-pleasant-memories-04"
         probability: 0.05
         conditions:
-        - !type:OrganType
+        - !type:MetabolizerTypeCondition
           type: Dwarf
           shouldHave: true
       - !type:PopupMessage
@@ -49,7 +49,7 @@
         - "rock-dust-effect-nf-tense-memories-03"
         probability: 0.015
         conditions:
-        - !type:OrganType
+        - !type:MetabolizerTypeCondition
           type: Dwarf
           shouldHave: true
 
@@ -76,7 +76,7 @@
         type: Add
         time: 15
         conditions:
-        - !type:OrganType
+        - !type:MetabolizerTypeCondition
           type: Goblin
           shouldHave: true
       - !type:Emote
@@ -84,7 +84,7 @@
         showInChat: true
         probability: 0.08
         conditions:
-        - !type:OrganType
+        - !type:MetabolizerTypeCondition
           type: Goblin
           shouldHave: true
       - !type:Emote
@@ -92,7 +92,7 @@
         showInChat: true
         probability: 0.05
         conditions:
-        - !type:OrganType
+        - !type:MetabolizerTypeCondition
           type: Goblin
           shouldHave: true
       - !type:Emote
@@ -100,7 +100,7 @@
         showInChat: true
         probability: 0.025
         conditions:
-        - !type:OrganType
+        - !type:MetabolizerTypeCondition
           type: Goblin
           shouldHave: true
       - !type:PopupMessage
@@ -117,7 +117,7 @@
         - "shroom-mix-effect-nf-procrastination-visions-08"
         probability: 0.05
         conditions:
-        - !type:OrganType
+        - !type:MetabolizerTypeCondition
           type: Goblin
           shouldHave: true
       # Effects for everyone
@@ -132,26 +132,26 @@
       # Effects for non-goblins
       - !type:Jitter
         conditions:
-        - !type:ReagentThreshold
+        - !type:ReagentCondition
           min: 1
-        - !type:OrganType
+        - !type:MetabolizerTypeCondition
           type: Goblin
           shouldHave: false
       - !type:ChemVomit
         probability: 0.025
         conditions:
-        - !type:OrganType
+        - !type:MetabolizerTypeCondition
           type: Goblin
           shouldHave: false
       - !type:SatiateThirst
         factor: -1 # Makes non goblins thirsty, scales with reagent quantity (I think)
         conditions:
-        - !type:OrganType
+        - !type:MetabolizerTypeCondition
           type: Goblin
           shouldHave: false
       - !type:SatiateHunger
         factor: -1 # Makes non goblins hungry, scales with reagent quantity (I think)
         conditions:
-        - !type:OrganType
+        - !type:MetabolizerTypeCondition
           type: Goblin
           shouldHave: false

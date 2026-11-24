@@ -1,6 +1,6 @@
 - type: entity
   name: mail bag
-  id: MailBag
+  id: MailBagNyano # HS: Renamed from MailBag
   parent: BaseStorageItem
   description: Here's the mail, it never fails...
   components:

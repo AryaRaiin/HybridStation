@@ -11,6 +11,7 @@
 
   - !type:CorridorDunGen
     width: 3
+    tile: FloorSteel
 
   - !type:DungeonEntranceDunGen
     count: 2
@@ -99,6 +100,7 @@
 
   - !type:WormCorridorDunGen
     width: 3
+    tile: FloorCaveDrought
 
   - !type:CorridorClutterDunGen
     contents:

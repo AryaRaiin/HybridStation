@@ -200,19 +200,6 @@
   recipeType:
   - Assembler
 
-- type: microwaveMealRecipe
-  id: RecipeFoodBakedChevreChaudCotton
-  name: cotton chevre chaud recipe
-  result: FoodBakedChevreChaudCotton
-  time: 5
-  group: Breads
-  solids:
-    FoodChevreSlice: 1
-    FoodBreadBaguetteCottonSlice: 1
-  recipeType:
-  - Oven
-  - Microwave
-
 # Cured Meat - Future category for sausages/transformative meat and now consumption friendly.
 
 - type: microwaveMealRecipe
@@ -372,7 +359,7 @@
     FoodCuredCarp: 1
   recipeType:
   - Assembler
-   
+
 # Donuts (uncooked as well as glazed) - frying handled by DeepFrySpawnComponent per-entity
 
 - type: microwaveMealRecipe

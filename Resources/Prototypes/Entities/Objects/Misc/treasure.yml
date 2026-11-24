@@ -145,6 +145,8 @@
   name: coin
   description: A flat bit of metal. If it was still in circulation, inflation would've made it worthless. Since it isn't, it's worth enough to keep in a book.
   components:
+  - type: StaticPrice # HS
+    price: 75 # HS
   - type: Sprite
     sprite: Objects/Misc/coins.rsi
     state: coin_iron
@@ -165,6 +167,8 @@
   parent: TreasureCoinIron
   id: TreasureCoinSilver
   components:
+  - type: StaticPrice # HS
+    price: 135 # HS
   - type: Sprite
     state: coin_silver
   - type: PhysicalComposition
@@ -181,6 +185,8 @@
   parent: TreasureCoinIron
   id: TreasureCoinGold
   components:
+  - type: StaticPrice # HS
+    price: 175 # HS
   - type: Sprite
     state: coin_gold
   - type: PhysicalComposition
@@ -197,6 +203,8 @@
   parent: TreasureCoinIron
   id: TreasureCoinAdamantine
   components:
+  - type: StaticPrice # HS
+    price: 250 # HS
   - type: Sprite
     state: coin_adamantine
   - type: PhysicalComposition
@@ -213,6 +221,8 @@
   parent: TreasureCoinIron
   id: TreasureCoinDiamond
   components:
+  - type: StaticPrice # HS
+    price: 500 # HS
   - type: Sprite
     state: coin_diamond
   - type: PhysicalComposition

@@ -95,9 +95,8 @@
     slot: head
   - type: ContainerContainer
     containers:
-      toggleable-clothing: !type:ContainerSlot {}
-      storagebase: !type:Container
-        ents: []
+      toggleable-clothing: !type:Container # HS
+        ents: [] # HS
 
 - type: entity
   abstract: true
@@ -132,7 +131,8 @@
     slot: head
   - type: ContainerContainer
     containers:
-      toggleable-clothing: !type:ContainerSlot {}
+      toggleable-clothing: !type:Container # HS
+        ents: [] # HS
   - type: GroupExamine
   - type: Tag
     tags:
@@ -192,8 +192,7 @@
     slot: head
   - type: ContainerContainer
     containers:
-      toggleable-clothing: !type:ContainerSlot {}
-      storagebase: !type:Container
+      toggleable-clothing: !type:Container # HS
         ents: []
 
 - type: entity

@@ -1,6 +1,6 @@
 - type: entity
   parent: ReagentDispenserBase
-  id: CondimentDispenser  
+  id: CondimentDispenser
   name: condiment dispenser
   suffix: Filled
   description: A condiment dispenser with a single slot for a condiment cup.
@@ -28,7 +28,6 @@
     storageWhitelist:
      tags:
       - DrinkBottle
-    pack: CondimentDispenserInventory
   - type: Transform
     noRot: false
   - type: Machine

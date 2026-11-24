@@ -16,7 +16,7 @@
       - !type:SatiateHunger
       - !type:HealthChange #minor health benefit if you eat full meals, helps with the existing 'healthy' vitamins etc. to create a complete and balanced diet.
         conditions:
-        - !type:ReagentThreshold
+        - !type:ReagentCondition
           min: 10
         damage:
           types:
