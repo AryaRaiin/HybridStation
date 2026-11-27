@@ -30,7 +30,8 @@
         - !type:HealthChange
           conditions:
           - !type:ReagentCondition
-            min: 21
+          reagent: Stasizium
+          min: 21
           damage:
             types:
               Blunt: 100

@@ -20,6 +20,7 @@
       - !type:HealthChange
         conditions:
         - !type:ReagentCondition
+          reagent: Lean
           min: 25
         damage:
           types:
@@ -27,11 +28,12 @@
       - !type:Electrocute
         conditions:
         - !type:ReagentCondition
+          reagent: Lean
           min: 35
         probability: 0.1
     Medicine:
       effects:
-      - !type:ChemVomit
+      - !type:Vomit
         conditions:
           - !type:ReagentCondition
             min: 60

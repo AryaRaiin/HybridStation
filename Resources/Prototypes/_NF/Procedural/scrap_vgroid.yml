@@ -244,39 +244,57 @@
   - !type:MobsDunGen
     minCount: 1
     maxCount: 2
-    groups:
-    - id: SpawnMobRogueSiliconsT3
-      amount: 1
+    contents: DunGenSpawnMobRogueSiliconsT3 #HS
   - !type:MobsDunGen
     minCount: 1
     maxCount: 2
-    groups:
-    - id: SpawnMobRogueSiliconsT2
-      amount: 1
+    contents: DunGenSpawnMobRogueSiliconsT2 #HS
   - !type:MobsDunGen
     minCount: 1
     maxCount: 2
-    groups:
-    - id: SpawnMobRogueScapT1
-      amount: 1
+    contents: DunGenSpawnMobRogueScapT1 #HS
   - !type:MobsDunGen
     minCount: 1
     maxCount: 2
-    groups:
-    - id: SpawnMobRogueScapT1
-      amount: 1
+    contents: DunGenSpawnMobRogueScapT1 #HS
   - !type:MobsDunGen
     minCount: 1
     maxCount: 2
-    groups:
-    - id: SpawnMobRogueSiliconsT2
-      amount: 1
+    contents: DunGenSpawnMobRogueSiliconsT2 #HS
   - !type:MobsDunGen
     minCount: 0
     maxCount: 1
-    groups:
+    contents: DunGenSpawnMobRogueSiliconBossRandom #HS
+
+# HS START
+- type: entityTable
+  id: DunGenSpawnMobRogueSiliconsT3
+  table: !type:GroupSelector
+    children:
+    - id: SpawnMobRogueSiliconsT3
+      amount: 1
+
+- type: entityTable
+  id: DunGenSpawnMobRogueSiliconsT2
+  table: !type:GroupSelector
+    children:
+    - id: SpawnMobRogueSiliconsT2
+      amount: 1
+
+- type: entityTable
+  id: DunGenSpawnMobRogueScapT1
+  table: !type:GroupSelector
+    children:
+    - id: SpawnMobRogueScapT1
+      amount: 1
+
+- type: entityTable
+  id: DunGenSpawnMobRogueSiliconBossRandom
+  table: !type:GroupSelector
+    children:
     - id: SpawnMobRogueSiliconBossRandom
       amount: 1
+# HS END
 
 #- type: dungeonConfig
 #  id: NFVGRoidInteriorDungeonsScrap

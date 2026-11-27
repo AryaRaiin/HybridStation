@@ -275,15 +275,27 @@
   - !type:MobsDunGen
     minCount: 8
     maxCount: 15
-    groups:
-    - id: NFSpawnMobXenoT2
-      amount: 1
+    contents: DunGenNFSpawnMobXenoT2 # HS
   - !type:MobsDunGen
     minCount: 0
     maxCount: 1
-    groups:
+    contents: DunGenNFSpawnMobXenoQueen # HS
+
+# HS START
+- type: entityTable
+  id: DunGenNFSpawnMobXenoT2
+  table: !type:GroupSelector
+    children:
+    - id: NFSpawnMobXenoT2
+      amount: 1
+
+- type: entityTable
+  id: DunGenNFSpawnMobXenoQueen
+  table: !type:GroupSelector
+    children:
     - id: NFSpawnMobXenoQueen
       amount: 1
+# HS END
 
 #- type: dungeonConfig
 #  id: NFVGRoidInteriorDungeonsSnow

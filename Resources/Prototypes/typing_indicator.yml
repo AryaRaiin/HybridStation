@@ -6,6 +6,7 @@
 - type: typingIndicator
   id: empty
   typingState: empty0
+  idleState: empty3 # HS: Added to cover missing idle indicators on felinid, goblins, pal, rodentia, and chitinid
 
 - type: typingIndicator
   id: robot
@@ -87,7 +88,3 @@
   idleState: regal3
   offset: 0, 0.125
 
-- type: typingIndicator # HS: Added to cover missing idle indicators on felinid, goblins, pal, rodentia, and chitinid
-  id: empty
-  typingState: empty0
-  idleState: empty3

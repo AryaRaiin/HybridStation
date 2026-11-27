@@ -11,7 +11,7 @@ ShipyardLiquidatorInfo: null # missing from map
 ShipyardCeresInfo: null
 StationEfficiencyCircuitBoard : null # item removed by wizden
 40mmGrenadeIncendiary: 40mmGrenadeThermobaric # item removed
-40mmGrenadeStinger: 40mmGrenadeBaton # item removed
+40mmGrenadeStinger: GrenadeBaton # item removed
 40mmGrenadeShrapnel: 40mmGrenadeFragmentation # item removed
 CircularShieldConsole: null # entity removed
 CircularShieldBase: ShieldGeneratorSmall

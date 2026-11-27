@@ -76,8 +76,8 @@
         probability: 0.1
         conditions:
         - !type:ReagentCondition
-          max: 0
           reagent: Histamine
+          max: 0
         - !type:TagCondition
           inverted: true
           tag: Bee

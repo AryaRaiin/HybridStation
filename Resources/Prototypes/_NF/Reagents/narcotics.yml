@@ -133,11 +133,12 @@
       - !type:Jitter
         conditions:
         - !type:ReagentCondition
+          reagent: ShroomMix
           min: 1
         - !type:MetabolizerTypeCondition
           type: Goblin
           shouldHave: false
-      - !type:ChemVomit
+      - !type:Vomit
         probability: 0.025
         conditions:
         - !type:MetabolizerTypeCondition

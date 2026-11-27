@@ -211,46 +211,6 @@
 
 # Facial Hairs
 - type: marking
-  id: VulpFacialHairRuff
-  bodyPart: FacialHair
-  markingCategory: FacialHair
-  speciesRestriction: [ Vulpkanin ]
-  canBeDisplaced: false
-  sprites:
-    - sprite: Mobs/Customization/Vulpkanin/facial_hair.rsi
-      state: ruff
-
-- type: marking
-  id: VulpFacialHairElder
-  bodyPart: FacialHair
-  markingCategory: FacialHair
-  speciesRestriction: [ Vulpkanin ]
-  canBeDisplaced: false
-  sprites:
-    - sprite: Mobs/Customization/Vulpkanin/facial_hair.rsi
-      state: elder
-
-- type: marking
-  id: VulpFacialHairElderChin
-  bodyPart: FacialHair
-  markingCategory: FacialHair
-  speciesRestriction: [ Vulpkanin ]
-  canBeDisplaced: false
-  sprites:
-    - sprite: Mobs/Customization/Vulpkanin/facial_hair.rsi
-      state: elder_chin
-
-- type: marking
-  id: VulpFacialHairKita
-  bodyPart: FacialHair
-  markingCategory: FacialHair
-  speciesRestriction: [ Vulpkanin ]
-  canBeDisplaced: false
-  sprites:
-    - sprite: Mobs/Customization/Vulpkanin/facial_hair.rsi
-      state: kita
-
-- type: marking
   id: VulpFacialHairGoatee
   bodyPart: FacialHair
   markingCategory: FacialHair

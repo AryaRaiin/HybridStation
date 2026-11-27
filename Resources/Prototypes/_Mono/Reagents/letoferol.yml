@@ -20,6 +20,7 @@
       - !type:HealthChange
         conditions:
         - !type:ReagentCondition
+          reagent: Letoferol
           max: 10
         - !type:MetabolizerTypeCondition
           type: Chimera
@@ -30,6 +31,7 @@
       - !type:HealthChange
         conditions:
         - !type:ReagentCondition
+          reagent: Letoferol
           min: 10
         - !type:MetabolizerTypeCondition
           type: Chimera
@@ -42,10 +44,12 @@
         prototype: LetoferolMutation
         conditions:
         - !type:ReagentCondition
+          reagent: Letoferol
           min: 10
       - !type:PopupMessage
         conditions:
         - !type:ReagentCondition
+          reagent: Letoferol
           min: 2
         type: Local
         visualType: Medium
@@ -55,6 +59,7 @@
         boozePower: 15
         conditions:
         - !type:ReagentCondition
+          reagent: Letoferol
           min: 8
 
 - type: reagent
@@ -78,6 +83,7 @@
       - !type:HealthChange
         conditions:
         - !type:ReagentCondition
+          reagent: NaturalLetoferol
           max: 15
         - !type:MetabolizerTypeCondition
           type: Chimera
@@ -88,6 +94,7 @@
       - !type:HealthChange
         conditions:
         - !type:ReagentCondition
+          reagent: NaturalLetoferol
           min: 15
         - !type:MetabolizerTypeCondition
           type: Chimera
@@ -100,6 +107,7 @@
         prototype: LetoferolMutationNatural
         conditions:
         - !type:ReagentCondition
+          reagent: NaturalLetoferol
           min: 15
         - !type:HasTag
           tag: Humanoid
@@ -107,6 +115,7 @@
         prototype: LetoferolMutationBeastNatural
         conditions:
         - !type:ReagentCondition
+          reagent: NaturalLetoferol
           min: 10 # less for non-humanoids
         - !type:HasTag
           tag: Humanoid
@@ -114,6 +123,7 @@
       - !type:PopupMessage
         conditions:
         - !type:ReagentCondition
+          reagent: NaturalLetoferol
           min: 4
         type: Local
         visualType: Medium
@@ -123,6 +133,7 @@
         boozePower: 15
         conditions:
         - !type:ReagentCondition
+          reagent: NaturalLetoferol
           min: 10
 
 - type: reagent

@@ -250,48 +250,80 @@
     maxCount: 20
     table: !type:NestedSelector
       tableId: SalvageEquipmentSpawnerValuable
-  - !type:MobsDunGen
-    minCount: 1
-    maxCount: 2
-    groups:
-    - id: SpawnMobBloodCultistPriest
-      amount: 1
-  - !type:MobsDunGen
-    minCount: 1
-    maxCount: 2
-    groups:
-    - id: SpawnMobBloodCultistAcolyte
-      amount: 1
-  - !type:MobsDunGen
-    minCount: 1
-    maxCount: 2
-    groups:
-    - id: SpawnMobBloodCultistZealotMelee
-      amount: 1
-  - !type:MobsDunGen
-    minCount: 1
-    maxCount: 2
-    groups:
-    - id: SpawnMobBloodCultistZealotRanged
-      amount: 1
-  - !type:MobsDunGen
-    minCount: 1
-    maxCount: 2
-    groups:
-    - id: SpawnMobBloodCultistCaster
-      amount: 1
-  - !type:MobsDunGen
-    minCount: 0
-    maxCount: 1
-    groups:
-    - id: SpawnMobBloodCultistAscended # Boss
-      amount: 1
+- !type:MobsDunGen
+  minCount: 1
+  maxCount: 2
+  contents: DunGenSpawnMobBloodCultistPriest # HS
+- !type:MobsDunGen
+  minCount: 1
+  maxCount: 2
+  contents: DunGenSpawnMobBloodCultistAcolyte # HS
+- !type:MobsDunGen
+  minCount: 1
+  maxCount: 2
+  contents: DunGenSpawnMobBloodCultistZealotMelee # HS
+- !type:MobsDunGen
+  minCount: 1
+  maxCount: 2
+  contents: DunGenSpawnMobBloodCultistZealotRanged # HS
+- !type:MobsDunGen
+  minCount: 1
+  maxCount: 2
+  contents: DunGenSpawnMobBloodCultistCaster # HS
+- !type:MobsDunGen
+  minCount: 0
+  maxCount: 1
+  contents: DunGenSpawnMobBloodCultistAscended # HS
   # - !type:MobsDunGen # Dies to barotrauma - equip it for space if you want this restored
   #   minCount: 1
   #   maxCount: 1
   #   groups:
   #   - id: SpawnMobCatBloodCultLowChance
   #     amount: 1
+
+# HS START
+- type: entityTable
+  id: DunGenSpawnMobBloodCultistPriest
+  table: !type:GroupSelector
+    children:
+    - id: SpawnMobBloodCultistPriest
+      amount: 1
+
+- type: entityTable
+  id: DunGenSpawnMobBloodCultistAcolyte
+  table: !type:GroupSelector
+    children:
+    - id: SpawnMobBloodCultistAcolyte
+      amount: 1
+
+- type: entityTable
+  id: DunGenSpawnMobBloodCultistZealotMelee
+  table: !type:GroupSelector
+    children:
+    - id: SpawnMobBloodCultistZealotMelee
+      amount: 1
+
+- type: entityTable
+  id: DunGenSpawnMobBloodCultistZealotRanged
+  table: !type:GroupSelector
+    children:
+    - id: SpawnMobBloodCultistZealotRanged
+      amount: 1
+
+- type: entityTable
+  id: DunGenSpawnMobBloodCultistCaster
+  table: !type:GroupSelector
+    children:
+    - id: SpawnMobBloodCultistCaster
+      amount: 1
+
+- type: entityTable
+  id: DunGenSpawnMobBloodCultistAscended
+  table: !type:GroupSelector
+    children:
+    - id: SpawnMobBloodCultistAscended
+      amount: 1
+# HS END
 
 #- type: dungeonConfig
 #  id: NFVGRoidInteriorDungeonsChromite

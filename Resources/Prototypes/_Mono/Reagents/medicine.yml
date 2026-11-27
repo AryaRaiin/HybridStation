@@ -29,22 +29,25 @@
           type: Yowie
           shouldHave: false
         - !type:ReagentCondition
+          reagent: Celoxradine
           min: 15
         damage:
           types:
             Asphyxiation: 2.5
             Poison: 2.0
-      - !type:ChemVomit
+      - !type:Vomit
         conditions:
         - !type:MetabolizerTypeCondition
           type: Yowie
           shouldHave: false
         - !type:ReagentCondition
+          reagent: Celoxradine
           min: 30
         probability: 0.5
       - !type:Jitter
         conditions:
         - !type:ReagentCondition
+          reagent: Celoxradine
           min: 15
       - !type:Drunk
 
@@ -75,6 +78,7 @@
           type: Yowie
           shouldHave: false
         - !type:ReagentCondition
+          reagent: Rhymatine
           min: 10
         damage:
           types:
@@ -85,6 +89,7 @@
       - !type:Jitter
         conditions:
         - !type:ReagentCondition
+          reagent: Rhymatine
           min: 10
 
 # ambuzol plus minus
@@ -105,6 +110,7 @@
       - !type:CureZombieInfection
         conditions:
         - !type:ReagentCondition
+          reagent: Mesotaxinide
           min: 15
       - !type:HealthChange
         damage:
@@ -116,6 +122,7 @@
           type: Yowie
           shouldHave: false
         - !type:ReagentCondition
+          reagent: Mesotaxinide
           min: 17.5
         damage:
           types:
@@ -124,11 +131,13 @@
       - !type:Jitter
         conditions:
         - !type:ReagentCondition
+          reagent: Mesotaxinide
           min: 40
       - !type:RevertPolymorph
         prototype: LetoferolMutationNatural
         conditions:
         - !type:ReagentCondition
+          reagent: Mesotaxinide
           min: 15
       - !type:AdjustReagent
         reagent: Letoferol
@@ -156,6 +165,7 @@
         prototype: LetoferolMutationNatural
         conditions:
         - !type:ReagentCondition
+          reagent: Mesophenerol
           min: 40
       - !type:AdjustReagent
         reagent: Letoferol

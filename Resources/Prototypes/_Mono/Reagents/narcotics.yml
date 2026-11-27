@@ -15,6 +15,7 @@
         - !type:TotalDamageCondition
           min: 5
         - !type:ReagentCondition
+          reagent: Fentanyl
           max: 5
         damage:
           groups:
@@ -52,7 +53,7 @@
         slurSpeech: true
         boozePower: 75
         # OD effects
-      - !type:ChemVomit
+      - !type:Vomit
         probability: 0.05
         conditions:
         - !type:ReagentCondition
@@ -73,6 +74,7 @@
       - !type:HealthChange
         conditions:
         - !type:ReagentCondition
+          reagent: Fentanyl
           min: 12.5
         damage:
           types:
@@ -82,6 +84,7 @@
       - !type:PopupMessage
         conditions:
         - !type:ReagentCondition
+          reagent: BeesKnees
           min: 2
         type: Local
         visualType: Medium

@@ -22,7 +22,7 @@
         - !type:MetabolizerTypeCondition
           type: Goblin
           shouldHave: false
-      - !type:ChemVomit
+      - !type:Vomit
         probability: 0.025
         conditions:
         - !type:MetabolizerTypeCondition

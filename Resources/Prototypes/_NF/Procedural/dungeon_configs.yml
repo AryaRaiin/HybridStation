@@ -79,6 +79,14 @@
   - !type:PrototypeDunGen
     proto: NFPlanetBase
 
+# HS START
+- type: entityTable
+  id: NFHauntedClutter
+  table: !type:GroupSelector
+    children:
+    - id: FloraStalagmite
+# HS END
+
 - type: dungeonConfig
   id: NFHaunted
   data:
@@ -103,8 +111,7 @@
     tile: FloorCaveDrought
 
   - !type:CorridorClutterDunGen
-    contents:
-    - id: FloraStalagmite
+    contents: NFHauntedClutter
 
   - !type:BoundaryWallDunGen
 
